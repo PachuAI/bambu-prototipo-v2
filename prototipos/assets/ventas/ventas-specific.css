@@ -1385,8 +1385,9 @@
 
 .modal-header-info {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
 }
 
 .pedido-cliente-info {
@@ -1654,12 +1655,12 @@
     flex-direction: column;
     gap: 0;
     background: var(--bg-sidebar);
-    padding: 24px;
+    padding: 16px;
     border-radius: var(--border-radius-lg);
 }
 
 .detalle-section {
-    padding-bottom: 20px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border-color-light);
 }
 
@@ -1669,12 +1670,12 @@
 }
 
 .section-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: var(--font-weight-semibold);
     color: var(--color-neutral);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1687,14 +1688,14 @@
 
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
 }
 
 .info-item {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .info-label {
@@ -1716,18 +1717,18 @@
 
 .table-detalle-productos thead th {
     text-align: left;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: var(--font-weight-semibold);
     color: var(--color-neutral);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    padding: 10px 8px;
+    padding: 6px;
     border-bottom: 2px solid var(--border-color);
 }
 
 .table-detalle-productos tbody td {
-    padding: 8px;
-    font-size: 14px;
+    padding: 6px;
+    font-size: 13px;
     border-bottom: 1px solid var(--border-color-light);
     color: var(--text-strong);
 }
@@ -1737,15 +1738,15 @@
 }
 
 .peso-total-row {
-    margin-top: 12px;
-    padding: 8px 12px;
+    margin-top: 8px;
+    padding: 6px 10px;
     background: var(--bg-sidebar);
     border-radius: var(--border-radius-base);
     display: flex;
     align-items: center;
     gap: 8px;
     color: var(--color-neutral);
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .peso-total-row i {
@@ -1758,8 +1759,8 @@
 
 /* Sidebar Sections */
 .detalle-sidebar-section {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -1773,7 +1774,7 @@
     font-size: 13px;
     font-weight: var(--font-weight-semibold);
     color: var(--text-strong);
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .badge-estado {
@@ -1790,7 +1791,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 4px;
     font-size: 13px;
     color: var(--color-neutral);
 }
@@ -1836,7 +1836,7 @@
 }
 
 .detalle-sidebar-section .total-row {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .detalle-sidebar-section .total-row:last-child {
@@ -1844,8 +1844,8 @@
 }
 
 .detalle-sidebar-section .total-destacado {
-    padding: 16px 0;
-    margin: 16px 0;
+    padding: 10px 0;
+    margin: 10px 0;
     border-top: 2px solid var(--border-color);
     border-bottom: 2px solid var(--border-color);
 }
@@ -1859,7 +1859,7 @@
 }
 
 .detalle-sidebar-section .total-destacado .value {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 900;
     color: var(--text-strong);
 }
@@ -1867,7 +1867,7 @@
 .estado-pago-info {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .estado-pago-info .total-row {
@@ -1882,14 +1882,14 @@
 .entrega-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .info-item-small {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 6px 10px;
     background: white;
     border-radius: var(--border-radius-base);
     font-size: 13px;

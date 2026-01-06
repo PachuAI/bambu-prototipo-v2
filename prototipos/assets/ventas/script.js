@@ -1897,8 +1897,8 @@ function abrirModalDetalle(pedidoId) {
     // Badge estado
     const estadoBadge = document.getElementById('detalle-estado-badge');
     estadoBadge.textContent = pedido.estado === 'transito' ? 'EN TRÁNSITO' : 'ENTREGADO';
-    estadoBadge.style.background = pedido.estado === 'transito' ? '#dbeafe' : '#d1fae5';
-    estadoBadge.style.color = pedido.estado === 'transito' ? '#1e40af' : '#065f46';
+    estadoBadge.style.background = pedido.estado === 'transito' ? '#dbeafe' : '#10b981';
+    estadoBadge.style.color = pedido.estado === 'transito' ? '#1e40af' : '#ffffff';
 
     // Info cliente
     document.getElementById('detalle-cliente-nombre').textContent = pedido.cliente;
