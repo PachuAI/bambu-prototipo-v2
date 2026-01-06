@@ -319,4 +319,37 @@ function setupSidebarAutoCollapse() {
     });
 }
 
+// ========================================
+// DESCUENTO CLIENTE - TOGGLE BUTTONS
+// ========================================
+
+function selectDescuento(btn) {
+    // Remover active de todos los botones del grupo
+    const grupo = btn.closest('.btn-group-toggle');
+    grupo.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+
+    // Agregar active al botón clickeado
+    btn.classList.add('active');
+
+    // Actualizar el badge en el header
+    const value = btn.getAttribute('data-value');
+    const badgeDescuento = document.querySelector('.badge-discount');
+
+    if (badgeDescuento) {
+        switch (value) {
+            case 'none':
+                badgeDescuento.innerHTML = '<i class="fas fa-tag"></i> Sin desc.';
+                break;
+            case 'l2':
+                badgeDescuento.innerHTML = '<i class="fas fa-tag"></i> 6.25%';
+                break;
+            case 'l3':
+                badgeDescuento.innerHTML = '<i class="fas fa-tag"></i> 10%';
+                break;
+        }
+    }
+
+    console.log('Descuento seleccionado:', value);
+}
+
 console.log('✅ Cliente Detalle V2 - Script cargado correctamente');

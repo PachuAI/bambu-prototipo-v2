@@ -19,42 +19,89 @@
    HEADER - Perfil del Cliente
    ============================================================================ */
 
-.detail-top-bar {
-    background: var(--bg-white);
-    padding: var(--spacing-2xl) var(--spacing-3xl) 0 var(--spacing-3xl);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.customer-profile-header {
+/* Header unificado - todo en una línea */
+.detail-top-bar-unified {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-2xl);
+    background: var(--bg-white);
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 24px;
 }
 
-.profile-main {
+.header-left {
     display: flex;
     align-items: center;
-    gap: var(--spacing-lg);
+    gap: 10px;
+    flex-shrink: 0;
 }
 
-.profile-avatar-lg {
-    width: 64px;
-    height: 64px;
-    border-radius: var(--border-radius-full);
-    background: var(--text-primary);
-    color: var(--text-white);
-    font-size: var(--font-size-xl);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: var(--font-weight-bold);
+.header-left .btn-icon-sm {
+    background: var(--bg-app);
+    color: var(--text-secondary);
 }
 
-.profile-info h1 {
-    font-size: var(--font-size-xl);
-    margin: 0 0 4px 0;
+.header-left .btn-icon-sm:hover {
+    background: var(--border-color);
     color: var(--text-primary);
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    justify-content: flex-start;
+    margin-left: 24px;
+}
+
+.header-center .tab-link {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.header-center .tab-link:hover {
+    color: var(--text-primary);
+    background: var(--bg-app);
+}
+
+.header-center .tab-link.active {
+    color: var(--color-accent);
+    background: var(--color-info-light);
+    font-weight: var(--font-weight-semibold);
+}
+
+.header-right {
+    flex-shrink: 0;
+}
+
+.customer-title {
+    font-size: 16px;
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.badge-discount {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: var(--color-warning);
+    color: #1a1a1a;
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    border-radius: 10px;
+}
+
+.badge-discount i {
+    font-size: 9px;
 }
 
 /* ============================================================================
@@ -180,10 +227,19 @@
     border-bottom: 1px solid var(--border-color);
 }
 
+.ledger-table th.text-center {
+    text-align: center;
+}
+
 .ledger-table td {
     padding: var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     font-size: var(--font-size-base);
+}
+
+.ledger-table td:last-child {
+    text-align: center;
+    padding: 8px;
 }
 
 /* Badge método de pago */
@@ -241,7 +297,7 @@
 }
 
 .detalle-content {
-    padding: 12px 16px 12px 32px; /* Indentación izquierda para jerarquía */
+    padding: 12px 16px 12px 16px;
     animation: slideDown 0.2s ease;
 }
 
@@ -349,6 +405,7 @@
     border-bottom: 1px solid var(--border-color-light);
     color: var(--text-primary);
     background: transparent;
+    text-align: left;
 }
 
 .detalle-productos-table tbody td strong {
@@ -660,14 +717,45 @@
    ============================================================================ */
 
 /* Badge descuento fijo - amarillo VIP */
-[data-theme="dark"] .badge-new {
+[data-theme="dark"] .badge-new,
+[data-theme="dark"] .badge-discount {
     background: #fbbf24 !important;
     color: #1a1a1a !important;
 }
 
-/* Avatar grande */
-[data-theme="dark"] .profile-avatar-lg {
-    background: var(--color-primary) !important;
+/* Customer title */
+[data-theme="dark"] .customer-title {
+    color: var(--text-primary) !important;
+}
+
+/* Header unificado dark mode */
+[data-theme="dark"] .detail-top-bar-unified {
+    background: var(--bg-sidebar) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .header-left .btn-icon-sm {
+    background: #2d3340 !important;
+    color: #9ca3af !important;
+}
+
+[data-theme="dark"] .header-left .btn-icon-sm:hover {
+    background: #3d4556 !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .header-center .tab-link {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .header-center .tab-link:hover {
+    color: var(--text-primary) !important;
+    background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .header-center .tab-link.active {
+    color: var(--color-accent) !important;
+    background: rgba(0, 82, 204, 0.2) !important;
 }
 
 /* Botones block action */
@@ -741,4 +829,65 @@
 [data-theme="dark"] .btn-link-small:hover {
     background: var(--color-accent) !important;
     color: white !important;
+}
+
+/* ============================================================================
+   BTN-GROUP-TOGGLE - Botones de selección tipo radio
+   ============================================================================ */
+
+.btn-group-toggle {
+    display: flex;
+    gap: 0;
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.btn-toggle {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    background: var(--bg-white);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border-right: 1px solid var(--border-color);
+}
+
+.btn-toggle:last-child {
+    border-right: none;
+}
+
+.btn-toggle:hover:not(.active) {
+    background: var(--bg-app);
+    color: var(--text-primary);
+}
+
+.btn-toggle.active {
+    background: var(--color-accent);
+    color: white;
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Dark mode */
+[data-theme="dark"] .btn-group-toggle {
+    border-color: #3d4556;
+}
+
+[data-theme="dark"] .btn-toggle {
+    background: #1a1f2e;
+    color: #9ca3af;
+    border-right-color: #3d4556;
+}
+
+[data-theme="dark"] .btn-toggle:hover:not(.active) {
+    background: #242938;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-toggle.active {
+    background: var(--color-accent);
+    color: white;
 }

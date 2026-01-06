@@ -83,34 +83,25 @@
         <!-- MAIN LAYOUT -->
         <main class="main-layout">
 
-            <!-- HEADER -->
-            <div class="detail-top-bar">
-                <div class="customer-profile-header">
-                    <div class="profile-main">
-                        <button class="btn-icon-sm" style="margin-right: 16px;"
-                            onclick="location.href='clientes.html'"><i class="fas fa-arrow-left"></i></button>
-                        <div class="profile-avatar-lg">9</div>
-                        <div class="profile-info">
-                            <h1>9 DE JULIO 902</h1>
-                            <div class="text-subtle">
-                                ID: 151
-                                <span class="badge-status active" style="margin: 0 8px;">ACTIVO</span>
-                                <span class="badge-new"
-                                    style="background:var(--color-accent); color:white; font-weight:600;"><i
-                                        class="fas fa-tag"></i> Desc. Fijo: 10%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Actions header removed, moved to sidebar -->
-                    <button class="btn-primary" onclick="alert('Nueva Cotización')"><i class="fas fa-plus"></i> Nueva
-                        Cotización</button>
+            <!-- HEADER - Todo en una línea -->
+            <div class="detail-top-bar-unified">
+                <div class="header-left">
+                    <button class="btn-icon-sm" onclick="location.href='clientes.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h1 class="customer-title">9 DE JULIO 902</h1>
+                    <span class="badge-status active">ACTIVO</span>
+                    <span class="badge-discount"><i class="fas fa-tag"></i> 10%</span>
                 </div>
-
-                <!-- TABS -->
-                <div class="tabs-nav">
+                <div class="header-center">
                     <div class="tab-link active" data-tab="cc">Cuenta Corriente</div>
                     <div class="tab-link" data-tab="pedidos">Historial de Pedidos</div>
                     <div class="tab-link" data-tab="info">Información</div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-primary" onclick="alert('Nueva Cotización')">
+                        <i class="fas fa-plus"></i> Nueva Cotización
+                    </button>
                 </div>
             </div>
 
@@ -128,9 +119,10 @@
                                         <th>Fecha</th>
                                         <th>Descripción</th>
                                         <th>Método</th>
-                                        <th class="text-right">Cargo</th>
-                                        <th class="text-right">Pago</th>
-                                        <th class="text-right">Saldo</th>
+                                        <th class="text-center">Cargo</th>
+                                        <th class="text-center">Pago</th>
+                                        <th class="text-center">Saldo</th>
+                                        <th style="width: 80px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -144,12 +136,13 @@
                                         </td>
                                         <td><span class="method-badge partial"><i class="fas fa-money-bill"></i> Efvo
                                                 (Parcial)</span></td>
-                                        <td class="text-right text-subtle">-</td>
-                                        <td class="text-right amount-positive">$20.000</td>
-                                        <td class="text-right amount-negative">-$130.000</td>
+                                        <td class="text-center text-subtle">-</td>
+                                        <td class="text-center amount-positive">$20.000</td>
+                                        <td class="text-center amount-negative">-$130.000</td>
+                                        <td></td>
                                     </tr>
                                     <tr class="detalle-expandido hidden" id="detalle-1">
-                                        <td colspan="6">
+                                        <td colspan="7">
                                             <div class="detalle-content">
                                                 <div class="detalle-info-grid">
                                                     <div class="detalle-info-item">
@@ -178,20 +171,18 @@
                                             Pedido #1435 <span class="text-subtle">(15 items)</span>
                                         </td>
                                         <td>-</td>
-                                        <td class="text-right amount-negative">$50.000</td>
-                                        <td class="text-right text-subtle">-</td>
-                                        <td class="text-right amount-negative">-$150.000</td>
+                                        <td class="text-center amount-negative">$50.000</td>
+                                        <td class="text-center text-subtle">-</td>
+                                        <td class="text-center amount-negative">-$150.000</td>
+                                        <td>
+                                            <button class="btn-link-small" onclick="event.stopPropagation(); window.open('ventas.html', '_blank')">
+                                                <i class="fas fa-external-link-alt"></i> Ver
+                                            </button>
+                                        </td>
                                     </tr>
                                     <tr class="detalle-expandido hidden" id="detalle-2">
-                                        <td colspan="6">
+                                        <td colspan="7">
                                             <div class="detalle-content">
-                                                <div class="detalle-productos-header">
-                                                    <span><i class="fas fa-box"></i> Productos del pedido</span>
-                                                    <button class="btn-link-small"
-                                                        onclick="window.open('ventas.html', '_blank')">
-                                                        <i class="fas fa-external-link-alt"></i> Ver pedido en VENTAS
-                                                    </button>
-                                                </div>
                                                 <table class="detalle-productos-table">
                                                     <thead>
                                                         <tr>
@@ -236,12 +227,13 @@
                                         </td>
                                         <td><span class="method-badge"><i class="fas fa-university"></i>
                                                 Transferencia</span></td>
-                                        <td class="text-right text-subtle">-</td>
-                                        <td class="text-right amount-positive">$120.000</td>
-                                        <td class="text-right amount-negative">-$100.000</td>
+                                        <td class="text-center text-subtle">-</td>
+                                        <td class="text-center amount-positive">$120.000</td>
+                                        <td class="text-center amount-negative">-$100.000</td>
+                                        <td></td>
                                     </tr>
                                     <tr class="detalle-expandido hidden" id="detalle-3">
-                                        <td colspan="6">
+                                        <td colspan="7">
                                             <div class="detalle-content">
                                                 <div class="detalle-info-grid">
                                                     <div class="detalle-info-item">
@@ -270,20 +262,18 @@
                                             Pedido #1420
                                         </td>
                                         <td>-</td>
-                                        <td class="text-right amount-negative">$120.000</td>
-                                        <td class="text-right text-subtle">-</td>
-                                        <td class="text-right amount-negative">-$220.000</td>
+                                        <td class="text-center amount-negative">$120.000</td>
+                                        <td class="text-center text-subtle">-</td>
+                                        <td class="text-center amount-negative">-$220.000</td>
+                                        <td>
+                                            <button class="btn-link-small" onclick="event.stopPropagation(); window.open('ventas.html', '_blank')">
+                                                <i class="fas fa-external-link-alt"></i> Ver
+                                            </button>
+                                        </td>
                                     </tr>
                                     <tr class="detalle-expandido hidden" id="detalle-4">
-                                        <td colspan="6">
+                                        <td colspan="7">
                                             <div class="detalle-content">
-                                                <div class="detalle-productos-header">
-                                                    <span><i class="fas fa-box"></i> Productos del pedido</span>
-                                                    <button class="btn-link-small"
-                                                        onclick="window.open('ventas.html', '_blank')">
-                                                        <i class="fas fa-external-link-alt"></i> Ver pedido en VENTAS
-                                                    </button>
-                                                </div>
                                                 <table class="detalle-productos-table">
                                                     <thead>
                                                         <tr>
@@ -420,19 +410,19 @@
                             <h3>Configuración Comercial</h3>
                             <div style="display:grid; gap:16px;">
                                 <div>
-                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Descuento Fijo
-                                        (%)</label>
-                                    <input type="number" value="10" class="input-search-header" style="width:100%;">
-                                    <small class="text-subtle">Este descuento se aplicará automáticamente en el
-                                        cotizador.</small>
+                                    <label class="text-subtle" style="display:block; margin-bottom:8px;">Descuento de Cliente</label>
+                                    <div class="btn-group-toggle">
+                                        <button type="button" class="btn-toggle" data-value="none" onclick="selectDescuento(this)">Sin descuento</button>
+                                        <button type="button" class="btn-toggle" data-value="l2" onclick="selectDescuento(this)">L2 (6.25%)</button>
+                                        <button type="button" class="btn-toggle active" data-value="l3" onclick="selectDescuento(this)">L3 (10%)</button>
+                                    </div>
+                                    <small class="text-subtle" style="display:block; margin-top:6px;">Este descuento se aplicará automáticamente en el cotizador.</small>
                                 </div>
                                 <div>
-                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Límite de
-                                        Crédito</label>
-                                    <input type="text" value="Ilimitado" class="input-search-header"
-                                        style="width:100%;">
+                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Nota / Comentario</label>
+                                    <textarea class="input-search-header" style="width:100%; min-height:80px; resize:vertical;" placeholder="Observaciones sobre el cliente..."></textarea>
                                 </div>
-                                <div style="margin-top:16px;">
+                                <div style="margin-top:8px;">
                                     <button class="btn-primary" style="width:100%; justify-content: center;">Guardar
                                         Cambios</button>
                                 </div>
