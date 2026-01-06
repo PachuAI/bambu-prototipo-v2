@@ -17,6 +17,40 @@ const CONFIG = {
 };
 
 // ============================================================================
+// CONFIGURACIÓN DE PRECIOS (Módulo Configuración)
+// PRD: prd/configuracion.html - Sección 3.4
+// ============================================================================
+
+const CONFIG_PRECIOS = {
+  l2_descuento_porciento: 6.25,   // % descuento sobre L1
+  l3_descuento_porciento: 10.00, // % descuento sobre L1
+  l2_umbral_minimo: null,        // null = sin umbral (siempre disponible)
+  l3_umbral_minimo: null,        // o monto en pesos (ej: 20000)
+};
+
+// ============================================================================
+// CONFIGURACIÓN DE STOCK (Módulo Configuración)
+// PRD: prd/configuracion.html - Sección 3.5
+// ============================================================================
+
+const CONFIG_STOCK = {
+  comportamiento: 'ADVERTIR', // 'ADVERTIR' | 'BLOQUEAR'
+};
+
+// ============================================================================
+// CIUDADES (Módulo Configuración)
+// PRD: prd/configuracion.html - Sección 3.3
+// ============================================================================
+
+const CIUDADES = [
+  { id: 1, nombre: 'Neuquén', clientesAsociados: 5 },
+  { id: 2, nombre: 'Cipolletti', clientesAsociados: 2 },
+  { id: 3, nombre: 'Plottier', clientesAsociados: 2 },
+  { id: 4, nombre: 'Centenario', clientesAsociados: 1 },
+  { id: 5, nombre: 'Allen', clientesAsociados: 2 },
+];
+
+// ============================================================================
 // PROVEEDORES
 // Estructura según PRD productos.html
 // ============================================================================
@@ -324,32 +358,35 @@ const MOVIMIENTOS_STOCK = [
 
 // ============================================================================
 // CLIENTES
-// Estructura extraída de: prototipos/assets/cotizador/script.js
-// Campos: id, name (DIRECCIÓN), phone, address, discount
-// NO usar: CUIT, razon_social, email (opcional si se agrega después)
+// Estructura completa para módulo clientes.html
+// Campos: id, direccion, telefono, ciudad, saldo, estado, lista_precio, email, nota
 // ============================================================================
 
 const CLIENTES = [
-  { id: 1, name: 'ARAUCARIAS 371', phone: '299-4567890', address: 'Araucarias 371', discount: 0 },
-  { id: 2, name: 'PELLEGRINI 615', phone: '299-4567891', address: 'Pellegrini 615', discount: 10 },
-  { id: 3, name: 'SAN LUIS 372', phone: '299-4567892', address: 'San Luis 372', discount: 0 },
-  { id: 4, name: 'MITRE 4735', phone: '299-4567893', address: 'Mitre 4735', discount: 6.25 },
-  { id: 5, name: 'ECUADOR 2133', phone: '299-4567894', address: 'Ecuador 2133', discount: 0 },
-  { id: 6, name: 'AV. ARGENTINA 825', phone: '299-4567895', address: 'Av. Argentina 825', discount: 10 },
-  { id: 7, name: 'CUENCA 16 MZA 7', phone: '299-4567896', address: 'Cuenca 16 Mza 7', discount: 0 },
-  { id: 8, name: 'ALMAFUERTE 1245', phone: '299-4567897', address: 'Almafuerte 1245', discount: 6.25 },
+  { id: 1, direccion: 'ARAUCARIAS 371', telefono: '299 456-7890', ciudad: 'Neuquén', saldo: -45000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+  { id: 2, direccion: 'PELLEGRINI 615', telefono: '299 456-7891', ciudad: 'Cipolletti', saldo: 0, estado: 'activo', lista_precio: 'L3', email: 'pellegrini@email.com', nota: '' },
+  { id: 3, direccion: 'SAN LUIS 372', telefono: '299 456-7892', ciudad: 'Allen', saldo: -25000, estado: 'activo', lista_precio: 'L1', email: '', nota: 'Cliente mayorista' },
+  { id: 4, direccion: 'MITRE 4735', telefono: '299 456-7893', ciudad: 'Neuquén', saldo: 15000, estado: 'activo', lista_precio: 'L2', email: '', nota: '' },
+  { id: 5, direccion: 'ECUADOR 2133', telefono: '299 456-7894', ciudad: 'Plottier', saldo: -150000, estado: 'activo', lista_precio: 'L1', email: 'ecuador2133@mail.com', nota: 'Atención: horario restringido' },
+  { id: 6, direccion: 'AV. ARGENTINA 825', telefono: '299 456-7895', ciudad: 'Neuquén', saldo: 0, estado: 'inactivo', lista_precio: 'L3', email: '', nota: 'Cerrado temporalmente' },
+  { id: 7, direccion: 'CUENCA 16 MZA 7', telefono: '294 464-3435', ciudad: 'Neuquén', saldo: 0, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+  { id: 8, direccion: 'ALMAFUERTE 1245', telefono: '299 456-7897', ciudad: 'Centenario', saldo: -80000, estado: 'activo', lista_precio: 'L2', email: '', nota: '' },
+  { id: 9, direccion: '9 DE JULIO 902', telefono: '299 507-3355', ciudad: 'Cipolletti', saldo: -150000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+  { id: 10, direccion: 'GENERAL PAZ 1461', telefono: '299 412-8800', ciudad: 'Neuquén', saldo: 5000, estado: 'activo', lista_precio: 'L2', email: 'gralpazclient@mail.com', nota: '' },
+  { id: 11, direccion: 'LAS RETAMAS 1091', telefono: '299 523-4455', ciudad: 'Plottier', saldo: -12000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+  { id: 12, direccion: 'CATAMARCA 662', telefono: '299 487-9633', ciudad: 'Allen', saldo: 0, estado: 'inactivo', lista_precio: 'L1', email: '', nota: 'Sin actividad hace 6 meses' },
 ];
 
 // ============================================================================
-// VEHÍCULOS
-// Estructura extraída de: prototipos/assets/repartos/script.js
-// Campos: id, nombre, patente, badge, capacidadKg
+// VEHÍCULOS (Módulo Configuración)
+// PRD: prd/configuracion.html - Sección 3.2
+// Campos: id, nombre, capacidadKg, pedidosAsignados
 // ============================================================================
 
 const VEHICULOS = [
-  { id: 'r1', nombre: 'Mercedes-Benz Sprinter', patente: 'AB123CD', badge: 'REPARTO 1', capacidadKg: 2500 },
-  { id: 'r2', nombre: 'Toyota Hiace', patente: 'EF456GH', badge: 'REPARTO 2', capacidadKg: 1500 },
-  { id: 'r3', nombre: 'Renault Master', patente: 'IJ789KL', badge: 'REPARTO 3', capacidadKg: 2250 },
+  { id: 1, nombre: 'Reparto 1', capacidadKg: 2500, pedidosAsignados: 8 },
+  { id: 2, nombre: 'Reparto 2', capacidadKg: 1500, pedidosAsignados: 5 },
+  { id: 3, nombre: 'Reparto 3', capacidadKg: 2250, pedidosAsignados: 3 },
 ];
 
 // ============================================================================
@@ -596,8 +633,102 @@ function getPedidosByEstado(estado) {
 }
 
 // ============================================================================
+// BACKUPS (Módulo Backup y Logs)
+// PRD: prd/backup.html - Sección 3.2
+// ============================================================================
+
+const BACKUPS = [
+  { id: 1, fecha: '2026-01-06 14:30:00', tamanoBytes: 2621440, tipo: 'MANUAL' },
+  { id: 2, fecha: '2026-01-05 23:00:00', tamanoBytes: 2516582, tipo: 'AUTOMATICO' },
+  { id: 3, fecha: '2026-01-04 23:00:00', tamanoBytes: 2498764, tipo: 'AUTOMATICO' },
+  { id: 4, fecha: '2026-01-03 23:00:00', tamanoBytes: 2450123, tipo: 'AUTOMATICO' },
+  { id: 5, fecha: '2026-01-02 10:15:00', tamanoBytes: 2389456, tipo: 'MANUAL' },
+];
+
+// ============================================================================
+// LOGS DEL SISTEMA (Módulo Backup y Logs)
+// PRD: prd/backup.html - Sección 3.3
+// Tipos: ACCESO | STOCK | CONFIGURACION
+// ============================================================================
+
+const LOGS_SISTEMA = [
+  { id: 1, fecha: '2026-01-06 14:35:00', usuario: 'admin@bambu.com', tipo: 'STOCK', descripcion: 'Ajuste manual: Detergente 5L (+100 un)', ip: '192.168.1.100' },
+  { id: 2, fecha: '2026-01-06 14:20:00', usuario: 'admin@bambu.com', tipo: 'ACCESO', descripcion: 'Login exitoso', ip: '192.168.1.100' },
+  { id: 3, fecha: '2026-01-06 10:15:00', usuario: 'vendedor@bambu.com', tipo: 'ACCESO', descripcion: 'Login exitoso', ip: '192.168.1.105' },
+  { id: 4, fecha: '2026-01-05 18:30:00', usuario: 'admin@bambu.com', tipo: 'CONFIGURACION', descripcion: 'Modificó lista L2: 6.25% → 7%', ip: '192.168.1.100' },
+  { id: 5, fecha: '2026-01-05 17:45:00', usuario: 'admin@bambu.com', tipo: 'ACCESO', descripcion: 'Logout', ip: '192.168.1.100' },
+  { id: 6, fecha: '2026-01-05 09:00:00', usuario: 'admin@bambu.com', tipo: 'ACCESO', descripcion: 'Login exitoso', ip: '192.168.1.100' },
+  { id: 7, fecha: '2026-01-04 16:20:00', usuario: 'admin@bambu.com', tipo: 'STOCK', descripcion: 'Ajuste manual: Lavandina 1L (-50 un) - Rotura', ip: '192.168.1.100' },
+  { id: 8, fecha: '2026-01-04 11:30:00', usuario: 'vendedor@bambu.com', tipo: 'ACCESO', descripcion: 'Login fallido - Contraseña incorrecta', ip: '192.168.1.105' },
+  { id: 9, fecha: '2026-01-03 15:00:00', usuario: 'admin@bambu.com', tipo: 'CONFIGURACION', descripcion: 'Creó vehículo: Reparto 3', ip: '192.168.1.100' },
+  { id: 10, fecha: '2026-01-03 14:00:00', usuario: 'admin@bambu.com', tipo: 'CONFIGURACION', descripcion: 'Agregó ciudad: San Martín de los Andes', ip: '192.168.1.100' },
+];
+
+// ============================================================================
+// PEDIDOS_PRODUCTOS (Detalle de productos por pedido)
+// Para módulo Estadísticas - PRD: prd/estadisticas.html
+// Estructura: pedido_id, producto_id, cantidad, precio_unitario
+// ============================================================================
+
+const PEDIDOS_PRODUCTOS = generatePedidosProductos();
+
+function generatePedidosProductos() {
+  const items = [];
+  let itemId = 1;
+
+  // Solo pedidos NO borrador (para estadísticas)
+  const pedidosValidos = PEDIDOS.filter(p => p.estado !== 'borrador');
+
+  pedidosValidos.forEach(pedido => {
+    // Generar entre 2 y 6 productos por pedido
+    const numProductos = Math.floor(Math.random() * 5) + 2;
+    const productosUsados = new Set();
+    let totalPedido = 0;
+
+    for (let i = 0; i < numProductos; i++) {
+      // Elegir producto aleatorio no repetido
+      let productoId;
+      do {
+        productoId = Math.floor(Math.random() * 15) + 1;
+      } while (productosUsados.has(productoId));
+      productosUsados.add(productoId);
+
+      const producto = PRODUCTOS.find(p => p.id === productoId);
+      if (!producto) continue;
+
+      // Cantidad entre 1 y 20 unidades
+      const cantidad = Math.floor(Math.random() * 20) + 1;
+
+      // Precio según lista del cliente (simulado L1/L2/L3)
+      const listas = ['precio_l1', 'precio_l2', 'precio_l3'];
+      const listaRandom = listas[Math.floor(Math.random() * listas.length)];
+      const precioUnitario = producto.en_promocion
+        ? producto.precio_promocional
+        : producto[listaRandom];
+
+      items.push({
+        id: itemId++,
+        pedido_id: pedido.id,
+        producto_id: productoId,
+        producto_nombre: producto.nombre,
+        cantidad,
+        precio_unitario: precioUnitario,
+        subtotal: cantidad * precioUnitario
+      });
+
+      totalPedido += cantidad * precioUnitario;
+    }
+
+    // Actualizar total del pedido para consistencia
+    pedido.total = totalPedido;
+  });
+
+  return items;
+}
+
+// ============================================================================
 // EXPORTS (para usar en prototipos HTML)
 // ============================================================================
 
 // <script src="shared/mock-data.js"></script>
-// Luego acceder con: PRODUCTOS, CLIENTES, PEDIDOS, VEHICULOS, etc.
+// Luego acceder con: PRODUCTOS, CLIENTES, PEDIDOS, VEHICULOS, PEDIDOS_PRODUCTOS, etc.

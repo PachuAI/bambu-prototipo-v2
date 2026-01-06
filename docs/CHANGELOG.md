@@ -1,6 +1,64 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
-## [06 Enero 2026] - Módulo Productos y Stock ✅
+## [06 Enero 2026] - Sidebar Persistente + Estadísticas + Limpieza
+
+### Sidebar refactorizado
+- **Comportamiento simplificado**: Solo toggle con botón (sin setTimeout, sin hover auto-collapse)
+- **Estado persistente**: Guardado en localStorage, persiste entre páginas
+- **Sin flash**: Script inline aplica estado antes del renderizado
+- **Código centralizado**: Lógica en `utils.js`, eliminada de 9 scripts individuales
+- **Badge "NUEVO" eliminado**: Removido de item Ventas en todos los sidebars
+
+### Nuevo prototipo: `estadisticas.html`
+- **Filtros**: Período desde-hasta, proveedor, búsqueda producto, toggle "sin ventas"
+- **Tabla estadísticas**: Producto, cantidad vendida, monto total, % participación
+- **Ordenamiento**: Click en columnas para ordenar asc/desc
+- **Modal detalle**: Ver pedidos individuales de cada producto
+- **Gráfico Chart.js**: Top 10 productos (toggle cantidad/monto)
+- **Exportar Excel**: Genera CSV con datos filtrados
+- **Cards resumen**: Productos, unidades, monto total, pedidos en período
+
+### Mock data actualizado (`shared/mock-data.js`)
+- `PEDIDOS_PRODUCTOS`: Detalle de productos por pedido (generado dinámicamente)
+- Permite calcular estadísticas de ventas por producto
+
+### Archivos creados
+| Archivo | Descripción |
+|---------|-------------|
+| `estadisticas.html` | Layout + filtros + tabla + modal + gráfico |
+| `estadisticas-specific.css` | Estilos + dark mode completo |
+| `script.js` | Lógica comentada con referencias PRD |
+
+### Sidebar actualizado
+- Link "Reportes" funcional en los 10 prototipos existentes
+
+### Progreso proyecto
+- **Fase 1 Prototipado UI**: 8/8 módulos (100%) ✅
+- Listo para Fase 2: Auditoría PRD
+
+---
+
+## [06 Enero 2026] - Módulo Clientes Compactado + Datos Mock
+
+### Tabla clientes compactada
+- Eliminado avatar circular (irrelevante para el negocio)
+- Columna "Acciones" alineada a la derecha con sus botones
+- Padding reducido ~40% (th: 8px 12px, td: 10px 12px)
+- Font-size headers: 11px, contenido: 13px
+
+### Mock data actualizado (`shared/mock-data.js`)
+- `CLIENTES`: Expandido de 8 a 12 clientes
+- Campos nuevos: ciudad, saldo, estado, lista_precio, email, nota
+- Saldos variados: deudores, a favor, al día, inactivos
+
+### Renderizado dinámico
+- Clientes se cargan desde mock-data.js al iniciar
+- Formato saldo con separador de miles y colores (rojo/verde)
+- Badge estado activo/inactivo con estilos diferenciados
+
+---
+
+## [06 Enero 2026] - Módulo Productos y Stock
 
 ### Nuevo prototipo: `productos.html`
 - CRUD productos completo con validaciones según PRD

@@ -257,3 +257,51 @@ function initTheme() {
 
 // Auto-inicializar tema al cargar
 document.addEventListener('DOMContentLoaded', initTheme);
+
+// ============================================================================
+// SIDEBAR (Persistente entre páginas)
+// ============================================================================
+
+/**
+ * Inicializa el sidebar con estado persistente.
+ *
+ * LÓGICA:
+ * - Default: expandido
+ * - Solo se colapsa/expande con el botón
+ * - Estado se guarda en localStorage y persiste entre páginas
+ * - Sin setTimeout, sin hover auto-collapse
+ */
+function initSidebar() {
+    const sidebar = document.getElementById('main-sidebar');
+    const btnToggle = document.getElementById('btn-toggle-sidebar');
+
+    if (!sidebar || !btnToggle) return;
+
+    // Leer estado guardado (default: expandido = false significa NO collapsed)
+    const isCollapsed = getFromStorage('bambu-sidebar-collapsed') === true;
+
+    if (isCollapsed) {
+        sidebar.classList.add('collapsed');
+        updateToggleIcon(btnToggle, true);
+    }
+
+    // Click en botón toggle
+    btnToggle.addEventListener('click', () => {
+        const nowCollapsed = sidebar.classList.toggle('collapsed');
+        saveToStorage('bambu-sidebar-collapsed', nowCollapsed);
+        updateToggleIcon(btnToggle, nowCollapsed);
+    });
+}
+
+/**
+ * Actualiza el icono del botón toggle
+ */
+function updateToggleIcon(btn, isCollapsed) {
+    const icon = btn.querySelector('i');
+    if (icon) {
+        icon.className = isCollapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left';
+    }
+}
+
+// Auto-inicializar sidebar al cargar
+document.addEventListener('DOMContentLoaded', initSidebar);

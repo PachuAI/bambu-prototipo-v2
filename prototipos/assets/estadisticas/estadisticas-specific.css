@@ -1,0 +1,509 @@
+/**
+ * ESTADÍSTICAS - Estilos Específicos
+ * Bambu CRM V2 Prototipo
+ *
+ * Sistema: tokens.css → components.css → este archivo
+ */
+
+/* ============================================================================
+   HEADER TOOLBAR
+   ============================================================================ */
+
+.header-toolbar-estadisticas {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 24px;
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.filters-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.filter-periodo-compact {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-label-sm {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.input-date-compact {
+    padding: 6px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-white);
+    color: var(--text-primary);
+}
+
+.periodo-arrow {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.select-filter-compact {
+    padding: 6px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-white);
+    color: var(--text-primary);
+    min-width: 150px;
+}
+
+.input-search-compact {
+    padding: 6px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-white);
+    color: var(--text-primary);
+    width: 180px;
+}
+
+.checkbox-inline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.checkbox-inline input {
+    cursor: pointer;
+}
+
+.btn-primary-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.btn-primary-sm:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn-ghost-sm {
+    padding: 6px 10px;
+    font-size: 12px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-ghost-sm:hover {
+    background: var(--bg-hover);
+}
+
+.btn-excel {
+    padding: 6px 12px;
+    font-size: 12px;
+    background: #217346;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+}
+
+.btn-excel:hover {
+    background: #1a5c38;
+}
+
+/* ============================================================================
+   CONTENIDO PRINCIPAL
+   ============================================================================ */
+
+.content-estadisticas {
+    padding: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ============================================================================
+   CARDS RESUMEN
+   ============================================================================ */
+
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.stat-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   GRÁFICO
+   ============================================================================ */
+
+.chart-container {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+    height: 280px;
+    position: relative;
+}
+
+.chart-container canvas {
+    max-height: 220px !important;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.chart-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-header h3 i {
+    color: var(--color-primary);
+}
+
+.chart-toggle {
+    display: flex;
+    gap: 4px;
+}
+
+.btn-toggle {
+    padding: 4px 10px;
+    font-size: 11px;
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-toggle.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+/* ============================================================================
+   TABLA ESTADÍSTICAS
+   ============================================================================ */
+
+.table-container {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.table th.sortable:hover {
+    background: var(--border-color);
+}
+
+.table th i {
+    margin-left: 4px;
+    font-size: 10px;
+    opacity: 0.5;
+}
+
+.table th.sorted i {
+    opacity: 1;
+    color: var(--color-primary);
+}
+
+.table td {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody tr:hover {
+    background: var(--bg-hover);
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.fila-total {
+    background: var(--bg-hover) !important;
+}
+
+.fila-total td {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+.btn-ver-detalle {
+    padding: 4px 8px;
+    font-size: 11px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-ver-detalle:hover {
+    background: var(--color-primary);
+    color: white;
+}
+
+/* Sin ventas */
+.producto-sin-ventas {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* ============================================================================
+   MODAL DETALLE
+   ============================================================================ */
+
+.modal-info-periodo {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--bg-hover);
+    border-radius: 4px;
+}
+
+.table-compact th,
+.table-compact td {
+    padding: 8px 10px;
+    font-size: 12px;
+}
+
+.link-pedido {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-pedido:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   TOAST NOTIFICATION
+   ============================================================================ */
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--color-success);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.toast.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+/* ============================================================================
+   DARK MODE
+   ============================================================================ */
+
+[data-theme="dark"] .header-toolbar-estadisticas {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .input-date-compact,
+[data-theme="dark"] .select-filter-compact,
+[data-theme="dark"] .input-search-compact {
+    background: #1a1f2e;
+    border-color: #3d4556;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .stat-card {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .stat-icon {
+    background: rgba(66, 153, 225, 0.15);
+}
+
+[data-theme="dark"] .chart-container {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .table-container {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .table th {
+    background: #1a1f2e;
+    border-color: #3d4556;
+}
+
+[data-theme="dark"] .table td {
+    border-color: #3d4556;
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+    background: #242938;
+}
+
+[data-theme="dark"] .fila-total {
+    background: #1a1f2e !important;
+}
+
+[data-theme="dark"] .modal-info-periodo {
+    background: #1a1f2e;
+}
+
+[data-theme="dark"] .btn-toggle {
+    background: #1a1f2e;
+    border-color: #3d4556;
+}
+
+[data-theme="dark"] .btn-ghost-sm {
+    border-color: #3d4556;
+}
+
+[data-theme="dark"] .btn-ghost-sm:hover {
+    background: #242938;
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 1200px) {
+    .stats-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .header-toolbar-estadisticas {
+        padding: 10px 16px;
+    }
+
+    .filters-inline {
+        width: 100%;
+    }
+
+    .input-search-compact {
+        width: 100%;
+    }
+}

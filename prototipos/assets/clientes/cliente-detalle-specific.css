@@ -891,3 +891,70 @@
     background: var(--color-accent);
     color: white;
 }
+
+/* ============================================================================
+   TAB INFORMACIÓN - Inputs de datos del cliente
+   ============================================================================ */
+
+.info-form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    background: var(--bg-white);
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+}
+
+.info-form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+}
+
+.info-form-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Select estilizado */
+select.info-form-input {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b778c' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+/* Textarea estilizado */
+textarea.info-form-input {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Labels de formulario */
+.info-form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+/* Dark mode */
+[data-theme="dark"] .info-form-input {
+    background: var(--bg-sidebar);
+    border-color: #3d4556;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .info-form-input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+}
+
+[data-theme="dark"] select.info-form-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239ca3af' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+}

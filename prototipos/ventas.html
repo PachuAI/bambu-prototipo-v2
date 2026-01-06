@@ -16,6 +16,7 @@
     <div class="app-wrapper">
         <!-- SIDEBAR -->
         <nav class="sidebar" id="main-sidebar">
+            <script>if(JSON.parse(localStorage.getItem('bambu-sidebar-collapsed')))document.getElementById('main-sidebar').classList.add('collapsed')</script>
             <div class="sidebar-header">
                 <div class="logo-icon">
                     <i class="fas fa-leaf"></i>
@@ -50,24 +51,26 @@
                     </li>
                     <li title="Ventas" class="active" onclick="location.href='ventas.html'">
                         <i class="fas fa-money-bill-wave"></i>
-                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                        <span>Ventas</span>
                     </li>
-                    <li title="Repartos">
+                    <!-- TODO: Evaluar si mantener acceso directo o solo desde Ventas/Dashboard
+                    <li title="Repartos" onclick="location.href='repartos-dia.html'">
                         <i class="fas fa-truck"></i>
                         <span>Repartos</span>
                     </li>
-                    <li title="Reportes y Estadísticas">
+                    -->
+                    <li title="Reportes y Estadísticas" onclick="location.href='estadisticas.html'">
                         <i class="fas fa-chart-line"></i>
                         <span>Reportes</span>
                     </li>
-                    <li title="Respaldos">
+                    <li title="Respaldos" onclick="location.href='backup.html'">
                         <i class="fas fa-server"></i>
                         <span>Respaldos</span>
                     </li>
                 </ul>
 
                 <div class="nav-footer">
-                    <li title="Configuración">
+                    <li title="Configuración" onclick="location.href='configuracion.html'">
                         <i class="fas fa-cog"></i>
                         <span>Configuración</span>
                     </li>

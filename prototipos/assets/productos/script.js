@@ -790,16 +790,3 @@ function verificarTemaGuardado() {
     }
 }
 
-// ============================================================================
-// SIDEBAR TOGGLE (reutilizado de otros módulos)
-// ============================================================================
-
-document.getElementById('btn-toggle-sidebar')?.addEventListener('click', () => {
-    const sidebar = document.getElementById('main-sidebar');
-    sidebar.classList.toggle('collapsed');
-
-    const icon = document.querySelector('#btn-toggle-sidebar i');
-    icon.className = sidebar.classList.contains('collapsed')
-        ? 'fas fa-chevron-right'
-        : 'fas fa-chevron-left';
-});

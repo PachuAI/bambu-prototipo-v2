@@ -1,0 +1,499 @@
+/**
+ * ============================================================================
+ * CONFIGURACIÓN - Estilos Específicos
+ * ============================================================================
+ *
+ * Sistema: tokens.css + components.css + configuracion-specific.css
+ * Creado: 06 Enero 2026
+ * PRD: prd/configuracion.html
+ *
+ * ============================================================================
+ */
+
+/* ============================================================================
+   HEADER DE CONFIGURACIÓN
+   ============================================================================ */
+
+.config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    background: var(--bg-white);
+    border-bottom: var(--border-width) solid var(--border-color);
+    gap: 16px;
+}
+
+.header-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-btn:hover {
+    background: var(--bg-app);
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    background: var(--color-info-light);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-semibold);
+}
+
+.tab-btn i {
+    font-size: 12px;
+}
+
+/* ============================================================================
+   CONTENEDOR DE TABS
+   ============================================================================ */
+
+.config-content {
+    padding: 20px 24px;
+    background: var(--bg-app);
+    min-height: calc(100vh - 60px);
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* ============================================================================
+   CARDS DE CONFIGURACIÓN
+   ============================================================================ */
+
+.config-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-app);
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-header h3 i {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* ============================================================================
+   TABLA DE CONFIGURACIÓN
+   ============================================================================ */
+
+.config-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.config-table th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.config-table th.th-acciones {
+    text-align: right;
+    width: 120px;
+}
+
+.config-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.config-table tr:last-child td {
+    border-bottom: none;
+}
+
+.config-table tr:hover {
+    background: var(--bg-app);
+}
+
+/* Acciones de tabla */
+.table-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.btn-icon-sm {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-size: 12px;
+}
+
+.btn-edit {
+    background: var(--color-info-light, rgba(0, 82, 204, 0.1));
+    color: var(--color-accent);
+}
+
+.btn-edit:hover {
+    background: rgba(0, 82, 204, 0.2);
+}
+
+.btn-delete {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.btn-delete:hover {
+    background: var(--color-danger-border);
+}
+
+/* ============================================================================
+   BOTONES
+   ============================================================================ */
+
+.btn-primary-sm {
+    background: var(--color-success);
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: var(--border-radius-base);
+    font-size: 12px;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background var(--transition-base);
+}
+
+.btn-primary-sm:hover {
+    background: var(--color-success-dark);
+}
+
+/* ============================================================================
+   LISTAS DE PRECIO - Grid de Cards
+   ============================================================================ */
+
+.precios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.precio-card {
+    background: var(--bg-app);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: 16px;
+}
+
+.precio-card.l1 {
+    border-left: 3px solid var(--text-secondary);
+}
+
+.precio-card.l2 {
+    border-left: 3px solid var(--color-warning);
+}
+
+.precio-card.l3 {
+    border-left: 3px solid var(--color-success);
+}
+
+.precio-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.precio-badge {
+    background: var(--text-primary);
+    color: var(--text-white);
+    padding: 4px 10px;
+    border-radius: var(--border-radius-sm);
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+}
+
+.precio-card.l2 .precio-badge {
+    background: var(--color-warning);
+    color: #1a1a1a;
+}
+
+.precio-card.l3 .precio-badge {
+    background: var(--color-success);
+}
+
+.precio-title {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.precio-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.precio-card .form-group {
+    margin-bottom: 10px;
+}
+
+.precio-card .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.precio-card .form-label {
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.precio-card .form-input {
+    padding: 8px 10px;
+    font-size: 13px;
+}
+
+/* ============================================================================
+   COMPORTAMIENTO STOCK - Opciones Radio
+   ============================================================================ */
+
+.config-description {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+}
+
+.stock-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stock-option {
+    cursor: pointer;
+}
+
+.stock-option input[type="radio"] {
+    display: none;
+}
+
+.option-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    transition: all var(--transition-base);
+    background: var(--bg-white);
+}
+
+.stock-option input:checked + .option-content {
+    border-color: var(--color-accent);
+    background: var(--color-info-light);
+}
+
+.option-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.option-icon.danger {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.option-icon.warning {
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+.option-text {
+    flex: 1;
+}
+
+.option-text strong {
+    display: block;
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.option-text span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* ============================================================================
+   INFO BOX
+   ============================================================================ */
+
+.info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--color-info-light);
+    border-radius: var(--border-radius-base);
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--color-accent);
+}
+
+.info-box.warning {
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+.info-box i {
+    font-size: 14px;
+    margin-top: 1px;
+}
+
+/* ============================================================================
+   FORM ACTIONS
+   ============================================================================ */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ============================================================================
+   MODAL PEQUEÑO
+   ============================================================================ */
+
+.modal-sm {
+    width: 400px;
+    max-width: 95vw;
+}
+
+/* ============================================================================
+   DARK MODE OVERRIDES
+   ============================================================================ */
+
+[data-theme="dark"] .config-header {
+    background: var(--bg-sidebar);
+}
+
+[data-theme="dark"] .tab-btn {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .tab-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .tab-btn.active {
+    background: rgba(0, 82, 204, 0.2);
+    color: var(--color-accent);
+}
+
+[data-theme="dark"] .config-card {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .card-header {
+    background: #141821;
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .config-table tr:hover {
+    background: var(--bg-hover);
+}
+
+[data-theme="dark"] .precio-card {
+    background: #141821;
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .precio-card .form-input {
+    background: var(--bg-sidebar);
+    border-color: #3d4556;
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .precio-card .form-input:focus {
+    border-color: var(--color-accent);
+}
+
+[data-theme="dark"] .option-content {
+    background: #141821;
+    border-color: #3d4556;
+}
+
+[data-theme="dark"] .stock-option input:checked + .option-content {
+    background: rgba(0, 82, 204, 0.15);
+    border-color: var(--color-accent);
+}
+
+[data-theme="dark"] .info-box {
+    background: rgba(0, 82, 204, 0.15);
+}
+
+[data-theme="dark"] .info-box.warning {
+    background: rgba(255, 171, 0, 0.15);
+}
+
+[data-theme="dark"] .modal-content {
+    background: var(--bg-sidebar);
+}

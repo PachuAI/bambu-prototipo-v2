@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Estadísticas</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/estadisticas/estadisticas-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <script>if(JSON.parse(localStorage.getItem('bambu-sidebar-collapsed')))document.getElementById('main-sidebar').classList.add('collapsed')</script>
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock" onclick="location.href='productos.html'">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas</span>
+                    </li>
+                    <li title="Reportes y Estadísticas" class="active" onclick="location.href='estadisticas.html'">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos" onclick="location.href='backup.html'">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración" onclick="location.href='configuracion.html'">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER (con filtros integrados) -->
+            <header class="header-toolbar-estadisticas">
+                <div class="page-header-title">
+                    <i class="fas fa-chart-line" style="color: var(--text-secondary);"></i>
+                    Estadísticas de Ventas
+                </div>
+
+                <!-- Filtros compactos -->
+                <div class="filters-inline">
+                    <div class="filter-periodo-compact">
+                        <label class="filter-label-sm">Desde:</label>
+                        <input type="date" class="input-date-compact" id="filter-fecha-desde" value="2025-12-01">
+                        <span class="periodo-arrow">→</span>
+                        <label class="filter-label-sm">Hasta:</label>
+                        <input type="date" class="input-date-compact" id="filter-fecha-hasta" value="2025-12-31">
+                    </div>
+
+                    <select class="select-filter-compact" id="filter-proveedor">
+                        <option value="todos">Proveedor: Todos</option>
+                    </select>
+
+                    <input type="text" class="input-search-compact" id="filter-buscar" placeholder="Buscar producto...">
+
+                    <label class="checkbox-inline" title="Incluir productos con 0 ventas">
+                        <input type="checkbox" id="filter-sin-ventas">
+                        <span>Sin ventas</span>
+                    </label>
+
+                    <button class="btn-primary-sm" onclick="aplicarFiltros()">
+                        <i class="fas fa-search"></i> Aplicar
+                    </button>
+
+                    <button class="btn-ghost-sm" onclick="limpiarFiltros()" title="Limpiar filtros">
+                        <i class="fas fa-redo"></i>
+                    </button>
+
+                    <button class="btn-excel" onclick="exportarExcel()">
+                        <i class="fas fa-file-excel"></i> Exportar Excel
+                    </button>
+                </div>
+            </header>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div class="content-estadisticas">
+
+                <!-- RESUMEN CARDS -->
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-box"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-productos">0</span>
+                            <span class="stat-label">Productos vendidos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-cubes"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-cantidad">0</span>
+                            <span class="stat-label">Unidades vendidas</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-monto">$0</span>
+                            <span class="stat-label">Monto total</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-pedidos">0</span>
+                            <span class="stat-label">Pedidos en período</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRÁFICO TOP 10 -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> Top 10 Productos Más Vendidos</h3>
+                        <div class="chart-toggle">
+                            <button class="btn-toggle active" data-metric="cantidad" onclick="cambiarMetricaGrafico('cantidad')">Cantidad</button>
+                            <button class="btn-toggle" data-metric="monto" onclick="cambiarMetricaGrafico('monto')">Monto</button>
+                        </div>
+                    </div>
+                    <canvas id="chart-top10" height="200"></canvas>
+                </div>
+
+                <!-- TABLA DE ESTADÍSTICAS -->
+                <div class="table-container">
+                    <table class="table table-hover" id="tabla-estadisticas">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="producto" onclick="ordenarPor('producto')">
+                                    Producto <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="sortable text-right" data-sort="cantidad" onclick="ordenarPor('cantidad')">
+                                    Cant. Vendida <i class="fas fa-sort-down"></i>
+                                </th>
+                                <th class="sortable text-right" data-sort="monto" onclick="ordenarPor('monto')">
+                                    Monto Total <i class="fas fa-sort"></i>
+                                </th>
+                                <th class="text-right">% Partic.</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-estadisticas">
+                            <!-- Filas generadas por JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="fila-total">
+                                <td><strong>TOTAL</strong></td>
+                                <td class="text-right"><strong id="total-cantidad">0</strong></td>
+                                <td class="text-right"><strong id="total-monto">$0</strong></td>
+                                <td class="text-right"><strong>100%</strong></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: Ver Detalle Producto -->
+    <div id="modal-detalle" class="modal-overlay hidden">
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h2><i class="fas fa-list-alt"></i> <span id="modal-producto-nombre">Detalle Producto</span></h2>
+                <button class="modal-close" onclick="cerrarModal('detalle')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-info-periodo">
+                    <span id="modal-periodo-texto">Período: 01/12/2025 - 31/12/2025</span>
+                </div>
+
+                <table class="table table-compact" id="tabla-detalle">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Pedido #</th>
+                            <th>Cliente</th>
+                            <th class="text-right">Cantidad</th>
+                            <th class="text-right">Precio Unit.</th>
+                            <th class="text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-detalle">
+                        <!-- Filas generadas por JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="fila-total">
+                            <td colspan="3"><strong>TOTAL</strong></td>
+                            <td class="text-right"><strong id="detalle-total-cantidad">0</strong></td>
+                            <td></td>
+                            <td class="text-right"><strong id="detalle-total-monto">$0</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModal('detalle')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICACIÓN TOAST -->
+    <div id="toast-notification" class="toast hidden">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-message">Operación exitosa</span>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="shared/mock-data.js"></script>
+    <script src="shared/utils.js"></script>
+    <script src="assets/estadisticas/script.js"></script>
+
+</body>
+
+</html>

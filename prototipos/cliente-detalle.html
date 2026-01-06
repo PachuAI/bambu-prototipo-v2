@@ -17,6 +17,7 @@
     <div class="app-wrapper">
         <!-- SIDEBAR -->
         <nav class="sidebar" id="main-sidebar">
+            <script>if(JSON.parse(localStorage.getItem('bambu-sidebar-collapsed')))document.getElementById('main-sidebar').classList.add('collapsed')</script>
             <div class="sidebar-header">
                 <div class="logo-icon">
                     <i class="fas fa-leaf"></i>
@@ -51,24 +52,26 @@
                     </li>
                     <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
                         <i class="fas fa-money-bill-wave"></i>
-                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                        <span>Ventas</span>
                     </li>
-                    <li title="Repartos">
+                    <!-- TODO: Evaluar si mantener acceso directo o solo desde Ventas/Dashboard
+                    <li title="Repartos" onclick="location.href='repartos-dia.html'">
                         <i class="fas fa-truck"></i>
                         <span>Repartos</span>
                     </li>
-                    <li title="Reportes y Estadísticas">
+                    -->
+                    <li title="Reportes y Estadísticas" onclick="location.href='estadisticas.html'">
                         <i class="fas fa-chart-line"></i>
                         <span>Reportes</span>
                     </li>
-                    <li title="Respaldos">
+                    <li title="Respaldos" onclick="location.href='backup.html'">
                         <i class="fas fa-server"></i>
                         <span>Respaldos</span>
                     </li>
                 </ul>
 
                 <div class="nav-footer">
-                    <li title="Configuración">
+                    <li title="Configuración" onclick="location.href='configuracion.html'">
                         <i class="fas fa-cog"></i>
                         <span>Configuración</span>
                     </li>
@@ -378,28 +381,25 @@
                             <h3>Datos del Cliente</h3>
                             <div style="display:grid; gap:16px;">
                                 <div>
-                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Nombre / Razón
-                                        Social</label>
-                                    <input type="text" value="9 DE JULIO 902" class="input-search-header"
-                                        style="width:100%;">
+                                    <label class="info-form-label">Nombre / Razón Social</label>
+                                    <input type="text" value="9 DE JULIO 902" class="info-form-input">
                                 </div>
                                 <div>
-                                    <label class="text-subtle"
-                                        style="display:block; margin-bottom:4px;">Dirección</label>
-                                    <input type="text" value="9 de Julio 902" class="input-search-header"
-                                        style="width:100%;">
+                                    <label class="info-form-label">Dirección</label>
+                                    <input type="text" value="9 de Julio 902" class="info-form-input">
                                 </div>
                                 <div>
-                                    <label class="text-subtle"
-                                        style="display:block; margin-bottom:4px;">Teléfono</label>
-                                    <input type="text" value="2995 07-3355" class="input-search-header"
-                                        style="width:100%;">
+                                    <label class="info-form-label">Teléfono</label>
+                                    <input type="text" value="299 507-3355" class="info-form-input">
                                 </div>
                                 <div>
-                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Ciudad</label>
-                                    <select class="input-search-header" style="width:100%;">
-                                        <option>Cipolletti</option>
-                                        <option>Neuquén</option>
+                                    <label class="info-form-label">Ciudad</label>
+                                    <select class="info-form-input">
+                                        <option value="cipolletti" selected>Cipolletti</option>
+                                        <option value="neuquen">Neuquén</option>
+                                        <option value="plottier">Plottier</option>
+                                        <option value="centenario">Centenario</option>
+                                        <option value="allen">Allen</option>
                                     </select>
                                 </div>
                             </div>
@@ -410,7 +410,7 @@
                             <h3>Configuración Comercial</h3>
                             <div style="display:grid; gap:16px;">
                                 <div>
-                                    <label class="text-subtle" style="display:block; margin-bottom:8px;">Descuento de Cliente</label>
+                                    <label class="info-form-label">Descuento de Cliente</label>
                                     <div class="btn-group-toggle">
                                         <button type="button" class="btn-toggle" data-value="none" onclick="selectDescuento(this)">Sin descuento</button>
                                         <button type="button" class="btn-toggle" data-value="l2" onclick="selectDescuento(this)">L2 (6.25%)</button>
@@ -419,8 +419,8 @@
                                     <small class="text-subtle" style="display:block; margin-top:6px;">Este descuento se aplicará automáticamente en el cotizador.</small>
                                 </div>
                                 <div>
-                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Nota / Comentario</label>
-                                    <textarea class="input-search-header" style="width:100%; min-height:80px; resize:vertical;" placeholder="Observaciones sobre el cliente..."></textarea>
+                                    <label class="info-form-label">Nota / Comentario</label>
+                                    <textarea class="info-form-input" placeholder="Observaciones sobre el cliente..."></textarea>
                                 </div>
                                 <div style="margin-top:8px;">
                                     <button class="btn-primary" style="width:100%; justify-content: center;">Guardar

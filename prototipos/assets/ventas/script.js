@@ -763,69 +763,6 @@ function limpiarFiltros() {
 }
 
 // ========================================
-// SIDEBAR AUTO-COLLAPSE BEHAVIOR
-// ========================================
-
-function setupSidebarAutoCollapse() {
-    const sidebar = document.getElementById('main-sidebar');
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
-    let collapseTimer = null;
-
-    if (!sidebar || !btnToggle) return;
-
-    // Function to start the auto-collapse timer
-    function startCollapseTimer() {
-        clearTimeout(collapseTimer);
-        collapseTimer = setTimeout(() => {
-            sidebar.classList.add('collapsed');
-        }, 5000); // 5 seconds
-    }
-
-    // Function to expand sidebar
-    function expandSidebar() {
-        sidebar.classList.remove('collapsed');
-        clearTimeout(collapseTimer);
-    }
-
-    // Function to collapse sidebar
-    function collapseSidebar() {
-        clearTimeout(collapseTimer);
-        sidebar.classList.add('collapsed');
-    }
-
-    // Initial behavior: expanded, then auto-collapse after 5 seconds
-    startCollapseTimer();
-
-    // Hover behavior
-    sidebar.addEventListener('mouseenter', expandSidebar);
-    sidebar.addEventListener('mouseleave', collapseSidebar);
-
-    // Navigation behavior: when clicking on nav items, start timer again
-    const navItems = sidebar.querySelectorAll('.nav-menu li, .btn-cotizador-nav');
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            // Expand and start timer for new page
-            expandSidebar();
-            startCollapseTimer();
-        });
-    });
-
-    // Toggle button behavior (optional - keep manual toggle)
-    btnToggle.addEventListener('click', () => {
-        if (sidebar.classList.contains('collapsed')) {
-            expandSidebar();
-            startCollapseTimer();
-        } else {
-            collapseSidebar();
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    setupSidebarAutoCollapse();
-});
-
-// ========================================
 // BORRADORES - PAGINACIÓN
 // ========================================
 

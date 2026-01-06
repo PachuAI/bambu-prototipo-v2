@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Configuración</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/configuracion/configuracion-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <script>if(JSON.parse(localStorage.getItem('bambu-sidebar-collapsed')))document.getElementById('main-sidebar').classList.add('collapsed')</script>
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock" onclick="location.href='productos.html'">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas</span>
+                    </li>
+                    <!-- TODO: Evaluar si mantener acceso directo o solo desde Ventas/Dashboard
+                    <li title="Repartos" onclick="location.href='repartos-dia.html'">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    -->
+                    <li title="Reportes y Estadísticas" onclick="location.href='estadisticas.html'">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos" onclick="location.href='backup.html'">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración" class="active">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER -->
+            <header class="config-header">
+                <div class="page-header-title">
+                    <i class="fas fa-cog"></i>
+                    Configuración General
+                </div>
+                <div class="header-tabs">
+                    <button class="tab-btn active" data-tab="vehiculos">
+                        <i class="fas fa-truck"></i> Vehículos
+                    </button>
+                    <button class="tab-btn" data-tab="ciudades">
+                        <i class="fas fa-map-marker-alt"></i> Ciudades
+                    </button>
+                    <button class="tab-btn" data-tab="precios">
+                        <i class="fas fa-tags"></i> Listas de Precio
+                    </button>
+                    <button class="tab-btn" data-tab="stock">
+                        <i class="fas fa-boxes"></i> Stock
+                    </button>
+                </div>
+            </header>
+
+            <!-- TAB CONTENTS -->
+            <div class="config-content">
+
+                <!-- TAB: VEHÍCULOS -->
+                <div id="tab-vehiculos" class="tab-pane active">
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-truck"></i> Vehículos de Reparto</h3>
+                            <button class="btn-primary-sm" onclick="abrirModalVehiculo()">
+                                <i class="fas fa-plus"></i> Agregar Vehículo
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <table class="config-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Capacidad (kg)</th>
+                                        <th>Pedidos Asignados</th>
+                                        <th class="th-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-vehiculos">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CIUDADES -->
+                <div id="tab-ciudades" class="tab-pane">
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-map-marker-alt"></i> Ciudades Disponibles</h3>
+                            <button class="btn-primary-sm" onclick="abrirModalCiudad()">
+                                <i class="fas fa-plus"></i> Agregar Ciudad
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <table class="config-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ciudad</th>
+                                        <th>Clientes Asociados</th>
+                                        <th class="th-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-ciudades">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: LISTAS DE PRECIO -->
+                <div id="tab-precios" class="tab-pane">
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-tags"></i> Configuración de Listas de Precio</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="precios-grid">
+                                <!-- L1 -->
+                                <div class="precio-card l1">
+                                    <div class="precio-header">
+                                        <span class="precio-badge">L1</span>
+                                        <span class="precio-title">Precio Base</span>
+                                    </div>
+                                    <p class="precio-desc">Precio de referencia sin descuento aplicado.</p>
+                                </div>
+
+                                <!-- L2 -->
+                                <div class="precio-card l2">
+                                    <div class="precio-header">
+                                        <span class="precio-badge">L2</span>
+                                        <span class="precio-title">Lista 2</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Descuento (%)</label>
+                                        <input type="number" class="form-input" id="l2-descuento"
+                                            step="0.01" min="0" max="100" placeholder="6.25">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Umbral mínimo ($) <span class="text-muted">(opcional)</span></label>
+                                        <input type="number" class="form-input" id="l2-umbral"
+                                            min="0" placeholder="Sin umbral">
+                                    </div>
+                                </div>
+
+                                <!-- L3 -->
+                                <div class="precio-card l3">
+                                    <div class="precio-header">
+                                        <span class="precio-badge">L3</span>
+                                        <span class="precio-title">Lista 3</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Descuento (%)</label>
+                                        <input type="number" class="form-input" id="l3-descuento"
+                                            step="0.01" min="0" max="100" placeholder="10.00">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Umbral mínimo ($) <span class="text-muted">(opcional)</span></label>
+                                        <input type="number" class="form-input" id="l3-umbral"
+                                            min="0" placeholder="Sin umbral">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-box">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Los umbrales definen el monto mínimo del pedido para acceder a cada lista. Dejar vacío para acceso sin restricciones.</span>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn-primary" onclick="guardarPrecios()">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: COMPORTAMIENTO STOCK -->
+                <div id="tab-stock" class="tab-pane">
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-boxes"></i> Comportamiento de Stock</h3>
+                        </div>
+                        <div class="card-body">
+                            <p class="config-description">
+                                Define qué sucede cuando se intenta confirmar un pedido sin stock suficiente.
+                            </p>
+
+                            <div class="stock-options">
+                                <label class="stock-option">
+                                    <input type="radio" name="stock-comportamiento" value="BLOQUEAR">
+                                    <div class="option-content">
+                                        <div class="option-icon danger">
+                                            <i class="fas fa-ban"></i>
+                                        </div>
+                                        <div class="option-text">
+                                            <strong>Bloquear venta</strong>
+                                            <span>No permite confirmar el pedido si no hay stock suficiente.</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="stock-option">
+                                    <input type="radio" name="stock-comportamiento" value="ADVERTIR" checked>
+                                    <div class="option-content">
+                                        <div class="option-icon warning">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <div class="option-text">
+                                            <strong>Advertir pero permitir</strong>
+                                            <span>Muestra alerta pero permite confirmar (stock queda negativo).</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="info-box warning">
+                                <i class="fas fa-flask"></i>
+                                <span><strong>Excepción:</strong> Los productos del proveedor "BAMBU" (producción propia) siempre permiten stock negativo sin límite.</span>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn-primary" onclick="guardarStock()">
+                                    <i class="fas fa-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: CREAR/EDITAR VEHÍCULO -->
+    <div id="modal-vehiculo" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="modal-vehiculo-titulo"><i class="fas fa-truck"></i> Nuevo Vehículo</h3>
+                <button class="btn-close-modal" onclick="cerrarModalVehiculo()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="vehiculo-id">
+                <div class="form-group">
+                    <label class="form-label">Nombre <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="vehiculo-nombre" placeholder="Ej: Reparto 4">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Capacidad (kg) <span class="required">*</span></label>
+                    <input type="number" class="form-input" id="vehiculo-capacidad" min="1" placeholder="Ej: 1500">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalVehiculo()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarVehiculo()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREAR/EDITAR CIUDAD -->
+    <div id="modal-ciudad" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="modal-ciudad-titulo"><i class="fas fa-map-marker-alt"></i> Nueva Ciudad</h3>
+                <button class="btn-close-modal" onclick="cerrarModalCiudad()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="ciudad-id">
+                <div class="form-group">
+                    <label class="form-label">Nombre <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="ciudad-nombre" placeholder="Ej: San Martín de los Andes">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalCiudad()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarCiudad()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="shared/mock-data.js"></script>
+    <script src="assets/configuracion/script.js"></script>
+</body>
+
+</html>

@@ -1,10 +1,10 @@
-/* BAmbu CRM - Clientes V2 Script */
+/* Bambu CRM - Clientes V2 Script */
 
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Clientes V2 Loaded');
 
-    // 1. Sidebar Auto-Collapse Behavior
-    setupSidebarAutoCollapse();
+    // 1. Cargar clientes desde mock-data.js
+    renderizarClientes();
 
     // 2. Tabs Logic (Detail View)
     const tabs = document.querySelectorAll('.tab-link');
@@ -263,62 +263,6 @@ function toggleDetalleMovimiento(movimientoId) {
     }
 }
 
-/* SIDEBAR AUTO-COLLAPSE BEHAVIOR */
-function setupSidebarAutoCollapse() {
-    const sidebar = document.getElementById('main-sidebar');
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
-    let collapseTimer = null;
-
-    if (!sidebar || !btnToggle) return;
-
-    // Function to start the auto-collapse timer
-    function startCollapseTimer() {
-        clearTimeout(collapseTimer);
-        collapseTimer = setTimeout(() => {
-            sidebar.classList.add('collapsed');
-        }, 5000); // 5 seconds
-    }
-
-    // Function to expand sidebar
-    function expandSidebar() {
-        sidebar.classList.remove('collapsed');
-        clearTimeout(collapseTimer);
-    }
-
-    // Function to collapse sidebar
-    function collapseSidebar() {
-        clearTimeout(collapseTimer);
-        sidebar.classList.add('collapsed');
-    }
-
-    // Initial behavior: expanded, then auto-collapse after 5 seconds
-    startCollapseTimer();
-
-    // Hover behavior
-    sidebar.addEventListener('mouseenter', expandSidebar);
-    sidebar.addEventListener('mouseleave', collapseSidebar);
-
-    // Navigation behavior: when clicking on nav items, start timer again
-    const navItems = sidebar.querySelectorAll('.nav-menu li, .btn-cotizador-nav');
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            // Expand and start timer for new page
-            expandSidebar();
-            startCollapseTimer();
-        });
-    });
-
-    // Toggle button behavior (optional - keep manual toggle)
-    btnToggle.addEventListener('click', () => {
-        if (sidebar.classList.contains('collapsed')) {
-            expandSidebar();
-            startCollapseTimer();
-        } else {
-            collapseSidebar();
-        }
-    });
-}
-
 // ========================================
 // DESCUENTO CLIENTE - TOGGLE BUTTONS
 // ========================================
@@ -469,5 +413,236 @@ document.addEventListener('click', function(e) {
         cerrarModalNuevoCliente();
     }
 });
+
+// ========================================
+// MODAL EDITAR CLIENTE
+// PRD: prd/clientes.html - Sección CRUD
+// ========================================
+
+/**
+ * Variable para almacenar el ID del cliente en edición
+ * null = modo crear, número = modo editar
+ */
+let clienteEnEdicion = null;
+
+/**
+ * Abre el modal en modo edición con datos del cliente precargados
+ *
+ * LÓGICA:
+ * - Busca cliente por ID en CLIENTES (mock)
+ * - Precarga todos los campos del formulario
+ * - Cambia título y botón a modo "Editar"
+ */
+function abrirModalEditarCliente(clienteId) {
+    // Buscar cliente en mock
+    const cliente = CLIENTES.find(c => c.id === clienteId);
+    if (!cliente) {
+        alert('Cliente no encontrado');
+        return;
+    }
+
+    // Guardar ID para saber que estamos editando
+    clienteEnEdicion = clienteId;
+
+    // Cambiar título y botón del modal
+    const modalHeader = document.querySelector('#modal-nuevo-cliente .modal-header h3');
+    const btnGuardar = document.querySelector('#modal-nuevo-cliente .modal-footer .btn-primary');
+
+    modalHeader.innerHTML = '<i class="fas fa-user-edit"></i> Editar Cliente';
+    btnGuardar.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+    btnGuardar.setAttribute('onclick', 'guardarCliente()');
+
+    // Precargar campos
+    document.getElementById('nc-direccion').value = cliente.direccion;
+    document.getElementById('nc-telefono').value = cliente.telefono;
+    document.getElementById('nc-ciudad').value = cliente.ciudad.toLowerCase();
+    document.getElementById('nc-email').value = cliente.email || '';
+    document.getElementById('nc-nota').value = cliente.nota || '';
+    document.getElementById('nc-activo').checked = cliente.estado === 'activo';
+
+    // Precargar descuento según lista_precio
+    const btnGroup = document.querySelector('#modal-nuevo-cliente .btn-group-toggle');
+    btnGroup.querySelectorAll('.btn-toggle').forEach(btn => btn.classList.remove('active'));
+
+    let valorDescuento = 'none';
+    if (cliente.lista_precio === 'L2') valorDescuento = 'l2';
+    if (cliente.lista_precio === 'L3') valorDescuento = 'l3';
+
+    const btnDescuento = btnGroup.querySelector(`[data-value="${valorDescuento}"]`);
+    if (btnDescuento) btnDescuento.classList.add('active');
+
+    // Mostrar modal
+    document.getElementById('modal-nuevo-cliente').classList.remove('hidden');
+
+    // Focus en dirección
+    setTimeout(() => {
+        document.getElementById('nc-direccion').focus();
+    }, 100);
+
+    console.log('📝 Editando cliente:', cliente.direccion);
+}
+
+/**
+ * Guarda los cambios del cliente (crear o actualizar)
+ *
+ * LÓGICA:
+ * - Si clienteEnEdicion es null → crear nuevo
+ * - Si clienteEnEdicion tiene ID → actualizar existente
+ */
+function guardarCliente() {
+    // Obtener valores del formulario
+    const direccion = document.getElementById('nc-direccion').value.trim();
+    const telefono = document.getElementById('nc-telefono').value.trim();
+    const ciudad = document.getElementById('nc-ciudad').value;
+    const email = document.getElementById('nc-email').value.trim();
+    const nota = document.getElementById('nc-nota').value.trim();
+    const activo = document.getElementById('nc-activo').checked;
+
+    // Obtener descuento seleccionado
+    const btnActivo = document.querySelector('#modal-nuevo-cliente .btn-toggle.active');
+    const descuentoVal = btnActivo ? btnActivo.getAttribute('data-value') : 'none';
+
+    // Validaciones
+    if (!direccion) {
+        alert('⚠️ La dirección es obligatoria');
+        document.getElementById('nc-direccion').focus();
+        return;
+    }
+    if (!telefono) {
+        alert('⚠️ El teléfono es obligatorio');
+        document.getElementById('nc-telefono').focus();
+        return;
+    }
+    if (!ciudad) {
+        alert('⚠️ Debe seleccionar una ciudad');
+        document.getElementById('nc-ciudad').focus();
+        return;
+    }
+
+    // Mapear descuento a lista_precio
+    let listaPrecio = 'L1';
+    if (descuentoVal === 'l2') listaPrecio = 'L2';
+    if (descuentoVal === 'l3') listaPrecio = 'L3';
+
+    if (clienteEnEdicion) {
+        // MODO EDITAR: Actualizar cliente existente en mock
+        const idx = CLIENTES.findIndex(c => c.id === clienteEnEdicion);
+        if (idx !== -1) {
+            CLIENTES[idx] = {
+                ...CLIENTES[idx],
+                direccion: direccion.toUpperCase(),
+                telefono,
+                ciudad: ciudad.charAt(0).toUpperCase() + ciudad.slice(1),
+                email,
+                nota,
+                estado: activo ? 'activo' : 'inactivo',
+                lista_precio: listaPrecio
+            };
+            console.log('✅ Cliente actualizado:', CLIENTES[idx]);
+            alert(`✅ Cliente actualizado\n\nDirección: ${CLIENTES[idx].direccion}`);
+        }
+    } else {
+        // MODO CREAR: Llamar función original
+        crearNuevoCliente();
+        return;
+    }
+
+    // Cerrar modal y refrescar tabla
+    cerrarModalNuevoCliente();
+    renderizarClientes();
+}
+
+/**
+ * Override de cerrarModalNuevoCliente para resetear modo edición
+ */
+const cerrarModalNuevoClienteOriginal = cerrarModalNuevoCliente;
+cerrarModalNuevoCliente = function() {
+    // Resetear a modo "Nuevo Cliente"
+    const modalHeader = document.querySelector('#modal-nuevo-cliente .modal-header h3');
+    const btnGuardar = document.querySelector('#modal-nuevo-cliente .modal-footer .btn-primary');
+
+    modalHeader.innerHTML = '<i class="fas fa-user-plus"></i> Nuevo Cliente';
+    btnGuardar.innerHTML = '<i class="fas fa-check"></i> Crear Cliente';
+    btnGuardar.setAttribute('onclick', 'crearNuevoCliente()');
+
+    // Limpiar variable de edición
+    clienteEnEdicion = null;
+
+    // Llamar función original
+    cerrarModalNuevoClienteOriginal();
+};
+
+// ========================================
+// RENDERIZADO DE CLIENTES DESDE MOCK
+// ========================================
+
+/**
+ * Renderiza la tabla de clientes desde CLIENTES (mock-data.js)
+ *
+ * LÓGICA:
+ * - Formatea saldo con separador de miles y signo
+ * - Clases CSS: amount-negative (rojo), amount-positive (verde/neutro)
+ * - Badge estado: active/inactive
+ */
+function renderizarClientes() {
+    const tbody = document.getElementById('tabla-clientes-body');
+    if (!tbody) return;
+
+    // Verificar que CLIENTES existe (mock-data.js cargado)
+    if (typeof CLIENTES === 'undefined') {
+        console.error('CLIENTES no definido - verificar mock-data.js');
+        return;
+    }
+
+    tbody.innerHTML = CLIENTES.map(cliente => {
+        // Formatear saldo
+        const saldoAbs = Math.abs(cliente.saldo);
+        const saldoFormateado = saldoAbs.toLocaleString('es-AR');
+        const saldoClass = cliente.saldo < 0 ? 'amount-negative' : 'amount-positive';
+        const saldoTexto = cliente.saldo < 0 ? `-$${saldoFormateado}` : `$${saldoFormateado}`;
+
+        // Badge estado
+        const estadoClass = cliente.estado === 'activo' ? 'active' : 'inactive';
+        const estadoTexto = cliente.estado === 'activo' ? 'Activo' : 'Inactivo';
+
+        return `
+            <tr onclick="location.href='cliente-detalle.html?id=${cliente.id}'">
+                <td class="text-bold">${cliente.direccion}</td>
+                <td>${cliente.telefono}</td>
+                <td>${cliente.ciudad}</td>
+                <td class="${saldoClass}">${saldoTexto}</td>
+                <td><span class="badge-status ${estadoClass}">${estadoTexto}</span></td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-icon-sm btn-edit" title="Editar"
+                            onclick="event.stopPropagation(); abrirModalEditarCliente(${cliente.id})">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn-icon-sm btn-view" title="Ver Detalle"
+                            onclick="event.stopPropagation(); location.href='cliente-detalle.html?id=${cliente.id}'">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon-sm btn-delete" title="Eliminar"
+                            onclick="event.stopPropagation(); confirmarEliminar(${cliente.id}, '${cliente.direccion}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    console.log(`✅ ${CLIENTES.length} clientes cargados`);
+}
+
+/**
+ * Confirmar eliminación de cliente (mock)
+ */
+function confirmarEliminar(id, direccion) {
+    if (confirm(`¿Eliminar cliente "${direccion}"?\n\nEsta acción no se puede deshacer.`)) {
+        alert(`Cliente ${direccion} eliminado (mock)`);
+        // En producción: llamar API y recargar tabla
+    }
+}
 
 console.log('✅ Clientes V2 - Script cargado correctamente');

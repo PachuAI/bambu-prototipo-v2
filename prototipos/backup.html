@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Backup y Logs</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/backup/backup-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <script>if(JSON.parse(localStorage.getItem('bambu-sidebar-collapsed')))document.getElementById('main-sidebar').classList.add('collapsed')</script>
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock" onclick="location.href='productos.html'">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas</span>
+                    </li>
+                    <!-- TODO: Evaluar si mantener acceso directo o solo desde Ventas/Dashboard
+                    <li title="Repartos" onclick="location.href='repartos-dia.html'">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    -->
+                    <li title="Reportes y Estadísticas" onclick="location.href='estadisticas.html'">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos" class="active">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración" onclick="location.href='configuracion.html'">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER -->
+            <header class="backup-header">
+                <div class="page-header-title">
+                    <i class="fas fa-server"></i>
+                    Backup y Logs
+                </div>
+                <div class="header-tabs">
+                    <button class="tab-btn active" data-tab="backup">
+                        <i class="fas fa-database"></i> Respaldos
+                    </button>
+                    <button class="tab-btn" data-tab="logs">
+                        <i class="fas fa-clipboard-list"></i> Logs
+                    </button>
+                </div>
+            </header>
+
+            <!-- TAB CONTENTS -->
+            <div class="backup-content">
+
+                <!-- TAB: BACKUP -->
+                <div id="tab-backup" class="tab-pane active">
+                    <div class="backup-actions">
+                        <button class="btn-primary-lg" onclick="crearBackup()">
+                            <i class="fas fa-plus-circle"></i> Crear respaldo ahora
+                        </button>
+                        <button class="btn-secondary-lg" onclick="abrirModalRestaurar()">
+                            <i class="fas fa-upload"></i> Restaurar desde archivo
+                        </button>
+                    </div>
+
+                    <div class="backup-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> Historial de Respaldos</h3>
+                            <span class="badge-count" id="backup-count">5 respaldos</span>
+                        </div>
+                        <div class="card-body">
+                            <table class="backup-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tamaño</th>
+                                        <th>Tipo</th>
+                                        <th class="th-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-backups">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: LOGS -->
+                <div id="tab-logs" class="tab-pane">
+                    <div class="logs-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">Desde</label>
+                            <input type="date" class="filter-input" id="log-desde">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Hasta</label>
+                            <input type="date" class="filter-input" id="log-hasta">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Usuario</label>
+                            <select class="filter-input" id="log-usuario">
+                                <option value="">Todos</option>
+                                <option value="admin@bambu.com">admin@bambu.com</option>
+                                <option value="vendedor@bambu.com">vendedor@bambu.com</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo</label>
+                            <select class="filter-input" id="log-tipo">
+                                <option value="">Todos</option>
+                                <option value="ACCESO">Accesos</option>
+                                <option value="STOCK">Cambios en stock</option>
+                                <option value="CONFIGURACION">Configuración</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn-primary-sm" onclick="aplicarFiltrosLogs()">
+                                <i class="fas fa-filter"></i> Aplicar
+                            </button>
+                            <button class="btn-secondary-sm" onclick="limpiarFiltrosLogs()">
+                                <i class="fas fa-times"></i> Limpiar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="backup-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-clipboard-list"></i> Registro de Actividad</h3>
+                            <span class="badge-count" id="logs-count">10 eventos</span>
+                        </div>
+                        <div class="card-body">
+                            <table class="logs-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha/Hora</th>
+                                        <th>Usuario</th>
+                                        <th>Tipo</th>
+                                        <th>Descripción</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-logs">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: RESTAURAR BACKUP -->
+    <div id="modal-restaurar" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3><i class="fas fa-upload"></i> Restaurar desde archivo</h3>
+                <button class="btn-close-modal" onclick="cerrarModalRestaurar()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Atención</strong>
+                        <p>Esta acción sobrescribirá TODOS los datos actuales. Se recomienda crear un backup antes de continuar.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Seleccionar archivo <span class="required">*</span></label>
+                    <input type="file" class="form-input-file" id="archivo-restaurar" accept=".sql,.sql.gz,.zip">
+                    <small class="text-muted">Formatos permitidos: .sql, .sql.gz, .zip (máx. 100 MB)</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalRestaurar()">Cancelar</button>
+                <button class="btn-danger" onclick="confirmarRestaurar()">
+                    <i class="fas fa-exclamation-triangle"></i> Restaurar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="shared/mock-data.js"></script>
+    <script src="assets/backup/script.js"></script>
+</body>
+
+</html>
