@@ -1,8 +1,13 @@
 /* ============================================
-   VENTAS - Rediseño Minimalista
+   VENTAS V2 - Rediseño Minimalista
    ============================================
-   Sistema: tokens.css + components.css + ventas-specific.css
-   Migrado: 06 Enero 2026
+   Estilo: Notion/Linear - limpio, neutro, profesional
+   Cambios principales:
+   - Border-radius reducido (4-6px)
+   - Colores más neutros
+   - Badges sutiles (outline/text)
+   - Sin bordes de color en cards
+   - Botones secundarios en gris
    ============================================ */
 
 /* ========================================
@@ -194,7 +199,7 @@
 }
 
 /* ========================================
-   CALENDARIO SEMANAL
+   CALENDARIO SEMANAL - MINIMALISTA
    ======================================== */
 
 .calendario-container {
@@ -252,7 +257,7 @@
 }
 
 /* ========================================
-   DIA CARD
+   DIA CARD - REDISEÑO LIMPIO
    ======================================== */
 
 .dia-card {
@@ -273,6 +278,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
+/* HOY - fondo azul muy sutil */
 .dia-card.dia-hoy {
     border-color: rgba(0, 82, 204, 0.3);
     background: linear-gradient(to bottom, rgba(0, 82, 204, 0.03), var(--bg-white));
@@ -286,6 +292,7 @@
     border-color: rgba(0, 82, 204, 0.4);
 }
 
+/* FABRICA - fondo amarillo muy sutil */
 .dia-card.fabrica-card {
     background: rgba(255, 171, 0, 0.06);
     border-color: rgba(255, 171, 0, 0.25);
@@ -299,6 +306,7 @@
     color: var(--color-warning-dark);
 }
 
+/* Sin bordes laterales de color */
 .dia-card.dia-controlado,
 .dia-card.dia-sin-control {
     border-left: 1px solid var(--border-color);
@@ -363,9 +371,23 @@
 }
 
 /* ========================================
-   BADGES DE ESTADO
+   BADGES DE ESTADO - MINIMALISTAS
    ======================================== */
 
+/* Base para todos los badges */
+.badge-estado-base {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* HOY - azul con fondo */
 .dia-badge-hoy {
     position: absolute;
     top: 10px;
@@ -387,6 +409,7 @@
     font-size: 5px;
 }
 
+/* PLANIFICADO - gris neutro outline */
 .badge-estado-planificado {
     position: absolute;
     top: 10px;
@@ -402,6 +425,7 @@
     letter-spacing: 0.3px;
 }
 
+/* SEMANAL (fabrica) - naranja con fondo sutil */
 .badge-estado-semanal {
     position: absolute;
     top: 10px;
@@ -417,6 +441,7 @@
     letter-spacing: 0.3px;
 }
 
+/* CONTROLADO - verde con fondo sutil */
 .badge-estado-controlado {
     position: absolute;
     top: 10px;
@@ -442,6 +467,7 @@
     border-radius: 50%;
 }
 
+/* CONTROLAR - naranja con fondo sutil */
 .badge-estado-controlar {
     position: absolute;
     top: 10px;
@@ -511,6 +537,7 @@
     font-weight: var(--font-weight-semibold);
 }
 
+/* Dias controlados - mostrar montos con color */
 .dia-card.dia-controlado .pago-item {
     color: var(--text-secondary);
 }
@@ -524,7 +551,7 @@
 }
 
 /* ========================================
-   BOTONES DIA
+   BOTONES DIA - SIMPLIFICADOS
    ======================================== */
 
 .dia-botones {
@@ -533,6 +560,7 @@
     margin-top: 6px;
 }
 
+/* Boton principal - azul accent */
 .btn-ver-detalle-dia {
     flex: 1;
     padding: 6px 8px;
@@ -559,6 +587,7 @@
     color: white;
 }
 
+/* Boton secundario - con borde sutil */
 .btn-filtrar-lista-dia {
     flex: 1;
     padding: 6px 8px;
@@ -613,6 +642,7 @@
     border-color: var(--text-muted);
 }
 
+/* Sin bordes de color laterales */
 .vehiculo-card.capacidad-baja,
 .vehiculo-card.capacidad-media,
 .vehiculo-card.capacidad-alta {
@@ -734,7 +764,7 @@
 }
 
 /* ========================================
-   TABLA VENTAS
+   TABLA VENTAS (ORIGINAL)
    ======================================== */
 
 .list-container {
@@ -942,9 +972,10 @@
 }
 
 /* ========================================
-   MODALES
+   MODALES (ORIGINAL)
    ======================================== */
 
+/* Info row en modales */
 .pedido-info {
     display: flex;
     flex-direction: column;
@@ -984,6 +1015,7 @@
     color: var(--color-accent);
 }
 
+/* Info Pago CC */
 .info-pago-cc {
     display: flex;
     gap: 16px;
@@ -1074,7 +1106,7 @@
 }
 
 /* ========================================
-   MODAL EDITAR PEDIDO
+   MODAL EDITAR PEDIDO (ORIGINAL)
    ======================================== */
 
 .modal-edit-large {
@@ -1209,6 +1241,7 @@
     background: var(--color-danger-light);
 }
 
+/* Panel lateral totales */
 .edit-panel-totales {
     background: var(--bg-sidebar);
     padding: 24px;
@@ -1332,7 +1365,7 @@
 }
 
 /* ========================================
-   MODAL VER DETALLE PEDIDO
+   MODAL VER DETALLE PEDIDO (ORIGINAL)
    ======================================== */
 
 .modal-detalle-large {
@@ -1461,6 +1494,7 @@
     color: var(--text-strong);
 }
 
+/* Sidebar Sections */
 .detalle-sidebar-section {
     padding-bottom: 12px;
     margin-bottom: 12px;
@@ -1754,7 +1788,7 @@
 
 [data-theme="dark"] .btn-filtrar-lista-dia {
     background: var(--bg-sidebar) !important;
-    border-color: var(--border-color) !important;
+    border-color: var(--color-accent) !important;
 }
 
 [data-theme="dark"] .btn-page.active {

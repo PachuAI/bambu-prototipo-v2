@@ -192,6 +192,7 @@
             <!-- VISTA PEDIDOS -->
             <div class="view-container hidden" id="view-pedidos">
                 <div class="list-container">
+                    <!-- Barra de acciones bulk -->
                     <div class="barra-bulk-actions hidden" id="barra-bulk-actions">
                         <div class="bulk-info">
                             <i class="fas fa-check-square"></i>
@@ -225,7 +226,9 @@
                                 <th style="width: 160px;">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            <!-- Los pedidos se renderizan dinamicamente con JS -->
+                        </tbody>
                         <tfoot>
                             <tr style="background: #f8f9fa; font-weight: 600; border-top: 2px solid #dee2e6;">
                                 <td colspan="8" style="text-align: right; padding-right: 1rem;">TOTAL:</td>
@@ -235,6 +238,7 @@
                         </tfoot>
                     </table>
 
+                    <!-- Paginacion -->
                     <div class="pagination">
                         <button class="btn-page"><i class="fas fa-chevron-left"></i></button>
                         <button class="btn-page active">1</button>
@@ -263,8 +267,12 @@
                                 <th style="width: 200px;">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tbody-borradores"></tbody>
+                        <tbody id="tbody-borradores">
+                            <!-- Se renderiza dinamicamente con JS -->
+                        </tbody>
                     </table>
+
+                    <!-- Paginacion borradores -->
                     <div class="pagination" id="pagination-borradores"></div>
                 </div>
             </div>
@@ -272,6 +280,7 @@
             <!-- VISTA CALENDARIO SEMANA -->
             <div class="view-container" id="view-calendario">
                 <div class="calendario-container">
+                    <!-- Header calendario -->
                     <div class="calendario-header">
                         <h3>Semana: 23 - 27 Diciembre 2025</h3>
                         <div class="calendario-nav">
@@ -281,7 +290,9 @@
                         </div>
                     </div>
 
+                    <!-- Grid calendario semanal -->
                     <div class="calendario-grid">
+                        <!-- Fabrica -->
                         <div class="dia-card fabrica-card">
                             <div class="dia-header">
                                 <span class="dia-label">FABRICA</span>
@@ -290,18 +301,31 @@
                                 <span class="badge-estado-semanal">Semanal</span>
                             </div>
                             <div class="dia-stats">
-                                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>9 pedidos</strong></span></div>
-                                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>270 kg</strong></span></div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-box"></i>
+                                    <span><strong>9 pedidos</strong></span>
+                                </div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-weight"></i>
+                                    <span><strong>270 kg</strong></span>
+                                </div>
                             </div>
                             <div class="dia-pagos-line">
-                                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> XXX</span>
-                                <span class="pago-item"><i class="fas fa-credit-card"></i> XXX</span>
+                                <span class="pago-item">
+                                    <i class="fas fa-money-bill-wave"></i> XXX
+                                </span>
+                                <span class="pago-item">
+                                    <i class="fas fa-credit-card"></i> XXX
+                                </span>
                             </div>
                             <div class="dia-botones">
-                                <button class="btn-filtrar-lista-dia" onclick="verVentasFabrica()"><i class="fas fa-list"></i> Ver pedidos</button>
+                                <button class="btn-filtrar-lista-dia" onclick="verVentasFabrica()">
+                                    <i class="fas fa-list"></i> Ver pedidos
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Lunes 23 - PASADO CONTROLADO -->
                         <div class="dia-card dia-controlado" data-dia="lunes" data-fecha="2025-12-23" onclick="seleccionarDia(this, 'lunes')">
                             <div class="dia-header">
                                 <span class="dia-label">LUNES</span>
@@ -310,61 +334,112 @@
                                 <span class="badge-estado-controlado">Controlado</span>
                             </div>
                             <div class="dia-stats">
-                                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>10/40 ped</strong></span></div>
-                                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>285/6250 kg</strong></span></div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-box"></i>
+                                    <span><strong>10/40 ped</strong></span>
+                                </div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-weight"></i>
+                                    <span><strong>285/6250 kg</strong></span>
+                                </div>
                             </div>
                             <div class="dia-pagos-line">
-                                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> <strong>$180k</strong></span>
-                                <span class="pago-item"><i class="fas fa-credit-card"></i> <strong>$105k</strong></span>
+                                <span class="pago-item">
+                                    <i class="fas fa-money-bill-wave"></i> <strong>$180k</strong>
+                                </span>
+                                <span class="pago-item">
+                                    <i class="fas fa-credit-card"></i> <strong>$105k</strong>
+                                </span>
                             </div>
                             <div class="dia-botones">
-                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-23')"><i class="fas fa-eye"></i> Ver detalle</button>
-                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-23')"><i class="fas fa-list"></i> Ver pedidos</button>
+                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-23')">
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </button>
+                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-23')">
+                                    <i class="fas fa-list"></i> Ver pedidos
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Martes 24 - PASADO SIN CONTROL -->
                         <div class="dia-card dia-sin-control" data-dia="martes" data-fecha="2025-12-24" onclick="seleccionarDia(this, 'martes')">
                             <div class="dia-header">
                                 <span class="dia-label">MARTES</span>
                                 <span class="dia-numero">24</span>
                                 <span class="dia-tipo">Reparto</span>
-                                <button class="badge-estado-controlar" onclick="filtrarListaPorDia(event, '2025-12-24'); event.stopPropagation();">Controlar</button>
+                                <button class="badge-estado-controlar"
+                                        onclick="filtrarListaPorDia(event, '2025-12-24'); event.stopPropagation();"
+                                        title="Ver pedidos del dia para controlar">
+                                    Controlar
+                                </button>
                             </div>
                             <div class="dia-stats">
-                                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>10/40 ped</strong></span></div>
-                                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>310/6250 kg</strong></span></div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-box"></i>
+                                    <span><strong>10/40 ped</strong></span>
+                                </div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-weight"></i>
+                                    <span><strong>310/6250 kg</strong></span>
+                                </div>
                             </div>
                             <div class="dia-pagos-line">
-                                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> XXX</span>
-                                <span class="pago-item"><i class="fas fa-credit-card"></i> XXX</span>
+                                <span class="pago-item">
+                                    <i class="fas fa-money-bill-wave"></i> XXX
+                                </span>
+                                <span class="pago-item">
+                                    <i class="fas fa-credit-card"></i> XXX
+                                </span>
                             </div>
                             <div class="dia-botones">
-                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-24')"><i class="fas fa-eye"></i> Ver detalle</button>
-                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-24')"><i class="fas fa-list"></i> Ver pedidos</button>
+                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-24')">
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </button>
+                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-24')">
+                                    <i class="fas fa-list"></i> Ver pedidos
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Miercoles 25 - DIA HOY -->
                         <div class="dia-card active dia-hoy" data-dia="miercoles" data-fecha="2025-12-25" onclick="seleccionarDia(this, 'miercoles')">
                             <div class="dia-header">
                                 <span class="dia-label">MIERCOLES</span>
                                 <span class="dia-numero">25</span>
                                 <span class="dia-tipo">Reparto</span>
-                                <span class="dia-badge-hoy"><i class="fas fa-circle"></i> HOY</span>
+                                <span class="dia-badge-hoy" title="Dia actual">
+                                    <i class="fas fa-circle"></i> HOY
+                                </span>
                             </div>
                             <div class="dia-stats">
-                                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>12/40 ped</strong></span></div>
-                                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>380/6250 kg</strong></span></div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-box"></i>
+                                    <span><strong>12/40 ped</strong></span>
+                                </div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-weight"></i>
+                                    <span><strong>380/6250 kg</strong></span>
+                                </div>
                             </div>
                             <div class="dia-pagos-line">
-                                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> XXX</span>
-                                <span class="pago-item"><i class="fas fa-credit-card"></i> XXX</span>
+                                <span class="pago-item">
+                                    <i class="fas fa-money-bill-wave"></i> XXX
+                                </span>
+                                <span class="pago-item">
+                                    <i class="fas fa-credit-card"></i> XXX
+                                </span>
                             </div>
                             <div class="dia-botones">
-                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-25')"><i class="fas fa-eye"></i> Ver detalle</button>
-                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-25')"><i class="fas fa-list"></i> Ver pedidos</button>
+                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-25')">
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </button>
+                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-25')">
+                                    <i class="fas fa-list"></i> Ver pedidos
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Jueves 26 - DIA FUTURO -->
                         <div class="dia-card" data-dia="jueves" data-fecha="2025-12-26" onclick="seleccionarDia(this, 'jueves')">
                             <div class="dia-header">
                                 <span class="dia-label">JUEVES</span>
@@ -373,19 +448,34 @@
                                 <span class="badge-estado-planificado">Planificado</span>
                             </div>
                             <div class="dia-stats">
-                                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>10/40 ped</strong></span></div>
-                                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>295/6250 kg</strong></span></div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-box"></i>
+                                    <span><strong>10/40 ped</strong></span>
+                                </div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-weight"></i>
+                                    <span><strong>295/6250 kg</strong></span>
+                                </div>
                             </div>
                             <div class="dia-pagos-line">
-                                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> XXX</span>
-                                <span class="pago-item"><i class="fas fa-credit-card"></i> XXX</span>
+                                <span class="pago-item">
+                                    <i class="fas fa-money-bill-wave"></i> XXX
+                                </span>
+                                <span class="pago-item">
+                                    <i class="fas fa-credit-card"></i> XXX
+                                </span>
                             </div>
                             <div class="dia-botones">
-                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-26')"><i class="fas fa-eye"></i> Ver detalle</button>
-                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-26')"><i class="fas fa-list"></i> Ver pedidos</button>
+                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-26')">
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </button>
+                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-26')">
+                                    <i class="fas fa-list"></i> Ver pedidos
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Viernes 27 - DIA FUTURO -->
                         <div class="dia-card" data-dia="viernes" data-fecha="2025-12-27" onclick="seleccionarDia(this, 'viernes')">
                             <div class="dia-header">
                                 <span class="dia-label">VIERNES</span>
@@ -394,25 +484,42 @@
                                 <span class="badge-estado-planificado">Planificado</span>
                             </div>
                             <div class="dia-stats">
-                                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>9/40 ped</strong></span></div>
-                                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>270/6250 kg</strong></span></div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-box"></i>
+                                    <span><strong>9/40 ped</strong></span>
+                                </div>
+                                <div class="dia-stat">
+                                    <i class="fas fa-weight"></i>
+                                    <span><strong>270/6250 kg</strong></span>
+                                </div>
                             </div>
                             <div class="dia-pagos-line">
-                                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> XXX</span>
-                                <span class="pago-item"><i class="fas fa-credit-card"></i> XXX</span>
+                                <span class="pago-item">
+                                    <i class="fas fa-money-bill-wave"></i> XXX
+                                </span>
+                                <span class="pago-item">
+                                    <i class="fas fa-credit-card"></i> XXX
+                                </span>
                             </div>
                             <div class="dia-botones">
-                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-27')"><i class="fas fa-eye"></i> Ver detalle</button>
-                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-27')"><i class="fas fa-list"></i> Ver pedidos</button>
+                                <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '2025-12-27')">
+                                    <i class="fas fa-eye"></i> Ver detalle
+                                </button>
+                                <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '2025-12-27')">
+                                    <i class="fas fa-list"></i> Ver pedidos
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="vehiculos-capacidades" id="vehiculos-capacidades"></div>
+                    <!-- Capacidades de vehiculos -->
+                    <div class="vehiculos-capacidades" id="vehiculos-capacidades">
+                        <!-- Se renderiza dinamicamente con JS -->
+                    </div>
 
                     <div class="calendario-hint">
                         <i class="fas fa-info-circle"></i>
-                        Click en un dia para ver capacidades de vehiculos. Click en "Ver detalle" para ver lista completa de pedidos.
+                        Click en un dia para ver capacidades de vehiculos. Click en "Ver detalle" para ver lista completa de pedidos con opcion de editar, marcar como entregado, etc.
                     </div>
                 </div>
             </div>
@@ -433,8 +540,11 @@
                         <span id="edit-cliente-dir">3 items - 12kg</span>
                     </div>
                 </div>
-                <button class="btn-close-modal" onclick="cerrarModalEditar()"><i class="fas fa-times"></i></button>
+                <button class="btn-close-modal" onclick="cerrarModalEditar()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
+
             <div class="modal-body-edit-grid">
                 <div class="edit-productos-area">
                     <table class="table-edit-productos">
@@ -445,31 +555,70 @@
                                 <th style="width: 16%; text-align: right;">P. Unit.</th>
                                 <th style="width: 12%; text-align: center;">Cant.</th>
                                 <th style="width: 16%; text-align: right;">Subtotal</th>
-                                <th style="width: 4%;"></th>
+                                <th style="width: 4%; text-align: center;"></th>
                             </tr>
                         </thead>
-                        <tbody id="edit-productos-tbody"></tbody>
+                        <tbody id="edit-productos-tbody">
+                            <!-- Se renderiza con JS -->
+                        </tbody>
                     </table>
-                    <button class="btn-agregar-producto" onclick="abrirModalAgregarProducto()"><i class="fas fa-plus-circle"></i> Agregar producto</button>
+
+                    <button class="btn-agregar-producto" onclick="abrirModalAgregarProducto()">
+                        <i class="fas fa-plus-circle"></i> Agregar producto
+                    </button>
                 </div>
+
                 <div class="edit-panel-totales">
                     <div class="totales-edit-section">
-                        <div class="total-row"><span class="label">Subtotal:</span><span class="value" id="edit-subtotal">$0</span></div>
-                        <div class="total-row"><span class="label">Desc. Nivel:</span><span class="value" id="edit-descuentos">-$0</span></div>
-                        <div class="total-row"><span class="label">Desc. Manual:</span><span class="value" id="edit-desc-manual">-$0</span></div>
-                        <div class="total-row"><span class="label">Ajustes:</span><span class="value" id="edit-ajustes">-$0</span></div>
+                        <div class="total-row">
+                            <span class="label">Subtotal:</span>
+                            <span class="value" id="edit-subtotal">$0</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">Desc. Nivel:</span>
+                            <span class="value" id="edit-descuentos">-$0</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">Desc. Manual:</span>
+                            <span class="value" id="edit-desc-manual">-$0</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">Ajustes:</span>
+                            <span class="value" id="edit-ajustes">-$0</span>
+                        </div>
+
                         <div class="total-divider"></div>
-                        <div class="total-row total-nuevo"><span class="label">TOTAL NUEVO:</span><span class="value" id="edit-total-nuevo">$0</span></div>
+
+                        <div class="total-row total-nuevo">
+                            <span class="label">TOTAL NUEVO:</span>
+                            <span class="value" id="edit-total-nuevo">$0</span>
+                        </div>
+
                         <div class="total-divider"></div>
-                        <div class="total-row text-muted-row"><span class="label">Total anterior:</span><span class="value" id="edit-total-anterior">$0</span></div>
-                        <div class="total-row diferencia-row"><span class="label">Diferencia:</span><span class="value" id="edit-diferencia">$0</span></div>
-                        <div class="peso-info"><i class="fas fa-weight"></i><span>Peso total: <strong id="edit-peso-total">0kg</strong></span></div>
+
+                        <div class="total-row text-muted-row">
+                            <span class="label">Total anterior:</span>
+                            <span class="value" id="edit-total-anterior">$0</span>
+                        </div>
+
+                        <div class="total-row diferencia-row">
+                            <span class="label">Diferencia:</span>
+                            <span class="value" id="edit-diferencia">$0</span>
+                        </div>
+
+                        <div class="peso-info">
+                            <i class="fas fa-weight"></i>
+                            <span>Peso total: <strong id="edit-peso-total">0kg</strong></span>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModalEditar()">Cancelar</button>
-                <button class="btn-primary" onclick="guardarEdicion()"><i class="fas fa-save"></i> Guardar Cambios</button>
+                <button class="btn-primary" onclick="guardarEdicion()">
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
             </div>
         </div>
     </div>
@@ -479,34 +628,61 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3><i class="fas fa-check-circle"></i> Marcar Pedido como ENTREGADO</h3>
-                <button class="btn-close-modal" onclick="cerrarModal()"><i class="fas fa-times"></i></button>
+                <button class="btn-close-modal" onclick="cerrarModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
+
             <div class="modal-body">
                 <div class="pedido-info">
-                    <div class="info-row"><span class="label">Pedido:</span><span class="value" id="modal-pedido-num">#00467</span></div>
-                    <div class="info-row"><span class="label">Cliente:</span><span class="value" id="modal-cliente-nombre">ARAUCACIAS 371</span></div>
-                    <div class="info-row"><span class="label">Total pedido:</span><span class="value"><strong id="modal-pedido-total">$45.800</strong></span></div>
+                    <div class="info-row">
+                        <span class="label">Pedido:</span>
+                        <span class="value" id="modal-pedido-num">#00467</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Cliente:</span>
+                        <span class="value" id="modal-cliente-nombre">ARAUCACIAS 371</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Total pedido:</span>
+                        <span class="value"><strong id="modal-pedido-total">$45.800</strong></span>
+                    </div>
                 </div>
+
                 <div class="divider-modal"></div>
+
                 <div class="info-pago-cc">
-                    <div class="icon-info-wrapper"><i class="fas fa-money-check-alt"></i></div>
+                    <div class="icon-info-wrapper">
+                        <i class="fas fa-money-check-alt"></i>
+                    </div>
                     <div class="info-content">
                         <h4>Registro de pagos</h4>
                         <p>Los pagos se registran desde <strong>Cuenta Corriente</strong> del cliente.</p>
-                        <p class="text-muted-small">Puedes marcar el pedido como entregado ahora y registrar el pago despues desde el perfil del cliente.</p>
-                        <button class="btn-ir-cc" onclick="irACuentaCorriente()"><i class="fas fa-arrow-right"></i> Ir a Cuenta Corriente</button>
+                        <p class="text-muted-small">Puedes marcar el pedido como entregado ahora y registrar el pago
+                            despues desde el perfil del cliente.</p>
+
+                        <button class="btn-ir-cc" onclick="irACuentaCorriente()">
+                            <i class="fas fa-arrow-right"></i> Ir a Cuenta Corriente
+                        </button>
                     </div>
                 </div>
+
                 <div class="divider-modal"></div>
+
                 <div class="editar-hint">
                     <i class="fas fa-info-circle"></i>
                     Hubo cambios en cantidades o productos?
-                    <button class="btn-link" onclick="abrirModalEditar()"><i class="fas fa-edit"></i> Editar pedido antes de marcar entregado</button>
+                    <button class="btn-link" onclick="abrirModalEditar()">
+                        <i class="fas fa-edit"></i> Editar pedido antes de marcar entregado
+                    </button>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
-                <button class="btn-primary" onclick="confirmarEntregado()"><i class="fas fa-check"></i> Marcar como Entregado</button>
+                <button class="btn-primary" onclick="confirmarEntregado()">
+                    <i class="fas fa-check"></i> Marcar como Entregado
+                </button>
             </div>
         </div>
     </div>
@@ -516,27 +692,45 @@
         <div class="modal-content modal-detalle-large">
             <div class="modal-header">
                 <div class="modal-header-info">
-                    <h3><i class="fas fa-file-invoice"></i> Detalle del Pedido <span id="detalle-pedido-num">#00467</span></h3>
+                    <h3><i class="fas fa-file-invoice"></i> Detalle del Pedido <span
+                            id="detalle-pedido-num">#00467</span></h3>
                     <div class="pedido-estado-info">
                         <span class="badge-estado" id="detalle-estado-badge">EN TRANSITO</span>
                         <span class="separator">-</span>
                         <span id="detalle-fecha">Lunes 23 Dic 2025</span>
                     </div>
                 </div>
-                <button class="btn-close-modal" onclick="cerrarModalDetalle()"><i class="fas fa-times"></i></button>
+                <button class="btn-close-modal" onclick="cerrarModalDetalle()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
+
             <div class="modal-body-detalle-grid">
                 <div class="detalle-main-area">
                     <div class="detalle-section">
-                        <div class="section-title"><i class="fas fa-user"></i> Cliente</div>
+                        <div class="section-title">
+                            <i class="fas fa-user"></i> Cliente
+                        </div>
                         <div class="info-grid">
-                            <div class="info-item"><span class="info-label">Nombre:</span><span class="info-value" id="detalle-cliente-nombre">ARAUCACIAS 371</span></div>
-                            <div class="info-item"><span class="info-label">Telefono:</span><span class="info-value" id="detalle-cliente-tel">294-123456</span></div>
-                            <div class="info-item"><span class="info-label">Direccion:</span><span class="info-value" id="detalle-cliente-dir">Araucacias 371, Bariloche</span></div>
+                            <div class="info-item">
+                                <span class="info-label">Nombre:</span>
+                                <span class="info-value" id="detalle-cliente-nombre">ARAUCACIAS 371</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Telefono:</span>
+                                <span class="info-value" id="detalle-cliente-tel">294-123456</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Direccion:</span>
+                                <span class="info-value" id="detalle-cliente-dir">Araucacias 371, Bariloche</span>
+                            </div>
                         </div>
                     </div>
+
                     <div class="detalle-section">
-                        <div class="section-title"><i class="fas fa-box"></i> Productos</div>
+                        <div class="section-title">
+                            <i class="fas fa-box"></i> Productos
+                        </div>
                         <table class="table-detalle-productos">
                             <thead>
                                 <tr>
@@ -547,47 +741,94 @@
                                     <th style="width: 15%; text-align: right;">Subtotal</th>
                                 </tr>
                             </thead>
-                            <tbody id="detalle-productos-tbody"></tbody>
+                            <tbody id="detalle-productos-tbody">
+                                <!-- Se renderiza con JS -->
+                            </tbody>
                         </table>
-                        <div class="peso-total-row"><i class="fas fa-weight"></i><span>Peso total: <strong id="detalle-peso-total">0kg</strong></span></div>
+
+                        <div class="peso-total-row">
+                            <i class="fas fa-weight"></i>
+                            <span>Peso total: <strong id="detalle-peso-total">0kg</strong></span>
+                        </div>
                     </div>
+
                     <div class="detalle-section" id="detalle-notas-section" style="display: none;">
-                        <div class="section-title"><i class="fas fa-sticky-note"></i> Notas</div>
-                        <div class="nota-content" id="detalle-nota-texto"></div>
+                        <div class="section-title">
+                            <i class="fas fa-sticky-note"></i> Notas
+                        </div>
+                        <div class="nota-content" id="detalle-nota-texto">
+                        </div>
                     </div>
                 </div>
+
                 <div class="detalle-sidebar">
                     <div class="detalle-sidebar-section">
                         <div class="sidebar-section-title">Resumen Financiero</div>
-                        <div class="total-row"><span class="label">Subtotal:</span><span class="value" id="detalle-subtotal">$0</span></div>
-                        <div class="total-row"><span class="label">Desc. Nivel:</span><span class="value" id="detalle-descuentos">-$0</span></div>
-                        <div class="total-row"><span class="label">Desc. Manual:</span><span class="value" id="detalle-desc-manual">-$0</span></div>
-                        <div class="total-row"><span class="label">Ajustes:</span><span class="value" id="detalle-ajustes">-$0</span></div>
-                        <div class="total-row total-destacado"><span class="label">TOTAL PEDIDO:</span><span class="value" id="detalle-total">$0</span></div>
+
+                        <div class="total-row">
+                            <span class="label">Subtotal:</span>
+                            <span class="value" id="detalle-subtotal">$0</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">Desc. Nivel:</span>
+                            <span class="value" id="detalle-descuentos">-$0</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">Desc. Manual:</span>
+                            <span class="value" id="detalle-desc-manual">-$0</span>
+                        </div>
+                        <div class="total-row">
+                            <span class="label">Ajustes:</span>
+                            <span class="value" id="detalle-ajustes">-$0</span>
+                        </div>
+
+                        <div class="total-row total-destacado">
+                            <span class="label">TOTAL PEDIDO:</span>
+                            <span class="value" id="detalle-total">$0</span>
+                        </div>
                     </div>
+
                     <div class="detalle-sidebar-section">
                         <div class="sidebar-section-title">Metodo de Pago</div>
-                        <div class="metodo-pago-display" id="detalle-metodo-pago"></div>
+                        <div class="metodo-pago-display" id="detalle-metodo-pago">
+                        </div>
                     </div>
+
                     <div class="detalle-sidebar-section">
                         <div class="sidebar-section-title">Estado de Pago</div>
                         <div class="estado-pago-info">
-                            <div class="total-row"><span class="label">Monto pagado:</span><span class="value" id="detalle-pagado">$0</span></div>
-                            <div class="total-row"><span class="label">Pendiente:</span><span class="value pendiente-valor" id="detalle-pendiente">$0</span></div>
+                            <div class="total-row">
+                                <span class="label">Monto pagado:</span>
+                                <span class="value" id="detalle-pagado">$0</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="label">Pendiente:</span>
+                                <span class="value pendiente-valor" id="detalle-pendiente">$0</span>
+                            </div>
                         </div>
                     </div>
+
                     <div class="detalle-sidebar-section" id="detalle-entrega-section" style="display: none;">
                         <div class="sidebar-section-title">Informacion de Entrega</div>
                         <div class="entrega-info">
-                            <div class="info-item-small"><i class="fas fa-calendar-check"></i><span id="detalle-fecha-entrega">25/12/2025 14:30</span></div>
-                            <div class="info-item-small"><i class="fas fa-user"></i><span id="detalle-usuario-entrega">Juan Perez</span></div>
+                            <div class="info-item-small">
+                                <i class="fas fa-calendar-check"></i>
+                                <span id="detalle-fecha-entrega">25/12/2025 14:30</span>
+                            </div>
+                            <div class="info-item-small">
+                                <i class="fas fa-user"></i>
+                                <span id="detalle-usuario-entrega">Juan Perez</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModalDetalle()">Cerrar</button>
-                <button class="btn-primary" onclick="abrirEditarDesdeDetalle()"><i class="fas fa-edit"></i> Editar Pedido</button>
+                <button class="btn-primary" onclick="abrirEditarDesdeDetalle()">
+                    <i class="fas fa-edit"></i> Editar Pedido
+                </button>
             </div>
         </div>
     </div>

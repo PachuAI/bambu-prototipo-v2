@@ -15,6 +15,7 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ---
 
 **Fecha**: 06 Enero 2026
+**Última actualización**: 06 Enero 2026 (hallazgo crítico: descuento sin promociones)
 **Archivos verificados**:
 - `prototipos/cotizador.html`
 - `prototipos/assets/cotizador/script.js`
@@ -141,7 +142,22 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 ### Alta prioridad
 
-1. **Atajos de teclado**
+1. **⚠️ CRÍTICO: Descuento sobre base sin promociones**
+   - PRD: **Sección 9.1.1** (agregado Diciembre 2025)
+   - Debe hacer: Excluir productos `en_promocion=true` del cálculo de descuentos
+   - Cálculo correcto:
+     ```javascript
+     // Base descuento = subtotal - suma(productos con en_promocion=true)
+     const baseDescuento = productos.reduce((sum, p) => {
+       return p.en_promocion ? sum : sum + (p.precio * p.qty)
+     }, 0)
+     descuentoMonto = baseDescuento * (descuentoPorcentaje / 100)
+     ```
+   - HTML/JS: No implementado
+   - Complejidad: Media
+   - **PRIORIDAD MÁXIMA**: Regla de negocio nueva en PRD
+
+2. **Atajos de teclado**
    - PRD: Sección 16 completa
    - Debe hacer:
      - `Shift+4` → Confirmar Pedido
@@ -211,13 +227,7 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 ### Baja prioridad
 
-11. **Descuento sobre base sin promociones**
-    - PRD: Sección 9.1.1
-    - Debe hacer: Excluir productos en_promocion del cálculo de descuento
-    - Mock actual: No hay productos con promoción
-    - Complejidad: Media (cuando se implemente promociones)
-
-12. **Edición pedido desde VENTAS**
+11. **Edición pedido desde VENTAS**
     - PRD: Sección 12.3
     - Debe hacer: Cargar pedido existente en cotizador para editar
     - Nota: Requiere integración con módulo Ventas
@@ -241,27 +251,31 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ## Roadmap Implementación
 
 ### Sprint 1 - CRÍTICOS (Flujo básico funcional)
-1. Flujo continuo post-confirmación (quitar reload)
-2. Toast notifications básicas
-3. Guardar Borrador con localStorage
-4. Confirmar Pedido con persistencia mock
+1. ⚠️ **Descuento sobre base sin promociones** (REGLA NEGOCIO NUEVA)
+2. Flujo continuo post-confirmación (quitar reload)
+3. Toast notifications básicas
+4. Guardar Borrador con localStorage
+5. Confirmar Pedido con persistencia mock
 
 ### Sprint 2 - UX IMPORTANTE
-5. Atajos de teclado (Shift+4, F4, Esc)
-6. Navegación teclado en buscadores
-7. Validación fecha solo L-V
-8. Botón copiar en modal resumen
+6. Atajos de teclado (Shift+4, F4, Esc)
+7. Navegación teclado en buscadores
+8. Validación fecha solo L-V
+9. Botón copiar en modal resumen
+10. Input cantidad editable
 
 ### Sprint 3 - COMPLETITUD
-9. Quitar cliente (botón X)
-10. Saldo cliente en resultados
-11. Advertencia stock bajo
-12. Cierre con advertencia cambios
+11. Quitar cliente (botón X)
+12. Saldo cliente en resultados
+13. Advertencia stock bajo
+14. Cierre con advertencia cambios
+15. Productos BAMBU sin restricción stock
 
 ### Sprint 4 - AVANZADO
-13. Remito PDF formal
-14. Edición pedido desde VENTAS
-15. Calendario modal mejorado
+16. Remito PDF formal
+17. Edición pedido desde VENTAS
+18. Calendario modal mejorado
+19. Tab Email/Remito en modal resumen
 
 ---
 
