@@ -6,32 +6,26 @@
 
 ## Estado del Proyecto
 
-**Fase**: Prototipado y especificación
-**Sistema CSS**: ✅ Migración completada (tokens.css + components.css + dark mode)
+**Fase actual**: Auditoría PRD (Fase 2)
+**Fase anterior**: ✅ Prototipado UI completado (8/8 módulos)
+**Sistema CSS**: ✅ Migrado (tokens.css + components.css + dark mode)
 
 ---
 
-## Prototipos Implementados
-
-| Prototipo | Estado | Descripción |
-|-----------|--------|-------------|
-| `dashboard.html` | ✅ | Buscador global, calendario, alertas stock |
-| `cotizador.html` | ✅ | Crear pedidos, modos REPARTO/FÁBRICA |
-| `ventas.html` | ✅ | Lista pedidos, borradores, calendario semana |
-| `clientes.html` | ✅ | Listado clientes con filtros |
-| `cliente-detalle.html` | ✅ | Detalle + Cuenta Corriente (tab integrada) |
-| `repartos-dia.html` | ✅ | Vista día, asignación vehículos |
-
----
-
-## Prototipos Pendientes
+## Prototipos Implementados (11 archivos)
 
 | Prototipo | PRD | Descripción |
 |-----------|-----|-------------|
-| `productos.html` | `prd/productos.html` | CRUD productos, stock, alertas |
-| `estadisticas.html` | `prd/estadisticas.html` | Ventas por producto |
-| `configuracion.html` | `prd/configuracion.html` | Vehículos, ciudades, listas |
-| `backup.html` | `prd/backup.html` | Respaldos y logs |
+| `dashboard.html` | `prd/dashboard.html` | Buscador global, calendario, alertas stock |
+| `cotizador.html` | `prd/cotizador-especificacion.html` | Crear pedidos REPARTO/FÁBRICA |
+| `ventas.html` | `prd/ventas.html` | Lista pedidos, borradores, calendario semana |
+| `repartos-dia.html` | (parte de ventas) | Vista día, asignación vehículos |
+| `clientes.html` | `prd/clientes.html` | Listado clientes con filtros |
+| `cliente-detalle.html` | `prd/cuenta-corriente.html` | Detalle + Cuenta Corriente (tabs) |
+| `productos.html` | `prd/productos.html` | CRUD productos, stock, promociones |
+| `estadisticas.html` | `prd/estadisticas.html` | Ventas por producto, gráficos, exportar |
+| `configuracion.html` | `prd/configuracion.html` | Vehículos, ciudades, listas precio, stock |
+| `backup.html` | `prd/backup.html` | Crear/restaurar backups, logs auditoría |
 
 ---
 
@@ -63,7 +57,9 @@ prototipos/
 
 ## Skills Disponibles
 
-- `/construir-prototipo` - Guía para construir nuevos prototipos HTML
+- `/construir-prototipo` - Construir nuevos prototipos HTML (7 fases)
+- `/analizar-estado-modulo` - Auditar prototipo vs PRD, genera ESTADO-{MODULO}.md
+- `/migrar-css-tokens` - Migrar CSS antiguo al sistema tokens.css
 
 ---
 

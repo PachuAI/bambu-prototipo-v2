@@ -141,20 +141,25 @@ function miFuncion() {
 ## Skills Disponibles
 
 - `/construir-prototipo` - Proceso 7 fases para crear nuevo HTML con reglas de compactación y dark mode
+- `/analizar-estado-modulo` - Auditar prototipo vs PRD, genera documento ESTADO-{MODULO}.md
+- `/migrar-css-tokens` - Migrar CSS antiguo al sistema tokens.css + components.css
 
 ---
 
-## Prototipos Existentes
+## Prototipos Existentes (10 módulos)
 
 | Archivo | Descripción |
 |---------|-------------|
 | `dashboard.html` | Buscador global, calendario, alertas |
 | `cotizador.html` | Crear pedidos (REPARTO/FÁBRICA) |
 | `ventas.html` | Lista + borradores + calendario semana |
-| `clientes.html` | Listado con filtros |
-| `cliente-detalle.html` | Detalle + Cuenta Corriente |
 | `repartos-dia.html` | Vista día, asignar vehículos |
+| `clientes.html` | Listado con filtros |
+| `cliente-detalle.html` | Detalle + Cuenta Corriente (tabs) |
 | `productos.html` | CRUD productos, stock, promociones |
+| `estadisticas.html` | Filtros, tabla, gráfico Chart.js, exportar |
+| `configuracion.html` | Vehículos, ciudades, listas precio, stock |
+| `backup.html` | Crear/restaurar backups, logs auditoría |
 
 ---
 
