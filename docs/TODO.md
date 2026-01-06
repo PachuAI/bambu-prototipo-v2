@@ -47,7 +47,7 @@ Comparar cada prototipo HTML contra su PRD para identificar:
 | # | Módulo | PRD | Prototipo | Auditoría | Estado |
 |---|--------|-----|-----------|-----------|--------|
 | 1 | Dashboard | `prd/dashboard.html` | `dashboard.html` | - | ⏸️ En trabajo (otra instancia) |
-| 2 | Cotizador | `prd/cotizador-especificacion.html` | `cotizador.html` | ESTADO-COTIZADOR.md | ⬜ Pendiente |
+| 2 | Cotizador | `prd/cotizador-especificacion.html` | `cotizador.html` | ESTADO-COTIZADOR.md | ✅ Completado |
 | 3 | Ventas | `prd/ventas.html` | `ventas.html` + `repartos-dia.html` | ESTADO-VENTAS.md | ⬜ Pendiente |
 | 4 | Clientes | `prd/clientes.html` | `clientes.html` | ESTADO-CLIENTES.md | ⬜ Pendiente |
 | 5 | Cliente Detalle | `prd/cuenta-corriente.html` | `cliente-detalle.html` | ESTADO-CUENTA-CORRIENTE.md | ⬜ Pendiente |
