@@ -397,16 +397,16 @@ const VEHICULOS = [
 // ============================================================================
 
 /**
- * Genera ~83 pedidos distribuidos en la semana 23-27/12/2025
+ * Genera ~83 pedidos distribuidos en la semana 06-10/01/2026
  *
- * HOY = 26/12/2025 (Jueves)
+ * HOY = 08/01/2026 (Miércoles)
  *
  * Lógica de control a DÍA VENCIDO (repartidores vuelven tarde):
- * - 23/12 (Lunes): Hace 3 días → CONTROLADO ✅ (todos entregados)
- * - 24/12 (Martes): Hace 2 días → CONTROLADO ✅ (todos entregados)
- * - 25/12 (Miércoles - Navidad): AYER → A CONTROLAR 📋 (controlando HOY)
- * - 26/12 (Jueves): HOY → Repartos saliendo ahora (control mañana)
- * - 27/12 (Viernes): MAÑANA → Preparando repartos
+ * - 06/01 (Lunes): Hace 2 días → CONTROLADO ✅ (todos entregados)
+ * - 07/01 (Martes): AYER → A CONTROLAR 📋 (controlando HOY)
+ * - 08/01 (Miércoles): HOY → Repartos saliendo ahora (control mañana)
+ * - 09/01 (Jueves): MAÑANA → Preparando repartos
+ * - 10/01 (Viernes): Pasado mañana → Planificando
  *
  * Estados: borrador, pendiente, asignado, en transito, entregado
  */
@@ -481,95 +481,100 @@ function generatePedidos() {
   }
 
   // ========================================================================
-  // LUNES 23/12/2025 - DÍA CONTROLADO (18 pedidos - TODOS ENTREGADOS)
+  // LUNES 06/01/2026 - DÍA CONTROLADO (18 pedidos - TODOS ENTREGADOS)
   // ========================================================================
 
   // 14 repartos entregados
   for (let i = 0; i < 14; i++) {
     const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-23', 'reparto', 'entregado', veh, ''));
+    pedidos.push(crearPedido('2026-01-06', 'reparto', 'entregado', veh, ''));
   }
 
   // 4 fábrica entregados
   for (let i = 0; i < 4; i++) {
-    pedidos.push(crearPedido('2025-12-23', 'fabrica', 'entregado', null, 'Retiró en planta'));
+    pedidos.push(crearPedido('2026-01-06', 'fabrica', 'entregado', null, 'Retiró en planta'));
   }
 
   // ========================================================================
-  // MARTES 24/12/2025 - DÍA CONTROLADO (16 pedidos - TODOS ENTREGADOS)
+  // MARTES 07/01/2026 - AYER (16 pedidos - A CONTROLAR HOY)
   // ========================================================================
 
-  // 12 repartos entregados
-  for (let i = 0; i < 12; i++) {
+  // 10 repartos entregados (ya controlados hoy)
+  for (let i = 0; i < 10; i++) {
     const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-24', 'reparto', 'entregado', veh, ''));
-  }
-
-  // 4 fábrica entregados
-  for (let i = 0; i < 4; i++) {
-    pedidos.push(crearPedido('2025-12-24', 'fabrica', 'entregado', null, 'Retiró en planta'));
-  }
-
-  // ========================================================================
-  // MIÉRCOLES 25/12/2025 - NAVIDAD - AYER (14 pedidos - A CONTROLAR HOY)
-  // ========================================================================
-
-  // 8 repartos entregados (ya controlados hoy)
-  for (let i = 0; i < 8; i++) {
-    const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-25', 'reparto', 'entregado', veh, ''));
+    pedidos.push(crearPedido('2026-01-07', 'reparto', 'entregado', veh, ''));
   }
 
   // 3 repartos en tránsito (aún controlando)
   for (let i = 0; i < 3; i++) {
     const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-25', 'reparto', 'en transito', veh, 'Pendiente confirmar entrega'));
+    pedidos.push(crearPedido('2026-01-07', 'reparto', 'en transito', veh, 'Pendiente confirmar entrega'));
   }
 
   // 3 fábrica entregados
   for (let i = 0; i < 3; i++) {
-    pedidos.push(crearPedido('2025-12-25', 'fabrica', 'entregado', null, 'Retiró en planta'));
+    pedidos.push(crearPedido('2026-01-07', 'fabrica', 'entregado', null, 'Retiró en planta'));
   }
 
   // ========================================================================
-  // JUEVES 26/12/2025 - HOY (16 pedidos - REPARTOS SALIENDO AHORA)
+  // MIÉRCOLES 08/01/2026 - HOY (16 pedidos - REPARTOS SALIENDO AHORA)
   // ========================================================================
 
   // 9 repartos en tránsito (ya salieron)
   for (let i = 0; i < 9; i++) {
     const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-26', 'reparto', 'en transito', veh, 'En reparto'));
+    pedidos.push(crearPedido('2026-01-08', 'reparto', 'en transito', veh, 'En reparto'));
   }
 
   // 5 repartos asignados (listos para salir)
   for (let i = 0; i < 5; i++) {
     const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-26', 'reparto', 'asignado', veh, 'Listo para despachar'));
+    pedidos.push(crearPedido('2026-01-08', 'reparto', 'asignado', veh, 'Listo para despachar'));
   }
 
   // 2 fábrica entregados (retiraron temprano)
   for (let i = 0; i < 2; i++) {
-    pedidos.push(crearPedido('2025-12-26', 'fabrica', 'entregado', null, 'Retiró en planta'));
+    pedidos.push(crearPedido('2026-01-08', 'fabrica', 'entregado', null, 'Retiró en planta'));
   }
 
   // ========================================================================
-  // VIERNES 27/12/2025 - MAÑANA (16 pedidos - PREPARANDO REPARTOS)
+  // JUEVES 09/01/2026 - MAÑANA (16 pedidos - PREPARANDO REPARTOS)
   // ========================================================================
 
-  // 9 repartos pendientes (sin vehículo)
-  for (let i = 0; i < 9; i++) {
-    pedidos.push(crearPedido('2025-12-27', 'reparto', 'pendiente', null, 'Pendiente asignar vehículo'));
-  }
-
-  // 5 repartos asignados (ya tienen vehículo)
+  // 5 repartos pendientes (sin vehículo)
   for (let i = 0; i < 5; i++) {
+    pedidos.push(crearPedido('2026-01-09', 'reparto', 'pendiente', null, 'Pendiente asignar vehículo'));
+  }
+
+  // 9 repartos asignados (ya tienen vehículo)
+  for (let i = 0; i < 9; i++) {
     const veh = vehiculos[i % 3];
-    pedidos.push(crearPedido('2025-12-27', 'reparto', 'asignado', veh, 'Programado para mañana'));
+    pedidos.push(crearPedido('2026-01-09', 'reparto', 'asignado', veh, 'Programado para mañana'));
   }
 
   // 2 fábrica pendientes (retirarán mañana)
   for (let i = 0; i < 2; i++) {
-    pedidos.push(crearPedido('2025-12-27', 'fabrica', 'pendiente', null, 'Cliente retira mañana'));
+    pedidos.push(crearPedido('2026-01-09', 'fabrica', 'pendiente', null, 'Cliente retira mañana'));
+  }
+
+  // ========================================================================
+  // VIERNES 10/01/2026 - PASADO MAÑANA (12 pedidos - PLANIFICANDO)
+  // ========================================================================
+
+  // 8 repartos pendientes (sin vehículo)
+  for (let i = 0; i < 8; i++) {
+    pedidos.push(crearPedido('2026-01-10', 'reparto', 'pendiente', null, 'Planificando'));
+  }
+
+  // 2 repartos asignados
+  for (let i = 0; i < 2; i++) {
+    const veh = vehiculos[i % 3];
+    pedidos.push(crearPedido('2026-01-10', 'reparto', 'asignado', veh, 'Cliente prioritario'));
+  }
+
+  // 2 fábrica pendientes
+  for (let i = 0; i < 2; i++) {
+    pedidos.push(crearPedido('2026-01-10', 'fabrica', 'pendiente', null, 'Cliente retira viernes'));
   }
 
   // ========================================================================

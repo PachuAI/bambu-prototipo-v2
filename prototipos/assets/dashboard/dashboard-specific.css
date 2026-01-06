@@ -409,199 +409,447 @@
 }
 
 /* ============================================================================
-   SPLIT SECTION (Orders + Stock Alerts)
+   DAY CARD - Estado "today" (día actual)
    ============================================================================ */
 
-.split-section {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: var(--spacing-2xl);
+.day-card-v2.today {
+    border: 2px solid var(--color-info);
+    background: var(--color-info-bg);
 }
 
-/* Orders List Container */
-.orders-list-container {
+.day-card-v2.today .day-label {
+    color: var(--color-info);
+}
+
+.day-card-v2.today .metric-pill {
+    background: var(--bg-white);
+    border-color: var(--color-info-light);
+}
+
+/* ============================================================================
+   REPARTOS PROGRAMADOS PARA MAÑANA
+   ============================================================================ */
+
+.section-repartos-manana {
     background: var(--bg-white);
     border: var(--border-width) solid var(--border-color);
     border-radius: var(--border-radius-lg);
-    padding: 0;
     box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
 }
 
-.clean-list-header {
-    padding: var(--spacing-lg);
-    border-bottom: var(--border-width) solid var(--border-color);
+.repartos-manana-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 12px 16px;
     background: var(--bg-sidebar);
-    border-top-left-radius: var(--border-radius-lg);
-    border-top-right-radius: var(--border-radius-lg);
-}
-
-.clean-list-title {
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-base);
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.orders-groups {
-    padding: 0;
-}
-
-/* Order Row Item */
-.order-row-item {
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-md) var(--spacing-lg);
     border-bottom: var(--border-width) solid var(--border-color);
-    background: var(--bg-white);
-    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-.order-row-item:last-of-type {
-    border-bottom: none;
-}
-
-.order-row-item:hover {
-    background: var(--bg-app);
-    border-color: var(--border-color);
-    transform: none;
-}
-
-.order-icon {
-    width: 32px;
-    height: 32px;
-    background: var(--color-success-light);
-    color: var(--color-success-dark);
-    border-radius: var(--border-radius-sm);
-    font-size: var(--font-size-base);
+.repartos-manana-title {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.order-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.order-main-text {
-    font-weight: var(--font-weight-semibold);
+    gap: 8px;
     font-size: 13px;
     color: var(--text-primary);
-    line-height: 1.4;
 }
 
-.order-sub-text {
-    font-size: var(--font-size-xs);
+.repartos-manana-title i {
+    color: var(--color-violet);
+}
+
+.repartos-manana-title strong {
+    color: var(--color-violet);
+}
+
+.repartos-manana-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
     color: var(--text-secondary);
 }
 
-.order-meta {
+.stat-item {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
     gap: 4px;
 }
 
-.tag-status {
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
+.stat-item i {
+    font-size: 11px;
+    color: var(--text-muted);
 }
 
-.tag-ready {
-    background: var(--color-success-light);
-    color: var(--color-success-dark);
-}
-
-/* Stock Alerts Container */
-.stock-alerts-container {
-    background: var(--bg-white);
-    border: var(--border-width) solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    padding: 0;
-    box-shadow: var(--shadow-sm);
-    height: fit-content;
-}
-
-.stock-alerts-container .clean-list-header {
+.stat-pct {
     background: var(--color-warning-light);
-    border-bottom: var(--border-width) solid var(--color-warning-border);
+    color: var(--color-warning-dark);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
 }
 
-.stock-alerts-container .clean-list-title {
-    color: var(--text-primary);
+.stat-divider {
+    color: var(--border-color);
 }
 
-.alert-item {
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-bottom: var(--border-width) solid var(--border-color);
+/* Grid de 4 columnas */
+.repartos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+}
+
+.reparto-col {
+    padding: 12px;
+    border-right: var(--border-width) solid var(--border-color);
+    min-height: 140px;
+}
+
+.reparto-col:last-child {
+    border-right: none;
+}
+
+/* Primera columna: Ciudades (mismo fondo que las demás) */
+.reparto-col.col-ciudades {
+    background: transparent;
+}
+
+.reparto-col-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--spacing-md);
+    align-items: center;
+    margin-bottom: 8px;
 }
 
-.alert-item:last-child {
-    border-bottom: none;
-}
-
-.alert-item:hover {
-    background: var(--bg-sidebar);
-    transform: none;
-    box-shadow: none;
-}
-
-.alert-content {
-    flex: 1;
-}
-
-.alert-header {
-    display: flex;
-    gap: var(--spacing-sm);
-    margin-bottom: 4px;
-    justify-content: flex-start;
-}
-
-.product-alert-name {
-    font-weight: var(--font-weight-semibold);
-    font-size: 13px;
-    color: var(--text-primary);
-    margin-bottom: 2px;
-}
-
-.alert-badge {
-    background: var(--color-danger);
-    color: var(--text-white);
-    font-size: 9px;
-    padding: 1px 4px;
-    border-radius: 3px;
+.reparto-col-title {
+    font-size: 11px;
     font-weight: var(--font-weight-bold);
-    height: fit-content;
-    margin-top: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
 }
 
-.stock-meter {
-    font-size: var(--font-size-xs);
+.reparto-col-pct {
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
     color: var(--text-secondary);
 }
 
-/* Footer of lists */
-.list-footer-action {
-    padding: var(--spacing-md);
+.reparto-col-subtitle {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+/* Barra de progreso vehículo */
+.vehiculo-progress {
+    height: 6px;
+    background: var(--bg-app);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.vehiculo-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.vehiculo-progress-fill.low { background: var(--color-success); }
+.vehiculo-progress-fill.medium { background: var(--color-warning); }
+.vehiculo-progress-fill.high { background: var(--color-danger); }
+
+/* Badge pedidos */
+.reparto-pedidos-badge {
+    display: inline-block;
+    background: var(--color-success-light);
+    color: var(--color-success-dark);
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+}
+
+/* Lista ciudades */
+.ciudades-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ciudad-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-primary);
+    padding: 2px 0;
+}
+
+.ciudad-item .ciudad-nombre {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ciudad-item .ciudad-nombre i {
+    font-size: 8px;
+    color: var(--color-danger);
+}
+
+.ciudad-item .ciudad-meta {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+/* Resumen ciudades */
+.ciudades-resumen {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: var(--border-width) dashed var(--border-color);
+    font-size: 10px;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   ZONA INFERIOR: 2 widgets lado a lado
+   ============================================================================ */
+
+.dashboard-bottom-widgets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+/* ============================================================================
+   WIDGET BASE (compartido)
+   ============================================================================ */
+
+.widget-card {
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.widget-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.widget-title i {
+    font-size: 10px;
+}
+
+.widget-body {
+    padding: 6px 10px;
+}
+
+/* ============================================================================
+   STOCK CRÍTICO (lista compacta)
+   ============================================================================ */
+
+.widget-stock .widget-header {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-bottom-color: var(--color-warning-border);
+}
+
+.widget-stock .widget-title {
+    color: var(--color-warning-dark);
+}
+
+.widget-stock .widget-title i {
+    color: var(--color-warning);
+}
+
+.stock-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stock-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.stock-row:last-child {
+    border-bottom: none;
+}
+
+.stock-row-name {
+    font-size: 11px;
+    color: var(--text-primary);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stock-row-qty {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin: 0 10px;
+    white-space: nowrap;
+}
+
+.stock-row-badge {
+    font-size: 9px;
+    font-weight: var(--font-weight-bold);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.stock-row-badge.agotado {
+    background: var(--color-danger);
+    color: white;
+}
+
+.stock-row-badge.bajo {
+    background: var(--color-warning);
+    color: white;
+}
+
+/* ============================================================================
+   PEDIDOS SIN ASIGNAR
+   ============================================================================ */
+
+.widget-sin-asignar .widget-header {
+    background: var(--bg-sidebar);
+}
+
+.widget-sin-asignar .widget-title i {
+    color: var(--color-violet);
+}
+
+.sin-asignar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sin-asignar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.sin-asignar-row:hover {
+    background: var(--bg-hover);
+}
+
+.sin-asignar-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.sin-asignar-cliente {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.sin-asignar-ciudad {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.sin-asignar-peso {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.widget-empty {
+    padding: 16px;
     text-align: center;
-    border-top: var(--border-width) solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.widget-empty i {
+    font-size: 20px;
+    margin-bottom: 8px;
+    display: block;
+    color: var(--color-success);
+}
+
+/* ============================================================================
+   WIDGET CIUDADES
+   ============================================================================ */
+
+.widget-ciudades .widget-header {
+    background: var(--bg-sidebar);
+}
+
+.widget-ciudades .widget-title i {
+    color: var(--color-danger);
+}
+
+.ciudades-widget-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.ciudad-widget-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 6px;
+    border-radius: var(--border-radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.ciudad-widget-row:hover {
+    background: var(--bg-hover);
+}
+
+.ciudad-widget-name {
+    font-size: 11px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ciudad-widget-name i {
+    font-size: 9px;
+    color: var(--color-danger);
+}
+
+.ciudad-widget-stats {
+    font-size: 10px;
+    color: var(--text-muted);
 }
 
 /* ============================================================================
@@ -740,4 +988,69 @@
 
 [data-theme="dark"] .user-avatar-sm {
     background: var(--color-primary) !important;
+}
+
+/* Day card today en dark */
+[data-theme="dark"] .day-card-v2.today {
+    border-color: var(--color-info) !important;
+    background: var(--bg-sidebar) !important;
+}
+
+/* Repartos mañana */
+[data-theme="dark"] .section-repartos-manana {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .repartos-manana-header {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .reparto-col {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .reparto-col.col-ciudades {
+    background: transparent !important;
+}
+
+[data-theme="dark"] .vehiculo-progress {
+    background: var(--bg-hover) !important;
+}
+
+/* Widgets inferiores */
+[data-theme="dark"] .widget-card {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .widget-header {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .widget-stock .widget-header {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+    border-color: #c2410c !important;
+}
+
+[data-theme="dark"] .widget-stock .widget-title,
+[data-theme="dark"] .widget-stock .widget-title i {
+    color: white !important;
+}
+
+[data-theme="dark"] .widget-sin-asignar .widget-header {
+    background: var(--bg-sidebar) !important;
+}
+
+[data-theme="dark"] .stock-row {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .ciudad-widget-row:hover {
+    background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .widget-ciudades .widget-header {
+    background: var(--bg-sidebar) !important;
 }

@@ -1,138 +1,440 @@
+// ============================================================================
+// DASHBOARD V2 - Script Principal
+// PRD: Dashboard con calendario semanal, repartos mañana y stock crítico
+// ============================================================================
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Dashboard V2 Loaded");
 
-    // DATA SIMULATION FOR SEARCH
-    const SEARCH_DB = {
-        clientes: [
-            { id: 1, name: "Araucarias 371", detail: "Cipolletti • 299-4567890", type: "client" },
-            { id: 2, name: "9 de Julio 902", detail: "Cipolletti • 299-5123456", type: "client" },
-            { id: 3, name: "San Luis 372", detail: "Neuquén • 299-6789012", type: "client" },
-            { id: 4, name: "Supermercado La Anónima", detail: "Neuquén • 299-1112222", type: "client" }
-        ],
-        productos: [
-            { id: 101, name: "Botella PET Cristal 1L", detail: "Stock: 0 - AGOTADO", type: "product" },
-            { id: 102, name: "Bolsas Consorcio 50x70", detail: "Stock: 156 - Disponible", type: "product" },
-            { id: 103, name: "Lavandina 5L", detail: "Stock: 40 - Bajo", type: "product" },
-            { id: 104, name: "Pack Limpieza Full", detail: "Combo Oferta", type: "product" }
-        ],
-        pedidos: [
-            { id: 1204, name: "Pedido #1204", detail: "Ingeniero Huergo - Listo", type: "order" },
-            { id: 1205, name: "Pedido #1205", detail: "Choele Choel - Listo", type: "order" },
-            { id: 1210, name: "Pedido #1210", detail: "Neuquén - En proceso", type: "order" }
-        ]
-    };
+    // ========================================================================
+    // CONFIGURACIÓN: Fecha simulada (miércoles 8 enero 2026)
+    // ========================================================================
+    const HOY = new Date(2026, 0, 8); // Miércoles 8 Enero 2026
+    const CAPACIDAD_TOTAL_FLOTA = VEHICULOS.reduce((sum, v) => sum + v.capacidadKg, 0);
 
-    // Global Search Interactions
-    const globalSearch = document.getElementById('global-search');
-    const resultsContainer = document.getElementById('global-search-results');
+    // ========================================================================
+    // 1. CALENDARIO SEMANAL
+    // PRD: Click en día → navega a repartos-dia.html
+    // Muestra: pedidos, kilos, porcentaje de carga
+    // Highlight: día actual (HOY)
+    // ========================================================================
 
-    // Shortcut
-    document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            globalSearch.focus();
+    function initCalendario() {
+        const daysRow = document.getElementById('days-row');
+        const mesLabel = document.getElementById('calendario-mes');
+
+        // Obtener lunes de la semana actual
+        const lunes = getLunesDeSemana(HOY);
+
+        // Actualizar label del mes
+        const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        mesLabel.textContent = `${meses[lunes.getMonth()]} ${lunes.getFullYear()}`;
+
+        // Generar 5 días (lunes a viernes)
+        daysRow.innerHTML = '';
+        const diasSemana = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES'];
+
+        for (let i = 0; i < 5; i++) {
+            const fecha = new Date(lunes);
+            fecha.setDate(lunes.getDate() + i);
+
+            const fechaStr = formatFechaISO(fecha);
+            const pedidosDia = getPedidosByFecha(fechaStr);
+
+            // Calcular métricas del día
+            const totalPedidos = pedidosDia.filter(p => p.tipo === 'reparto').length;
+            const totalKg = pedidosDia.reduce((sum, p) => sum + (p.peso || 0), 0);
+            const pctCarga = Math.round((totalKg / CAPACIDAD_TOTAL_FLOTA) * 100);
+
+            // Determinar si es HOY
+            const esHoy = fecha.toDateString() === HOY.toDateString();
+
+            const card = document.createElement('div');
+            card.className = `day-card-v2${esHoy ? ' today' : ''}`;
+            card.dataset.fecha = fechaStr;
+            card.innerHTML = `
+                <span class="day-label">${diasSemana[i]}</span>
+                <span class="day-number-big">${fecha.getDate()}</span>
+                <span class="metric-pill">${totalPedidos} PEDIDOS</span>
+                <span class="metric-pill">${Math.round(totalKg)}kg • ${pctCarga}%</span>
+            `;
+
+            // Click → navegar a repartos-dia.html
+            card.addEventListener('click', () => {
+                window.location.href = `repartos-dia.html?fecha=${fechaStr}`;
+            });
+
+            daysRow.appendChild(card);
         }
-    });
+    }
 
-    // Close on click outside
-    document.addEventListener('click', (e) => {
-        if (!globalSearch.contains(e.target) && !resultsContainer.contains(e.target)) {
-            resultsContainer.classList.add('hidden');
-        }
-    });
+    // ========================================================================
+    // 2. REPARTOS PROGRAMADOS PARA MAÑANA
+    // PRD: 4 columnas - Ciudades + 3 vehículos
+    // ========================================================================
 
-    // Input Logic
-    globalSearch.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
+    function initRepartosManana() {
+        const manana = new Date(HOY);
+        manana.setDate(HOY.getDate() + 1);
+        const fechaMananaStr = formatFechaISO(manana);
 
-        if (query.length < 2) {
-            resultsContainer.classList.add('hidden');
+        // Actualizar header
+        const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        document.getElementById('fecha-manana').textContent =
+            `${diasSemana[manana.getDay()]} ${manana.getDate()} ${meses[manana.getMonth()]}`;
+
+        // Obtener pedidos de mañana (solo repartos)
+        const pedidosManana = getPedidosByFecha(fechaMananaStr).filter(p => p.tipo === 'reparto');
+
+        // Calcular totales
+        const totalKg = pedidosManana.reduce((sum, p) => sum + (p.peso || 0), 0);
+        const pct = Math.round((totalKg / CAPACIDAD_TOTAL_FLOTA) * 100);
+
+        document.getElementById('capacidad-total').textContent = `${Math.round(totalKg)}kg / ${CAPACIDAD_TOTAL_FLOTA}kg`;
+        document.getElementById('capacidad-pct').textContent = `${pct}%`;
+        document.getElementById('pedidos-total').textContent = `${pedidosManana.length} pedidos`;
+
+        // Agrupar por ciudad
+        const ciudadesMap = {};
+        pedidosManana.forEach(p => {
+            if (!ciudadesMap[p.ciudad]) {
+                ciudadesMap[p.ciudad] = { pedidos: 0, kg: 0 };
+            }
+            ciudadesMap[p.ciudad].pedidos++;
+            ciudadesMap[p.ciudad].kg += p.peso || 0;
+        });
+
+        // Agrupar por vehículo
+        const vehiculosMap = {};
+        VEHICULOS.forEach(v => {
+            vehiculosMap[v.nombre] = {
+                pedidos: [],
+                kg: 0,
+                capacidad: v.capacidadKg,
+                modelo: v.modelo || ''
+            };
+        });
+
+        pedidosManana.forEach(p => {
+            if (p.vehiculo && vehiculosMap[p.vehiculo]) {
+                vehiculosMap[p.vehiculo].pedidos.push(p);
+                vehiculosMap[p.vehiculo].kg += p.peso || 0;
+            }
+        });
+
+        // Renderizar grid
+        const grid = document.getElementById('repartos-grid');
+        grid.innerHTML = '';
+
+        // Columna 1: Pedidos sin asignar (mañana)
+        const sinAsignarCol = document.createElement('div');
+        sinAsignarCol.className = 'reparto-col col-sin-asignar';
+
+        const pedidosSinAsignar = pedidosManana.filter(p => !p.vehiculo);
+        const totalSinAsignar = pedidosSinAsignar.length;
+        const kgSinAsignar = pedidosSinAsignar.reduce((sum, p) => sum + (p.peso || 0), 0);
+
+        sinAsignarCol.innerHTML = `
+            <div class="reparto-col-header">
+                <span class="reparto-col-title">Sin asignar</span>
+                <span class="reparto-col-pct">${totalSinAsignar}</span>
+            </div>
+            <div class="reparto-col-subtitle">${Math.round(kgSinAsignar)}kg pendientes</div>
+            ${totalSinAsignar > 0 ? `
+                <div class="sin-asignar-col-list">
+                    ${pedidosSinAsignar.slice(0, 4).map(p => `
+                        <div class="ciudad-item">
+                            <span class="ciudad-nombre">${p.cliente.substring(0, 18)}${p.cliente.length > 18 ? '...' : ''}</span>
+                            <span class="ciudad-meta">${p.peso}kg</span>
+                        </div>
+                    `).join('')}
+                </div>
+                ${totalSinAsignar > 4 ? `<div class="ciudades-resumen">+${totalSinAsignar - 4} más</div>` : ''}
+            ` : `
+                <div class="widget-empty" style="padding: 8px 0;">
+                    <i class="fas fa-check-circle" style="font-size: 16px;"></i>
+                    Todos asignados
+                </div>
+            `}
+        `;
+        grid.appendChild(sinAsignarCol);
+
+        // Columnas 2-4: Vehículos
+        VEHICULOS.forEach(vehiculo => {
+            const data = vehiculosMap[vehiculo.nombre];
+            const pctVeh = Math.round((data.kg / data.capacidad) * 100);
+            const progressClass = pctVeh > 85 ? 'high' : pctVeh > 50 ? 'medium' : 'low';
+
+            // Ciudades de este vehículo
+            const ciudadesVeh = {};
+            data.pedidos.forEach(p => {
+                if (!ciudadesVeh[p.ciudad]) ciudadesVeh[p.ciudad] = { pedidos: 0, kg: 0 };
+                ciudadesVeh[p.ciudad].pedidos++;
+                ciudadesVeh[p.ciudad].kg += p.peso || 0;
+            });
+
+            const col = document.createElement('div');
+            col.className = 'reparto-col';
+            col.innerHTML = `
+                <div class="reparto-col-header">
+                    <span class="reparto-col-title">${vehiculo.nombre}</span>
+                    <span class="reparto-col-pct">${pctVeh}%</span>
+                </div>
+                <div class="reparto-col-subtitle">${Math.round(data.kg)}kg / ${data.capacidad}kg</div>
+                <div class="vehiculo-progress">
+                    <div class="vehiculo-progress-fill ${progressClass}" style="width: ${pctVeh}%"></div>
+                </div>
+                <span class="reparto-pedidos-badge">${data.pedidos.length} PEDIDOS</span>
+                <div class="ciudades-list">
+                    ${Object.entries(ciudadesVeh).slice(0, 3).map(([ciudad, cdata]) => `
+                        <div class="ciudad-item">
+                            <span class="ciudad-nombre"><i class="fas fa-map-marker-alt"></i> ${ciudad}</span>
+                            <span class="ciudad-meta">${cdata.pedidos}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            grid.appendChild(col);
+        });
+    }
+
+    // ========================================================================
+    // 3. STOCK CRÍTICO
+    // Lista compacta de productos con stock bajo
+    // ========================================================================
+
+    function initStockCritico() {
+        const container = document.getElementById('stock-critico-list');
+
+        // Filtrar productos con stock bajo (< stock_minimo)
+        const productosCriticos = PRODUCTOS
+            .filter(p => p.disponible && p.stock_actual < p.stock_minimo)
+            .sort((a, b) => a.stock_actual - b.stock_actual);
+
+        if (productosCriticos.length === 0) {
+            container.innerHTML = `
+                <div class="widget-empty">
+                    <i class="fas fa-check-circle"></i>
+                    Stock OK - No hay productos críticos
+                </div>
+            `;
             return;
         }
 
-        const stats = searchInDB(query);
-        renderResults(stats);
-    });
+        container.innerHTML = productosCriticos.slice(0, 5).map(p => {
+            const esAgotado = p.stock_actual === 0;
+            const badgeClass = esAgotado ? 'agotado' : 'bajo';
+            const badgeText = esAgotado ? 'AGOTADO' : 'BAJO';
 
-    globalSearch.addEventListener('focus', () => {
-        if (globalSearch.value.length >= 2) {
-            resultsContainer.classList.remove('hidden');
-        }
-    });
-
-    function searchInDB(query) {
-        const results = {
-            clientes: SEARCH_DB.clientes.filter(c => c.name.toLowerCase().includes(query) || c.detail.toLowerCase().includes(query)),
-            productos: SEARCH_DB.productos.filter(p => p.name.toLowerCase().includes(query) || p.detail.toLowerCase().includes(query)),
-            pedidos: SEARCH_DB.pedidos.filter(o => o.name.toLowerCase().includes(query) || o.detail.toLowerCase().includes(query))
-        };
-        return results;
+            return `
+                <div class="stock-row">
+                    <span class="stock-row-name">${p.nombre}</span>
+                    <span class="stock-row-qty">${p.stock_actual} / ${p.stock_minimo}</span>
+                    <span class="stock-row-badge ${badgeClass}">${badgeText}</span>
+                </div>
+            `;
+        }).join('');
     }
 
-    function renderResults(results) {
-        resultsContainer.innerHTML = '';
+    // ========================================================================
+    // 4. CIUDADES A VISITAR MAÑANA (widget inferior)
+    // Lista de todas las ciudades con pedidos para mañana
+    // ========================================================================
+
+    function initCiudadesWidget() {
+        const container = document.getElementById('ciudades-widget-list');
+
+        // Obtener fecha de mañana
+        const manana = new Date(HOY);
+        manana.setDate(HOY.getDate() + 1);
+        const fechaMananaStr = formatFechaISO(manana);
+
+        // Obtener pedidos de mañana y agrupar por ciudad
+        const pedidosManana = getPedidosByFecha(fechaMananaStr).filter(p => p.tipo === 'reparto');
+
+        const ciudadesMap = {};
+        pedidosManana.forEach(p => {
+            if (!ciudadesMap[p.ciudad]) {
+                ciudadesMap[p.ciudad] = { pedidos: 0, kg: 0 };
+            }
+            ciudadesMap[p.ciudad].pedidos++;
+            ciudadesMap[p.ciudad].kg += p.peso || 0;
+        });
+
+        const ciudadesArr = Object.entries(ciudadesMap).sort((a, b) => b[1].pedidos - a[1].pedidos);
+
+        if (ciudadesArr.length === 0) {
+            container.innerHTML = `
+                <div class="widget-empty">
+                    <i class="fas fa-calendar-times"></i>
+                    No hay repartos programados para mañana
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = ciudadesArr.map(([ciudad, data]) => `
+            <div class="ciudad-widget-row">
+                <span class="ciudad-widget-name"><i class="fas fa-map-marker-alt"></i> ${ciudad}</span>
+                <span class="ciudad-widget-stats">${data.pedidos} pedidos • ${Math.round(data.kg)}kg</span>
+            </div>
+        `).join('');
+    }
+
+    // ========================================================================
+    // 4. BÚSQUEDA GLOBAL (mantener funcionalidad existente)
+    // ========================================================================
+
+    function initBusquedaGlobal() {
+        const globalSearch = document.getElementById('global-search');
+        const resultsContainer = document.getElementById('global-search-results');
+
+        if (!globalSearch || !resultsContainer) return;
+
+        // Shortcut Ctrl+K
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                globalSearch.focus();
+            }
+        });
+
+        // Cerrar al hacer click afuera
+        document.addEventListener('click', (e) => {
+            if (!globalSearch.contains(e.target) && !resultsContainer.contains(e.target)) {
+                resultsContainer.classList.add('hidden');
+            }
+        });
+
+        // Input handler
+        globalSearch.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+
+            const results = buscarEnMockData(query);
+            renderizarResultados(results, resultsContainer);
+        });
+
+        globalSearch.addEventListener('focus', () => {
+            if (globalSearch.value.length >= 2) {
+                resultsContainer.classList.remove('hidden');
+            }
+        });
+    }
+
+    function buscarEnMockData(query) {
+        return {
+            clientes: CLIENTES.filter(c =>
+                c.direccion.toLowerCase().includes(query) ||
+                c.ciudad.toLowerCase().includes(query)
+            ).slice(0, 4),
+            productos: PRODUCTOS.filter(p =>
+                p.nombre.toLowerCase().includes(query)
+            ).slice(0, 4),
+            pedidos: PEDIDOS.filter(p =>
+                p.numero.toLowerCase().includes(query) ||
+                p.cliente.toLowerCase().includes(query)
+            ).slice(0, 4)
+        };
+    }
+
+    function renderizarResultados(results, container) {
+        container.innerHTML = '';
         let hasResults = false;
 
-        // Render Clients
+        // Clientes
         if (results.clientes.length > 0) {
             hasResults = true;
-            appendCategoryHeader('Clientes');
-            results.clientes.forEach(item => appendResultItem(item, 'fas fa-user', 'icon-client', 'clientes.html'));
+            container.innerHTML += '<div class="result-category-header">Clientes</div>';
+            results.clientes.forEach(c => {
+                container.innerHTML += `
+                    <div class="search-result-item" onclick="location.href='cliente-detalle.html?id=${c.id}'">
+                        <div class="result-icon icon-client"><i class="fas fa-user"></i></div>
+                        <div class="result-info">
+                            <span class="result-title">${c.direccion}</span>
+                            <span class="result-subtitle">${c.ciudad} • ${c.telefono}</span>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // Render Products
+        // Productos
         if (results.productos.length > 0) {
             hasResults = true;
-            appendCategoryHeader('Productos');
-            results.productos.forEach(item => appendResultItem(item, 'fas fa-box', 'icon-product', '#'));
+            container.innerHTML += '<div class="result-category-header">Productos</div>';
+            results.productos.forEach(p => {
+                const stockStatus = p.stock_actual === 0 ? 'AGOTADO' :
+                                   p.stock_actual < p.stock_minimo ? 'Stock bajo' : 'Disponible';
+                container.innerHTML += `
+                    <div class="search-result-item" onclick="location.href='productos.html'">
+                        <div class="result-icon icon-product"><i class="fas fa-box"></i></div>
+                        <div class="result-info">
+                            <span class="result-title">${p.nombre}</span>
+                            <span class="result-subtitle">Stock: ${p.stock_actual} - ${stockStatus}</span>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
-        // Render Orders
+        // Pedidos
         if (results.pedidos.length > 0) {
             hasResults = true;
-            appendCategoryHeader('Pedidos');
-            results.pedidos.forEach(item => appendResultItem(item, 'fas fa-file-invoice', 'icon-order', '#'));
+            container.innerHTML += '<div class="result-category-header">Pedidos</div>';
+            results.pedidos.forEach(p => {
+                container.innerHTML += `
+                    <div class="search-result-item" onclick="location.href='ventas.html'">
+                        <div class="result-icon icon-order"><i class="fas fa-file-invoice"></i></div>
+                        <div class="result-info">
+                            <span class="result-title">Pedido ${p.numero}</span>
+                            <span class="result-subtitle">${p.cliente} - ${p.estado}</span>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         if (hasResults) {
-            resultsContainer.classList.remove('hidden');
+            container.classList.remove('hidden');
         } else {
-            resultsContainer.innerHTML = '<div style="padding:16px; text-align:center; color:#6b778c;">No se encontraron resultados</div>';
-            resultsContainer.classList.remove('hidden');
+            container.innerHTML = '<div style="padding:16px; text-align:center; color:#6b778c;">No se encontraron resultados</div>';
+            container.classList.remove('hidden');
         }
     }
 
-    function appendCategoryHeader(title) {
-        const header = document.createElement('div');
-        header.className = 'result-category-header';
-        header.textContent = title;
-        resultsContainer.appendChild(header);
+    // ========================================================================
+    // HELPERS
+    // ========================================================================
+
+    function getLunesDeSemana(fecha) {
+        const d = new Date(fecha);
+        const dia = d.getDay();
+        const diff = dia === 0 ? -6 : 1 - dia; // Si es domingo, ir al lunes anterior
+        d.setDate(d.getDate() + diff);
+        return d;
     }
 
-    function appendResultItem(item, iconClass, colorClass, link) {
-        const el = document.createElement('div');
-        el.className = 'search-result-item';
-        el.onclick = () => window.location.href = link;
-
-        el.innerHTML = `
-            <div class="result-icon ${colorClass}">
-                <i class="${iconClass}"></i>
-            </div>
-            <div class="result-info">
-                <span class="result-title">${item.name}</span>
-                <span class="result-subtitle">${item.detail}</span>
-            </div>
-        `;
-        resultsContainer.appendChild(el);
+    function formatFechaISO(fecha) {
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, '0');
+        const d = String(fecha.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
 
-    // Day Card Interaction (Visual only)
-    const dayCards = document.querySelectorAll('.day-card-v2');
-    dayCards.forEach(card => {
-        card.addEventListener('click', () => {
-            dayCards.forEach(c => c.classList.remove('active'));
-            card.classList.add('active');
-        });
-    });
+    // ========================================================================
+    // INIT
+    // ========================================================================
 
+    initCalendario();
+    initRepartosManana();
+    initStockCritico();
+    initCiudadesWidget();
+    initBusquedaGlobal();
 });
