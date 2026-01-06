@@ -17,16 +17,15 @@ const CONFIG = {
 };
 
 // ============================================================================
-// CONFIGURACIÓN DE PRECIOS (Módulo Configuración)
+// LISTAS DE PRECIO (Módulo Configuración)
 // PRD: prd/configuracion.html - Sección 3.4
+// Campos: id, nombre, descuento (%), umbral (null = sin umbral)
 // ============================================================================
 
-const CONFIG_PRECIOS = {
-  l2_descuento_porciento: 6.25,   // % descuento sobre L1
-  l3_descuento_porciento: 10.00, // % descuento sobre L1
-  l2_umbral_minimo: null,        // null = sin umbral (siempre disponible)
-  l3_umbral_minimo: null,        // o monto en pesos (ej: 20000)
-};
+const LISTAS_PRECIO = [
+  { id: 1, nombre: 'L2', descuento: 6.25, umbral: 50000 },
+  { id: 2, nombre: 'L3', descuento: 10, umbral: 100000 },
+];
 
 // ============================================================================
 // CONFIGURACIÓN DE STOCK (Módulo Configuración)
@@ -43,11 +42,11 @@ const CONFIG_STOCK = {
 // ============================================================================
 
 const CIUDADES = [
-  { id: 1, nombre: 'Neuquén', clientesAsociados: 5 },
-  { id: 2, nombre: 'Cipolletti', clientesAsociados: 2 },
-  { id: 3, nombre: 'Plottier', clientesAsociados: 2 },
-  { id: 4, nombre: 'Centenario', clientesAsociados: 1 },
-  { id: 5, nombre: 'Allen', clientesAsociados: 2 },
+  { id: 1, nombre: 'Neuquén', provincia: 'Neuquén', clientesAsociados: 5 },
+  { id: 2, nombre: 'Cipolletti', provincia: 'Río Negro', clientesAsociados: 2 },
+  { id: 3, nombre: 'Plottier', provincia: 'Neuquén', clientesAsociados: 2 },
+  { id: 4, nombre: 'Centenario', provincia: 'Neuquén', clientesAsociados: 1 },
+  { id: 5, nombre: 'Allen', provincia: 'Río Negro', clientesAsociados: 2 },
 ];
 
 // ============================================================================
@@ -384,9 +383,9 @@ const CLIENTES = [
 // ============================================================================
 
 const VEHICULOS = [
-  { id: 1, nombre: 'Reparto 1', capacidadKg: 2500, pedidosAsignados: 8 },
-  { id: 2, nombre: 'Reparto 2', capacidadKg: 1500, pedidosAsignados: 5 },
-  { id: 3, nombre: 'Reparto 3', capacidadKg: 2250, pedidosAsignados: 3 },
+  { id: 1, nombre: 'Reparto 1', capacidadKg: 2500, modelo: 'Fiat Fiorino', patente: 'AB 123 CD' },
+  { id: 2, nombre: 'Reparto 2', capacidadKg: 1500, modelo: 'Renault Kangoo', patente: null },
+  { id: 3, nombre: 'Reparto 3', capacidadKg: 2250, modelo: null, patente: null },
 ];
 
 // ============================================================================

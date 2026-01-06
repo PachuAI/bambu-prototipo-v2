@@ -59,9 +59,9 @@
                         <span>Repartos</span>
                     </li>
                     -->
-                    <li title="Reportes y Estadísticas" onclick="location.href='estadisticas.html'">
+                    <li title="Estadísticas" onclick="location.href='estadisticas.html'">
                         <i class="fas fa-chart-line"></i>
-                        <span>Reportes</span>
+                        <span>Estadísticas</span>
                     </li>
                     <li title="Respaldos" onclick="location.href='backup.html'">
                         <i class="fas fa-server"></i>
@@ -92,17 +92,11 @@
                     Configuración General
                 </div>
                 <div class="header-tabs">
-                    <button class="tab-btn active" data-tab="vehiculos">
-                        <i class="fas fa-truck"></i> Vehículos
+                    <button class="tab-btn active" data-tab="configuracion">
+                        <i class="fas fa-sliders-h"></i> Configuración
                     </button>
                     <button class="tab-btn" data-tab="ciudades">
                         <i class="fas fa-map-marker-alt"></i> Ciudades
-                    </button>
-                    <button class="tab-btn" data-tab="precios">
-                        <i class="fas fa-tags"></i> Listas de Precio
-                    </button>
-                    <button class="tab-btn" data-tab="stock">
-                        <i class="fas fa-boxes"></i> Stock
                     </button>
                 </div>
             </header>
@@ -110,13 +104,15 @@
             <!-- TAB CONTENTS -->
             <div class="config-content">
 
-                <!-- TAB: VEHÍCULOS -->
-                <div id="tab-vehiculos" class="tab-pane active">
+                <!-- TAB: CONFIGURACIÓN (Vehículos + Listas + Stock) -->
+                <div id="tab-configuracion" class="tab-pane active">
+
+                    <!-- SECCIÓN: VEHÍCULOS -->
                     <div class="config-card">
                         <div class="card-header">
                             <h3><i class="fas fa-truck"></i> Vehículos de Reparto</h3>
                             <button class="btn-primary-sm" onclick="abrirModalVehiculo()">
-                                <i class="fas fa-plus"></i> Agregar Vehículo
+                                <i class="fas fa-plus"></i> Agregar
                             </button>
                         </div>
                         <div class="card-body">
@@ -125,7 +121,8 @@
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Capacidad (kg)</th>
-                                        <th>Pedidos Asignados</th>
+                                        <th>Modelo</th>
+                                        <th>Patente</th>
                                         <th class="th-acciones">Acciones</th>
                                     </tr>
                                 </thead>
@@ -135,6 +132,58 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- SECCIÓN: LISTAS DE PRECIO -->
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-tags"></i> Listas de Precio</h3>
+                            <button class="btn-primary-sm" onclick="abrirModalLista()">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <table class="config-table">
+                                <thead>
+                                    <tr>
+                                        <th>Lista</th>
+                                        <th>Descuento</th>
+                                        <th>Umbral Mínimo</th>
+                                        <th class="th-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-listas">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SECCIÓN: COMPORTAMIENTO STOCK -->
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-boxes"></i> Comportamiento de Stock</h3>
+                        </div>
+                        <div class="card-body card-body-padded">
+                            <div class="stock-inline">
+                                <span class="stock-label">Sin stock suficiente:</span>
+                                <div class="stock-radios">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="stock-comportamiento" value="BLOQUEAR">
+                                        <span>Bloquear venta</span>
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="stock-comportamiento" value="ADVERTIR" checked>
+                                        <span>Advertir y permitir</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="info-box-compact">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Productos BAMBU siempre permiten stock negativo</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- TAB: CIUDADES -->
@@ -151,6 +200,7 @@
                                 <thead>
                                     <tr>
                                         <th>Ciudad</th>
+                                        <th>Provincia</th>
                                         <th>Clientes Asociados</th>
                                         <th class="th-acciones">Acciones</th>
                                     </tr>
@@ -159,127 +209,6 @@
                                     <!-- Se carga dinámicamente -->
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: LISTAS DE PRECIO -->
-                <div id="tab-precios" class="tab-pane">
-                    <div class="config-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-tags"></i> Configuración de Listas de Precio</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="precios-grid">
-                                <!-- L1 -->
-                                <div class="precio-card l1">
-                                    <div class="precio-header">
-                                        <span class="precio-badge">L1</span>
-                                        <span class="precio-title">Precio Base</span>
-                                    </div>
-                                    <p class="precio-desc">Precio de referencia sin descuento aplicado.</p>
-                                </div>
-
-                                <!-- L2 -->
-                                <div class="precio-card l2">
-                                    <div class="precio-header">
-                                        <span class="precio-badge">L2</span>
-                                        <span class="precio-title">Lista 2</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Descuento (%)</label>
-                                        <input type="number" class="form-input" id="l2-descuento"
-                                            step="0.01" min="0" max="100" placeholder="6.25">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Umbral mínimo ($) <span class="text-muted">(opcional)</span></label>
-                                        <input type="number" class="form-input" id="l2-umbral"
-                                            min="0" placeholder="Sin umbral">
-                                    </div>
-                                </div>
-
-                                <!-- L3 -->
-                                <div class="precio-card l3">
-                                    <div class="precio-header">
-                                        <span class="precio-badge">L3</span>
-                                        <span class="precio-title">Lista 3</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Descuento (%)</label>
-                                        <input type="number" class="form-input" id="l3-descuento"
-                                            step="0.01" min="0" max="100" placeholder="10.00">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label">Umbral mínimo ($) <span class="text-muted">(opcional)</span></label>
-                                        <input type="number" class="form-input" id="l3-umbral"
-                                            min="0" placeholder="Sin umbral">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="info-box">
-                                <i class="fas fa-info-circle"></i>
-                                <span>Los umbrales definen el monto mínimo del pedido para acceder a cada lista. Dejar vacío para acceso sin restricciones.</span>
-                            </div>
-
-                            <div class="form-actions">
-                                <button class="btn-primary" onclick="guardarPrecios()">
-                                    <i class="fas fa-save"></i> Guardar Cambios
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB: COMPORTAMIENTO STOCK -->
-                <div id="tab-stock" class="tab-pane">
-                    <div class="config-card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-boxes"></i> Comportamiento de Stock</h3>
-                        </div>
-                        <div class="card-body">
-                            <p class="config-description">
-                                Define qué sucede cuando se intenta confirmar un pedido sin stock suficiente.
-                            </p>
-
-                            <div class="stock-options">
-                                <label class="stock-option">
-                                    <input type="radio" name="stock-comportamiento" value="BLOQUEAR">
-                                    <div class="option-content">
-                                        <div class="option-icon danger">
-                                            <i class="fas fa-ban"></i>
-                                        </div>
-                                        <div class="option-text">
-                                            <strong>Bloquear venta</strong>
-                                            <span>No permite confirmar el pedido si no hay stock suficiente.</span>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                <label class="stock-option">
-                                    <input type="radio" name="stock-comportamiento" value="ADVERTIR" checked>
-                                    <div class="option-content">
-                                        <div class="option-icon warning">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                        </div>
-                                        <div class="option-text">
-                                            <strong>Advertir pero permitir</strong>
-                                            <span>Muestra alerta pero permite confirmar (stock queda negativo).</span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-
-                            <div class="info-box warning">
-                                <i class="fas fa-flask"></i>
-                                <span><strong>Excepción:</strong> Los productos del proveedor "BAMBU" (producción propia) siempre permiten stock negativo sin límite.</span>
-                            </div>
-
-                            <div class="form-actions">
-                                <button class="btn-primary" onclick="guardarStock()">
-                                    <i class="fas fa-save"></i> Guardar Cambios
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -305,6 +234,14 @@
                     <label class="form-label">Capacidad (kg) <span class="required">*</span></label>
                     <input type="number" class="form-input" id="vehiculo-capacidad" min="1" placeholder="Ej: 1500">
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Modelo <span class="text-muted">(opcional)</span></label>
+                    <input type="text" class="form-input" id="vehiculo-modelo" placeholder="Ej: Fiat Fiorino">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Patente <span class="text-muted">(opcional)</span></label>
+                    <input type="text" class="form-input" id="vehiculo-patente" placeholder="Ej: ABC 123">
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModalVehiculo()">Cancelar</button>
@@ -325,13 +262,48 @@
             <div class="modal-body">
                 <input type="hidden" id="ciudad-id">
                 <div class="form-group">
-                    <label class="form-label">Nombre <span class="required">*</span></label>
+                    <label class="form-label">Ciudad <span class="required">*</span></label>
                     <input type="text" class="form-input" id="ciudad-nombre" placeholder="Ej: San Martín de los Andes">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Provincia <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="ciudad-provincia" placeholder="Ej: Neuquén">
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModalCiudad()">Cancelar</button>
                 <button class="btn-primary" onclick="guardarCiudad()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREAR/EDITAR LISTA DE PRECIO -->
+    <div id="modal-lista" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="modal-lista-titulo"><i class="fas fa-tags"></i> Nueva Lista</h3>
+                <button class="btn-close-modal" onclick="cerrarModalLista()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="lista-id">
+                <div class="form-group">
+                    <label class="form-label">Nombre <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="lista-nombre" placeholder="Ej: L4">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descuento (%) <span class="required">*</span></label>
+                    <input type="number" class="form-input" id="lista-descuento" step="0.01" min="0" max="100" placeholder="Ej: 15">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Umbral Mínimo ($) <span class="text-muted">(opcional)</span></label>
+                    <input type="number" class="form-input" id="lista-umbral" min="0" placeholder="Sin umbral">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalLista()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarLista()">
                     <i class="fas fa-save"></i> Guardar
                 </button>
             </div>

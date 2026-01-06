@@ -6,11 +6,9 @@
  * PRD: prd/configuracion.html
  * Módulo: Configuración General
  *
- * Secciones:
- * - Vehículos (CRUD)
- * - Ciudades (CRUD)
- * - Listas de Precio
- * - Comportamiento Stock
+ * Tabs:
+ * - Configuración: Vehículos (CRUD), Listas de Precio (CRUD), Stock (inline)
+ * - Ciudades: CRUD
  *
  * ============================================================================
  */
@@ -23,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Cargar datos iniciales
     renderizarVehiculos();
+    renderizarListas();
     renderizarCiudades();
-    cargarConfigPrecios();
     cargarConfigStock();
 
 });
@@ -62,8 +60,9 @@ function setupTabs() {
  * Renderiza la tabla de vehículos desde VEHICULOS (mock-data.js)
  *
  * LÓGICA:
- * - Muestra nombre, capacidad en kg, pedidos asignados
+ * - Muestra nombre, capacidad en kg, modelo (opcional), patente (opcional)
  * - Botones editar/eliminar por fila
+ * - Si modelo o patente están vacíos, muestra "-"
  */
 function renderizarVehiculos() {
     const tbody = document.getElementById('tabla-vehiculos');
@@ -73,7 +72,8 @@ function renderizarVehiculos() {
         <tr>
             <td><strong>${v.nombre}</strong></td>
             <td>${v.capacidadKg.toLocaleString('es-AR')} kg</td>
-            <td>${v.pedidosAsignados} pedidos</td>
+            <td>${v.modelo || '-'}</td>
+            <td>${v.patente || '-'}</td>
             <td>
                 <div class="table-actions">
                     <button class="btn-icon-sm btn-edit" title="Editar" onclick="editarVehiculo(${v.id})">
@@ -96,6 +96,8 @@ function abrirModalVehiculo() {
     document.getElementById('vehiculo-id').value = '';
     document.getElementById('vehiculo-nombre').value = '';
     document.getElementById('vehiculo-capacidad').value = '';
+    document.getElementById('vehiculo-modelo').value = '';
+    document.getElementById('vehiculo-patente').value = '';
     document.getElementById('modal-vehiculo').classList.remove('hidden');
     document.getElementById('vehiculo-nombre').focus();
 }
@@ -111,6 +113,8 @@ function editarVehiculo(id) {
     document.getElementById('vehiculo-id').value = id;
     document.getElementById('vehiculo-nombre').value = vehiculo.nombre;
     document.getElementById('vehiculo-capacidad').value = vehiculo.capacidadKg;
+    document.getElementById('vehiculo-modelo').value = vehiculo.modelo || '';
+    document.getElementById('vehiculo-patente').value = vehiculo.patente || '';
     document.getElementById('modal-vehiculo').classList.remove('hidden');
     document.getElementById('vehiculo-nombre').focus();
 }
@@ -128,11 +132,15 @@ function cerrarModalVehiculo() {
  * VALIDACIONES (PRD sección 4.1):
  * - Nombre: obligatorio, único
  * - Capacidad: obligatorio, mayor a 0
+ * - Modelo: opcional
+ * - Patente: opcional
  */
 function guardarVehiculo() {
     const id = document.getElementById('vehiculo-id').value;
     const nombre = document.getElementById('vehiculo-nombre').value.trim();
     const capacidad = parseInt(document.getElementById('vehiculo-capacidad').value);
+    const modelo = document.getElementById('vehiculo-modelo').value.trim();
+    const patente = document.getElementById('vehiculo-patente').value.trim();
 
     // Validar nombre obligatorio
     if (!nombre) {
@@ -159,6 +167,8 @@ function guardarVehiculo() {
         if (idx !== -1) {
             VEHICULOS[idx].nombre = nombre;
             VEHICULOS[idx].capacidadKg = capacidad;
+            VEHICULOS[idx].modelo = modelo || null;
+            VEHICULOS[idx].patente = patente || null;
             console.log('✅ Vehículo actualizado:', VEHICULOS[idx]);
         }
     } else {
@@ -168,7 +178,8 @@ function guardarVehiculo() {
             id: nuevoId,
             nombre: nombre,
             capacidadKg: capacidad,
-            pedidosAsignados: 0
+            modelo: modelo || null,
+            patente: patente || null
         });
         console.log('✅ Vehículo creado:', nombre);
     }
@@ -212,7 +223,7 @@ function eliminarVehiculo(id) {
  * Renderiza la tabla de ciudades desde CIUDADES (mock-data.js)
  *
  * LÓGICA:
- * - Muestra nombre y cantidad de clientes asociados
+ * - Muestra ciudad, provincia y cantidad de clientes asociados
  * - Botones editar/eliminar por fila
  */
 function renderizarCiudades() {
@@ -222,6 +233,7 @@ function renderizarCiudades() {
     tbody.innerHTML = CIUDADES.map(c => `
         <tr>
             <td><strong>${c.nombre}</strong></td>
+            <td>${c.provincia}</td>
             <td>${c.clientesAsociados} clientes</td>
             <td>
                 <div class="table-actions">
@@ -244,6 +256,7 @@ function abrirModalCiudad() {
     document.getElementById('modal-ciudad-titulo').innerHTML = '<i class="fas fa-map-marker-alt"></i> Nueva Ciudad';
     document.getElementById('ciudad-id').value = '';
     document.getElementById('ciudad-nombre').value = '';
+    document.getElementById('ciudad-provincia').value = '';
     document.getElementById('modal-ciudad').classList.remove('hidden');
     document.getElementById('ciudad-nombre').focus();
 }
@@ -258,6 +271,7 @@ function editarCiudad(id) {
     document.getElementById('modal-ciudad-titulo').innerHTML = '<i class="fas fa-map-marker-alt"></i> Editar Ciudad';
     document.getElementById('ciudad-id').value = id;
     document.getElementById('ciudad-nombre').value = ciudad.nombre;
+    document.getElementById('ciudad-provincia').value = ciudad.provincia || '';
     document.getElementById('modal-ciudad').classList.remove('hidden');
     document.getElementById('ciudad-nombre').focus();
 }
@@ -273,15 +287,23 @@ function cerrarModalCiudad() {
  * Guarda ciudad (crear o actualizar)
  *
  * VALIDACIONES (PRD sección 4.2):
- * - Nombre: obligatorio, único
+ * - Ciudad: obligatorio, único
+ * - Provincia: obligatorio
  */
 function guardarCiudad() {
     const id = document.getElementById('ciudad-id').value;
     const nombre = document.getElementById('ciudad-nombre').value.trim();
+    const provincia = document.getElementById('ciudad-provincia').value.trim();
 
-    // Validar nombre obligatorio
+    // Validar ciudad obligatoria
     if (!nombre) {
-        alert('⚠️ El nombre es obligatorio');
+        alert('⚠️ La ciudad es obligatoria');
+        return;
+    }
+
+    // Validar provincia obligatoria
+    if (!provincia) {
+        alert('⚠️ La provincia es obligatoria');
         return;
     }
 
@@ -297,6 +319,7 @@ function guardarCiudad() {
         const idx = CIUDADES.findIndex(c => c.id == id);
         if (idx !== -1) {
             CIUDADES[idx].nombre = nombre;
+            CIUDADES[idx].provincia = provincia;
             console.log('✅ Ciudad actualizada:', CIUDADES[idx]);
         }
     } else {
@@ -305,6 +328,7 @@ function guardarCiudad() {
         CIUDADES.push({
             id: nuevoId,
             nombre: nombre,
+            provincia: provincia,
             clientesAsociados: 0
         });
         console.log('✅ Ciudad creada:', nombre);
@@ -341,81 +365,158 @@ function eliminarCiudad(id) {
 }
 
 // ============================================================================
-// LISTAS DE PRECIO - Configuración
+// LISTAS DE PRECIO - CRUD
 // PRD: prd/configuracion.html - Sección 3.4
 // ============================================================================
 
 /**
- * Carga configuración actual de precios en el formulario
+ * Renderiza la tabla de listas de precio desde LISTAS_PRECIO (mock-data.js)
+ *
+ * LÓGICA:
+ * - Muestra nombre, descuento % y umbral mínimo
+ * - Botones editar/eliminar por fila
  */
-function cargarConfigPrecios() {
-    if (typeof CONFIG_PRECIOS === 'undefined') return;
+function renderizarListas() {
+    const tbody = document.getElementById('tabla-listas');
+    if (!tbody || typeof LISTAS_PRECIO === 'undefined') return;
 
-    document.getElementById('l2-descuento').value = CONFIG_PRECIOS.l2_descuento_porciento || '';
-    document.getElementById('l3-descuento').value = CONFIG_PRECIOS.l3_descuento_porciento || '';
-    document.getElementById('l2-umbral').value = CONFIG_PRECIOS.l2_umbral_minimo || '';
-    document.getElementById('l3-umbral').value = CONFIG_PRECIOS.l3_umbral_minimo || '';
+    tbody.innerHTML = LISTAS_PRECIO.map(l => `
+        <tr>
+            <td><strong>${l.nombre}</strong></td>
+            <td>${l.descuento}%</td>
+            <td>${l.umbral ? '$' + l.umbral.toLocaleString('es-AR') : '-'}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-icon-sm btn-edit" title="Editar" onclick="editarLista(${l.id})">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="btn-icon-sm btn-delete" title="Eliminar" onclick="eliminarLista(${l.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
 }
 
 /**
- * Guarda configuración de listas de precio
- *
- * VALIDACIONES (PRD sección 4.3):
- * - Descuentos: entre 0% y 100%
- * - L3 debe ser mayor que L2
- * - Umbral L3 debe ser mayor que umbral L2 (si ambos están definidos)
+ * Abre modal para crear nueva lista
  */
-function guardarPrecios() {
-    const l2Desc = parseFloat(document.getElementById('l2-descuento').value) || 0;
-    const l3Desc = parseFloat(document.getElementById('l3-descuento').value) || 0;
-    const l2Umbral = document.getElementById('l2-umbral').value ? parseInt(document.getElementById('l2-umbral').value) : null;
-    const l3Umbral = document.getElementById('l3-umbral').value ? parseInt(document.getElementById('l3-umbral').value) : null;
+function abrirModalLista() {
+    document.getElementById('modal-lista-titulo').innerHTML = '<i class="fas fa-tags"></i> Nueva Lista';
+    document.getElementById('lista-id').value = '';
+    document.getElementById('lista-nombre').value = '';
+    document.getElementById('lista-descuento').value = '';
+    document.getElementById('lista-umbral').value = '';
+    document.getElementById('modal-lista').classList.remove('hidden');
+    document.getElementById('lista-nombre').focus();
+}
 
-    // Validar rango 0-100 (PRD 4.3)
-    if (l2Desc < 0 || l2Desc > 100 || l3Desc < 0 || l3Desc > 100) {
-        alert('⚠️ Los descuentos deben estar entre 0 y 100');
+/**
+ * Abre modal para editar lista existente
+ */
+function editarLista(id) {
+    const lista = LISTAS_PRECIO.find(l => l.id === id);
+    if (!lista) return;
+
+    document.getElementById('modal-lista-titulo').innerHTML = '<i class="fas fa-tags"></i> Editar Lista';
+    document.getElementById('lista-id').value = id;
+    document.getElementById('lista-nombre').value = lista.nombre;
+    document.getElementById('lista-descuento').value = lista.descuento;
+    document.getElementById('lista-umbral').value = lista.umbral || '';
+    document.getElementById('modal-lista').classList.remove('hidden');
+    document.getElementById('lista-nombre').focus();
+}
+
+/**
+ * Cierra modal de lista
+ */
+function cerrarModalLista() {
+    document.getElementById('modal-lista').classList.add('hidden');
+}
+
+/**
+ * Guarda lista (crear o actualizar)
+ *
+ * VALIDACIONES:
+ * - Nombre: obligatorio, único
+ * - Descuento: obligatorio, entre 0 y 100
+ * - Umbral: opcional
+ */
+function guardarLista() {
+    const id = document.getElementById('lista-id').value;
+    const nombre = document.getElementById('lista-nombre').value.trim();
+    const descuento = parseFloat(document.getElementById('lista-descuento').value);
+    const umbral = document.getElementById('lista-umbral').value ? parseInt(document.getElementById('lista-umbral').value) : null;
+
+    // Validar nombre obligatorio
+    if (!nombre) {
+        alert('⚠️ El nombre es obligatorio');
         return;
     }
 
-    // Validar L3 > L2 (PRD 4.3)
-    if (l3Desc <= l2Desc) {
-        alert('⚠️ El descuento L3 debe ser mayor que L2');
+    // Validar nombre único
+    const nombreExiste = LISTAS_PRECIO.some(l => l.nombre.toLowerCase() === nombre.toLowerCase() && l.id != id);
+    if (nombreExiste) {
+        alert('⚠️ Ya existe una lista con este nombre');
         return;
     }
 
-    // Validar umbrales (PRD 4.3)
-    if (l2Umbral && l2Umbral <= 0) {
-        alert('⚠️ El umbral L2 debe ser mayor a 0');
+    // Validar descuento
+    if (isNaN(descuento) || descuento < 0 || descuento > 100) {
+        alert('⚠️ El descuento debe estar entre 0 y 100');
         return;
     }
 
-    if (l3Umbral && l3Umbral <= 0) {
-        alert('⚠️ El umbral L3 debe ser mayor a 0');
-        return;
+    if (id) {
+        // Actualizar existente
+        const idx = LISTAS_PRECIO.findIndex(l => l.id == id);
+        if (idx !== -1) {
+            LISTAS_PRECIO[idx].nombre = nombre;
+            LISTAS_PRECIO[idx].descuento = descuento;
+            LISTAS_PRECIO[idx].umbral = umbral;
+            console.log('✅ Lista actualizada:', LISTAS_PRECIO[idx]);
+        }
+    } else {
+        // Crear nueva
+        const nuevoId = Math.max(...LISTAS_PRECIO.map(l => l.id)) + 1;
+        LISTAS_PRECIO.push({
+            id: nuevoId,
+            nombre: nombre,
+            descuento: descuento,
+            umbral: umbral
+        });
+        console.log('✅ Lista creada:', nombre);
     }
 
-    if (l2Umbral && l3Umbral && l3Umbral <= l2Umbral) {
-        alert('⚠️ El umbral L3 debe ser mayor que el umbral L2');
-        return;
+    cerrarModalLista();
+    renderizarListas();
+    alert('✅ Lista guardada correctamente');
+}
+
+/**
+ * Elimina una lista de precio
+ */
+function eliminarLista(id) {
+    const lista = LISTAS_PRECIO.find(l => l.id === id);
+    if (!lista) return;
+
+    if (confirm(`¿Eliminar lista "${lista.nombre}"?`)) {
+        const idx = LISTAS_PRECIO.findIndex(l => l.id === id);
+        LISTAS_PRECIO.splice(idx, 1);
+        renderizarListas();
+        console.log('🗑️ Lista eliminada:', lista.nombre);
+        alert('✅ Lista eliminada');
     }
-
-    // Guardar en mock
-    CONFIG_PRECIOS.l2_descuento_porciento = l2Desc;
-    CONFIG_PRECIOS.l3_descuento_porciento = l3Desc;
-    CONFIG_PRECIOS.l2_umbral_minimo = l2Umbral;
-    CONFIG_PRECIOS.l3_umbral_minimo = l3Umbral;
-
-    console.log('✅ Configuración de precios actualizada:', CONFIG_PRECIOS);
-    alert('✅ Listas de precio actualizadas\n\nLos cambios se aplicarán a todos los pedidos nuevos.');
 }
 
 // ============================================================================
-// COMPORTAMIENTO STOCK - Configuración
+// COMPORTAMIENTO STOCK - Configuración Inline
 // PRD: prd/configuracion.html - Sección 3.5
 // ============================================================================
 
 /**
- * Carga configuración actual de stock en el formulario
+ * Carga configuración actual de stock y configura auto-guardado
  */
 function cargarConfigStock() {
     if (typeof CONFIG_STOCK === 'undefined') return;
@@ -423,29 +524,12 @@ function cargarConfigStock() {
     const radios = document.querySelectorAll('input[name="stock-comportamiento"]');
     radios.forEach(radio => {
         radio.checked = (radio.value === CONFIG_STOCK.comportamiento);
+        // Auto-guardar al cambiar
+        radio.addEventListener('change', function() {
+            CONFIG_STOCK.comportamiento = this.value;
+            console.log('✅ Stock:', this.value);
+        });
     });
-}
-
-/**
- * Guarda configuración de comportamiento de stock
- *
- * OPCIONES (PRD sección 3.5):
- * - BLOQUEAR: No permite confirmar pedido si no hay stock
- * - ADVERTIR: Muestra alerta pero permite confirmar
- *
- * EXCEPCIÓN: Productos BAMBU siempre permiten stock negativo
- */
-function guardarStock() {
-    const seleccionado = document.querySelector('input[name="stock-comportamiento"]:checked');
-    if (!seleccionado) {
-        alert('⚠️ Debe seleccionar una opción');
-        return;
-    }
-
-    CONFIG_STOCK.comportamiento = seleccionado.value;
-
-    console.log('✅ Comportamiento de stock actualizado:', CONFIG_STOCK.comportamiento);
-    alert(`✅ Comportamiento de stock actualizado\n\nModo: ${seleccionado.value === 'BLOQUEAR' ? 'Bloquear venta' : 'Advertir pero permitir'}`);
 }
 
 // ============================================================================
@@ -457,6 +541,7 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         cerrarModalVehiculo();
         cerrarModalCiudad();
+        cerrarModalLista();
     }
 });
 
@@ -465,6 +550,7 @@ document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal-overlay')) {
         cerrarModalVehiculo();
         cerrarModalCiudad();
+        cerrarModalLista();
     }
 });
 

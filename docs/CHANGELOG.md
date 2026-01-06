@@ -1,5 +1,58 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [06 Enero 2026] - Módulos Backup + Configuración + UI Tweaks
+
+### Renombramiento global
+- **"Reportes" → "Estadísticas"** en todos los sidebars (10 HTMLs) y PRDs
+- Estandariza nomenclatura para evitar confusión con "Repartos" y "Respaldos"
+
+### Módulo Estadísticas
+- Página ahora es **scrollable** (antes contenido se cortaba)
+
+### Módulo Backup compactado
+- Botones acción: padding 12px 20px → 8px 14px
+- Card header: 14px 20px → 10px 16px
+- Tabla: headers 12px → 8px, celdas 14px → 10px
+- Filtros logs: padding 16px → 10px 12px
+
+### Módulo Configuración - Rediseño completo
+**Estructura nueva (2 tabs en lugar de 4):**
+- Tab "Configuración": Vehículos + Listas de Precio + Stock
+- Tab "Ciudades": CRUD ciudades
+
+**Tab Vehículos:**
+- Quitada columna "Pedidos Asignados" (dato volátil, inútil)
+- Agregadas columnas "Modelo" y "Patente" (opcionales)
+- Modal actualizado con campos Modelo/Patente
+
+**Tab Ciudades:**
+- Agregada columna "Provincia" (obligatorio)
+- Modal actualizado: "Nombre" → "Ciudad" + campo Provincia
+
+**Listas de Precio (antes: form estático, ahora: CRUD):**
+- Tabla editable: Lista, Descuento %, Umbral Mínimo
+- Modal crear/editar/eliminar listas
+- Sin L1 (precio base no configurable)
+
+**Comportamiento Stock (simplificado):**
+- De radio buttons grandes a inline compacto
+- Auto-guardado al cambiar opción
+- Info box compacta con fondo
+
+### Modales compactados (Configuración)
+- Border-radius reducido
+- Header: 20px 24px → 12px 16px
+- Body: 24px → 16px
+- Footer: 16px 24px → 12px 16px
+- Inputs border-radius reducido
+
+### Mock data actualizado
+- `VEHICULOS`: Agregados campos modelo, patente
+- `CIUDADES`: Agregado campo provincia
+- `LISTAS_PRECIO`: Nuevo array CRUD (reemplaza CONFIG_PRECIOS)
+
+---
+
 ## [06 Enero 2026] - Sidebar Persistente + Estadísticas + Limpieza
 
 ### Sidebar refactorizado
