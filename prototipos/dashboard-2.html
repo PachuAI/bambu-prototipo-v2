@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard V2 - Propuesta 2 | Bambu CRM</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/dashboard/dashboard-specific.css">
+    <link rel="stylesheet" href="assets/dashboard/dashboard-2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <script>if(JSON.parse(localStorage.getItem('bambu-sidebar-collapsed')))document.getElementById('main-sidebar').classList.add('collapsed')</script>
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" class="active" onclick="location.href='dashboard-2.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock" onclick="location.href='productos.html'">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas</span>
+                    </li>
+                    <li title="Estadísticas" onclick="location.href='estadisticas.html'">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Estadísticas</span>
+                    </li>
+                    <li title="Respaldos" onclick="location.href='backup.html'">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración" onclick="location.href='configuracion.html'">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER -->
+            <header class="header-toolbar-standard">
+                <div class="page-header-title">
+                    <i class="fas fa-home" style="color: var(--text-secondary);"></i>
+                    Dashboard
+                    <span style="font-size: 11px; color: var(--color-primary); margin-left: 8px; font-weight: normal;">Propuesta 2</span>
+                </div>
+
+                <div class="filters-inline">
+                    <div class="search-global-compact">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="global-search" placeholder="Buscar clientes, productos, pedidos..." autocomplete="off">
+                        <span class="search-shortcut">Ctrl+K</span>
+                        <div id="global-search-results" class="global-results-dropdown hidden"></div>
+                    </div>
+
+                    <button class="btn-icon-compact" title="Notificaciones">
+                        <i class="far fa-bell"></i>
+                    </button>
+
+                    <div class="user-badge-compact">
+                        <div class="user-avatar-sm">AD</div>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- DASHBOARD CONTENT -->
+            <div class="dashboard-content-v2">
+
+                <!-- BLOQUE UNIFICADO -->
+                <div class="dashboard-panel">
+
+                    <!-- HEADER: Resumen Semanal -->
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-calendar-week"></i>
+                            Resumen Semanal
+                            <span class="panel-subtitle" id="calendario-mes">Enero 2026</span>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn-icon-sm" id="btn-semana-prev"><i class="fas fa-chevron-left"></i></button>
+                            <button class="btn-icon-sm" id="btn-semana-next"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- CALENDARIO: Fila de días -->
+                    <div class="calendario-row" id="calendario-row">
+                        <!-- Se genera dinámicamente -->
+                    </div>
+
+                    <!-- SEPARADOR -->
+                    <div class="panel-divider">
+                        <div class="divider-title">
+                            <i class="fas fa-truck"></i>
+                            Repartos programados para mañana: <strong id="fecha-manana">Jueves 9 Ene</strong>
+                        </div>
+                        <div class="divider-stats">
+                            <span><i class="fas fa-weight-hanging"></i> <span id="capacidad-total">449kg / 6250kg</span></span>
+                            <span class="stat-badge" id="capacidad-pct">7%</span>
+                            <span><i class="fas fa-box"></i> <span id="pedidos-total">14 pedidos</span></span>
+                        </div>
+                    </div>
+
+                    <!-- GRID REPARTOS: 4 columnas -->
+                    <div class="repartos-row" id="repartos-row">
+                        <!-- Se genera dinámicamente -->
+                    </div>
+
+                    <!-- SEPARADOR INFERIOR -->
+                    <div class="panel-divider-simple"></div>
+
+                    <!-- ZONA INFERIOR: 2 columnas -->
+                    <div class="bottom-row">
+                        <!-- Stock Crítico -->
+                        <div class="bottom-col">
+                            <div class="bottom-col-header warning">
+                                <span><i class="fas fa-exclamation-triangle"></i> Stock Crítico</span>
+                                <a href="productos.html" class="link-action">Ver inventario</a>
+                            </div>
+                            <div class="bottom-col-body" id="stock-critico-list">
+                                <!-- Se genera dinámicamente -->
+                            </div>
+                        </div>
+
+                        <!-- Ciudades mañana -->
+                        <div class="bottom-col">
+                            <div class="bottom-col-header">
+                                <span><i class="fas fa-map-marker-alt"></i> Ciudades a visitar mañana</span>
+                                <a href="repartos-dia.html" class="link-action">Ver repartos</a>
+                            </div>
+                            <div class="bottom-col-body" id="ciudades-list">
+                                <!-- Se genera dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <script src="shared/mock-data.js"></script>
+    <script src="shared/utils.js"></script>
+    <script src="assets/dashboard/script-2.js"></script>
+</body>
+
+</html>

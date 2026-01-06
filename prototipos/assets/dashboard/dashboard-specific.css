@@ -853,6 +853,81 @@
 }
 
 /* ============================================================================
+   LIGHT MODE IMPROVEMENTS - Mejor contraste
+   ============================================================================ */
+
+/* Fondo contenido más cálido */
+.dashboard-content {
+    background: #f0f2f5;
+}
+
+/* Cards calendario con más presencia */
+.day-card-v2 {
+    background: #ffffff;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.day-card-v2:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.day-card-v2.today {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* Metric pills con más contraste */
+.metric-pill {
+    background: #e5e7eb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+/* Sección repartos mañana */
+.section-repartos-manana {
+    background: #ffffff;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.repartos-manana-header {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.reparto-col {
+    border-color: #e5e7eb;
+}
+
+/* Barra progreso más visible */
+.vehiculo-progress {
+    background: #e5e7eb;
+}
+
+/* Widgets inferiores */
+.widget-card {
+    background: #ffffff;
+    border-color: #d1d5db;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.widget-header {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.widget-stock .widget-header {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+/* Filas con separadores visibles */
+.stock-row {
+    border-color: #e5e7eb;
+}
+
+/* ============================================================================
    DASHBOARD-SPECIFIC OVERRIDES
    ============================================================================ */
 
@@ -990,16 +1065,39 @@
     background: var(--color-primary) !important;
 }
 
-/* Day card today en dark */
+/* Dashboard content en dark */
+[data-theme="dark"] .dashboard-content {
+    background: var(--bg-app) !important;
+}
+
+/* Day cards en dark */
+[data-theme="dark"] .day-card-v2 {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] .day-card-v2:hover {
+    box-shadow: var(--shadow-md) !important;
+}
+
 [data-theme="dark"] .day-card-v2.today {
     border-color: var(--color-info) !important;
     background: var(--bg-sidebar) !important;
+    box-shadow: 0 0 0 1px var(--color-info) !important;
+}
+
+[data-theme="dark"] .metric-pill {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
 }
 
 /* Repartos mañana */
 [data-theme="dark"] .section-repartos-manana {
     background: var(--bg-white) !important;
     border-color: var(--border-color) !important;
+    box-shadow: none !important;
 }
 
 [data-theme="dark"] .repartos-manana-header {
@@ -1009,6 +1107,10 @@
 
 [data-theme="dark"] .reparto-col {
     border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .vehiculo-progress {
+    background: var(--bg-hover) !important;
 }
 
 [data-theme="dark"] .reparto-col.col-ciudades {
@@ -1023,9 +1125,11 @@
 [data-theme="dark"] .widget-card {
     background: var(--bg-white) !important;
     border-color: var(--border-color) !important;
+    box-shadow: none !important;
 }
 
 [data-theme="dark"] .widget-header {
+    background: var(--bg-sidebar) !important;
     border-color: var(--border-color) !important;
 }
 
