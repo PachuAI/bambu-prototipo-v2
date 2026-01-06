@@ -27,33 +27,162 @@
 
 ### Documentación actualizada
 - **CLAUDE.md**: Sección "Regla de Comentarios en JavaScript" + lista prototipos
-- **Skill `/construir-prototipo`**: FASE 0 (leer PRD obligatorio) + checklist comentarios
-
-### Navegación
-Link a `productos.html` agregado en sidebar de todos los prototipos.
+- **Skill `/construir-prototipo`**: FASE 0 (leer PRD obligatorio) + checklist comentarios JS
 
 ---
 
-## Historial Resumido
+## [06 Enero 2026] - Modal Nuevo Cliente + Headers Estandarizados ✅
 
-### 06 Enero 2026
-- Modal Nuevo Cliente en `clientes.html`
-- Headers estandarizados (padding 10px 24px) en todos los módulos
-- Limpieza docs obsoletos + CLAUDE.md rediseñado
-- Compactación modales + header unificado cliente-detalle
+### Modal Nuevo Cliente (`clientes.html`)
+- Campos: Dirección*, Teléfono*, Ciudad*, Descuento (L1/L2/L3), Nombre, Email, Nota
+- Toggle "Activo" en header del modal
+- Validación campos requeridos + dark mode
 
-### 03-04 Enero 2026
-- Sistema de diseño: `tokens.css` + `components.css`
-- Auditoría CSS completa (100% cobertura)
-- Skill `/construir-prototipo` creado
+### Headers estandarizados (padding 10px 24px)
+- Clientes: `.header-toolbar-standard`, filtros compactos
+- Cliente-detalle: Tabs compactados, título 14px
+- Dashboard: Título agregado, buscador compacto
 
-### 31 Diciembre 2025
-- Refactorización PRDs modular (10 PRDs específicos)
-- Corrección error conceptual: Repartos integrado en Ventas
-- Ajustes visuales Ventas + documentación ESTADO-VENTAS.md
+---
 
-### 30 Diciembre 2025
-- Reunión Carlos: 18 ajustes solicitados (implementados en PRD)
+## [06 Enero 2026] - Limpieza Docs + CLAUDE.md Rediseñado ✅
+
+### Archivos eliminados (7)
+Docs obsoletos de migración CSS completada:
+- `PLAN-MIGRACION-TOKENS.md`, `AUDITORIA-*.md`, `CORRECCIONES-*.md`
+- `ESTADO-VENTAS.md`, `ESTADO-COTIZADOR.md`, `DISEÑO-VISUAL.md`
+
+### CLAUDE.md actualizado
+- Sección "Entorno" (Windows, fecha, stack)
+- Comandos PowerShell
+- Sistema CSS: tokens.css → components.css → specific.css
+- Skill `/construir-prototipo` documentado
+
+---
+
+## [06 Enero 2026] - UX Compactación + Skill Creado ✅
+
+### Header unificado cliente-detalle
+- De 2 líneas a 1 línea (nombre + badges + tabs + botón)
+- Eliminado: Avatar circular, ID cliente
+
+### Compactación modales
+- Modal "Detalle Pedido" (ventas): paddings reducidos ~40%
+- Modal "Registrar Pago" (cliente-detalle): sin overflow vertical
+
+### Skill `/construir-prototipo`
+- Proceso 7 fases para construir HTML
+- Reglas compactación documentadas
+- Dark mode desde inicio obligatorio
+
+---
+
+## [04 Enero 2026] - Auditoría CSS + Sistema 100% Cubierto ✅
+
+### Auditoría completa
+- 6 prototipos analizados, 389 clases CSS únicas
+- 11 clases faltantes identificadas y agregadas
+- Cobertura final: **100%** (excluyendo Font Awesome)
+
+### components.css expandido
+- 703 → 811 líneas (+108)
+- 9 componentes genéricos agregados: `.header-toolbar`, `.page-header-title`, `.badge-status`, etc.
+
+---
+
+## [03 Enero 2026] - Sistema de Diseño ✅
+
+### Tokens CSS + Sistema 3 Colores
+**Paleta minimalista:**
+- Verde `#36b37e` → Estados completados (ENTREGADO)
+- Naranja `#ffab00` → Estados en proceso (PENDIENTE, EN TRÁNSITO)
+- Gris `#6b778c` → Todo lo demás
+
+### Archivos creados
+- `shared/tokens.css` (248 líneas): Variables colores, tipografía, espaciado
+- `shared/components.css` (487 líneas): Sidebar, badges, botones, tablas, modales, forms
+
+---
+
+## [31 Diciembre 2025] - Refactorización PRDs Modular ✅
+
+### PRDs creados (10 total)
+1. `index.html` - PRD padre (reducido 46%)
+2. `cotizador-especificacion.html` (~1,700 líneas)
+3. `ventas.html` (~1,200 líneas)
+4. `cuenta-corriente.html` (~500 líneas)
+5. `productos.html` (~850 líneas)
+6. `clientes.html` (~650 líneas)
+7. `configuracion.html` (~700 líneas)
+8. `estadisticas.html` (~550 líneas)
+9. `dashboard.html` (~700 líneas)
+10. `backup.html` (~500 líneas)
+
+### Corrección error conceptual crítico
+- ❌ INCORRECTO: "Módulo Repartos separado"
+- ✅ CORRECTO: Calendario de Repartos es **vista filtrada DENTRO de Ventas**
+- Archivo `prd/repartos.html` eliminado (965 líneas incorrectas)
+
+---
+
+## [31 Diciembre 2025] - Ajustes Visuales Ventas ✅
+
+### Implementados (9)
+1. Fila TOTAL en tabla ventas con cálculo suma
+2. Columna teléfono agregada
+3. Label "Fecha" en borradores (no "Fecha Creación")
+4. Vehículos "Reparto 1/2/3"
+5. Botón desasignar vehículo
+6. SKU eliminado en cotizador
+7. Filtro vehículo arreglado
+8. Fábrica primero en calendario
+9. Suma total calculada dinámicamente
+
+---
+
+## [31 Diciembre 2025] - Estandarización Proyecto ✅
+
+### Estructura reorganizada
+- `docs/`, `prd/`, `prototipos/`, `wireframes/`
+- Eliminados sufijos `-v2` de todos los archivos
+- Archivos obsoletos eliminados
+
+### Mock data centralizado (`shared/mock-data.js`)
+- 83 pedidos, 8 clientes, 8 productos, 3 vehículos
+- **Campos eliminados**: CUIT, razón_social, nombre, SKU
+- **Campos correctos**: dirección (identificador), teléfono, ciudad, lista_precio
+
+---
+
+## [30 Diciembre 2025] - Reunión Carlos (Ciclo 3)
+
+### Ajustes solicitados implementados en PRD (17/17)
+1. Fila TOTAL en tabla ventas
+2. Columna teléfono en ventas
+3. Exportación Excel con selección columnas
+4. Label "Fecha" en borradores
+5. Cambiar tipo pedido REPARTO ↔ FÁBRICA
+6. Control reparto desde módulo VENTAS
+7. Pedidos sin asignar ordenados por ciudad
+8. Dos botones exportación (con/sin precio)
+9. Vehículos: "Reparto X"
+10. Productos: orden drag & drop
+11. SKU eliminado
+12. Descuento cliente: botones L2/L3
+13. Descuentos sobre subtotal MENOS promocionales
+14. Registro pagos VENTAS + CC sin duplicación
+15. Desasignar vehículo
+16. Formato descuento más claro (sin L1/L2/L3)
+17. Remito PDF formal (eliminar Email)
+
+---
+
+## Histórico
+
+### Diciembre 2025
+- 7 bugs V1 producción corregidos
+- Feedback inicial módulo Cotizador
 
 ### Octubre 2024
 - V1 Producción lanzada: https://gestion.quimicabambu.com.ar
+- Stack: React 19 + Laravel 12 + PostgreSQL 17
