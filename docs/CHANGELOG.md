@@ -1,5 +1,122 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [06 Enero 2026 - Limpieza Docs + CLAUDE.md Rediseñado] ✅
+
+### Resumen
+Limpieza completa de documentación obsoleta y rediseño de CLAUDE.md siguiendo mejores prácticas de Anthropic.
+
+### Archivos Eliminados (7)
+Documentos de la fase de migración CSS ya completada:
+- `PLAN-MIGRACION-TOKENS.md` - Fases 1-3 completadas
+- `AUDITORIA-MIGRACION-TOKENS.md` - Auditoría pre-migración obsoleta
+- `AUDITORIA-COBERTURA-CSS.md` - Cobertura ya al 100%
+- `CORRECCIONES-CSS-04-ENE-2026.md` - Correcciones ya aplicadas
+- `ESTADO-VENTAS.md` - Análisis de gaps viejo
+- `ESTADO-COTIZADOR.md` - Análisis de gaps viejo
+- `DISEÑO-VISUAL.md` - Reemplazado por tokens.css
+
+### Archivos Actualizados
+
+#### `docs/TODO.md`
+- **Antes**: 1280 líneas (histórico acumulado)
+- **Ahora**: 39 líneas (solo pendientes actuales)
+- Contenido: Estado actual + pendientes próxima sesión
+
+#### `docs/README.md`
+- **Antes**: 222 líneas (referencias obsoletas a migración)
+- **Ahora**: 75 líneas (estado limpio)
+- Contenido: Prototipos implementados/pendientes, arquitectura CSS, docs disponibles
+
+#### `CLAUDE.md` (Raíz)
+- **Antes**: 353 líneas (desactualizado, no mencionaba Windows)
+- **Ahora**: 139 líneas (siguiendo mejores prácticas Anthropic)
+- Cambios clave:
+  - ✅ Sección "Entorno" (Windows, fecha, stack)
+  - ✅ Comandos PowerShell (no bash)
+  - ✅ Sistema CSS actualizado (tokens + components)
+  - ✅ Skill `/construir-prototipo` documentado
+  - ✅ Campos de datos correctos (sin CUIT/SKU)
+  - ❌ Eliminado: credenciales, ejemplos extensos, info redundante
+
+### Estructura Final `/docs`
+```
+docs/
+├── README.md               # Estado general
+├── CHANGELOG.md            # Registro histórico
+├── TODO.md                 # Pendientes actuales
+├── ARQUITECTURA-PROTOTIPOS.md
+└── FLUJOS-NEGOCIO.md
+```
+**5 archivos vs 12 antes**
+
+### Fuente
+Mejores prácticas: https://www.anthropic.com/engineering/claude-code-best-practices
+
+---
+
+## [06 Enero 2026 - UX Compactación + Header Unificado + Skill] ✅
+
+### Resumen
+Sesión enfocada en mejoras de UX: compactación agresiva de modales y paneles, rediseño de header cliente-detalle, y creación de skill para construcción de prototipos.
+
+### Cambios Principales
+
+#### 1. Header Unificado cliente-detalle.html
+- **Antes**: 2 líneas (nombre + badges | tabs)
+- **Ahora**: 1 línea (nombre + badges + tabs + botón Nueva Cotización)
+- Eliminado: Avatar circular, ID cliente
+- Tabs alineados a la izquierda junto al nombre
+- Botón flecha con estilo dark mode correcto
+
+#### 2. Compactación Modal "Detalle Pedido" (ventas.html)
+- Panel derecho (Resumen Financiero): todos los paddings/margins reducidos ~40%
+- Panel izquierdo (Cliente/Productos): mismo tratamiento
+- Header del modal: todo en una línea
+- Badge ENTREGADO: verde fuerte (#10b981) en vez de pastel
+
+#### 3. Compactación Modal "Registrar Pago" (cliente-detalle.html)
+- Info cliente en una sola línea (flex row)
+- Todos los form-groups, labels, inputs compactados
+- Sección "Aplicar a:" con radio buttons más pequeños
+- Textarea reducido
+- Sin overflow vertical con ambos checkboxes activos
+
+#### 4. Acordeón Productos Expandible
+- Eliminada "carditis" (card dentro de card)
+- Header "Productos del pedido" eliminado
+- Botón "Ver en Ventas" movido a columna de tabla principal
+- Tabla de productos transparente, sin backgrounds
+
+#### 5. Columnas Tabla Cuenta Corriente
+- Cargo/Pago/Saldo centrados (text-center)
+- Nueva columna "Ver" para acceso directo a Ventas
+- Columna "Reparto" renombrada de "Veh" con más ancho (85px)
+
+#### 6. Skill Creado: `/construir-prototipo`
+- Proceso en 7 fases para construir nuevo HTML
+- Reglas de compactación documentadas
+- Sistema de diseño referenciado
+- Dark mode desde inicio
+- Checklist de validación
+
+### Archivos Modificados
+- `cliente-detalle.html` - Header unificado, acordeón, columnas tabla
+- `cliente-detalle-specific.css` - +200 líneas (compactación, dark mode)
+- `ventas.html` - Modal detalle compactado, columna Reparto
+- `ventas-specific.css` - Compactación paneles
+- `script.js` (ventas) - Badge ENTREGADO verde fuerte
+- `.claude/skills/construir-prototipo/SKILL.md` - Nuevo skill
+
+### Commits
+- `6876ad0` - Rediseño header y mejoras UX en Cliente Detalle
+
+### Próxima Sesión
+- Auditoría de documentos (limpiar obsoletos/redundantes)
+- Usar `/construir-prototipo` para crear modal "Nuevo Cliente"
+- Continuar construcción de nuevos prototipos HTML
+
+---
+
 ## [04 Enero 2026 - Auditoría CSS + Correcciones] - Sistema 100% Cubierto ✅
 
 ### Resumen
