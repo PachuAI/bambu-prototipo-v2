@@ -352,4 +352,122 @@ function selectDescuento(btn) {
     console.log('Descuento seleccionado:', value);
 }
 
-console.log('✅ Cliente Detalle V2 - Script cargado correctamente');
+// ========================================
+// MODAL NUEVO CLIENTE
+// ========================================
+
+function abrirModalNuevoCliente() {
+    document.getElementById('modal-nuevo-cliente').classList.remove('hidden');
+    // Reset form
+    resetFormNuevoCliente();
+    // Focus en primer campo
+    setTimeout(() => {
+        document.getElementById('nc-direccion').focus();
+    }, 100);
+}
+
+function cerrarModalNuevoCliente() {
+    document.getElementById('modal-nuevo-cliente').classList.add('hidden');
+    resetFormNuevoCliente();
+}
+
+function resetFormNuevoCliente() {
+    document.getElementById('nc-direccion').value = '';
+    document.getElementById('nc-telefono').value = '';
+    document.getElementById('nc-ciudad').value = '';
+    document.getElementById('nc-nombre').value = '';
+    document.getElementById('nc-email').value = '';
+    document.getElementById('nc-nota').value = '';
+    document.getElementById('nc-activo').checked = true;
+
+    // Reset descuento a "Sin desc."
+    const btnGroup = document.querySelector('#modal-nuevo-cliente .btn-group-toggle');
+    if (btnGroup) {
+        btnGroup.querySelectorAll('.btn-toggle').forEach(btn => btn.classList.remove('active'));
+        btnGroup.querySelector('[data-value="none"]').classList.add('active');
+    }
+}
+
+function selectDescuentoNuevo(btn) {
+    const grupo = btn.closest('.btn-group-toggle');
+    grupo.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function crearNuevoCliente() {
+    // Obtener valores
+    const direccion = document.getElementById('nc-direccion').value.trim();
+    const telefono = document.getElementById('nc-telefono').value.trim();
+    const ciudad = document.getElementById('nc-ciudad').value;
+    const nombre = document.getElementById('nc-nombre').value.trim();
+    const email = document.getElementById('nc-email').value.trim();
+    const nota = document.getElementById('nc-nota').value.trim();
+    const activo = document.getElementById('nc-activo').checked;
+
+    // Obtener descuento seleccionado
+    const btnActivo = document.querySelector('#modal-nuevo-cliente .btn-toggle.active');
+    const descuento = btnActivo ? btnActivo.getAttribute('data-value') : 'none';
+
+    // Validar campos requeridos
+    if (!direccion) {
+        alert('⚠️ La dirección es obligatoria');
+        document.getElementById('nc-direccion').focus();
+        return;
+    }
+
+    if (!telefono) {
+        alert('⚠️ El teléfono es obligatorio');
+        document.getElementById('nc-telefono').focus();
+        return;
+    }
+
+    if (!ciudad) {
+        alert('⚠️ Debe seleccionar una ciudad');
+        document.getElementById('nc-ciudad').focus();
+        return;
+    }
+
+    // Crear objeto cliente (mock)
+    const nuevoCliente = {
+        id: Date.now(),
+        direccion: direccion.toUpperCase(),
+        telefono,
+        ciudad,
+        nombre,
+        email,
+        nota,
+        activo,
+        descuento,
+        saldo: 0,
+        fechaCreacion: new Date().toISOString()
+    };
+
+    console.log('✅ Nuevo cliente creado:', nuevoCliente);
+
+    // Simular guardado
+    alert(`✅ Cliente creado exitosamente\n\nDirección: ${nuevoCliente.direccion}\nCiudad: ${ciudad}\nDescuento: ${descuento === 'none' ? 'Sin descuento' : descuento.toUpperCase()}`);
+
+    cerrarModalNuevoCliente();
+
+    // En producción: recargar tabla o agregar fila
+}
+
+// Cerrar modal con Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const modalNuevoCliente = document.getElementById('modal-nuevo-cliente');
+        if (modalNuevoCliente && !modalNuevoCliente.classList.contains('hidden')) {
+            cerrarModalNuevoCliente();
+        }
+    }
+});
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(e) {
+    const modalNuevoCliente = document.getElementById('modal-nuevo-cliente');
+    if (e.target === modalNuevoCliente) {
+        cerrarModalNuevoCliente();
+    }
+});
+
+console.log('✅ Clientes V2 - Script cargado correctamente');

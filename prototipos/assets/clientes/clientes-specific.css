@@ -13,40 +13,103 @@
  */
 
 /* ============================================================================
-   HEADER - Input búsqueda y filtros
+   HEADER ESTÁNDAR (mismo estilo que Ventas)
    ============================================================================ */
 
-.input-search-header {
-    padding: 10px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-base);
-    width: 300px;
-    font-size: var(--font-size-base);
-    font-family: var(--font-family);
-    outline: none;
-    transition: var(--transition-base);
+.header-toolbar-standard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    background: var(--bg-white);
+    border-bottom: var(--border-width) solid var(--border-color);
+    gap: 16px;
 }
 
-.input-search-header:focus {
-    border-color: var(--color-accent);
-    box-shadow: var(--input-focus-ring);
+.filters-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
 }
 
-.select-filter {
-    padding: 10px 12px;
+/* Search compacto con icono */
+.search-filter-compact {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-filter-compact i {
+    position: absolute;
+    left: 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.input-search-compact {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-base);
-    font-size: var(--font-size-base);
+    padding: 6px 10px 6px 30px;
+    font-size: 12px;
     color: var(--text-primary);
     background: var(--bg-white);
-    cursor: pointer;
     outline: none;
-    min-width: 140px;
-    font-family: var(--font-family);
+    width: 200px;
+    transition: border-color var(--transition-base);
 }
 
-.select-filter:focus {
+.input-search-compact:focus {
     border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.15);
+}
+
+.input-search-compact::placeholder {
+    color: var(--text-muted);
+}
+
+/* Select compacto (mismo que Ventas) */
+.select-filter-compact {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--text-primary);
+    background: var(--bg-white);
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--transition-base);
+}
+
+.select-filter-compact:hover {
+    border-color: var(--color-accent);
+}
+
+.select-filter-compact:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.15);
+}
+
+/* Botón primario compacto */
+.btn-primary-compact {
+    background: var(--color-success);
+    color: var(--text-white);
+    padding: 6px 14px;
+    border: none;
+    border-radius: var(--border-radius-base);
+    font-weight: var(--font-weight-semibold);
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: background var(--transition-base);
+}
+
+.btn-primary-compact:hover {
+    background: var(--color-success-dark);
 }
 
 /* ============================================================================
@@ -172,26 +235,181 @@
    DARK MODE OVERRIDES - CLIENTES
    ============================================================================ */
 
-/* Buscador superior oscuro */
-[data-theme="dark"] .input-search-header {
+/* Header estándar */
+[data-theme="dark"] .header-toolbar-standard {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Search compacto oscuro */
+[data-theme="dark"] .input-search-compact {
     background: var(--bg-sidebar) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
 }
 
-[data-theme="dark"] .input-search-header::placeholder {
+[data-theme="dark"] .input-search-compact::placeholder {
     color: var(--text-muted) !important;
 }
 
-/* Select filtros oscuros */
-[data-theme="dark"] .select-filter {
+[data-theme="dark"] .search-filter-compact i {
+    color: var(--text-muted) !important;
+}
+
+/* Select filtros compactos oscuros */
+[data-theme="dark"] .select-filter-compact {
     background: var(--bg-sidebar) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
+}
+
+/* Botón primario compacto */
+[data-theme="dark"] .btn-primary-compact {
+    background: var(--color-success) !important;
+    color: var(--text-white) !important;
+}
+
+[data-theme="dark"] .btn-primary-compact:hover {
+    background: var(--color-success-dark) !important;
 }
 
 /* Avatar círculo oscuro */
 [data-theme="dark"] .avatar-circle {
     background: var(--color-primary) !important;
     color: white !important;
+}
+
+/* ============================================================================
+   MODAL NUEVO CLIENTE
+   ============================================================================ */
+
+.modal-md {
+    width: 580px;
+    max-width: 95vw;
+}
+
+.modal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Toggle Activo */
+.toggle-activo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.toggle-activo input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-success);
+}
+
+.toggle-activo .toggle-label {
+    font-weight: var(--font-weight-medium);
+}
+
+/* Form rows de 2 columnas */
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Form groups compactos */
+.modal-body .form-group {
+    margin-bottom: 12px;
+}
+
+.modal-body .form-label {
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+}
+
+.modal-body .form-input {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+/* Asterisco requerido */
+.required {
+    color: var(--color-danger);
+}
+
+/* Textarea compacto */
+.form-textarea-sm {
+    min-height: 60px;
+    max-height: 80px;
+    resize: none;
+}
+
+/* Grupo de botones toggle (descuento) */
+.btn-group-toggle {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+}
+
+.btn-toggle {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    background: var(--bg-white);
+    border: none;
+    border-right: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    color: var(--text-secondary);
+}
+
+.btn-toggle:last-child {
+    border-right: none;
+}
+
+.btn-toggle:hover {
+    background: var(--bg-app);
+}
+
+.btn-toggle.active {
+    background: var(--text-primary);
+    color: var(--text-white);
+}
+
+/* ============================================================================
+   DARK MODE - MODAL NUEVO CLIENTE
+   ============================================================================ */
+
+[data-theme="dark"] .modal-content {
+    background: var(--bg-white) !important;
+}
+
+[data-theme="dark"] .toggle-activo {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-group-toggle {
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-toggle {
+    background: var(--bg-sidebar);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-toggle:hover {
+    background: var(--bg-hover);
+}
+
+[data-theme="dark"] .btn-toggle.active {
+    background: var(--color-primary) !important;
+    color: var(--text-white) !important;
 }

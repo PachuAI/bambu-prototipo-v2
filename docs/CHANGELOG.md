@@ -1,5 +1,33 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [06 Enero 2026 - Modal Nuevo Cliente + Headers Estandarizados] ✅
+
+### Modal Nuevo Cliente
+- Creado modal completo en `clientes.html` con campos: Dirección*, Teléfono*, Ciudad*, Descuento (L1/L2/L3), Nombre, Email, Nota
+- Toggle "Activo" en header del modal
+- Validación de campos requeridos
+- Dark mode completo
+
+### Estandarización Headers (padding 10px 24px)
+Todos los módulos ahora usan el mismo alto y estructura de header:
+
+| Módulo | Cambios |
+|--------|---------|
+| **Clientes** | Nueva clase `.header-toolbar-standard`, filtros compactos `.select-filter-compact` |
+| **Cliente Detalle** | Tabs compactados (5px 12px), título 14px, botón compacto |
+| **Dashboard** | Agregado título "Dashboard", buscador compacto a la derecha |
+
+### Archivos Modificados
+- `clientes.html` - Modal + header estandarizado
+- `clientes-specific.css` - +150 líneas (modal, header, dark mode)
+- `script.js` (clientes) - Funciones modal nuevo cliente
+- `cliente-detalle.html` - Botón compacto
+- `cliente-detalle-specific.css` - Header compactado
+- `dashboard.html` - Header con título
+- `dashboard-specific.css` - +100 líneas (header, search compacto, dark mode)
+
+---
+
 ## [06 Enero 2026 - Limpieza Docs + CLAUDE.md Rediseñado] ✅
 
 ### Resumen

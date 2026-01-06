@@ -82,39 +82,43 @@
         <!-- MAIN LAYOUT -->
         <main class="main-layout">
 
-            <!-- HEADER -->
-            <header class="header-toolbar">
+            <!-- HEADER (estandarizado estilo Ventas) -->
+            <header class="header-toolbar-standard">
                 <div class="page-header-title">
                     <i class="fas fa-users" style="color: var(--text-secondary);"></i>
                     Clientes
                 </div>
 
-                <!-- Central Search -->
-                <input type="text" class="input-search-header" placeholder="Buscar por nombre, teléfono o dirección...">
+                <!-- Filtros inline (mismo estilo Ventas) -->
+                <div class="filters-inline">
+                    <div class="search-filter-compact">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="input-search-compact" id="search-clientes" placeholder="Buscar por dirección, teléfono...">
+                    </div>
 
-                <!-- Actions -->
-                <div class="header-actions">
-                    <select class="select-filter">
+                    <select class="select-filter-compact" id="filter-estado">
                         <option value="">Estado: Todos</option>
                         <option value="activo">Activo</option>
                         <option value="inactivo">Inactivo</option>
                     </select>
 
-                    <select class="select-filter">
+                    <select class="select-filter-compact" id="filter-ciudad">
                         <option value="">Ciudad: Todas</option>
                         <option value="neuquen">Neuquén</option>
                         <option value="cipolletti">Cipolletti</option>
+                        <option value="plottier">Plottier</option>
+                        <option value="centenario">Centenario</option>
                         <option value="allen">Allen</option>
                     </select>
 
-                    <select class="select-filter">
+                    <select class="select-filter-compact" id="filter-saldo">
                         <option value="">Saldo: Todos</option>
                         <option value="deudor">Con Deuda</option>
                         <option value="favor">A Favor</option>
                         <option value="dia">Al Día</option>
                     </select>
 
-                    <button class="btn-primary"><i class="fas fa-plus"></i> Nuevo Cliente</button>
+                    <button class="btn-primary-compact" onclick="abrirModalNuevoCliente()"><i class="fas fa-plus"></i> Nuevo Cliente</button>
                 </div>
             </header>
 
@@ -208,6 +212,89 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- ================================================================
+         MODAL: NUEVO CLIENTE
+         ================================================================ -->
+    <div id="modal-nuevo-cliente" class="modal-overlay hidden">
+        <div class="modal-content modal-md">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Nuevo Cliente</h3>
+                <div class="modal-header-right">
+                    <label class="toggle-activo">
+                        <input type="checkbox" id="nc-activo" checked>
+                        <span class="toggle-label">Activo</span>
+                    </label>
+                    <button class="btn-close-modal" onclick="cerrarModalNuevoCliente()">&times;</button>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Row 1: Dirección + Teléfono -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Dirección <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="nc-direccion" placeholder="Ej: Av. Argentina 1250">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="nc-telefono" placeholder="299-4123456">
+                    </div>
+                </div>
+
+                <!-- Row 2: Ciudad + Descuento -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Ciudad <span class="required">*</span></label>
+                        <select class="form-input" id="nc-ciudad">
+                            <option value="">Seleccionar...</option>
+                            <option value="neuquen">Neuquén</option>
+                            <option value="cipolletti">Cipolletti</option>
+                            <option value="plottier">Plottier</option>
+                            <option value="centenario">Centenario</option>
+                            <option value="allen">Allen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Descuento</label>
+                        <div class="btn-group-toggle">
+                            <button type="button" class="btn-toggle active" data-value="none" onclick="selectDescuentoNuevo(this)">Sin desc.</button>
+                            <button type="button" class="btn-toggle" data-value="l2" onclick="selectDescuentoNuevo(this)">L2 6.25%</button>
+                            <button type="button" class="btn-toggle" data-value="l3" onclick="selectDescuentoNuevo(this)">L3 10%</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Nombre + Email -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-input" id="nc-nombre" placeholder="Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="nc-email" placeholder="cliente@email.com">
+                    </div>
+                </div>
+
+                <!-- Row 4: Nota -->
+                <div class="form-group">
+                    <label class="form-label">Nota</label>
+                    <textarea class="form-input form-textarea-sm" id="nc-nota" placeholder="Observaciones..."></textarea>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalNuevoCliente()">Cancelar</button>
+                <button class="btn-primary" onclick="crearNuevoCliente()">
+                    <i class="fas fa-check"></i> Crear Cliente
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="shared/utils.js"></script>

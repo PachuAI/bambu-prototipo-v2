@@ -84,29 +84,32 @@
         <!-- MAIN LAYOUT -->
         <main class="main-layout">
 
-            <!-- HEADER TOOLBAR (Dashboard Version) -->
-            <header class="header-toolbar" style="padding-left: 32px; padding-right: 32px;">
-                <!-- Global Search (Protagonist) -->
-                <div class="search-container-global">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="global-search" placeholder="Buscar clientes, productos, pedidos..."
-                        autocomplete="off">
-                    <span class="search-shortcut-badge">Ctrl + K</span>
-
-                    <!-- Search Results Dropdown -->
-                    <div id="global-search-results" class="global-results-dropdown hidden">
-                    </div>
+            <!-- HEADER (estandarizado) -->
+            <header class="header-toolbar-standard">
+                <div class="page-header-title">
+                    <i class="fas fa-home" style="color: var(--text-secondary);"></i>
+                    Dashboard
                 </div>
 
-                <!-- Quick User Actions -->
-                <div style="display:flex; gap:16px; margin-left: 24px;">
-                    <button class="btn-xs-outline" style="height: 36px; padding: 0 12px; border-radius: 20px;">
+                <!-- Filtros inline (mismo estilo otros módulos) -->
+                <div class="filters-inline">
+                    <!-- Global Search compacto -->
+                    <div class="search-global-compact">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="global-search" placeholder="Buscar clientes, productos, pedidos..." autocomplete="off">
+                        <span class="search-shortcut">Ctrl+K</span>
+                        <!-- Search Results Dropdown -->
+                        <div id="global-search-results" class="global-results-dropdown hidden"></div>
+                    </div>
+
+                    <!-- Notificación -->
+                    <button class="btn-icon-compact" title="Notificaciones">
                         <i class="far fa-bell"></i>
                     </button>
-                    <div class="client-status" style="background:transparent; border:1px solid #ebecf0;">
-                        <div
-                            style="width:24px; height:24px; background:#172b4d; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:10px;">
-                            AD</div>
+
+                    <!-- Usuario -->
+                    <div class="user-badge-compact">
+                        <div class="user-avatar-sm">AD</div>
                         <span>Admin</span>
                     </div>
                 </div>
