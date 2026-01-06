@@ -17,20 +17,309 @@ const CONFIG = {
 };
 
 // ============================================================================
+// PROVEEDORES
+// Estructura según PRD productos.html
+// ============================================================================
+
+const PROVEEDORES = [
+  { id: 1, nombre: 'Química del Sur' },
+  { id: 2, nombre: 'Distribuidora Norte' },
+  { id: 3, nombre: 'Limpieza Total S.A.' },
+  { id: 4, nombre: 'Fabricación Propia' },
+];
+
+// ============================================================================
 // PRODUCTOS
-// Estructura extraída de: prototipos/assets/cotizador/script.js
-// Campos: id, name, price (L1), stock, weight
+// Estructura completa según PRD prd/productos.html
+// Campos: id, nombre, proveedor_id, proveedor_nombre, precio_l1, precio_l2, precio_l3,
+//         stock_actual, stock_minimo, peso_kg, orden, disponible, en_promocion,
+//         precio_promocional, created_at, updated_at
 // ============================================================================
 
 const PRODUCTOS = [
-  { id: 1, name: 'Detergente Industrial 5L', price: 15000, stock: 150, weight: 5.0 },
-  { id: 2, name: 'Lavandina Concentrada 2L', price: 3500, stock: 300, weight: 2.0 },
-  { id: 3, name: 'Desinfectante Multiuso 1L', price: 2200, stock: 200, weight: 1.0 },
-  { id: 4, name: 'Limpiador Pisos 5L', price: 8500, stock: 120, weight: 5.0 },
-  { id: 5, name: 'Jabón Líquido Manos 500ml', price: 1800, stock: 250, weight: 0.5 },
-  { id: 6, name: 'Alcohol en Gel 1L', price: 4500, stock: 180, weight: 1.0 },
-  { id: 7, name: 'Desengrasante Cocina 750ml', price: 3200, stock: 160, weight: 0.75 },
-  { id: 8, name: 'Limpia Vidrios 500ml', price: 1500, stock: 220, weight: 0.5 },
+  {
+    id: 1,
+    nombre: 'Detergente Industrial 5L',
+    proveedor_id: 1,
+    proveedor_nombre: 'Química del Sur',
+    precio_l1: 15000,
+    precio_l2: 14062.50,  // L1 * 0.9375 (6.25% desc)
+    precio_l3: 13500,     // L1 * 0.90 (10% desc)
+    stock_actual: 150,
+    stock_minimo: 30,
+    peso_kg: 5.0,
+    orden: 1,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-06-15',
+    updated_at: '2025-12-20'
+  },
+  {
+    id: 2,
+    nombre: 'Lavandina Concentrada 2L',
+    proveedor_id: 4,
+    proveedor_nombre: 'Fabricación Propia',
+    precio_l1: 3500,
+    precio_l2: 3281.25,
+    precio_l3: 3150,
+    stock_actual: 300,
+    stock_minimo: 50,
+    peso_kg: 2.0,
+    orden: 2,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-01-10',
+    updated_at: '2025-12-18'
+  },
+  {
+    id: 3,
+    nombre: 'Desinfectante Multiuso 1L',
+    proveedor_id: 1,
+    proveedor_nombre: 'Química del Sur',
+    precio_l1: 2200,
+    precio_l2: 2062.50,
+    precio_l3: 1980,
+    stock_actual: 200,
+    stock_minimo: 40,
+    peso_kg: 1.0,
+    orden: 3,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-03-20',
+    updated_at: '2025-12-15'
+  },
+  {
+    id: 4,
+    nombre: 'Limpiador Pisos 5L',
+    proveedor_id: 2,
+    proveedor_nombre: 'Distribuidora Norte',
+    precio_l1: 8500,
+    precio_l2: 7968.75,
+    precio_l3: 7650,
+    stock_actual: 120,
+    stock_minimo: 25,
+    peso_kg: 5.0,
+    orden: 4,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-02-05',
+    updated_at: '2025-12-22'
+  },
+  {
+    id: 5,
+    nombre: 'Jabón Líquido Manos 500ml',
+    proveedor_id: 3,
+    proveedor_nombre: 'Limpieza Total S.A.',
+    precio_l1: 1800,
+    precio_l2: 1687.50,
+    precio_l3: 1620,
+    stock_actual: 250,
+    stock_minimo: 60,
+    peso_kg: 0.5,
+    orden: 5,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-04-12',
+    updated_at: '2025-12-10'
+  },
+  {
+    id: 6,
+    nombre: 'Alcohol en Gel 1L',
+    proveedor_id: 1,
+    proveedor_nombre: 'Química del Sur',
+    precio_l1: 4500,
+    precio_l2: 4218.75,
+    precio_l3: 4050,
+    stock_actual: 18,  // ⚠️ Stock bajo (< stock_minimo)
+    stock_minimo: 40,
+    peso_kg: 1.0,
+    orden: 6,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-05-08',
+    updated_at: '2025-12-28'
+  },
+  {
+    id: 7,
+    nombre: 'Desengrasante Cocina 750ml',
+    proveedor_id: 2,
+    proveedor_nombre: 'Distribuidora Norte',
+    precio_l1: 3200,
+    precio_l2: 3000,
+    precio_l3: 2880,
+    stock_actual: 160,
+    stock_minimo: 35,
+    peso_kg: 0.75,
+    orden: 7,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-07-22',
+    updated_at: '2025-12-05'
+  },
+  {
+    id: 8,
+    nombre: 'Limpia Vidrios 500ml',
+    proveedor_id: 3,
+    proveedor_nombre: 'Limpieza Total S.A.',
+    precio_l1: 1500,
+    precio_l2: 1406.25,
+    precio_l3: 1350,
+    stock_actual: 220,
+    stock_minimo: 50,
+    peso_kg: 0.5,
+    orden: 8,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-08-14',
+    updated_at: '2025-12-12'
+  },
+  {
+    id: 9,
+    nombre: 'Pack Limpieza Hogar Completo',
+    proveedor_id: null,
+    proveedor_nombre: '-',
+    precio_l1: 18000,
+    precio_l2: 18000,  // Ignorado si en_promocion
+    precio_l3: 18000,
+    stock_actual: 25,
+    stock_minimo: 10,
+    peso_kg: 8.0,
+    orden: 9,
+    disponible: true,
+    en_promocion: true,  // 🏷 PROMOCIÓN
+    precio_promocional: 15000,
+    created_at: '2025-11-01',
+    updated_at: '2025-12-26'
+  },
+  {
+    id: 10,
+    nombre: 'Cloro Concentrado 5L',
+    proveedor_id: 4,
+    proveedor_nombre: 'Fabricación Propia',
+    precio_l1: 4200,
+    precio_l2: 3937.50,
+    precio_l3: 3780,
+    stock_actual: 8,  // ⚠️ Stock MUY bajo
+    stock_minimo: 30,
+    peso_kg: 5.0,
+    orden: 10,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-09-03',
+    updated_at: '2025-12-29'
+  },
+  {
+    id: 11,
+    nombre: 'Suavizante Ropa 3L',
+    proveedor_id: 2,
+    proveedor_nombre: 'Distribuidora Norte',
+    precio_l1: 5800,
+    precio_l2: 5437.50,
+    precio_l3: 5220,
+    stock_actual: 95,
+    stock_minimo: 20,
+    peso_kg: 3.0,
+    orden: 11,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2024-10-18',
+    updated_at: '2025-12-14'
+  },
+  {
+    id: 12,
+    nombre: 'Producto Descontinuado Viejo',
+    proveedor_id: 1,
+    proveedor_nombre: 'Química del Sur',
+    precio_l1: 2500,
+    precio_l2: 2343.75,
+    precio_l3: 2250,
+    stock_actual: 5,
+    stock_minimo: 10,
+    peso_kg: 1.5,
+    orden: 12,
+    disponible: false,  // ❌ NO DISPONIBLE
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2023-05-10',
+    updated_at: '2025-06-01'
+  },
+  {
+    id: 13,
+    nombre: 'Pack Oficina Premium',
+    proveedor_id: null,
+    proveedor_nombre: '-',
+    precio_l1: 12000,
+    precio_l2: 12000,
+    precio_l3: 12000,
+    stock_actual: 15,
+    stock_minimo: 5,
+    peso_kg: 6.0,
+    orden: 13,
+    disponible: true,
+    en_promocion: true,  // 🏷 PROMOCIÓN
+    precio_promocional: 9500,
+    created_at: '2025-10-15',
+    updated_at: '2025-12-20'
+  },
+  {
+    id: 14,
+    nombre: 'Limpiador Multiusos Concentrado 1L',
+    proveedor_id: 1,
+    proveedor_nombre: 'Química del Sur',
+    precio_l1: 2800,
+    precio_l2: 2625,
+    precio_l3: 2520,
+    stock_actual: 180,
+    stock_minimo: 40,
+    peso_kg: 1.0,
+    orden: 14,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2025-01-20',
+    updated_at: '2025-12-18'
+  },
+  {
+    id: 15,
+    nombre: 'Cera Pisos Autobrillante 5L',
+    proveedor_id: 3,
+    proveedor_nombre: 'Limpieza Total S.A.',
+    precio_l1: 9500,
+    precio_l2: 8906.25,
+    precio_l3: 8550,
+    stock_actual: 45,
+    stock_minimo: 15,
+    peso_kg: 5.2,
+    orden: 15,
+    disponible: true,
+    en_promocion: false,
+    precio_promocional: null,
+    created_at: '2025-02-28',
+    updated_at: '2025-12-22'
+  }
+];
+
+// ============================================================================
+// MOVIMIENTOS DE STOCK (historial)
+// Estructura según PRD productos.html sección 4.7
+// ============================================================================
+
+const MOVIMIENTOS_STOCK = [
+  { id: 1, producto_id: 6, tipo: 'EGRESO', cantidad: 50, motivo: 'Pedido #00521', pedido_id: 521, stock_resultante: 18, usuario_id: 1, created_at: '2025-12-28 14:30:00' },
+  { id: 2, producto_id: 10, tipo: 'EGRESO', cantidad: 30, motivo: 'Pedido #00519', pedido_id: 519, stock_resultante: 8, usuario_id: 1, created_at: '2025-12-29 09:15:00' },
+  { id: 3, producto_id: 1, tipo: 'INGRESO', cantidad: 100, motivo: 'Producción lote #245', pedido_id: null, stock_resultante: 150, usuario_id: 1, created_at: '2025-12-20 11:00:00' },
+  { id: 4, producto_id: 2, tipo: 'INGRESO', cantidad: 200, motivo: 'Producción lote #246', pedido_id: null, stock_resultante: 300, usuario_id: 1, created_at: '2025-12-18 10:30:00' },
+  { id: 5, producto_id: 9, tipo: 'AJUSTE', cantidad: -5, motivo: 'Rotura en almacén', pedido_id: null, stock_resultante: 25, usuario_id: 1, created_at: '2025-12-26 16:45:00' },
 ];
 
 // ============================================================================

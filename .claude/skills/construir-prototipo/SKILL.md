@@ -7,17 +7,39 @@ description: Construye nuevas secciones HTML, modales y componentes para prototi
 
 ## Proceso de Construcción
 
-### FASE 1: Análisis (OBLIGATORIO)
+### FASE 0: Leer PRD (OBLIGATORIO - SIEMPRE PRIMERO)
+
+**⚠️ CRÍTICO: NO empezar a construir sin haber leído el PRD completo.**
+
+```
+ANTES DE CUALQUIER OTRA COSA:
+1. Leer `prd/{modulo}.html` completo
+2. Identificar: campos, validaciones, flujos, reglas de negocio
+3. Extraer estructura de datos (mock data)
+4. Anotar integraciones con otros módulos
+```
+
+El PRD es la **fuente de verdad** para:
+- Qué campos incluir (y cuáles NO)
+- Validaciones y mensajes de error
+- Estados y badges
+- Flujos de usuario
+- Casos de uso a cubrir
+
+---
+
+### FASE 1: Análisis
 
 **1.1 Identificar qué construir:**
 - ¿Es modal, sección, página completa, componente?
 - ¿En qué archivo HTML va? (`prototipos/{modulo}.html`)
-- ¿Existe PRD? Leer `prd/{modulo}.html`
+- ¿Es módulo nuevo o extensión de existente?
 
 **1.2 Revisar contexto:**
 - Leer ASCII/wireframe si el usuario lo proporciona
 - Identificar datos mock necesarios (`shared/mock-data.js`)
 - Listar qué es solo HTML/CSS vs qué necesita JS
+- Revisar prototipos existentes similares para consistencia
 
 ---
 
@@ -136,26 +158,45 @@ var(--spacing-lg)  /* 16px */
 
 ### FASE 6: Lógica JavaScript Mock
 
-**Estructura función:**
-```javascript
-function accionNombre() {
-    // 1. Obtener datos del form
-    const campo = document.getElementById('campo').value;
+**⚠️ CRÍTICO: Toda lógica debe estar COMENTADA para auditorías contra PRD.**
 
-    // 2. Validar
-    if (!campo) {
-        showNotification('Campo requerido', 'error');
-        return;
+**Estructura función con comentarios obligatorios:**
+```javascript
+// ============================================================================
+// REGLA DE NEGOCIO: Crear/Editar Producto
+// PRD: prd/productos.html - Sección 4.2
+// ============================================================================
+
+/**
+ * Guarda un producto nuevo o actualiza uno existente.
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Si en_promocion=true → precio_base disabled, usar precio_promocional
+ * - Si en_promocion=false → precio_promocional disabled, usar precio_base
+ * - stock_minimo es opcional (default: 20 para filtro stock bajo)
+ *
+ * VALIDACIONES:
+ * - Nombre: obligatorio, único
+ * - Precio activo: debe ser > 0
+ * - Stock actual: obligatorio
+ * - Peso: obligatorio, > 0
+ */
+function guardarProducto() {
+    // 1. Obtener valores del formulario
+    const nombre = document.getElementById('prod-nombre').value.trim();
+
+    // 2. Validar nombre único (PRD sección 4.2.1)
+    const nombreExiste = productosLocal.some(p => p.nombre === nombre);
+
+    // 3. Validar precio según modo promoción (PRD sección 4.5)
+    if (enPromocion) {
+        // Producto en promoción: validar precio promocional
+    } else {
+        // Producto normal: validar precio base
     }
 
-    // 3. Simular acción (mock)
-    console.log('Acción ejecutada:', { campo });
-
-    // 4. Feedback
-    showNotification('Acción completada', 'success');
-
-    // 5. Cerrar modal si aplica
-    cerrarModal('nombre');
+    // 4. Guardar con estructura de datos según PRD
+    // 5. Feedback y actualizar UI
 }
 ```
 
@@ -166,21 +207,41 @@ const cliente = CLIENTES.find(c => c.id === clienteId);
 const productos = PRODUCTOS.filter(p => p.categoria === 'limpieza');
 ```
 
+**Propósito de los comentarios:**
+- Facilitar auditorías comparando mock vs PRD
+- Documentar reglas de negocio implementadas
+- Identificar secciones del PRD que cubre cada función
+
 ---
 
 ### FASE 7: Checklist Final
 
 **Antes de dar por terminado:**
-- [ ] HTML semántico y accesible
+
+✅ **Conformidad con PRD:**
+- [ ] Todos los campos del PRD incluidos
+- [ ] Validaciones según PRD implementadas
+- [ ] Flujos de usuario cubiertos
+- [ ] Reglas de negocio respetadas
+- [ ] NO hay campos inventados que no estén en PRD
+
+✅ **Sistema de diseño:**
 - [ ] Usa tokens.css (no hardcodear colores)
 - [ ] Usa components.css (no reinventar)
 - [ ] Estilos específicos en `{modulo}-specific.css`
+
+✅ **UX y accesibilidad:**
+- [ ] HTML semántico y accesible
 - [ ] Dark mode implementado
 - [ ] NO hay overflow vertical
 - [ ] Compactación aplicada
-- [ ] JS mock funcional
-- [ ] Cumple con PRD
 - [ ] Probado en light y dark mode
+
+✅ **Funcionalidad:**
+- [ ] JS mock funcional
+- [ ] Datos conectados con mock-data.js
+- [ ] Notificaciones de feedback
+- [ ] **Lógica comentada con referencias a PRD** (obligatorio para auditorías)
 
 ---
 

@@ -61,6 +61,40 @@ bambu_v2_prototipo/
 - ✅ Usar sistema CSS: tokens.css → components.css → specific.css
 - ✅ Mensajes concisos (economizar tokens)
 - ✅ Dark mode desde inicio en nuevos componentes
+- ✅ **Comentar lógica JS** para auditorías contra PRD (ver abajo)
+
+---
+
+## Regla de Comentarios en JavaScript
+
+**OBLIGATORIO**: Toda lógica de negocio en archivos `.js` debe estar comentada para facilitar auditorías y validación contra el PRD.
+
+**Formato de comentarios:**
+```javascript
+// ============================================================================
+// REGLA DE NEGOCIO: [Nombre de la regla]
+// PRD: prd/{modulo}.html - Sección X.X
+// ============================================================================
+
+/**
+ * [Descripción de la función]
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Si condición A → resultado X
+ * - Si condición B → resultado Y
+ *
+ * VALIDACIONES:
+ * - Campo obligatorio
+ * - Valor debe ser > 0
+ */
+function miFuncion() {
+    // Paso 1: Obtener datos
+    // Paso 2: Validar según PRD sección X.X
+    // Paso 3: Aplicar regla de negocio
+}
+```
+
+**Propósito**: Permite comparar el mock con la especificación del PRD durante auditorías
 
 ---
 
@@ -120,6 +154,7 @@ bambu_v2_prototipo/
 | `clientes.html` | Listado con filtros |
 | `cliente-detalle.html` | Detalle + Cuenta Corriente |
 | `repartos-dia.html` | Vista día, asignar vehículos |
+| `productos.html` | CRUD productos, stock, promociones |
 
 ---
 

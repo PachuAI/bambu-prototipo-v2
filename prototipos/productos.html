@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Productos y Stock V2</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/productos/productos-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock" class="active">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                    </li>
+                    <li title="Repartos">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    <li title="Reportes y Estadísticas">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER -->
+            <header class="header-toolbar-standard">
+                <div class="page-header-title">
+                    <i class="fas fa-box" style="color: var(--text-secondary);"></i>
+                    Productos y Stock
+                </div>
+
+                <!-- Filtros inline -->
+                <div class="filters-inline">
+                    <div class="search-filter-compact">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="input-search-compact" id="search-productos" placeholder="Buscar producto...">
+                    </div>
+
+                    <select class="select-filter-compact" id="filter-proveedor">
+                        <option value="">Proveedor: Todos</option>
+                        <!-- Opciones dinámicas desde JS -->
+                    </select>
+
+                    <select class="select-filter-compact" id="filter-disponibilidad">
+                        <option value="">Disponibilidad: Todos</option>
+                        <option value="disponible">Disponibles</option>
+                        <option value="no-disponible">No disponibles</option>
+                    </select>
+
+                    <label class="checkbox-filter-compact">
+                        <input type="checkbox" id="filter-promocion">
+                        <span>En promoción</span>
+                    </label>
+
+                    <label class="checkbox-filter-compact filter-stock-bajo">
+                        <input type="checkbox" id="filter-stock-bajo">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Stock bajo</span>
+                    </label>
+
+                    <button class="btn-link-compact" onclick="limpiarFiltros()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
+
+                    <div class="header-actions-right">
+                        <button class="btn-secondary-compact" onclick="abrirModalExportar()">
+                            <i class="fas fa-file-excel"></i> Exportar
+                        </button>
+                        <button class="btn-primary-compact" onclick="abrirModalProducto()">
+                            <i class="fas fa-plus"></i> Nuevo Producto
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- LIST CONTAINER -->
+            <div class="list-container">
+                <table class="table-v2" id="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th class="col-orden">#</th>
+                            <th class="col-nombre">Nombre</th>
+                            <th class="col-proveedor">Proveedor</th>
+                            <th class="col-precio">Precio L1</th>
+                            <th class="col-stock">Stock</th>
+                            <th class="col-peso">Peso (kg)</th>
+                            <th class="col-estado">Estado</th>
+                            <th class="col-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-productos">
+                        <!-- Filas generadas dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ================================================================
+         MODAL: CREAR/EDITAR PRODUCTO
+         ================================================================ -->
+    <div id="modal-producto" class="modal-overlay hidden">
+        <div class="modal-content modal-md">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3 id="modal-producto-titulo"><i class="fas fa-box"></i> Nuevo Producto</h3>
+                <div class="modal-header-right">
+                    <label class="toggle-activo">
+                        <input type="checkbox" id="prod-disponible" checked>
+                        <span class="toggle-label">Disponible</span>
+                    </label>
+                    <button class="btn-close-modal" onclick="cerrarModalProducto()">&times;</button>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <input type="hidden" id="prod-id">
+
+                <!-- Row 1: Nombre -->
+                <div class="form-group">
+                    <label class="form-label">Nombre <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="prod-nombre" placeholder="Ej: Detergente Industrial 5L">
+                    <span class="form-error hidden" id="error-nombre">Ya existe un producto con este nombre</span>
+                </div>
+
+                <!-- Row 2: Proveedor + Precio base -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Proveedor</label>
+                        <select class="form-input" id="prod-proveedor">
+                            <option value="">Sin proveedor (combo)</option>
+                            <!-- Opciones dinámicas desde JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio base <span class="required">*</span></label>
+                        <div class="input-prefix">
+                            <span>$</span>
+                            <input type="number" class="form-input" id="prod-precio" placeholder="0" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Stock actual + Alerta stock bajo -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Stock actual <span class="required">*</span></label>
+                        <input type="number" class="form-input" id="prod-stock" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alerta stock bajo</label>
+                        <input type="number" class="form-input" id="prod-stock-min" placeholder="20" min="0">
+                        <span class="form-hint">Default: 20 unidades</span>
+                    </div>
+                </div>
+
+                <!-- Row 4: Peso -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Peso (kg) <span class="required">*</span></label>
+                        <input type="number" class="form-input" id="prod-peso" placeholder="0.0" min="0.1" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <!-- Espaciador -->
+                    </div>
+                </div>
+
+                <!-- Separador promoción -->
+                <div class="form-separator">
+                    <span>Promoción</span>
+                </div>
+
+                <!-- Row 5: Switch promoción + Precio promocional en misma línea -->
+                <div class="form-row-promocion">
+                    <label class="toggle-promocion">
+                        <input type="checkbox" id="prod-en-promocion" onchange="togglePrecioPromocional()">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-text">En promoción</span>
+                    </label>
+                    <div class="input-prefix precio-promo-inline">
+                        <span>$</span>
+                        <input type="number" class="form-input" id="prod-precio-promo" placeholder="Precio promocional" min="1" disabled>
+                    </div>
+                </div>
+                <span class="form-error hidden" id="error-precio-promo">El precio promocional debe ser mayor a 0</span>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalProducto()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarProducto()">
+                    <i class="fas fa-check"></i> <span id="btn-guardar-texto">Crear Producto</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL: AJUSTAR STOCK
+         ================================================================ -->
+    <div id="modal-ajustar-stock" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3><i class="fas fa-boxes"></i> Ajustar Stock</h3>
+                <button class="btn-close-modal" onclick="cerrarModalAjustarStock()">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <input type="hidden" id="ajuste-producto-id">
+
+                <!-- Info producto -->
+                <div class="info-producto-stock">
+                    <div class="info-row">
+                        <span class="info-label">Producto:</span>
+                        <span class="info-value" id="ajuste-producto-nombre">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Stock actual:</span>
+                        <span class="info-value" id="ajuste-stock-actual">-</span>
+                    </div>
+                </div>
+
+                <!-- Tipo de movimiento -->
+                <div class="form-group">
+                    <label class="form-label">Tipo de movimiento</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="tipo-movimiento" value="INGRESO" checked onchange="actualizarVistaPrevia()">
+                            <span class="radio-custom"></span>
+                            <span class="radio-text ingreso">Ingreso (+)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tipo-movimiento" value="AJUSTE" onchange="actualizarVistaPrevia()">
+                            <span class="radio-custom"></span>
+                            <span class="radio-text ajuste">Ajuste (-)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cantidad -->
+                <div class="form-group">
+                    <label class="form-label">Cantidad <span class="required">*</span></label>
+                    <input type="number" class="form-input" id="ajuste-cantidad" placeholder="0" min="1" oninput="actualizarVistaPrevia()">
+                </div>
+
+                <!-- Motivo -->
+                <div class="form-group">
+                    <label class="form-label">Motivo <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="ajuste-motivo" placeholder="Ej: Producción lote #XXX">
+                </div>
+
+                <!-- Vista previa -->
+                <div class="vista-previa-stock">
+                    <span class="label">Stock después del movimiento:</span>
+                    <span class="valor" id="ajuste-stock-resultante">-</span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalAjustarStock()">Cancelar</button>
+                <button class="btn-primary" onclick="confirmarAjusteStock()">
+                    <i class="fas fa-check"></i> Confirmar Ajuste
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL: EXPORTAR EXCEL
+         ================================================================ -->
+    <div id="modal-exportar" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3><i class="fas fa-file-excel"></i> Exportar Inventario</h3>
+                <button class="btn-close-modal" onclick="cerrarModalExportar()">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Filtro por proveedor -->
+                <div class="form-group">
+                    <label class="form-label">Filtrar por proveedor</label>
+                    <select class="form-input" id="export-proveedor" onchange="actualizarVistaExport()">
+                        <option value="">Todos los proveedores</option>
+                        <!-- Opciones dinámicas desde JS -->
+                    </select>
+                </div>
+
+                <!-- Vista previa -->
+                <div class="export-preview">
+                    <i class="fas fa-file-excel"></i>
+                    <span id="export-count">15 productos seleccionados</span>
+                </div>
+
+                <!-- Columnas a exportar -->
+                <div class="form-group">
+                    <label class="form-label">Columnas incluidas</label>
+                    <div class="export-columns">
+                        <span class="column-tag">Nombre</span>
+                        <span class="column-tag">Proveedor</span>
+                        <span class="column-tag">Stock Actual</span>
+                        <span class="column-tag">Stock Mínimo</span>
+                        <span class="column-tag">Precio L1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalExportar()">Cancelar</button>
+                <button class="btn-excel" onclick="descargarExcel()">
+                    <i class="fas fa-download"></i> Descargar Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL: CONFIRMAR ELIMINACIÓN
+         ================================================================ -->
+    <div id="modal-confirmar-eliminar" class="modal-overlay hidden">
+        <div class="modal-content modal-xs">
+            <div class="modal-header">
+                <h3><i class="fas fa-trash"></i> Eliminar Producto</h3>
+                <button class="btn-close-modal" onclick="cerrarModalEliminar()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="confirm-text">¿Estás seguro de eliminar <strong id="eliminar-nombre">-</strong>?</p>
+                <p class="confirm-warning">Esta acción no se puede deshacer.</p>
+                <input type="hidden" id="eliminar-producto-id">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalEliminar()">Cancelar</button>
+                <button class="btn-danger" onclick="confirmarEliminar()">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+
+    <script src="shared/mock-data.js"></script>
+    <script src="shared/utils.js"></script>
+    <script src="assets/productos/script.js"></script>
+</body>
+
+</html>
