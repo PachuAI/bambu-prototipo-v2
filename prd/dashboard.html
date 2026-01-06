@@ -12,785 +12,176 @@
 </head>
 
 <body>
-
     <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
 
     <nav id="sidebar">
-        <div class="logo">
-            <span>◆</span> Bambu CRM v2
-        </div>
-
+        <div class="logo"><span>◆</span> Bambu CRM v2</div>
         <div class="nav-group">
             <div class="nav-header">Navegación</div>
             <a href="index.html" class="nav-link">← PRD General</a>
         </div>
-
-        <div class="nav-group">
-            <div class="nav-header">Otros Módulos</div>
-            <a href="cotizador-especificacion.html" class="nav-link">Cotizador</a>
-            <a href="ventas.html" class="nav-link">Ventas</a>
-            <a href="dashboard.html" class="nav-link active">Dashboard</a>
-        </div>
-
         <div class="nav-group">
             <div class="nav-header">En esta página</div>
-            <ul id="toc" style="list-style: none; padding: 0; margin: 0;">
-                <!-- Auto-generado desde los h2 -->
-            </ul>
+            <a href="#contexto" class="nav-link">1. Contexto</a>
+            <a href="#funcionalidad" class="nav-link">2. Funcionalidad</a>
+            <a href="#componentes" class="nav-link">3. Componentes</a>
+            <a href="#reglas" class="nav-link">4. Reglas de Negocio</a>
         </div>
     </nav>
 
     <main>
         <header>
-            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
-                Química Bambu S.R.L.
-            </div>
-            <h1>PRD: Dashboard <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Pantalla principal del sistema</span></h1>
-
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Química Bambu S.R.L.</div>
+            <h1>PRD: Dashboard</h1>
             <table>
-                <tr>
-                    <td style="width: 150px;"><strong>Versión</strong></td>
-                    <td>2.0</td>
-                </tr>
-                <tr>
-                    <td><strong>Fecha</strong></td>
-                    <td>31 Diciembre 2024</td>
-                </tr>
-                <tr>
-                    <td><strong>Estado</strong></td>
-                    <td>⚠️ Borrador (pendiente prototipar y validar)</td>
-                </tr>
+                <tr><td><strong>Versión</strong></td><td>2.0 (Limpio - Enero 2026)</td></tr>
+                <tr><td><strong>Prototipo</strong></td><td><a href="../prototipos/dashboard.html">prototipos/dashboard.html</a></td></tr>
+                <tr><td><strong>Estado</strong></td><td>Prototipo validado</td></tr>
             </table>
-
-            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>⚠️ Nota importante:</strong> Este PRD es documentación modular de referencia. Solo Cotizador y Ventas están prototipados/validados al 100%. El contenido de Dashboard probablemente cambie al prototipar e implementar.</p>
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <strong>Nota:</strong> Este PRD describe funcionalidades y reglas de negocio. Para referencia visual, ver el prototipo HTML.
             </div>
         </header>
 
-        <!-- SECCIÓN 1: CONTEXTO Y OBJETIVO -->
+        <!-- CONTEXTO -->
         <section id="contexto">
             <h2>1. Contexto y Objetivo</h2>
 
-            <h3>1.1 Propósito del módulo</h3>
-            <p>El <strong>Dashboard</strong> es la pantalla principal al ingresar al sistema. Provee una vista ejecutiva del estado operativo diario: resumen de pedidos, alertas de stock bajo, calendario de repartos, y acceso rápido a funciones críticas mediante buscador global.</p>
+            <h3>1.1 Propósito</h3>
+            <p>Pantalla principal al ingresar al sistema. Vista ejecutiva del estado operativo diario.</p>
 
             <h3>1.2 Problema que resuelve</h3>
             <ul>
                 <li>Vista panorámica del estado operativo en un solo vistazo</li>
-                <li>Acceso rápido a cualquier entidad (cliente, producto, pedido) mediante buscador global</li>
-                <li>Identificación inmediata de alertas críticas (stock bajo, pedidos pendientes)</li>
-                <li>Resumen diario de repartos y carga de vehículos</li>
-                <li>Punto de entrada intuitivo al sistema</li>
+                <li>Acceso rápido a cualquier entidad mediante buscador global</li>
+                <li>Identificación inmediata de alertas críticas</li>
+                <li>Resumen diario de repartos</li>
             </ul>
 
-            <h3>1.3 Usuarios principales</h3>
-            <ul>
-                <li><strong>Administrador:</strong> Ve todos los widgets y métricas completas</li>
-                <li><strong>Vendedor:</strong> Ve widgets relevantes (pedidos del día, buscador, accesos rápidos)</li>
-            </ul>
-
-            <h3>1.4 Simplificación v1 → v2</h3>
+            <h3>1.3 Cambios v1 → v2</h3>
             <table>
-                <thead>
-                    <tr>
-                        <th>Aspecto</th>
-                        <th>v1</th>
-                        <th>v2</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Buscador global</td>
-                        <td>❌ No existía</td>
-                        <td>✅ Nuevo - Búsqueda unificada con atajo teclado</td>
-                    </tr>
-                    <tr>
-                        <td>Alertas stock bajo</td>
-                        <td>Lista larga</td>
-                        <td>Formato compacto (8-10 productos simultáneos)</td>
-                    </tr>
-                    <tr>
-                        <td>Zona "Pedidos pendientes asignar"</td>
-                        <td>✅ Existía</td>
-                        <td>❌ Eliminado (no aporta valor)</td>
-                    </tr>
-                </tbody>
+                <tr><th>Aspecto</th><th>v1</th><th>v2</th></tr>
+                <tr><td>Buscador global</td><td>No existía</td><td>Búsqueda unificada con atajo teclado</td></tr>
+                <tr><td>Alertas stock bajo</td><td>Lista larga</td><td>Formato compacto (8-10 productos)</td></tr>
+                <tr><td>Pedidos pendientes asignar</td><td>Existía</td><td>Eliminado (no aportaba valor)</td></tr>
             </table>
         </section>
 
-        <!-- SECCIÓN 2: FUNCIONALIDAD PRINCIPAL -->
+        <!-- FUNCIONALIDAD -->
         <section id="funcionalidad">
             <h2>2. Funcionalidad Principal</h2>
 
-            <h3>2.1 Descripción general</h3>
-            <p>El Dashboard se divide en 4 áreas principales:</p>
+            <h3>2.1 Áreas del Dashboard</h3>
             <ul>
-                <li><strong>Buscador global:</strong> Campo de búsqueda prominente en la parte superior (NUEVO v2)</li>
-                <li><strong>Carrusel de calendario:</strong> Resumen de cada día en términos de pedidos y kilos</li>
-                <li><strong>Pedidos en tránsito del día:</strong> Vista rápida de repartos programados para hoy</li>
-                <li><strong>Alertas de stock bajo:</strong> Productos que están por debajo del stock mínimo (8-10 simultáneos)</li>
+                <li><strong>Buscador global:</strong> Campo prominente en la parte superior</li>
+                <li><strong>Carrusel de calendario:</strong> Resumen de cada día (pedidos + kg)</li>
+                <li><strong>Repartos del día siguiente:</strong> Lista de repartos para mañana</li>
+                <li><strong>Widgets inferiores:</strong> Alertas de stock, métricas de ventas, etc.</li>
             </ul>
 
-            <h3>2.2 Características clave</h3>
-            <ul>
-                <li>✅ Buscador global con resultados agrupados (clientes, productos, pedidos)</li>
-                <li>✅ Atajo de teclado para buscador (pendiente definir tecla)</li>
-                <li>✅ Carrusel de calendario semanal (lunes a viernes)</li>
-                <li>✅ Resumen por día: Cantidad de pedidos + Total kg</li>
-                <li>✅ Pedidos del día en tránsito (clickeables → Ventas)</li>
-                <li>✅ Alertas de stock bajo (formato compacto optimizado)</li>
-                <li>✅ Accesos rápidos a módulos principales</li>
-            </ul>
-
-            <h3>2.3 Flujo de trabajo típico</h3>
-            <pre><code>Usuario ingresa al sistema
-        ↓
-Dashboard se carga como pantalla principal
-        ↓
-Ve vista panorámica:
-├─ Buscador global (parte superior)
-├─ Carrusel de calendario (resumen semana)
-├─ Pedidos del día en tránsito
-└─ Alertas de stock bajo
-        ↓
-Acciones disponibles:
-├─ Buscar cliente/producto/pedido (buscador global)
-├─ Click en día del calendario → Ventas filtrado por esa fecha
-├─ Click en pedido del día → Abrir detalle en Ventas
-├─ Click en alerta stock → Ir a Productos
-└─ Click en acceso rápido → Ir a módulo correspondiente</code></pre>
+            <h3>2.2 Flujo típico</h3>
+            <ol>
+                <li>Usuario ingresa al sistema → Dashboard se carga</li>
+                <li>Ve vista panorámica del estado operativo</li>
+                <li>Puede buscar cualquier entidad desde buscador global</li>
+                <li>Click en día del calendario → Ventas filtrado por esa fecha</li>
+                <li>Click en alerta stock → Ir a Productos</li>
+            </ol>
         </section>
 
-        <!-- SECCIÓN 3: INTERFAZ DE USUARIO -->
-        <section id="interfaz">
-            <h2>3. Interfaz de Usuario</h2>
+        <!-- COMPONENTES -->
+        <section id="componentes">
+            <h2>3. Componentes</h2>
 
-            <h3>3.1 Layout general</h3>
-            <p><strong>Vista principal:</strong> Pantalla dividida en secciones verticales (widgets)</p>
-
-            <p><strong>Estructura:</strong></p>
-            <pre><code>┌──────────────────────────────────────────────────────────┐
-│  DASHBOARD                                               │
-├──────────────────────────────────────────────────────────┤
-│  [🔍 Buscador global: Clientes, productos, pedidos...]  │ ← NUEVO
-├──────────────────────────────────────────────────────────┤
-│  📅 CALENDARIO SEMANAL                                   │
-│  ┌────┬────┬────┬────┬────┐                            │
-│  │Lun │Mar │Mie │Jue │Vie │                            │
-│  │15p │12p │8p  │20p │18p │ ← Cantidad pedidos         │
-│  │450 │380 │250 │720 │650 │ ← Total kg                 │
-│  └────┴────┴────┴────┴────┘                            │
-├──────────────────────────────────────────────────────────┤
-│  🚚 PEDIDOS DEL DÍA EN TRÁNSITO                         │
-│  Pedido #152 | Av. Argentina 456 | Reparto 1 | 45kg    │
-│  Pedido #165 | Calle Falsa 123 | Reparto 2 | 32kg      │
-│  ... (lista de pedidos de hoy)                          │
-├──────────────────────────────────────────────────────────┤
-│  ⚠️ ALERTAS DE STOCK BAJO (8-10 productos)              │
-│  Detergente X: 15 un (mín: 20) | Lavandina Y: 8 un...  │
-└──────────────────────────────────────────────────────────┘</code></pre>
-
-            <h3>3.2 Buscador global (NUEVO v2)</h3>
-            <p><strong>Ubicación:</strong> Parte superior del Dashboard, campo prominente y destacado</p>
-
-            <p><strong>Funcionalidad:</strong></p>
+            <h3>3.1 Buscador Global</h3>
+            <p><strong>Busca simultáneamente en:</strong></p>
             <ul>
-                <li>Busca simultáneamente en: Clientes (dirección), Productos (nombre), Pedidos (número o dirección)</li>
-                <li>Resultados agrupados por tipo con ícono identificador:
-                    <ul>
-                        <li>👤 Clientes</li>
-                        <li>📦 Productos</li>
-                        <li>🧾 Pedidos</li>
-                    </ul>
-                </li>
-                <li>Muestra máximo 5 resultados por categoría (los más relevantes)</li>
-                <li>Click en resultado → Navega directamente al detalle correspondiente</li>
-                <li>Atajo de teclado: Ctrl+K o Cmd+K (pendiente definir)</li>
+                <li>Clientes (por dirección, teléfono)</li>
+                <li>Productos (por nombre)</li>
+                <li>Pedidos (por número o dirección)</li>
+            </ul>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Resultados agrupados por tipo con ícono identificador</li>
+                <li>Máximo 5 resultados por categoría</li>
+                <li>Click en resultado → navega al detalle</li>
+                <li>Atajo de teclado: Ctrl+K o Cmd+K</li>
             </ul>
 
-            <p><strong>Ejemplo de resultados:</strong></p>
-            <pre><code>Búsqueda: "Av Argentina"
-
-👤 CLIENTES (2 resultados)
-  → Av. Argentina 456 | Tel: 299-1234567
-  → Av. Argentina 890 | Tel: 299-7654321
-
-🧾 PEDIDOS (1 resultado)
-  → Pedido #152 | Av. Argentina 456 | 25/12/2024 | $45.000</code></pre>
-
-            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>⭐ NUEVO v2:</strong> El buscador global es una de las mejoras más importantes de v2. Permite acceso rápido a cualquier entidad sin navegar por múltiples módulos.</p>
-            </div>
-
-            <h3>3.3 Carrusel de calendario</h3>
-            <p><strong>Vista:</strong> Carrusel horizontal mostrando días de la semana (lunes a viernes)</p>
-
+            <h3>3.2 Carrusel de Calendario</h3>
+            <p><strong>Vista:</strong> Días de la semana (L-V) con métricas</p>
             <p><strong>Información por día:</strong></p>
             <ul>
-                <li>Día de la semana (Lun, Mar, Mie, Jue, Vie)</li>
-                <li>Fecha (ej: 25/12)</li>
-                <li>Cantidad de pedidos programados para ese día</li>
-                <li>Total de kg a repartir ese día</li>
-                <li>Indicador visual si es día actual (destacado)</li>
+                <li>Fecha</li>
+                <li>Cantidad de pedidos REPARTO programados</li>
+                <li>Total kg a repartir</li>
+                <li>Indicador visual si es día actual</li>
             </ul>
-
             <p><strong>Interacción:</strong></p>
             <ul>
-                <li>Click en un día → Redirige a Ventas filtrado por esa fecha</li>
-                <li>Flechas < > para navegar entre semanas</li>
-                <li>Default: Muestra semana actual</li>
+                <li>Click en día → Ventas filtrado por esa fecha</li>
+                <li>Flechas para navegar entre semanas</li>
             </ul>
 
-            <p><strong>Ejemplo visual:</strong></p>
-            <pre><code>< Semana del 23 al 27 de Diciembre >
-
-┌─────┬─────┬─────┬─────┬─────┐
-│ Lun │ Mar │ Mie │ Jue │ Vie │
-│ 23  │ 24  │ 25* │ 26  │ 27  │
-├─────┼─────┼─────┼─────┼─────┤
-│ 15p │ 12p │ 8p  │ 20p │ 18p │
-│450kg│380kg│250kg│720kg│650kg│
-└─────┴─────┴─────┴─────┴─────┘
-        * = Día actual (destacado)</code></pre>
-
-            <h3>3.4 Pedidos del día en tránsito</h3>
-            <p><strong>Vista:</strong> Lista compacta de pedidos programados para HOY</p>
-
-            <p><strong>Información por pedido:</strong></p>
+            <h3>3.3 Repartos del Día Siguiente</h3>
+            <p><strong>Vista:</strong> Lista de pedidos programados para mañana</p>
+            <p><strong>Información:</strong></p>
             <ul>
-                <li>Pedido # (clickeable)</li>
+                <li>Número de pedido (clickeable)</li>
                 <li>Dirección del cliente</li>
                 <li>Vehículo asignado (si tiene)</li>
                 <li>Peso total (kg)</li>
             </ul>
+            <p><strong>Agrupación:</strong> Por vehículo (Reparto 1, Reparto 2, Sin asignar)</p>
 
-            <p><strong>Interacción:</strong></p>
-            <ul>
-                <li>Click en pedido → Abre detalle en módulo Ventas</li>
-                <li>Ordenado por vehículo asignado (Reparto 1, Reparto 2, Sin asignar)</li>
-            </ul>
-
-            <p><strong>Ejemplo:</strong></p>
-            <pre><code>🚚 PEDIDOS DEL DÍA EN TRÁNSITO (Miércoles 25/12)
-
-Reparto 1:
-  Pedido #152 | Av. Argentina 456 | 45kg
-  Pedido #165 | Calle Falsa 123 | 32kg
-
-Reparto 2:
-  Pedido #170 | Ruta 22 Km 5 | 28kg
-
-Sin asignar:
-  Pedido #175 | Neuquén Centro 890 | 15kg</code></pre>
-
-            <h3>3.5 Alertas de stock bajo</h3>
-            <p><strong>Vista:</strong> Panel compacto mostrando 8-10 productos con stock bajo simultáneamente</p>
-
-            <p><strong>Información por producto:</strong></p>
+            <h3>3.4 Alertas de Stock Bajo</h3>
+            <p><strong>Vista:</strong> Panel compacto (8-10 productos)</p>
+            <p><strong>Información:</strong></p>
             <ul>
                 <li>Nombre del producto</li>
                 <li>Stock actual</li>
                 <li>Stock mínimo configurado</li>
-                <li>Indicador visual (color rojo/amarillo según criticidad)</li>
             </ul>
-
-            <p><strong>Criterio de alerta:</strong></p>
+            <p><strong>Indicadores de criticidad:</strong></p>
             <ul>
-                <li>🔴 Crítico: stock_actual <= stock_minimo / 2 (menos de la mitad del mínimo)</li>
-                <li>🟡 Advertencia: stock_actual > stock_minimo / 2 AND stock_actual < stock_minimo</li>
+                <li>🔴 Crítico: stock actual ≤ 50% del mínimo</li>
+                <li>🟡 Advertencia: stock actual entre 50% y 100% del mínimo</li>
             </ul>
-
-            <p><strong>Interacción:</strong></p>
-            <ul>
-                <li>Click en producto → Ir a Productos (abre modal Ajustar Stock)</li>
-                <li>Ordenado por criticidad (críticos primero)</li>
-            </ul>
-
-            <p><strong>Ejemplo:</strong></p>
-            <pre><code>⚠️ ALERTAS DE STOCK BAJO
-
-🔴 Detergente X: 8 un (mín: 20) ← Crítico
-🔴 Lavandina Y: 5 un (mín: 15) ← Crítico
-🟡 Cloro Z: 12 un (mín: 20) ← Advertencia
-🟡 Desengrasante: 18 un (mín: 25) ← Advertencia
-...</code></pre>
-
-            <div class="note" style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>⭐ MEJORADO v2:</strong> Formato compacto optimizado que muestra 8-10 productos simultáneamente (antes mostraba lista larga poco legible).</p>
-            </div>
-
-            <h3>3.6 Accesos rápidos (opcional)</h3>
-            <p><strong>Vista:</strong> Botones grandes para módulos principales</p>
-
-            <p><strong>Accesos sugeridos:</strong></p>
-            <ul>
-                <li>[+ Nueva Cotización] → Abre Cotizador</li>
-                <li>[Ver Ventas] → Abre módulo Ventas</li>
-                <li>[Calendario Repartos] → Abre Ventas en tab Calendario</li>
-                <li>[Productos] → Abre módulo Productos</li>
-            </ul>
+            <p><strong>Click:</strong> Ir a Productos (abre modal Ajustar Stock)</p>
         </section>
 
-        <!-- SECCIÓN 4: REGLAS DE NEGOCIO -->
+        <!-- REGLAS -->
         <section id="reglas">
-            <h2>4. Reglas de Negocio Específicas</h2>
+            <h2>4. Reglas de Negocio</h2>
 
             <h3>4.1 Buscador global</h3>
-            <p><strong>Criterios de búsqueda:</strong></p>
             <table>
-                <thead>
-                    <tr>
-                        <th>Categoría</th>
-                        <th>Campos de búsqueda</th>
-                        <th>Resultado mostrado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Clientes</strong></td>
-                        <td>Dirección, teléfono, email</td>
-                        <td>Dirección | Teléfono</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Productos</strong></td>
-                        <td>Nombre</td>
-                        <td>Nombre | Precio L1 | Stock</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Pedidos</strong></td>
-                        <td>Número de pedido, dirección cliente</td>
-                        <td>Pedido # | Cliente | Fecha | Total</td>
-                    </tr>
-                </tbody>
+                <tr><th>Categoría</th><th>Campos de búsqueda</th><th>Resultado mostrado</th></tr>
+                <tr><td>Clientes</td><td>Dirección, teléfono</td><td>Dirección | Teléfono | Saldo</td></tr>
+                <tr><td>Productos</td><td>Nombre</td><td>Nombre | Precio L1 | Stock</td></tr>
+                <tr><td>Pedidos</td><td>Número, dirección</td><td>Pedido # | Cliente | Fecha | Total</td></tr>
             </table>
 
-            <p><strong>Orden de resultados:</strong></p>
+            <h3>4.2 Calendario</h3>
             <ul>
-                <li>Por relevancia (coincidencia exacta > coincidencia parcial)</li>
-                <li>Dentro de cada categoría: Ordenado alfabéticamente</li>
-                <li>Máximo 5 resultados por categoría</li>
+                <li>Solo muestra días laborales (L-V)</li>
+                <li>Cantidad pedidos: COUNT de pedidos REPARTO no entregados para ese día</li>
+                <li>Total kg: SUM del peso de todos los productos en esos pedidos</li>
             </ul>
 
-            <h3>4.2 Carrusel de calendario</h3>
-            <p><strong>Cálculo de métricas por día:</strong></p>
+            <h3>4.3 Alertas stock</h3>
             <ul>
-                <li><strong>Cantidad de pedidos:</strong> COUNT de pedidos con fecha = ese día AND tipo = "REPARTO" AND estado != "Entregado"</li>
-                <li><strong>Total kg:</strong> SUM de peso de todos los productos en esos pedidos</li>
-            </ul>
-
-            <p><strong>Solo días laborales:</strong></p>
-            <ul>
-                <li>Carrusel muestra SOLO lunes a viernes</li>
-                <li>Sábados y domingos NO aparecen (no se trabaja)</li>
-            </ul>
-
-            <h3>4.3 Alertas de stock bajo</h3>
-            <p><strong>Criterio de inclusión:</strong></p>
-            <ul>
-                <li>Producto con <code>stock_actual < stock_minimo</code></li>
-                <li>Producto con <code>disponible = true</code> (activos únicamente)</li>
-                <li>Ordenado por criticidad: (stock_actual / stock_minimo) ASC</li>
-            </ul>
-
-            <p><strong>Color de alerta:</strong></p>
-            <ul>
-                <li>🔴 Rojo: <code>stock_actual <= stock_minimo / 2</code></li>
-                <li>🟡 Amarillo: <code>stock_actual > stock_minimo / 2 AND stock_actual < stock_minimo</code></li>
-            </ul>
-
-            <h3>4.4 Pedidos del día en tránsito</h3>
-            <p><strong>Criterio de inclusión:</strong></p>
-            <ul>
-                <li>Pedido con <code>fecha = HOY</code></li>
-                <li>Pedido con <code>tipo = "REPARTO"</code></li>
-                <li>Pedido con <code>estado IN ("Pendiente", "Asignado", "En tránsito")</code></li>
-                <li>NO incluye <code>estado = "Entregado"</code> (ya completados)</li>
-            </ul>
-
-            <p><strong>Ordenamiento:</strong></p>
-            <ol>
-                <li>Por vehículo asignado (Reparto 1, Reparto 2, ..., Sin asignar al final)</li>
-                <li>Dentro de cada vehículo: Por ciudad (A-Z)</li>
-            </ol>
-        </section>
-
-        <!-- SECCIÓN 5: INTEGRACIÓN -->
-        <section id="integracion">
-            <h2>5. Integración con Otros Módulos</h2>
-
-            <h3>5.1 Ventas</h3>
-            <p><strong>Relación:</strong> Dashboard consume datos de pedidos del módulo Ventas</p>
-
-            <p><strong>Sincronización:</strong></p>
-            <ul>
-                <li>Carrusel de calendario: Query a tabla pedidos por rango de fechas</li>
-                <li>Pedidos del día: Query a tabla pedidos con fecha = HOY</li>
-                <li>Click en pedido → Abre detalle en Ventas</li>
-                <li>Click en día del calendario → Redirige a Ventas filtrado por esa fecha</li>
-            </ul>
-
-            <h3>5.2 Productos</h3>
-            <p><strong>Relación:</strong> Dashboard muestra alertas de stock desde módulo Productos</p>
-
-            <p><strong>Sincronización:</strong></p>
-            <ul>
-                <li>Alertas stock bajo: Query a tabla productos WHERE stock_actual < stock_minimo</li>
-                <li>Buscador global: Query a tabla productos WHERE nombre LIKE '%search%'</li>
-                <li>Click en alerta stock → Redirige a Productos</li>
-            </ul>
-
-            <h3>5.3 Clientes</h3>
-            <p><strong>Relación:</strong> Buscador global busca en tabla de clientes</p>
-
-            <p><strong>Sincronización:</strong></p>
-            <ul>
-                <li>Buscador: Query a tabla clientes WHERE direccion LIKE '%search%' OR telefono LIKE '%search%'</li>
-                <li>Click en cliente → Redirige a Clientes (vista detallada)</li>
-            </ul>
-
-            <h3>5.4 Cotizador</h3>
-            <p><strong>Relación:</strong> Acceso rápido desde Dashboard</p>
-
-            <p><strong>Sincronización:</strong></p>
-            <ul>
-                <li>Botón "[+ Nueva Cotización]" abre Cotizador en blanco</li>
+                <li>Incluye solo productos con <code>disponible = true</code></li>
+                <li>Criterio: <code>stock_actual < stock_minimo</code></li>
+                <li>Ordenado por criticidad (más críticos primero)</li>
             </ul>
         </section>
 
-        <!-- SECCIÓN 6: CASOS DE USO -->
-        <section id="casos-uso">
-            <h2>6. Casos de Uso</h2>
-
-            <h3>Caso 1: Buscar cliente rápidamente</h3>
-            <p><strong>Contexto:</strong> Vendedor necesita acceder a información de un cliente</p>
-            <p><strong>Acción:</strong></p>
-            <ol>
-                <li>Vendedor ingresa al sistema (Dashboard se carga)</li>
-                <li>Click en buscador global o presiona Ctrl+K</li>
-                <li>Escribe: "Av Argentina"</li>
-                <li>Ve resultados:
-                    <ul>
-                        <li>👤 Av. Argentina 456 | Tel: 299-1234567</li>
-                        <li>👤 Av. Argentina 890 | Tel: 299-7654321</li>
-                    </ul>
-                </li>
-                <li>Click en primer resultado</li>
-            </ol>
-            <p><strong>Resultado:</strong></p>
-            <ul>
-                <li>✅ Redirige a Clientes → Vista detallada del cliente "Av. Argentina 456"</li>
-                <li>✅ Puede ver cuenta corriente, historial de pedidos, etc.</li>
-            </ul>
-
-            <h3>Caso 2: Ver resumen de pedidos de la semana</h3>
-            <p><strong>Contexto:</strong> Administrador quiere saber cuántos pedidos hay cada día</p>
-            <p><strong>Acción:</strong></p>
-            <ol>
-                <li>Administrador ingresa al Dashboard</li>
-                <li>Ve carrusel de calendario con resumen semanal</li>
-            </ol>
-            <p><strong>Resultado:</strong></p>
-            <ul>
-                <li>✅ Ve cantidad de pedidos por día: Lun 15p, Mar 12p, Mie 8p, Jue 20p, Vie 18p</li>
-                <li>✅ Ve total kg por día: Lun 450kg, Mar 380kg, Mie 250kg, Jue 720kg, Vie 650kg</li>
-                <li>✅ Identifica que Jueves tiene mayor carga (20 pedidos, 720kg)</li>
-            </ul>
-
-            <h3>Caso 3: Controlar repartos del día</h3>
-            <p><strong>Contexto:</strong> Operador quiere ver qué pedidos están programados para hoy</p>
-            <p><strong>Acción:</strong></p>
-            <ol>
-                <li>Operador ingresa al Dashboard</li>
-                <li>Ve sección "Pedidos del día en tránsito"</li>
-            </ol>
-            <p><strong>Resultado:</strong></p>
-            <ul>
-                <li>✅ Ve lista de pedidos de hoy agrupados por vehículo</li>
-                <li>✅ Puede hacer click en pedido para ver detalle completo</li>
-                <li>✅ Identifica pedidos sin asignar que necesitan atención</li>
-            </ul>
-
-            <h3>Caso 4: Detectar productos con stock crítico</h3>
-            <p><strong>Contexto:</strong> Administrador quiere saber qué productos necesitan reposición</p>
-            <p><strong>Acción:</strong></p>
-            <ol>
-                <li>Administrador ingresa al Dashboard</li>
-                <li>Ve sección "Alertas de stock bajo"</li>
-            </ol>
-            <p><strong>Resultado:</strong></p>
-            <ul>
-                <li>✅ Ve productos con stock crítico:
-                    <ul>
-                        <li>🔴 Detergente X: 8 un (mín: 20) ← Crítico</li>
-                        <li>🔴 Lavandina Y: 5 un (mín: 15) ← Crítico</li>
-                    </ul>
-                </li>
-                <li>✅ Click en producto → Va a Productos para ajustar stock</li>
-            </ul>
-
-            <h3>Caso 5: Buscar pedido por número</h3>
-            <p><strong>Contexto:</strong> Vendedor recibe llamado de cliente preguntando por pedido #152</p>
-            <p><strong>Acción:</strong></p>
-            <ol>
-                <li>Vendedor en Dashboard</li>
-                <li>Click en buscador global</li>
-                <li>Escribe: "152"</li>
-                <li>Ve resultado:
-                    <ul>
-                        <li>🧾 Pedido #152 | Av. Argentina 456 | 25/12/2024 | $45.000</li>
-                    </ul>
-                </li>
-                <li>Click en resultado</li>
-            </ol>
-            <p><strong>Resultado:</strong></p>
-            <ul>
-                <li>✅ Redirige a Ventas → Detalle del pedido #152</li>
-                <li>✅ Puede ver estado, productos, cliente, etc.</li>
-            </ul>
-
-            <h3>Caso 6: Navegar a día específico del calendario</h3>
-            <p><strong>Contexto:</strong> Administrador quiere revisar pedidos del Jueves</p>
-            <p><strong>Acción:</strong></p>
-            <ol>
-                <li>Administrador en Dashboard</li>
-                <li>Ve carrusel de calendario</li>
-                <li>Click en "Jue 26"</li>
-            </ol>
-            <p><strong>Resultado:</strong></p>
-            <ul>
-                <li>✅ Redirige a Ventas con filtro de fecha = 26/12/2024</li>
-                <li>✅ Ve lista completa de pedidos programados para ese día</li>
-            </ul>
-        </section>
-
-        <!-- SECCIÓN 7: FLUJOS DE USUARIO -->
-        <section id="flujos">
-            <h2>7. Flujos de Usuario</h2>
-
-            <h3>7.1 Flujo principal: Acceso al sistema</h3>
-            <pre><code>Usuario hace login
-        ↓
-Dashboard se carga como pantalla principal
-        ↓
-Vista panorámica muestra:
-├─ Buscador global (parte superior)
-├─ Carrusel calendario (resumen semana)
-├─ Pedidos del día en tránsito
-└─ Alertas de stock bajo
-        ↓
-Usuario puede:
-├─ Usar buscador global (Ctrl+K)
-├─ Ver resumen semanal en calendario
-├─ Click en pedido del día
-├─ Click en alerta stock
-└─ Acceso rápido a módulos</code></pre>
-
-            <h3>7.2 Flujo: Buscador global</h3>
-            <pre><code>Usuario en Dashboard
-        ↓
-Click en buscador global o presiona Ctrl+K
-        ↓
-Campo se activa (foco automático)
-        ↓
-Usuario escribe término de búsqueda
-        ↓
-Sistema busca en paralelo:
-├─ Clientes (direccion, telefono, email)
-├─ Productos (nombre)
-└─ Pedidos (numero, direccion cliente)
-        ↓
-Resultados se muestran agrupados:
-├─ 👤 CLIENTES (máx 5)
-├─ 📦 PRODUCTOS (máx 5)
-└─ 🧾 PEDIDOS (máx 5)
-        ↓
-Usuario hace click en resultado
-        ↓
-Sistema redirige:
-├─ Cliente → Clientes (vista detallada)
-├─ Producto → Productos (abre modal editar)
-└─ Pedido → Ventas (detalle pedido)</code></pre>
-
-            <h3>7.3 Flujo: Navegar calendario</h3>
-            <pre><code>Usuario en Dashboard
-        ↓
-Ve carrusel de calendario (semana actual)
-        ↓
-Acciones disponibles:
-├─ Click en día específico → Redirige a Ventas filtrado por esa fecha
-├─ Click en flecha < → Navega a semana anterior
-└─ Click en flecha > → Navega a semana siguiente
-        ↓
-Carrusel se actualiza mostrando semana seleccionada
-        ↓
-Métricas se recalculan para esa semana:
-├─ Cantidad de pedidos por día
-└─ Total kg por día</code></pre>
-        </section>
-
-        <!-- SECCIÓN 8: NOTAS TÉCNICAS -->
-        <section id="notas-tecnicas">
-            <h2>8. Notas Técnicas para Desarrollo</h2>
-
-            <h3>8.1 Estructura de datos (Mock data)</h3>
-            <pre><code class="language-javascript">// Resumen día del calendario
-const RESUMEN_DIA = {
-    fecha: "2024-12-25",
-    dia_semana: "Mie",
-    cantidad_pedidos: 8,
-    total_kg: 250
-};
-
-// Alerta de stock bajo
-const ALERTA_STOCK = {
-    producto_id: 1,
-    producto_nombre: "Detergente X",
-    stock_actual: 8,
-    stock_minimo: 20,
-    criticidad: "CRITICO" // "CRITICO" | "ADVERTENCIA"
-};
-
-// Resultado de búsqueda global
-const RESULTADO_BUSQUEDA = {
-    clientes: [
-        { id: 1, direccion: "Av. Argentina 456", telefono: "299-1234567" }
-    ],
-    productos: [
-        { id: 5, nombre: "Detergente X", precio_l1: 4500, stock: 120 }
-    ],
-    pedidos: [
-        { id: 152, cliente_direccion: "Av. Argentina 456", fecha: "2024-12-25", total: 45000 }
-    ]
-};
-</code></pre>
-
-            <h3>8.2 Consideraciones de implementación</h3>
-            <ul>
-                <li>⚠️ <strong>Performance buscador:</strong> Implementar debounce (300ms) para evitar queries excesivos mientras escribe</li>
-                <li>⚠️ <strong>Caché dashboard:</strong> Cachear métricas del calendario (refrescar cada 5 minutos o al cambiar datos)</li>
-                <li>⚠️ <strong>Índices DB:</strong> Asegurar índices en: pedidos.fecha, productos.stock_actual, clientes.direccion</li>
-                <li>💡 <strong>Atajo teclado:</strong> Implementar event listener global para Ctrl+K (foco en buscador)</li>
-                <li>💡 <strong>Carrusel:</strong> Usar librería como Swiper.js (vanilla) o implementar scroll horizontal custom</li>
-                <li>💡 <strong>Actualización en tiempo real:</strong> Considerar WebSockets o polling cada X segundos para widgets dinámicos</li>
-            </ul>
-
-            <h3>8.3 Queries SQL útiles</h3>
-            <pre><code class="language-sql">-- Resumen de pedidos por día (carrusel calendario)
-SELECT
-    DATE(fecha) as fecha,
-    COUNT(*) as cantidad_pedidos,
-    SUM(peso_total_kg) as total_kg
-FROM pedidos
-WHERE fecha BETWEEN ? AND ?
-AND tipo = 'REPARTO'
-AND estado != 'Entregado'
-GROUP BY DATE(fecha)
-ORDER BY fecha ASC;
-
--- Pedidos del día en tránsito
-SELECT
-    p.id,
-    p.fecha,
-    c.direccion as cliente_direccion,
-    v.nombre as vehiculo,
-    p.peso_total_kg
-FROM pedidos p
-LEFT JOIN clientes c ON p.cliente_id = c.id
-LEFT JOIN vehiculos v ON p.vehiculo_id = v.id
-WHERE DATE(p.fecha) = CURDATE()
-AND p.tipo = 'REPARTO'
-AND p.estado IN ('Pendiente', 'Asignado', 'En tránsito')
-ORDER BY v.nombre ASC, c.ciudad ASC;
-
--- Alertas de stock bajo
-SELECT
-    id,
-    nombre,
-    stock_actual,
-    stock_minimo,
-    CASE
-        WHEN stock_actual <= stock_minimo / 2 THEN 'CRITICO'
-        ELSE 'ADVERTENCIA'
-    END as criticidad
-FROM productos
-WHERE stock_actual < stock_minimo
-AND disponible = true
-ORDER BY (stock_actual / stock_minimo) ASC
-LIMIT 10;
-
--- Buscador global
--- Clientes
-SELECT 'cliente' as tipo, id, direccion, telefono
-FROM clientes
-WHERE direccion LIKE CONCAT('%', ?, '%')
-   OR telefono LIKE CONCAT('%', ?, '%')
-LIMIT 5;
-
--- Productos
-SELECT 'producto' as tipo, id, nombre, precio_l1, stock_actual
-FROM productos
-WHERE nombre LIKE CONCAT('%', ?, '%')
-LIMIT 5;
-
--- Pedidos
-SELECT 'pedido' as tipo, p.id, c.direccion, p.fecha, p.total
-FROM pedidos p
-LEFT JOIN clientes c ON p.cliente_id = c.id
-WHERE p.id = ?
-   OR c.direccion LIKE CONCAT('%', ?, '%')
-LIMIT 5;</code></pre>
-
-            <h3>8.4 Implementación buscador global</h3>
-            <pre><code class="language-javascript">// Función de búsqueda con debounce
-let searchTimeout;
-function buscarGlobal(termino) {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(async () => {
-        if (termino.length < 2) return; // Mínimo 2 caracteres
-
-        const resultados = await fetch(`/api/buscar?q=${termino}`).then(r => r.json());
-
-        mostrarResultados(resultados);
-    }, 300); // Debounce de 300ms
-}
-
-// Atajo de teclado
-document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('buscador-global').focus();
-    }
-});
-</code></pre>
-        </section>
-
-        <!-- PIE DE PÁGINA -->
         <footer>
-            <p>Bambu CRM V2 - PRD Técnico | Última actualización: 31 Diciembre 2024</p>
+            <p>Bambu CRM V2 - PRD Dashboard | Actualizado: Enero 2026</p>
             <p><a href="index.html">← Volver al PRD General</a></p>
         </footer>
     </main>
-
-    <!-- SCRIPT PARA TOC AUTO -->
-    <script>
-        // Auto-generar tabla de contenidos desde los h2
-        const toc = document.getElementById('toc');
-        const h2s = document.querySelectorAll('main h2');
-        h2s.forEach(h2 => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = '#' + h2.parentElement.id;
-            a.textContent = h2.textContent;
-            a.className = 'nav-link';
-            li.appendChild(a);
-            toc.appendChild(li);
-        });
-
-        // Mobile menu toggle
-        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('open');
-        });
-    </script>
 </body>
 
 </html>

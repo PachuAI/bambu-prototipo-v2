@@ -172,22 +172,25 @@ Sistema aplica cambios inmediatamente</code></pre>
             <h2>3. Interfaz de Usuario</h2>
 
             <h3>3.1 Layout general</h3>
-            <p><strong>Vista principal:</strong> Panel con 4 secciones principales en pestañas o acordeón</p>
+            <p><strong>Vista principal:</strong> Panel con 2 tabs principales</p>
 
             <p><strong>Estructura:</strong></p>
-            <pre><code>┌──────────────────────────────────────────────────────────┐
-│  CONFIGURACIÓN GENERAL                                   │
-├──────────────────────────────────────────────────────────┤
-│  Pestañas:  [Vehículos] [Ciudades] [Precios] [Stock]    │
-├──────────────────────────────────────────────────────────┤
-│                                                          │
-│  [Contenido de la pestaña activa]                       │
-│                                                          │
-│  [Botón Guardar cambios]                                │
-└──────────────────────────────────────────────────────────┘</code></pre>
+            <pre><code>┌──────────────────────────────────────────────────────────────────────────┐
+│  ⚙️ Configuración General                    [Configuración] [Ciudades]  │
+├──────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  Tab CONFIGURACIÓN contiene:                                             │
+│  ├─ Sección Vehículos de Reparto (tabla CRUD)                           │
+│  ├─ Sección Listas de Precio (tabla CRUD)                               │
+│  └─ Sección Comportamiento de Stock (config inline)                     │
+│                                                                          │
+│  Tab CIUDADES contiene:                                                  │
+│  └─ Tabla CRUD de ciudades                                              │
+│                                                                          │
+└──────────────────────────────────────────────────────────────────────────┘</code></pre>
 
             <h3>3.2 Pestaña: Vehículos</h3>
-            <p><strong>Contenido:</strong> Tabla de vehículos de reparto + Botón [+ Agregar vehículo]</p>
+            <p><strong>Contenido:</strong> Tabla de vehículos de reparto + Botón [+ Agregar]</p>
 
             <p><strong>Tabla de vehículos:</strong></p>
             <table>
@@ -207,6 +210,14 @@ Sistema aplica cambios inmediatamente</code></pre>
                         <td>Capacidad máxima de carga en kilogramos</td>
                     </tr>
                     <tr>
+                        <td><strong>Modelo</strong></td>
+                        <td>Modelo del vehículo (opcional, ej: "Fiat Fiorino", "Renault Kangoo")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Patente</strong></td>
+                        <td>Patente del vehículo (opcional, ej: "AB 123 CD")</td>
+                    </tr>
+                    <tr>
                         <td><strong>Acciones</strong></td>
                         <td>Botones: [Editar] [Eliminar]</td>
                     </tr>
@@ -217,35 +228,50 @@ Sistema aplica cambios inmediatamente</code></pre>
             <ul>
                 <li><strong>Nombre:</strong> Text input (obligatorio, único)</li>
                 <li><strong>Capacidad (kg):</strong> Number input (obligatorio, mayor a 0)</li>
+                <li><strong>Modelo:</strong> Text input (opcional)</li>
+                <li><strong>Patente:</strong> Text input (opcional)</li>
                 <li><strong>Botones:</strong> [Cancelar] [Guardar]</li>
             </ul>
 
             <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>⭐ Simplificación v2:</strong> Solo nombre y capacidad. Se eliminaron campos innecesarios como marca, modelo, patente, color. Nomenclatura simple: "Reparto 1", "Reparto 2", "Reparto 3".</p>
+                <p style="margin: 0;"><strong>⭐ Campos opcionales:</strong> Modelo y Patente son opcionales para permitir identificación rápida del vehículo físico. Nomenclatura sugerida: "Reparto 1", "Reparto 2", "Reparto 3".</p>
             </div>
 
             <h3>3.3 Pestaña: Ciudades</h3>
-            <p><strong>Contenido:</strong> Lista de ciudades habilitadas + Botón [+ Agregar ciudad]</p>
+            <p><strong>Contenido:</strong> Tabla de ciudades habilitadas + Botón [+ Agregar Ciudad]</p>
 
-            <p><strong>Lista de ciudades:</strong></p>
-            <ul>
-                <li>Neuquén</li>
-                <li>Plottier</li>
-                <li>Centenario</li>
-                <li>San Martín de los Andes</li>
-                <li>Bariloche</li>
-                <li>... (otras ciudades configuradas)</li>
-            </ul>
-
-            <p><strong>Acciones por ciudad:</strong></p>
-            <ul>
-                <li>[Editar]: Cambiar nombre de la ciudad</li>
-                <li>[Eliminar]: Borrar ciudad (solo si no tiene clientes asociados)</li>
-            </ul>
+            <p><strong>Tabla de ciudades:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Columna</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ciudad</strong></td>
+                        <td>Nombre de la ciudad (ej: "Neuquén", "Plottier")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Provincia</strong></td>
+                        <td>Provincia a la que pertenece (ej: "Neuquén", "Río Negro")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Clientes Asociados</strong></td>
+                        <td>Cantidad de clientes con esta ciudad asignada</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acciones</strong></td>
+                        <td>Botones: [Editar] [Eliminar]</td>
+                    </tr>
+                </tbody>
+            </table>
 
             <p><strong>Modal: Crear/Editar Ciudad</strong></p>
             <ul>
-                <li><strong>Nombre:</strong> Text input (obligatorio, único)</li>
+                <li><strong>Ciudad:</strong> Text input (obligatorio, único)</li>
+                <li><strong>Provincia:</strong> Text input (obligatorio)</li>
                 <li><strong>Botones:</strong> [Cancelar] [Guardar]</li>
             </ul>
 
@@ -253,77 +279,72 @@ Sistema aplica cambios inmediatamente</code></pre>
                 <p style="margin: 0;"><strong>⚠️ Restricción de eliminación:</strong> No se puede eliminar una ciudad que tenga clientes asociados. Mensaje: "No se puede eliminar esta ciudad porque tiene X clientes asociados".</p>
             </div>
 
-            <h3>3.4 Pestaña: Listas de Precio</h3>
-            <p><strong>Contenido:</strong> Formulario de configuración de listas L1, L2, L3</p>
+            <h3>3.4 Sección: Listas de Precio</h3>
+            <p><strong>Contenido:</strong> Tabla CRUD de listas de precio con descuentos + Botón [+ Agregar]</p>
 
-            <p><strong>Estructura:</strong></p>
-            <pre><code>┌─────────────────────────────────────────────────┐
-│  LISTA 1 (L1) - Precio base                    │
-│  └─ Precio de referencia (sin descuento)       │
-│                                                 │
-│  LISTA 2 (L2)                                   │
-│  └─ Descuento: [ 6.25 ] %                      │
-│  └─ Umbral mínimo: [ $10,000 ] (opcional)      │
-│                                                 │
-│  LISTA 3 (L3)                                   │
-│  └─ Descuento: [ 10.00 ] %                     │
-│  └─ Umbral mínimo: [ $20,000 ] (opcional)      │
-│                                                 │
-│  [Guardar cambios]                              │
-└─────────────────────────────────────────────────┘</code></pre>
+            <p><strong>Nota:</strong> L1 es el precio base (sin descuento), no aparece en la tabla. Solo se configuran las listas con descuento (L2, L3, etc.)</p>
 
-            <p><strong>Campos configurables:</strong></p>
+            <p><strong>Tabla de listas:</strong></p>
             <table>
                 <thead>
                     <tr>
-                        <th>Campo</th>
-                        <th>Tipo</th>
+                        <th>Columna</th>
                         <th>Descripción</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Descuento L2 (%)</strong></td>
-                        <td>Number</td>
-                        <td>Porcentaje de descuento sobre L1 (default: 6.25%)</td>
+                        <td><strong>Lista</strong></td>
+                        <td>Nombre de la lista (ej: "L2", "L3")</td>
                     </tr>
                     <tr>
-                        <td><strong>Descuento L3 (%)</strong></td>
-                        <td>Number</td>
-                        <td>Porcentaje de descuento sobre L1 (default: 10%)</td>
+                        <td><strong>Descuento</strong></td>
+                        <td>Porcentaje de descuento sobre precio L1 (ej: 6.25%, 10%)</td>
                     </tr>
                     <tr>
-                        <td><strong>Umbral L2 ($)</strong></td>
-                        <td>Number (opcional)</td>
-                        <td>Monto mínimo de pedido para acceder a L2 (si se usa)</td>
+                        <td><strong>Umbral Mínimo</strong></td>
+                        <td>Monto mínimo del pedido para acceder a esta lista (opcional)</td>
                     </tr>
                     <tr>
-                        <td><strong>Umbral L3 ($)</strong></td>
-                        <td>Number (opcional)</td>
-                        <td>Monto mínimo de pedido para acceder a L3 (si se usa)</td>
+                        <td><strong>Acciones</strong></td>
+                        <td>Botones: [Editar] [Eliminar]</td>
                     </tr>
                 </tbody>
             </table>
+
+            <p><strong>Estructura visual:</strong></p>
+            <pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│  Listas de Precio                                        [+ Agregar]    │
+├─────────────────────────────────────────────────────────────────────────┤
+│  LISTA    │  DESCUENTO  │  UMBRAL MÍNIMO  │  ACCIONES                   │
+├───────────┼─────────────┼─────────────────┼─────────────────────────────┤
+│  L2       │  6.25%      │  $50.000        │  [Editar] [Eliminar]        │
+│  L3       │  10%        │  $100.000       │  [Editar] [Eliminar]        │
+└─────────────────────────────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Modal: Crear/Editar Lista</strong></p>
+            <ul>
+                <li><strong>Nombre:</strong> Text input (obligatorio, único, ej: "L4")</li>
+                <li><strong>Descuento (%):</strong> Number input (obligatorio, entre 0 y 100)</li>
+                <li><strong>Umbral Mínimo ($):</strong> Number input (opcional)</li>
+                <li><strong>Botones:</strong> [Cancelar] [Guardar]</li>
+            </ul>
 
             <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
                 <p style="margin: 0;"><strong>💡 Umbrales de acceso:</strong> Si se configuran umbrales, el cotizador solo permitirá seleccionar L2/L3 si el subtotal del pedido supera esos montos. Dejar en blanco para permitir acceso sin restricciones.</p>
             </div>
 
-            <h3>3.5 Pestaña: Comportamiento Stock</h3>
-            <p><strong>Contenido:</strong> Toggle para configurar qué hace el sistema cuando no hay stock suficiente</p>
+            <h3>3.5 Sección: Comportamiento de Stock</h3>
+            <p><strong>Contenido:</strong> Configuración inline (sin modal) para definir qué hace el sistema cuando no hay stock suficiente</p>
 
-            <p><strong>Opciones:</strong></p>
-            <pre><code>┌─────────────────────────────────────────────────┐
-│  COMPORTAMIENTO CUANDO NO HAY STOCK SUFICIENTE │
-│                                                 │
-│  ○ Bloquear venta (no permite confirmar)       │
-│  ● Advertir pero permitir (solo muestra alerta)│
-│                                                 │
-│  Nota: Productos del proveedor "BAMBU" siempre │
-│  permiten stock negativo sin límite.           │
-│                                                 │
-│  [Guardar cambios]                              │
-└─────────────────────────────────────────────────┘</code></pre>
+            <p><strong>Estructura visual:</strong></p>
+            <pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│  Comportamiento de Stock                                                │
+├─────────────────────────────────────────────────────────────────────────┤
+│  Sin stock suficiente:  ○ Bloquear venta   ● Advertir y permitir       │
+│                                                                         │
+│  ℹ️ Productos BAMBU siempre permiten stock negativo                      │
+└─────────────────────────────────────────────────────────────────────────┘</code></pre>
 
             <p><strong>Comportamiento según configuración:</strong></p>
             <table>

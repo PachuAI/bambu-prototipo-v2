@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bambu CRM v2 - Flujo Ventas Nuevo</title>
+    <title>PRD - Ventas | Bambu CRM V2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,2362 +12,327 @@
 </head>
 
 <body>
-
-    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰
-        Menú</button>
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
 
     <nav id="sidebar">
-        <div class="logo">
-            <span>◆</span> Bambu CRM v2
-        </div>
-
+        <div class="logo"><span>◆</span> Bambu CRM v2</div>
         <div class="nav-group">
-            <div class="nav-header">Documentación</div>
-            <a href="index.html" class="nav-link">← Volver al PRD</a>
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
         </div>
-
         <div class="nav-group">
-            <div class="nav-header">Índice</div>
-            <a href="#contexto" class="nav-link">1. Contexto y Problema</a>
-            <a href="#sistema-actual" class="nav-link">2. Sistema Actual (v1)</a>
-            <a href="#feedback-cliente" class="nav-link">3. Feedback Cliente</a>
-            <a href="#propuesta-nueva" class="nav-link">4. Propuesta Nueva</a>
-            <a href="#flujos-detallados" class="nav-link">5. Flujos Detallados</a>
-            <a href="#especificacion-ventas" class="nav-link">6. Especificación Ventas</a>
-            <a href="#impacto-prd" class="nav-link">7. Impacto en PRD</a>
-        </div>
-
-        <div class="nav-group">
-            <div class="nav-header">Temas Clave</div>
-            <a href="#interaccion-modulos" class="nav-link">→ Interacción Módulos</a>
-            <a href="#cuenta-corriente" class="nav-link">→ Cuenta Corriente</a>
-            <a href="#historial-cambios" class="nav-link">→ Auditoría</a>
-        </div>
-
-        <div class="nav-group">
-            <div class="nav-header">Prototipo HTML</div>
-            <a href="#prototipo-ui" class="nav-link">7. Implementación</a>
-            <a href="#prototipo-ui" class="nav-link">7.11 Estados de días</a>
+            <div class="nav-header">En esta página</div>
+            <a href="#contexto" class="nav-link">1. Contexto</a>
+            <a href="#arquitectura" class="nav-link">2. Arquitectura</a>
+            <a href="#vistas" class="nav-link">3. Vistas</a>
+            <a href="#filtros" class="nav-link">4. Filtros</a>
+            <a href="#acciones" class="nav-link">5. Acciones</a>
+            <a href="#pagos" class="nav-link">6. Métodos de Pago</a>
+            <a href="#edicion" class="nav-link">7. Edición Post-entrega</a>
+            <a href="#calendario" class="nav-link">8. Calendario Semana</a>
+            <a href="#exportar" class="nav-link">9. Exportar</a>
+            <a href="#auditoria" class="nav-link">10. Auditoría</a>
         </div>
     </nav>
 
     <main>
         <header>
-            <div
-                style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
-                Química Bambu S.R.L.</div>
-            <h1>Bambu CRM v2 <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Flujo
-                    Ventas Nuevo - Análisis Completo</span></h1>
-
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Química Bambu S.R.L.</div>
+            <h1>PRD: Módulo Ventas</h1>
             <table>
-                <tr>
-                    <td style="width: 150px;"><strong>Fecha</strong></td>
-                    <td>22 de Diciembre 2025</td>
-                </tr>
-                <tr>
-                    <td><strong>Sistema</strong></td>
-                    <td>Bambu CRM v2</td>
-                </tr>
-                <tr>
-                    <td><strong>Propósito</strong></td>
-                    <td>Rediseñar módulo Ventas fusionando Pedidos + Histórico</td>
-                </tr>
+                <tr><td><strong>Versión</strong></td><td>2.0 (Limpio - Enero 2026)</td></tr>
+                <tr><td><strong>Prototipo</strong></td><td><a href="../prototipos/ventas.html">prototipos/ventas.html</a></td></tr>
+                <tr><td><strong>Estado</strong></td><td>Prototipo validado</td></tr>
             </table>
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <strong>Nota:</strong> Este PRD describe funcionalidades y reglas de negocio. Para referencia visual, ver el prototipo HTML.
+            </div>
         </header>
 
+        <!-- CONTEXTO -->
         <section id="contexto">
-            <h2>1. Contexto y Problema</h2>
+            <h2>1. Contexto y Propósito</h2>
 
-            <h3>Situación actual</h3>
-            <p>El PRD tiene 3 módulos separados para gestión de pedidos:</p>
-            <ul>
-                <li><strong>3.2 Cotizador</strong>: Crear pedidos</li>
-                <li><strong>3.3 Pedidos</strong>: Listar y gestionar pedidos</li>
-                <li><strong>3.8 Ventas</strong> (ex-Histórico): Ver pedidos entregados</li>
-            </ul>
+            <h3>1.1 Descripción</h3>
+            <p>Módulo unificado para gestión de TODOS los pedidos post-cotización. Fusiona los conceptos de "Pedidos" e "Histórico" de la v1.</p>
 
-            <h3>Problema identificado</h3>
-            <p>Según feedback cliente (Carlos), el módulo Ventas debe cumplir una función diferente:</p>
-            <blockquote>
-                "Es donde se terminan de confeccionar el detalle de cómo se entregaron los pedidos. Lo que realmente se
-                vendió. Porque en reparto es lo que vamos a llevar. Pero después en ventas es lo que efectivamente se
-                vendió y cómo se vendió."
-            </blockquote>
-
-            <p><strong>Función real</strong>: Módulo donde se "pulen" los pedidos post-entrega:</p>
+            <h3>1.2 Función principal</h3>
+            <p>"Pulir" pedidos post-entrega con los datos reales de lo que se vendió:</p>
             <ul>
                 <li>Corregir cantidades entregadas vs planificadas</li>
                 <li>Ajustar descuentos olvidados</li>
                 <li>Sumar/restar productos por cambios de último momento</li>
-                <li><strong>Registrar métodos de pago reales</strong> (efectivo, digital)</li>
-                <li>Hacer ajustes finales</li>
-            </ul>
-        </section>
-
-        <section id="sistema-actual">
-            <h2>2. Sistema Actual (v1)</h2>
-
-            <h3>Módulo Pedidos (v1)</h3>
-            <p><strong>Ubicación</strong>: Dashboard → Pedidos</p>
-
-            <p><strong>Función</strong>:</p>
-            <ul>
-                <li>Lista TODOS los pedidos con estado "confirmado"</li>
-                <li>Desde aquí se cambia estado manualmente para asignar fecha</li>
-                <li>Permite editar pedidos</li>
+                <li>Registrar métodos de pago reales</li>
             </ul>
 
-            <p><strong>Estados en v1</strong>:</p>
-            <ol>
-                <li>Borrador</li>
-                <li><strong>Confirmado</strong> ← Aparecen aquí</li>
-                <li>Para despacho</li>
-                <li>En tránsito</li>
-                <li>Entregado</li>
-                <li>Cancelado</li>
-            </ol>
-
-            <p><strong>Flujo v1</strong>:</p>
-            <pre><code>Cotización → Confirma → Estado "Confirmado"
-                              ↓
-                      Módulo PEDIDOS
-                              ↓
-                  Cambiar estado manualmente
-                              ↓
-                      "Para despacho"
-                              ↓
-                  Asignación de vehículos
-                              ↓
-                      "En tránsito"
-                              ↓
-                      "Entregado"</code></pre>
-
-            <h3>Módulo Histórico (v1)</h3>
-            <p><strong>Ubicación</strong>: Dashboard → Repartos → Histórico</p>
-
-            <p><strong>Función</strong>:</p>
-            <ul>
-                <li>Muestra SOLO pedidos con estado "entregado"</li>
-                <li>Filtros: Fecha, Vehículo, Tipo (fábrica/reparto)</li>
-                <li>Solo lectura (no editable)</li>
-            </ul>
-
-            <p><strong>Filtros actuales</strong>:</p>
-            <ul>
-                <li>Período (desde-hasta)</li>
-                <li>Vehículo específico</li>
-                <li>Tipo: Fábrica | Reparto</li>
-            </ul>
-        </section>
-
-        <section id="feedback-cliente">
-            <h2>3. Feedback Cliente</h2>
-
-            <h3>Necesidades identificadas:</h3>
-            <ol>
-                <li>✅ <strong>Corregir cantidades</strong>: Planificado 10, entregado 9</li>
-                <li>✅ <strong>Ajustar descuentos</strong>: Olvidamos aplicar descuento</li>
-                <li>✅ <strong>Sumar/restar productos</strong>: Cambios de último momento</li>
-                <li>✅ <strong>Ajustar métodos de pago</strong>: Efectivo vs Digital (MercadoPago)</li>
-                <li>✅ <strong>Editar pedidos post-entrega</strong>: Poder modificar después de marcar como entregado
-                </li>
-                <li>✅ <strong>Vista unificada</strong>: Ver tanto "en tránsito" como "entregados"</li>
-            </ol>
-        </section>
-
-        <section id="propuesta-nueva">
-            <h2>4. Propuesta Nueva Arquitectura</h2>
-
-            <h3>Decisión: Fusionar Pedidos + Histórico → VENTAS</h3>
-
-            <p><strong>Eliminamos</strong>:</p>
-            <ul>
-                <li>❌ Módulo 3.3 Pedidos (como módulo separado)</li>
-                <li>❌ Módulo "Pendientes de asignación"</li>
-                <li>❌ Concepto "Histórico"</li>
-                <li>❌ Estados intermedios: "Confirmado" y "Listo para despacho"</li>
-            </ul>
-
-            <p><strong>Creamos</strong>:</p>
-            <ul>
-                <li>✅ <strong>Módulo VENTAS</strong> unificado (todos los pedidos post-cotización)</li>
-                <li>✅ <strong>Calendario integrado en cotizador</strong> (asignación directa de fecha)</li>
-            </ul>
-
-            <h3>Comparativa v1 vs v2:</h3>
+            <h3>1.3 Cambios clave vs V1</h3>
             <table>
-                <tr>
-                    <th>Aspecto</th>
-                    <th>v1 (Actual)</th>
-                    <th>v2 (Propuesto)</th>
-                </tr>
-                <tr>
-                    <td><strong>Estados</strong></td>
-                    <td>6 estados: Borrador, Confirmado, Listo despacho, En tránsito, Entregado, Cancelado</td>
-                    <td>3 estados: Borrador, En tránsito, Entregado</td>
-                </tr>
-                <tr>
-                    <td><strong>Asignación fecha</strong></td>
-                    <td>Manual en módulo "Pendientes asignación"</td>
-                    <td>Automática en cotizador (calendario integrado)</td>
-                </tr>
-                <tr>
-                    <td><strong>Módulo Pedidos</strong></td>
-                    <td>Separado (solo confirmados)</td>
-                    <td>❌ Eliminado → Integrado en VENTAS</td>
-                </tr>
-                <tr>
-                    <td><strong>Módulo Histórico</strong></td>
-                    <td>Separado (solo lectura)</td>
-                    <td>❌ Eliminado → Integrado en VENTAS (editable)</td>
-                </tr>
-                <tr>
-                    <td><strong>Pendientes asignación</strong></td>
-                    <td>Módulo separado para asignar día</td>
-                    <td>❌ Eliminado (se asigna desde cotizador)</td>
-                </tr>
-                <tr>
-                    <td><strong>Edición post-entrega</strong></td>
-                    <td>❌ No permitido</td>
-                    <td>✅ Permitido en VENTAS con auditoría</td>
-                </tr>
-                <tr>
-                    <td><strong>Método de pago</strong></td>
-                    <td>❌ No registrado</td>
-                    <td>✅ Campo obligatorio (efectivo/digital/mixto)</td>
-                </tr>
-                <tr>
-                    <td><strong>Clicks para pedido reparto</strong></td>
-                    <td>7 pasos manuales</td>
-                    <td>4 pasos simplificados</td>
-                </tr>
+                <tr><th>Aspecto</th><th>V1</th><th>V2</th></tr>
+                <tr><td>Estados</td><td>6 estados</td><td>3 estados: Borrador, En tránsito, Entregado</td></tr>
+                <tr><td>Edición post-entrega</td><td>No permitido</td><td>Permitido con auditoría</td></tr>
+                <tr><td>Método de pago</td><td>No registrado</td><td>Campo obligatorio</td></tr>
+                <tr><td>Módulos</td><td>Pedidos + Histórico separados</td><td>Todo en VENTAS</td></tr>
+            </table>
+        </section>
+
+        <!-- ARQUITECTURA -->
+        <section id="arquitectura">
+            <h2>2. Arquitectura</h2>
+
+            <h3>2.1 Interacción con otros módulos</h3>
+            <table>
+                <tr><th>Módulo</th><th>Responsabilidad</th></tr>
+                <tr><td><strong>COTIZADOR</strong></td><td>Crear pedidos, asignar fecha, descontar stock, generar cargo CC</td></tr>
+                <tr><td><strong>VENTAS</strong></td><td>Ver, editar, cambiar estados, registrar pagos, exportar</td></tr>
+                <tr><td><strong>CUENTA CORRIENTE</strong></td><td>Reflejar cargos, pagos y ajustes</td></tr>
             </table>
 
-            <h3>Nuevo flujo v2:</h3>
-
-            <h4>MODO REPARTO (Flujo completo detallado):</h4>
-            <pre><code>1. COTIZADOR:
-   Usuario selecciona modo REPARTO
-   Se abre calendario integrado en cotizador
-   Selecciona fecha de entrega (lunes-viernes)
-   Confirma pedido
-       ↓
-2. SISTEMA:
-   Estado cambia a "En tránsito" DIRECTO
-   (sin pasar por Confirmado ni Listo despacho)
-   Stock se descuenta
-   Cargo en cuenta corriente se genera
-   Pedido queda asignado al día seleccionado
-       ↓
-3. MÓDULO VENTAS:
-   Pedido aparece con filtro "En tránsito"
-   Estado: SIN vehículo asignado aún
-   Usuario puede editar si es necesario
-       ↓
-4. MÓDULO REPARTOS → CALENDARIO:
-   Ir a vista de Calendario
-   Entrar al DÍA que seleccionaste en cotizador
-   Ver capacidad del día (pedidos y kilos)
-       ↓
-5. MÓDULO REPARTOS → VISTA DEL DÍA:
-   Vistas disponibles (3 opciones):
-     - Lista de pedidos
-     - Agrupar por ciudad
-     - Agrupar por vehículo ← AQUÍ se asignan pedidos a vehículos
-       ↓
-6. ASIGNACIÓN VEHÍCULO:
-   Seleccionar pedido
-   Asignar a vehículo específico (Camión A, B, etc.)
-   Acomodar orden de visitas dentro del vehículo
-       ↓
-7. EXPORTAR HOJA DE REPARTO:
-   Descargar documento Word
-   Con detalles y orden de visitas
-   Para que chofer siga el orden exacto
-       ↓
-8. REPARTIDOR:
-   Entrega pedido al cliente
-       ↓
-9. MÓDULO VENTAS (Post-entrega):
-   Buscar pedido entregado
-   Click "Editar" si hubo cambios:
-     - Ajustar cantidades (ej: entregó 9 de 10)
-     - Corregir descuentos olvidados
-     - Sumar/restar productos de último momento
-   Sistema genera AJUSTE en cuenta corriente
-   Registrar método de pago (efectivo/digital/mixto)
-   Cambiar estado → "Entregado"
-       ↓
-10. RESULTADO FINAL:
-    Pedido queda en VENTAS como "Entregado"
-    Con datos reales de lo vendido
-    Método de pago registrado
-    Auditoría completa de cambios</code></pre>
-
-            <h4>MODO FÁBRICA (Flujo con registro de pago opcional):</h4>
-            <pre><code>1. COTIZADOR:
-   Usuario selecciona modo FÁBRICA
-   Agrega productos
-   (Opcional) Selecciona cliente o "Cliente sin nombre"
-   (Opcional) Aplica descuentos
-   <strong>(NUEVO) (Opcional) Registra método de pago:</strong>
-     - Marca: Efectivo | Digital | Ambos
-     - Monto recibido: Puede ser completo, parcial, o sin pago
-   Confirma pedido
-       ↓
-2. SISTEMA:
-   Estado cambia a "Entregado" DIRECTO
-   Stock se descuenta
-   Cargo en cuenta corriente (si hay cliente)
-   <strong>SI registró pago:</strong>
-     - Pago en CC: -Monto recibido
-     - Pedido guarda: metodo_pago y monto_pagado
-     - Saldo: Total - Monto recibido
-   <strong>SI NO registró pago:</strong>
-     - Solo cargo en CC
-     - Pedido: metodo_pago = null
-     - Saldo: Total (cliente debe)
-       ↓
-3. MÓDULO VENTAS:
-   Pedido aparece con filtro "Entregado"
-   Muestra: Total | Pagado | Pendiente
-
-   Ejemplos:
-   - Pedido $100k, pagado $30k → Pendiente $70k
-   - Pedido $100k, sin pago → Pendiente $100k
-   - Pedido $100k, pagado $100k → Pendiente $0
-
-   Usuario puede editar si hubo cambios:
-     - Ajustar cantidades
-     - Corregir precios
-     - Modificar productos
-   Sistema genera AJUSTE en cuenta corriente
-
-   <strong>Registrar/modificar método de pago:</strong>
-     - Si NO se registró en cotizador → Registrar ahora
-     - Si ya se registró → Puede modificar
-       ↓
-4. RESULTADO FINAL:
-   Venta de fábrica registrada con datos reales
-   Método de pago: Registrado en cotizador O en ventas
-   Saldo cliente: Refleja pago(s) realizado(s)</code></pre>
-
-            <h3 id="interaccion-modulos">Interacción entre módulos:</h3>
-            <p><strong>COTIZADOR ↔ VENTAS ↔ REPARTOS</strong></p>
-
-            <table>
-                <tr>
-                    <th>Módulo</th>
-                    <th>Responsabilidad</th>
-                    <th>Estados que maneja</th>
-                </tr>
-                <tr>
-                    <td><strong>COTIZADOR</strong></td>
-                    <td>
-                        • Crear pedidos<br>
-                        • Asignar fecha (modo reparto)<br>
-                        • <strong>Registrar pagos al momento (modo fábrica)</strong><br>
-                        • Generar cargo en CC<br>
-                        • Generar pago en CC (si se registró)<br>
-                        • Descontar stock
-                    </td>
-                    <td>Borrador → En tránsito/Entregado</td>
-                </tr>
-                <tr>
-                    <td><strong>VENTAS</strong></td>
-                    <td>
-                        • Ver todos los pedidos<br>
-                        • Editar pedidos (incluso entregados)<br>
-                        • Cambiar estados<br>
-                        • Registrar métodos de pago<br>
-                        • Generar ajustes en CC<br>
-                        • Exportar reportes
-                    </td>
-                    <td>En tránsito ↔ Entregado</td>
-                </tr>
-                <tr>
-                    <td><strong>REPARTOS</strong></td>
-                    <td>
-                        • Visualizar calendario<br>
-                        • Asignar vehículos<br>
-                        • Ordenar visitas<br>
-                        • Exportar hojas de reparto<br>
-                        • NO cambia estados
-                    </td>
-                    <td>Solo lectura (En tránsito)</td>
-                </tr>
-            </table>
-
-            <p><strong>Flujo de datos:</strong></p>
-            <pre><code>COTIZADOR crea pedido
-    ↓
-VENTAS muestra pedido (editable)
-    ↓
-REPARTOS visualiza pedido para asignar vehículo
-    ↓
-VENTAS marca como entregado + registra pago
-    ↓
-Dato final queda en VENTAS</code></pre>
-        </section>
-
-        <section id="flujos-detallados">
-            <h2>5. Flujos Detallados</h2>
-
-            <h3>Flujo 6.1 (actualizado): Cotizar venta fábrica</h3>
+            <h3>2.2 Flujo de datos</h3>
             <ol>
-                <li>Usuario abre "Nueva Cotización"</li>
-                <li>Selecciona switch modo <strong>FÁBRICA</strong></li>
-                <li>Busca y agrega productos</li>
-                <li>(Opcional) Selecciona cliente o deja "Cliente sin nombre"</li>
-                <li>(Opcional) Ajusta descuentos, notas</li>
-                <li>Confirma el pedido</li>
-                <li><strong>El pedido queda en estado "Entregado"</strong></li>
-                <li>El stock se descuenta</li>
-                <li>Si hay cliente, se genera cargo en cuenta corriente</li>
-                <li><strong>El pedido aparece automáticamente en módulo VENTAS con filtro "Entregado"</strong></li>
-                <li>El sistema vuelve a modo "nueva cotización"</li>
+                <li>COTIZADOR crea pedido → Estado "En tránsito" o "Entregado"</li>
+                <li>VENTAS muestra pedido (editable)</li>
+                <li>Usuario puede editar, cambiar estado, registrar pago</li>
+                <li>Cambios generan ajustes automáticos en CC</li>
             </ol>
 
-            <p><strong>NUEVO</strong>: Después, desde módulo VENTAS:</p>
-            <ol start="12">
-                <li>Usuario puede editar el pedido si hubo cambios</li>
-                <li>Registra método de pago (efectivo/digital)</li>
-            </ol>
-
-            <h3>Flujo 6.2 (actualizado): Cotizar pedido reparto</h3>
-            <ol>
-                <li>Usuario abre "Nueva Cotización"</li>
-                <li>Selecciona switch modo <strong>REPARTO</strong></li>
-                <li>Busca y agrega productos</li>
-                <li>Selecciona cliente</li>
-                <li>(Opcional) Ajusta descuentos, notas</li>
-                <li>Confirma el pedido</li>
-                <li>Se abre calendario para elegir fecha de entrega (lunes-viernes)</li>
-                <li>Selecciona fecha (si no selecciona, toma fecha actual)</li>
-                <li><strong>El pedido queda en estado "En tránsito" con fecha asignada</strong></li>
-                <li>El stock se descuenta</li>
-                <li>Se genera cargo en cuenta corriente</li>
-                <li><strong>El pedido aparece en módulo VENTAS con filtro "En tránsito"</strong></li>
-                <li>El sistema vuelve a modo "nueva cotización"</li>
-            </ol>
-
-            <p><strong>NUEVO</strong>: Después:</p>
-            <ol start="14">
-                <li>En módulo Repartos: Se asigna a vehículo</li>
-                <li>Repartidor entrega el pedido</li>
-                <li>En módulo VENTAS: Se marca como "Entregado"</li>
-                <li>Se editan cantidades/precios si hubo cambios</li>
-                <li>Se registra método de pago</li>
-            </ol>
-
-            <h3>Flujo 6.26 (NUEVO): Gestionar pedidos en Ventas</h3>
-            <p><strong>Objetivo</strong>: Ver, filtrar, editar y gestionar todos los pedidos post-cotización</p>
-            <ol>
-                <li>Usuario abre módulo "Ventas"</li>
-                <li>Ve listado de TODOS los pedidos (en tránsito + entregados)</li>
-                <li>Aplica filtros según necesidad:
-                    <ul>
-                        <li>Estado: En tránsito | Entregado</li>
-                        <li>Período: 10/12 - 15/12</li>
-                        <li>Tipo: Reparto</li>
-                        <li>Vehículo: Camión A</li>
-                    </ul>
-                </li>
-                <li>Ve totales actualizados según filtros</li>
-                <li><strong>Para cada pedido puede</strong>:
-                    <ul>
-                        <li>Ver detalle completo</li>
-                        <li>Editar (corregir cantidades, precios, productos)</li>
-                        <li>Cambiar estado (En tránsito ↔ Entregado)</li>
-                        <li>Registrar método de pago</li>
-                        <li>Eliminar (con reintegro stock)</li>
-                    </ul>
-                </li>
-            </ol>
-
-            <h3>Flujo 6.27 (NUEVO): Pulir pedido post-entrega</h3>
-            <p><strong>Objetivo</strong>: Ajustar pedido después de la entrega real</p>
-            <p><strong>Caso de uso</strong>: Repartidor entregó 9 de 10 productos planificados</p>
-            <ol>
-                <li>Usuario abre módulo "Ventas"</li>
-                <li>Filtra por: Entregados hoy</li>
-                <li>Busca el pedido específico</li>
-                <li>Click "Editar"</li>
-                <li>Se abre cotizador en modo edición</li>
-                <li><strong>Modifica cantidades</strong>:
-                    <ul>
-                        <li>Producto A: Tenía 10 → Cambia a 9</li>
-                    </ul>
-                </li>
-                <li>Guarda cambios</li>
-                <li>Sistema (procesos automáticos):
-                    <ul>
-                        <li>Reintegra 1 unidad al stock</li>
-                        <li>Recalcula total del pedido: $10.000 → $9.000</li>
-                        <li><strong>Genera AJUSTE en cuenta corriente</strong>: -$1.000</li>
-                        <li>Cargo original NO se modifica (trazabilidad)</li>
-                        <li><em>(Ver sección 3.8.6 para detalles de ajustes en CC)</em></li>
-                    </ul>
-                </li>
-                <li>Usuario registra método de pago:
-                    <ul>
-                        <li>Click icono pago</li>
-                        <li>Selecciona "Efectivo"</li>
-                        <li>Guarda</li>
-                    </ul>
-                </li>
-                <li>Pedido queda pulido con datos reales</li>
-            </ol>
-
-            <h3>Flujo 6.28 (NUEVO): Contrastar ventas sistema vs realidad</h3>
-            <p><strong>Objetivo</strong>: Verificar que los totales del sistema coincidan con ingresos reales</p>
-            <ol>
-                <li>Usuario abre módulo "Ventas"</li>
-                <li>Filtra por semana: 10-16 diciembre</li>
-                <li>Ve totales en panel superior:
-                    <ul>
-                        <li>Monto total: $245.000</li>
-                        <li>Efectivo: $180.000</li>
-                        <li>Digital: $65.000</li>
-                    </ul>
-                </li>
-                <li>Compara con:
-                    <ul>
-                        <li>Caja física real: $180.000 ✅</li>
-                        <li>MercadoPago: $65.000 ✅</li>
-                    </ul>
-                </li>
-                <li>Si hay discrepancia:
-                    <ul>
-                        <li>Revisa pedidos sin método de pago registrado</li>
-                        <li>Busca pedidos marcados como entregados pero no pagados</li>
-                        <li>Edita pedidos con errores</li>
-                    </ul>
-                </li>
-                <li>Exporta reporte Excel para contador</li>
-            </ol>
-        </section>
-
-        <section id="especificacion-ventas">
-            <h2>6. Especificación Módulo Ventas</h2>
-
-            <h3>3.8 Ventas - Nueva especificación</h3>
-            <p><strong>Descripción</strong>: Módulo central para gestión, edición y seguimiento de todos los pedidos
-                post-cotización.</p>
-
-            <h3>3.8.1 Funcionalidad principal</h3>
-            <p><strong>Muestra</strong>: TODOS los pedidos (sin importar estado):</p>
-            <ul>
-                <li>En tránsito (con fecha asignada)</li>
-                <li>Entregados (fábrica o reparto)</li>
-            </ul>
-
-            <p><strong>Permite</strong>:</p>
-            <ul>
-                <li>✅ Filtrar por múltiples criterios</li>
-                <li>✅ Editar pedidos (incluso entregados)</li>
-                <li>✅ Cambiar estados manualmente</li>
-                <li>✅ Registrar/modificar métodos de pago</li>
-                <li>✅ Ver totales y estadísticas</li>
-                <li>✅ Exportar reportes</li>
-            </ul>
-
-            <h3>3.8.2 Filtros disponibles</h3>
-            <table>
-                <tr>
-                    <th>Filtro</th>
-                    <th>Opciones</th>
-                    <th>Descripción</th>
-                </tr>
-                <tr>
-                    <td><strong>Estado</strong></td>
-                    <td>En tránsito | Entregado | Todos</td>
-                    <td>Filtra por estado actual</td>
-                </tr>
-                <tr>
-                    <td><strong>Período</strong></td>
-                    <td>Desde-Hasta (fechas)</td>
-                    <td>Rango de fechas de entrega</td>
-                </tr>
-                <tr>
-                    <td><strong>Tipo</strong></td>
-                    <td>Fábrica | Reparto | Todos</td>
-                    <td>Canal de venta</td>
-                </tr>
-                <tr>
-                    <td><strong>Vehículo</strong></td>
-                    <td>Camión A | Camión B | Sin vehículo | Todos</td>
-                    <td>Solo para repartos</td>
-                </tr>
-                <tr>
-                    <td><strong>Método pago</strong></td>
-                    <td>Efectivo | Digital | Mixto | Sin registrar</td>
-                    <td>Cómo pagó el cliente</td>
-                </tr>
-            </table>
-
-            <p><strong>Combinación</strong>: Todos los filtros son combinables</p>
-            <p><strong>Ejemplo</strong>: "Pedidos entregados entre 10-15/12, tipo reparto, vehículo Camión A, pagados en
-                efectivo"</p>
-
-            <h3>3.8.3 Vista listado</h3>
-            <p><strong>Columnas tabla</strong>:</p>
-            <ul>
-                <li># Pedido</li>
-                <li>Fecha entrega (o fecha asignada si en tránsito)</li>
-                <li>Dirección</li>
-                <li>Estado (badge: En tránsito / Entregado)</li>
-                <li>Tipo (badge: Fábrica / Reparto)</li>
-                <li>Vehículo (si aplica)</li>
-                <li>Monto total</li>
-                <li>Método pago (icon: 💵 efectivo / 💳 digital / ⚠️ sin registrar)</li>
-                <li>Acciones (Ver detalle, Editar, Cambiar estado)</li>
-            </ul>
-
-            <p><strong>Ordenamiento</strong>: Por defecto por fecha descendente (más recientes primero)</p>
-
-            <p><strong>Fila de totales</strong> (NUEVO - Dic 2025):</p>
-            <ul>
-                <li>✅ <strong>Ubicación</strong>: Al final de la tabla de pedidos</li>
-                <li>✅ <strong>Propósito</strong>: Control financiero de repartos (ver cuánto $ debe traer un vehículo)</li>
-                <li>✅ <strong>Se actualiza dinámicamente</strong> según filtros aplicados</li>
-                <li>✅ <strong>Columnas mostradas</strong>:
-                    <ul>
-                        <li><strong>Total pedidos</strong>: Cantidad de pedidos filtrados</li>
-                        <li><strong>Total monto</strong>: Suma de todos los montos (formato: $XXX.XXX)</li>
-                        <li><strong>Total efectivo</strong>: Suma de pagos en efectivo (si filtro por método pago)</li>
-                        <li><strong>Total digital</strong>: Suma de pagos digitales (si filtro por método pago)</li>
-                    </ul>
-                </li>
-            </ul>
-
-            <p><strong>Ejemplo de uso</strong>:</p>
-            <pre><code>Filtro aplicado: Vehículo "Camión A" + Fecha "27/12/2025"
-Tabla muestra: 8 pedidos
-
-FILA FINAL:
-┌──────────────────────────────────────────────────┐
-│ TOTAL: 8 pedidos | $285.000 | 💵 $180.000 | 💳 $105.000 │
-└──────────────────────────────────────────────────┘
-
-Uso: El chofer debe traer $180.000 en efectivo + comprobantes de $105.000 digital</code></pre>
-
-            <p><strong>Notas sobre pestaña BORRADORES</strong>:</p>
-            <ul>
-                <li>✅ <strong>Columna "Fecha"</strong>: En la pestaña Borradores, la columna se llama simplemente <strong>"Fecha"</strong> (no "Fecha de creación")</li>
-                <li>✅ Muestra la fecha en que se creó el borrador</li>
-            </ul>
-
-            <h3>3.8.4 Detalle de pedido</h3>
-            <p>Al hacer click en un pedido, se abre modal/página con:</p>
-            <p><strong>Información general</strong>:</p>
-            <ul>
-                <li># Pedido</li>
-                <li>Cliente (nombre, dirección, teléfono)</li>
-                <li>Estado actual</li>
-                <li>Tipo (Fábrica/Reparto)</li>
-                <li>Fecha creación | Fecha entrega</li>
-                <li>Vehículo asignado (si aplica)</li>
-            </ul>
-
-            <p><strong>Productos</strong>:</p>
-            <ul>
-                <li>Lista de productos con cantidades y precios</li>
-                <li>Subtotal</li>
-                <li>Descuentos aplicados</li>
-                <li>Ajustes (+/-)</li>
-                <li><strong>Total</strong></li>
-            </ul>
-
-            <p><strong>Método de pago</strong>: (NUEVO - OBLIGATORIO)</p>
-            <ul>
-                <li>Checkboxes múltiple selección: Efectivo | Digital (MercadoPago/Transferencia)</li>
-                <li>Permite seleccionar uno o ambos</li>
-                <li>Si selecciona ambos: Campos para dividir monto
-                    <ul>
-                        <li>Efectivo: $X</li>
-                        <li>Digital: $X</li>
-                        <li>Validación: Suma debe igualar total pedido</li>
-                    </ul>
-                </li>
-                <li>Notas sobre el pago (opcional)</li>
-            </ul>
-
-            <p id="historial-cambios"><strong>Historial de cambios</strong>: (OBLIGATORIO - Auditoría)</p>
-            <ul>
-                <li><strong>Registro automático</strong> de todas las modificaciones post-entrega</li>
-                <li><strong>Campos registrados</strong>:
-                    <ul>
-                        <li>Usuario que editó (nombre completo + ID)</li>
-                        <li>Fecha/hora exacta del cambio</li>
-                        <li>Campo modificado (ej: "Cantidad Producto A")</li>
-                        <li>Valor anterior → Valor nuevo</li>
-                        <li>IP del usuario (seguridad)</li>
-                        <li>(Opcional) Razón del cambio (campo texto libre)</li>
-                    </ul>
-                </li>
-                <li><strong>Visualización</strong>: Línea de tiempo cronológica</li>
-                <li><strong>Propósito</strong>: Trazabilidad total y auditoría fiscal</li>
-            </ul>
-
-            <p><strong>Acciones disponibles</strong>:</p>
-            <ul>
-                <li>✏️ Editar pedido (abre cotizador en modo edición)</li>
-                <li>🔄 Cambiar estado (En tránsito ↔ Entregado)</li>
-                <li>💰 Registrar/modificar método de pago</li>
-                <li>🗑️ Eliminar pedido (con confirmación + reintegro stock)</li>
-            </ul>
-
-            <h3>3.8.5 Editar pedido desde Ventas</h3>
-            <p><strong>Funcionalidad</strong>: Poder modificar pedidos incluso después de marcar como "entregado",
-                cuando el repartidor vuelve con novedades.</p>
-
-            <p><strong>Casos de uso</strong>:</p>
-            <ol>
-                <li>Cliente devolvió 1 producto → Restar cantidad</li>
-                <li>Se olvidó aplicar descuento → Aplicar descuento retroactivo</li>
-                <li>Cliente compró 2 productos extra → Sumar productos</li>
-                <li>Error en precio → Corregir precio unitario</li>
-            </ol>
-
-            <p><strong>Flujo edición</strong>:</p>
-            <pre><code>Módulo VENTAS → Selecciona pedido → Click "Editar"
-                            ↓
-                Abre cotizador en modo edición
-                (mismo que editar desde cualquier módulo)
-                            ↓
-                Modifica productos/cantidades/precios
-                            ↓
-                Guarda cambios
-                            ↓
-    Stock se ajusta automáticamente
-    Cuenta corriente se actualiza (si aplica)
-                            ↓
-        Vuelve al módulo VENTAS</code></pre>
-
-            <h4><strong>Cambiar tipo de pedido (REPARTO ↔ FÁBRICA)</strong> ⭐ NUEVO (Dic 2025)</h4>
-            <p><strong>Funcionalidad</strong>: Permitir cambiar el tipo de un pedido existente entre REPARTO y FÁBRICA.</p>
-
-            <p><strong>Acceso</strong>:</p>
-            <ul>
-                <li>Desde el detalle del pedido en VENTAS</li>
-                <li>Botón: <strong>[🔄 Cambiar tipo]</strong></li>
-            </ul>
-
-            <p><strong>Modal de confirmación</strong>:</p>
-            <pre><code>┌────────────────────────────────────────┐
-│  Cambiar tipo de pedido #155          │
-├────────────────────────────────────────┤
-│                                        │
-│  Tipo actual: 🚚 REPARTO               │
-│  Nuevo tipo:  🏭 FÁBRICA               │
-│                                        │
-│  ⚠️ Cambios que se aplicarán:         │
-│  • Estado cambiará a "Entregado"      │
-│  • Se eliminará asignación de vehículo│
-│  • Fecha de entrega = Hoy             │
-│                                        │
-│  [Cancelar]  [Confirmar cambio]        │
-└────────────────────────────────────────┘</code></pre>
-
-            <p><strong>Efectos al cambiar de REPARTO → FÁBRICA</strong>:</p>
-            <ul>
-                <li>✅ Estado: "En tránsito" → "Entregado"</li>
-                <li>✅ Fecha entrega: Se asigna fecha actual</li>
-                <li>✅ Vehículo asignado: Se elimina (vuelve a NULL)</li>
-                <li>✅ Aparece en filtro "Fábrica" en VENTAS</li>
-            </ul>
-
-            <p><strong>Efectos al cambiar de FÁBRICA → REPARTO</strong>:</p>
-            <ul>
-                <li>✅ Estado: "Entregado" → "En tránsito"</li>
-                <li>✅ Abre calendario para seleccionar fecha de reparto</li>
-                <li>✅ Vehículo: Sin asignar (se asigna desde REPARTOS)</li>
-                <li>✅ Aparece en filtro "Reparto" y en Calendario día seleccionado</li>
-            </ul>
-
-            <p><strong>Validaciones</strong>:</p>
-            <ul>
-                <li>⚠️ Si el pedido tiene método de pago registrado, se mantiene</li>
-                <li>⚠️ Si hay ajustes en cuenta corriente, se mantienen intactos</li>
-                <li>⚠️ El historial de cambios registra: Usuario, fecha/hora, tipo anterior → tipo nuevo</li>
-            </ul>
-
-            <h3 id="cuenta-corriente">3.8.6 Impacto en Cuenta Corriente al editar pedidos</h3>
-
-            <p><strong>Cuando se edita un pedido desde VENTAS</strong>, el sistema genera automáticamente <strong>ajustes en la Cuenta Corriente</strong> del cliente.</p>
-
-            <h4>Regla crítica:</h4>
-            <blockquote>
-                El cargo original del pedido NUNCA se modifica. Siempre se crea un NUEVO movimiento tipo "Ajuste" con la diferencia entre el total anterior y el nuevo.
-            </blockquote>
-
-            <h4>Ejemplo simplificado:</h4>
-            <pre><code>Pedido original: $10.000 (10 unidades)
-Cliente devolvió 1 unidad
-Nuevo total: $9.000
-
-Sistema AUTOMÁTICO:
-✅ Reintegra 1 unidad al stock
-✅ Crea AJUSTE en cuenta corriente: -$1.000
-✅ Cargo original permanece intacto (auditoría)
-✅ Saldo final: -$9.000</code></pre>
-
-            <div class="note" style="border-left: 4px solid #17a2b8; background: #d1ecf1; padding: 1rem; margin: 1.5rem 0;">
-                <p><strong>📄 Especificación completa en módulo Cuenta Corriente</strong></p>
-                <p>Para detalles técnicos sobre ajustes por edición de pedidos, validaciones, campos del ajuste, y casos de uso completos, ver:</p>
-                <p><a href="cuenta-corriente.html#ajustes-edicion-pedidos" style="color: #0056b3; font-weight: 600;">→ Módulo Cuenta Corriente - Sección 8: Ajustes por Edición de Pedidos</a></p>
-            </div>
-
-            <h3>3.8.7 Registrar método de pago</h3>
-            <p><strong>Campo nuevo en pedidos</strong>: <code>metodo_pago</code></p>
-            <p><strong>Opciones</strong> (selección múltiple):</p>
-            <ul>
-                <li><strong>Efectivo</strong>: Cliente pagó en efectivo</li>
-                <li><strong>Digital</strong>: MercadoPago, transferencia, débito, crédito</li>
-                <li><strong>Ambos</strong> (Efectivo + Digital): Combinación de métodos
-                    <ul>
-                        <li>Requiere campos adicionales: <code>monto_efectivo</code>, <code>monto_digital</code></li>
-                        <li>Validación: <code>monto_efectivo + monto_digital = total_pedido</code></li>
-                    </ul>
-                </li>
-                <li><strong>Sin registrar</strong>: Estado temporal hasta que se registre (solo para pedidos en
-                    tránsito)</li>
-            </ul>
-
-            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda; padding: 1rem; margin: 1.5rem 0;">
-                <p><strong>🔄 ACTUALIZACIÓN: Sistema híbrido de registro de pagos (Dic 2025)</strong></p>
-                <p>Los pagos se pueden registrar desde <strong>AMBOS módulos</strong> (VENTAS y Cuenta Corriente) con <strong>sincronización automática</strong> para evitar duplicación.</p>
-                <p><strong>Motivo</strong>: Operadores controlando repartos necesitan registrar pagos masivamente desde la tabla de ventas sin ir cliente por cliente a Cuenta Corriente. Al mismo tiempo, en casos puntuales se necesita registrar desde el perfil del cliente.</p>
-            </div>
-
-            <p><strong>Flujo opción 1 - Registro desde VENTAS</strong> (Caso más común):</p>
-            <pre><code>Módulo VENTAS → Pedido en tránsito → Click "Marcar como Entregado"
-                            ↓
-                Modal "Registrar entrega y pago"
-                            ↓
-                Campos obligatorios:
-                - Total pedido: $100,000
-                - Monto recibido: [______] (puede ser < total para pago parcial)
-                - Método: ☐ Efectivo | ☐ Digital | ☐ Ambos
-                - Nota (opcional)
-                            ↓
-            Estado cambia a "ENTREGADO"
-            + Se registra AUTOMÁTICAMENTE en Cuenta Corriente
-                            ↓
-                Sistema crea movimiento en CC:
-                - Tipo: Pago
-                - Descripción: "Pago pedido #XXX"
-                - Monto: $100,000
-                - Método: Efectivo/Digital/Mixto
-                - Origen: VENTAS
-                - Usuario: [Operador actual]
-                - Timestamp: [Fecha/hora actual]</code></pre>
-
-            <p><strong>Flujo opción 2 - Registro desde CUENTA CORRIENTE</strong> (Casos puntuales):</p>
-            <pre><code>Módulo CLIENTES → Cliente → Tab "Cuenta Corriente"
-                            ↓
-                Click [+ Registrar pago]
-                            ↓
-                Modal "Registrar Pago"
-                            ↓
-        Selecciona tipo:
-        ○ Pago genérico (reduce saldo sin asociar a pedido)
-        ○ Pago a pedido específico #XXX
-                            ↓
-        Si elige "específico" → Se actualiza <code>pedido.monto_pagado</code>
-        + Columna "Pagado" en VENTAS se sincroniza</code></pre>
-
-            <p><strong>🔄 Sincronización automática bidireccional</strong>:</p>
-            <ul>
-                <li>✅ <strong>VENTAS → CC</strong>: Pago registrado en VENTAS se crea automáticamente en Cuenta Corriente</li>
-                <li>✅ <strong>CC → VENTAS</strong>: Pago a pedido específico desde CC actualiza columna "Pagado" en tabla VENTAS</li>
-                <li>✅ <strong>Anti-duplicados</strong>: Sistema verifica si el pedido ya tiene pago registrado antes de crear nuevo movimiento</li>
-                <li>✅ <strong>Trazabilidad</strong>: Cada pago registra origen (VENTAS o CC), usuario y timestamp</li>
-                <li>✅ <strong>Consistencia</strong>: Ambos módulos muestran siempre la misma información actualizada</li>
-            </ul>
-
-            <p><strong>Relación con Cuenta Corriente</strong>:</p>
-            <ul>
-                <li>✅ El cargo del pedido se registra al confirmar (COTIZADOR o BORRADOR)</li>
-                <li>✅ <strong>Los pagos se pueden registrar desde VENTAS o Cuenta Corriente</strong></li>
-                <li>✅ El pago puede ser genérico (reduce saldo) o específico (actualiza <code>pedido.monto_pagado</code>)</li>
-                <li>✅ Permite pagos parciales múltiples al mismo pedido</li>
-                <li>✅ Sincronización automática evita duplicación y mantiene consistencia</li>
-                <li><em>Ver <a href="cuenta-corriente.html">Módulo Cuenta Corriente</a> para detalles del sistema híbrido</em></li>
-            </ul>
-
-            <h3>3.8.7.1 Pagos parciales (modo REPARTO y FÁBRICA)</h3>
-
-            <p><strong>Flexibilidad total</strong>: El sistema permite pagos parciales en AMBOS modos (REPARTO y FÁBRICA).</p>
-
-            <p><strong>Escenario común - Modo REPARTO</strong>:</p>
-            <pre><code>Pedido reparto: $100,000
-Repartidor entrega
-Cliente solo tiene: $60,000
-
-En VENTAS → Marcar como entregado:
-Modal "Registrar pago":
-  Total pedido: $100,000
-  Monto recibido: [$60,000]  ← Usuario puede ingresar menos
-
-  ⚠️ Pago parcial detectado
-  Saldo pendiente: $40,000
-  (quedará en cuenta corriente)
-
-Resultado:
-- pedido.total = $100,000
-- pedido.monto_pagado = $60,000
-- Cuenta Corriente: Cargo +$100k, Pago -$60k
-- Saldo cliente: -$40,000 (debe)</code></pre>
-
-            <p><strong>Pago mixto parcial</strong>:</p>
-            <pre><code>Total pedido: $100,000
-Usuario registra:
-  ☑ Efectivo: $30,000
-  ☑ Digital:  $20,000
-  Total recibido: $50,000
-
-Sistema:
-- Pago efectivo CC: -$30,000
-- Pago digital CC: -$20,000
-- Saldo pendiente: $50,000</code></pre>
-
-            <h3>3.8.7.2 Pagos asociados vs Pagos genéricos ⭐ CRÍTICO</h3>
-
-            <div class="note" style="border-left: 4px solid #dc3545; background: #f8d7da; padding: 1rem; margin: 1.5rem 0;">
-                <p><strong>⚠️ CONCEPTO FUNDAMENTAL DEL SISTEMA FINANCIERO</strong></p>
-                <p>Es crítico entender la diferencia entre pagos asociados a pedidos y pagos genéricos.</p>
-            </div>
-
-            <h4>Tipos de pagos en el sistema:</h4>
-
-            <table>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Dónde se registra</th>
-                    <th>Efecto en pedido</th>
-                    <th>Efecto en CC</th>
-                </tr>
-                <tr>
-                    <td><strong>Pago ASOCIADO</strong></td>
-                    <td>
-                        • Cotizador (modo fábrica - al confirmar)<br>
-                        • CC → Opción "Pago a pedido específico"
-                    </td>
-                    <td>✅ Actualiza <code>monto_pagado</code></td>
-                    <td>✅ Reduce saldo</td>
-                </tr>
-                <tr>
-                    <td><strong>Pago GENÉRICO</strong></td>
-                    <td>
-                        • Cuenta Corriente<br>
-                        • Opción: "Pago genérico"
-                    </td>
-                    <td>❌ NO actualiza pedido</td>
-                    <td>✅ Reduce saldo</td>
-                </tr>
-            </table>
-
-            <h4>¿Por qué esta diferencia?</h4>
-            <p><strong>Realidad del negocio</strong>: Los clientes NO siempre especifican "esto es para el pedido #100".</p>
-            <p>Muchas veces dicen: <em>"Te transfiero $50.000"</em> (sin especificar a qué pedido corresponde).</p>
-
-            <h4>Ejemplo completo:</h4>
-
-            <pre><code>Día 1 - COTIZADOR (Venta fábrica):
-Cliente: Av. San Martín 1234
-Pedido #100: $100,000
-Usuario registra pago parcial: $30,000 efectivo
-→ Sistema:
-  - pedido.monto_pagado = $30,000 ✅ (asociado al pedido)
-  - CC: Cargo +$100k, Pago -$30k
-  - Saldo cliente: -$70,000
-
-En VENTAS se ve:
-┌────────────────────────────────────────────┐
-│ #100 │ $100k │ $30k ⚠️ │ 💵 │ Entregado │
-│      │ Total │ Pagado  │    │           │
-└────────────────────────────────────────────┘
-
-─────────────────────────────────────────────
-
-Día 3 - CUENTA CORRIENTE (Pago genérico):
-Cliente transfiere sin especificar pedido
-Usuario registra: $40,000 digital → Opción: "Pago genérico"
-→ Sistema:
-  - pedido.monto_pagado = SIN CAMBIOS ($30k) ❌
-  - CC: Pago genérico -$40k
-  - Saldo cliente: -$30,000
-
-En VENTAS SIGUE igual:
-┌────────────────────────────────────────────┐
-│ #100 │ $100k │ $30k ⚠️ │ 💵 │ Entregado │
-│      │ Total │ Pagado  │    │           │
-└────────────────────────────────────────────┘
-
-⚠️ El pedido NO cambió porque el pago fue GENÉRICO
-
-─────────────────────────────────────────────
-
-Día 5 - CUENTA CORRIENTE (Pago específico):
-Cliente paga resto diciendo "es para el pedido #100"
-Usuario registra: $30,000 digital
-→ Opción: "Pedido específico" → Selecciona: Pedido #100
-→ Sistema:
-  - pedido.monto_pagado = $30k + $30k = $60k ✅ (asociado)
-  - CC: Pago a pedido #100 -$30k
-  - Saldo cliente: $0
-
-En VENTAS AHORA SÍ cambia:
-┌────────────────────────────────────────────┐
-│ #100 │ $100k │ $60k ⚠️ │ 💵💳│ Entregado │
-│      │ Total │ Pagado  │     │           │
-└────────────────────────────────────────────┘
-
-IMPORTANTE: Falta $40k según el pedido, aunque el
-cliente no deba nada (saldo $0) porque esos $40k
-fueron un pago genérico no asociado al pedido.</code></pre>
-
-            <h4>Regla de oro:</h4>
-            <blockquote>
-                <strong>Columna "Pagado" en VENTAS</strong> muestra SOLO los pagos ASOCIADOS directamente al pedido.
-                <br><br>
-                Los pagos genéricos NO aparecen en pedidos individuales, solo reducen el saldo total del cliente en Cuenta Corriente.
-            </blockquote>
-
-            <h4>¿Cómo saber si el cliente debe dinero?</h4>
-            <ul>
-                <li><strong>Saldo Cuenta Corriente</strong>: Fuente de verdad del debe/haber total</li>
-                <li><strong>Columna "Pagado" en pedidos</strong>: Informativo (pagos asociados a ese pedido específico)</li>
-            </ul>
-
-            <p><strong>Caso de uso real</strong>:</p>
-            <pre><code>Cliente tiene 3 pedidos:
-- Pedido #100: Total $100k, Pagado $30k, Pendiente $70k
-- Pedido #101: Total $50k,  Pagado $0,   Pendiente $50k
-- Pedido #155: Total $80k,  Pagado $80k, Pendiente $0
-
-Suma pendiente según pedidos: $120k
-
-Cliente transfiere $100k (pago genérico)
-
-Saldo CC: -$20k (debe solo $20k)
-
-PERO los pedidos SIGUEN mostrando:
-- #100: Pendiente $70k
-- #101: Pendiente $50k
-- #155: Pendiente $0
-
-⚠️ Total pendiente en pedidos: $120k
-✅ Saldo real cliente: -$20k
-
-El pago genérico de $100k redujo el saldo total pero
-NO se distribuyó entre los pedidos individuales.</code></pre>
-
-            <h3>3.8.7.3 Pedidos sin cliente (ventas casuales)</h3>
-
-            <p><strong>Caso de uso</strong>: Cliente casual compra en fábrica sin registrarse en el sistema.</p>
-
-            <p><strong>Solución</strong>: Cliente especial del sistema "Venta casual - Sin registro"</p>
-
-            <h4>Características:</h4>
-            <ul>
-                <li>Cliente ficticio creado por el sistema</li>
-                <li>NO tiene cuenta corriente activa (o siempre en $0)</li>
-                <li>Solo para ventas de fábrica (modo FÁBRICA)</li>
-                <li>NO permite ventas fiadas (pago obligatorio completo)</li>
-            </ul>
-
-            <h4>Validaciones especiales:</h4>
-            <pre><code>En COTIZADOR modo FÁBRICA:
-SI cliente = "Sin registro":
-  → Método de pago: OBLIGATORIO
-  → Monto debe = Total pedido (no permite parciales)
-  → No permite "sin pago" (fiado)
-  → No genera cargo en Cuenta Corriente</code></pre>
-
-            <h4>Vista en VENTAS:</h4>
-            <pre><code>┌────────────────────────────────────────────────────┐
-│ #    │ Fecha │ Cliente        │ Total │ Estado    │
-├────────────────────────────────────────────────────┤
-│ 1240 │ 20/12 │ Sin registro   │ $8k   │ Entregado │
-│ 1241 │ 20/12 │ Av. Mitre 567  │ $50k  │ Entregado │
-└────────────────────────────────────────────────────┘
-
-Características pedidos sin cliente:
-- Siempre "Pagado" completo (obligatorio)
-- NO permiten edición post-entrega
-- NO afectan Cuenta Corriente
-- Útiles para estadísticas de ventas</code></pre>
-
-            <h4>Filtros en VENTAS:</h4>
-            <ul>
-                <li>Filtro "Cliente": Incluye opción "Sin registro"</li>
-                <li>Permite filtrar solo ventas casuales</li>
-                <li>Útil para reportes de venta mostrador</li>
-            </ul>
-
-            <h3>3.8.8 Cambiar estado manualmente</h3>
-            <p><strong>Estados disponibles en v2</strong>:</p>
-            <ol>
-                <li>Borrador (solo en cotizador)</li>
-                <li><strong>En tránsito</strong> (pedidos reparto con fecha asignada)</li>
-                <li><strong>Entregado</strong> (pedidos fábrica directos + repartos completados)</li>
-            </ol>
-
-            <p><strong>Cambio de estado desde VENTAS</strong>:</p>
-            <pre><code>Pedido "En tránsito" → Click "Marcar como entregado"
-                        ↓
-            Confirma acción
-                        ↓
-        Estado cambia a "Entregado"
-        Registra usuario + fecha/hora
-                        ↓
-OBLIGATORIO: Solicita método de pago si no está registrado
-(No permite cerrar sin registrar método de pago)</code></pre>
-
-            <p><strong>Cambio inverso</strong> (si es necesario):</p>
-            <pre><code>Pedido "Entregado" → Click "Volver a En tránsito"
-                        ↓
-            Confirma acción
-                        ↓
-        Estado cambia a "En tránsito"</code></pre>
-
-            <h3>3.8.8.1 Control y ajustes de reparto desde VENTAS</h3> ⭐ NUEVO (Dic 2025)
-            <p><strong>Funcionalidad</strong>: Permitir hacer ajustes de asignación de vehículos y control de reparto directamente desde el módulo VENTAS, sin tener que ir al módulo REPARTOS.</p>
-
-            <p><strong>Contexto</strong>:</p>
-            <blockquote>
-                "Hay gente que va a hacer el control desde Cuenta Corriente y otra desde Venta al momento de controlar el reparto" - Carlos, reunión Dic 2025
-            </blockquote>
-
-            <p><strong>Problema identificado</strong>:</p>
-            <p>Algunos operadores trabajan principalmente en el módulo VENTAS para control financiero. Necesitan poder:</p>
-            <ul>
-                <li>Ver qué pedidos están asignados a cada vehículo</li>
-                <li>Reasignar pedidos entre vehículos sin salir de VENTAS</li>
-                <li>Marcar pedidos como controlados</li>
-                <li>Ver estado de reparto del día</li>
-            </ul>
-
-            <p><strong>Solución: Panel de repartos en VENTAS</strong></p>
-
-            <h4>Acceso rápido desde VENTAS</h4>
-            <p><strong>Ubicación</strong>: Vista Calendario Semana → Click en un día</p>
-            <pre><code>Calendario Semana (vista principal)
-        ↓
-Click en día específico (ej: "Lunes 23/12")
-        ↓
-Abre modal/panel lateral: "Repartos del día 23/12"
-        ↓
-Muestra mismo contenido que módulo REPARTOS → Vista del día</code></pre>
-
-            <h4>Funcionalidades disponibles desde VENTAS</h4>
-            <ul>
-                <li>✅ <strong>Ver pedidos por vehículo</strong>: Lista de pedidos asignados a cada camión</li>
-                <li>✅ <strong>Ver pedidos sin asignar</strong>: Pedidos del día sin vehículo</li>
-                <li>✅ <strong>Reasignar pedidos</strong>: Mover pedidos entre vehículos o desasignar</li>
-                <li>✅ <strong>Ver capacidad</strong>: Kg y cantidad de pedidos por vehículo</li>
-                <li>✅ <strong>Marcar como controlado</strong>: Badge de estado de control</li>
-                <li>✅ <strong>Link directo</strong>: Botón "Ver en REPARTOS" para vista completa</li>
-            </ul>
-
-            <h4>Vista modal "Repartos del día"</h4>
-            <pre><code>┌──────────────────────────────────────────────────────┐
-│  📅 Repartos del día: Lunes 23/12/2025               │
-│  [Ver en REPARTOS completo] [Cerrar]                 │
-├──────────────────────────────────────────────────────┤
-│                                                      │
-│  🚚 Camión A (Mercedes Sprinter)                     │
-│  📦 5 pedidos | ⚖️ 180 kg de 3500 kg (5%)           │
-│  ┌────────────────────────────────────────────┐     │
-│  │ #155 - Av. San Martín 1234 - $80k          │     │
-│  │ #156 - Calle Mitre 567 - $45k              │     │
-│  │ [Mover a...▼] [Desasignar]                 │     │
-│  └────────────────────────────────────────────┘     │
-│                                                      │
-│  🚚 Camión B (Toyota Hiace)                          │
-│  📦 3 pedidos | ⚖️ 95 kg de 1500 kg (6%)            │
-│                                                      │
-│  📋 Sin asignar (7 pedidos)                          │
-│  [Asignar a vehículo...]                            │
-│                                                      │
-└──────────────────────────────────────────────────────┘</code></pre>
-
-            <h4>Integración con módulo REPARTOS</h4>
-            <p><strong>Sincronización bidireccional</strong>:</p>
-            <ul>
-                <li>✅ Cambios en VENTAS → Se reflejan en REPARTOS</li>
-                <li>✅ Cambios en REPARTOS → Se reflejan en VENTAS</li>
-                <li>✅ Misma fuente de datos (tabla pedidos)</li>
-            </ul>
-
-            <p><strong>Flujo de trabajo típico</strong>:</p>
-            <pre><code>Usuario en módulo VENTAS:
-1. Filtra pedidos del día (Lunes 23/12)
-2. Ve que Camión A tiene 5 pedidos
-3. Click en "Ver repartos del día"
-4. Reasigna 2 pedidos de Camión A → Camión B
-5. Cierra modal
-6. Continúa con control financiero en VENTAS</code></pre>
-
-            <p><strong>Ventaja</strong>: Operadores financieros no necesitan cambiar de módulo para hacer ajustes simples de reparto.</p>
-
-            <h3>3.8.9 Totales y estadísticas</h3>
-            <p><strong>Panel superior del módulo</strong>:</p>
-            <p><strong>Con filtros aplicados, muestra</strong>:</p>
-            <ul>
-                <li>📦 Cantidad de pedidos (Ej: 45 pedidos)</li>
-                <li>💰 Monto total vendido (Ej: $1.245.000)</li>
-                <li>⚖️ Kg totales despachados (Ej: 2.350 kg)</li>
-            </ul>
-
-            <p><strong>Discriminado por</strong>:</p>
-            <ul>
-                <li>🏭 Fábrica: X pedidos - $XXX</li>
-                <li>🚚 Reparto: X pedidos - $XXX</li>
-            </ul>
-
-            <p><strong>Discriminado por método de pago</strong>:</p>
-            <ul>
-                <li>💵 Efectivo: $XXX (X pedidos)</li>
-                <li>💳 Digital: $XXX (X pedidos)</li>
-                <li>💵💳 Mixto: $XXX (X pedidos)</li>
-                <li>⚠️ Sin registrar: $XXX (X pedidos)</li>
-            </ul>
-
-            <h3>3.8.10 Exportar reportes</h3>
-            <p><strong>Botón</strong>: "Exportar Excel"</p>
-
-            <p><strong>Modal de selección de columnas</strong> ⭐ NUEVO (Dic 2025):</p>
-            <pre><code>┌─────────────────────────────────────────────┐
-│  Exportar a Excel - Seleccionar columnas   │
-├─────────────────────────────────────────────┤
-│                                             │
-│  ☑ # Pedido                (obligatorio)   │
-│  ☑ Fecha entrega           (obligatorio)   │
-│  ☑ Cliente                                 │
-│  ☑ Dirección                               │
-│  ☑ Teléfono                ⭐ NUEVO        │
-│  ☑ Tipo (Fábrica/Reparto)                  │
-│  ☑ Vehículo                                │
-│  ☑ Repartidor                              │
-│  ☑ Productos (detalle)                     │
-│  ☑ Subtotal                                │
-│  ☑ Descuentos                              │
-│  ☑ Ajustes                                 │
-│  ☑ Total                                   │
-│  ☑ Método de pago                          │
-│  ☑ Estado                                  │
-│                                             │
-│  [☑ Seleccionar todo]  [☐ Limpiar todo]    │
-│                                             │
-│  [Cancelar]  [Exportar]                    │
-└─────────────────────────────────────────────┘</code></pre>
-
-            <p><strong>Comportamiento</strong>:</p>
-            <ul>
-                <li>✅ <strong>Por defecto</strong>: Todas las columnas seleccionadas</li>
-                <li>✅ <strong>Columnas obligatorias</strong>: # Pedido y Fecha entrega (no se pueden desmarcar)</li>
-                <li>✅ <strong>Recordar selección</strong>: El sistema guarda la última selección del usuario</li>
-                <li>✅ <strong>Botón "Seleccionar todo"</strong>: Marca todas las columnas</li>
-                <li>✅ <strong>Botón "Limpiar todo"</strong>: Desmarca todas excepto obligatorias</li>
-            </ul>
-
-            <p><strong>Columnas disponibles</strong> (según filtros activos):</p>
-            <ul>
-                <li># Pedido <em>(obligatorio)</em></li>
-                <li>Fecha entrega <em>(obligatorio)</em></li>
-                <li>Cliente</li>
-                <li>Dirección</li>
-                <li><strong>Teléfono</strong> ⭐ NUEVO</li>
-                <li>Tipo (Fábrica/Reparto)</li>
-                <li>Vehículo</li>
-                <li>Repartidor</li>
-                <li>Productos (detalle completo)</li>
-                <li>Subtotal</li>
-                <li>Descuentos</li>
-                <li>Ajustes</li>
-                <li><strong>Total</strong></li>
-                <li><strong>Método de pago</strong></li>
-                <li>Estado</li>
-            </ul>
-
-            <p><strong>Formato</strong>: Excel con formato profesional, lista para enviar al contador</p>
-
-            <p><strong>Ejemplo de uso</strong>:</p>
-            <pre><code>Usuario solo necesita: Cliente, Dirección, Teléfono, Total, Método de pago
-→ Desmarca todas excepto esas columnas
-→ Exporta Excel más compacto y fácil de leer</code></pre>
-
-            <h3>3.8.11 Calendario de Repartos: Vista Integrada en Ventas ⭐ IMPORTANTE</h3>
-
-            <div class="note" style="border-left: 4px solid #dc3545; background: #f8d7da; padding: 1rem; margin: 1.5rem 0;">
-                <h4>⚠️ ACLARACIÓN CRÍTICA: NO existe módulo "Repartos" separado en v2</h4>
-                <p><strong>El "Calendario de Repartos" es una VISTA/FILTRO dentro del módulo VENTAS.</strong></p>
-                <p>Esta aclaración corrige un error conceptual grave en documentación previa que lo mostraba como módulo independiente.</p>
-            </div>
-
-            <h4>Concepto correcto:</h4>
-            <blockquote>
-                El módulo VENTAS es el único módulo que contiene TODOS los pedidos post-cotización.<br><br>
-                El "Calendario de Repartos" es simplemente una <strong>vista filtrada</strong> que muestra pedidos tipo REPARTO que aún NO están entregados, organizados por fecha en formato calendario semanal.
-            </blockquote>
-
-            <h4>¿Dónde está el calendario?</h4>
-            <ul>
-                <li><strong>Ubicación</strong>: Módulo VENTAS → Tab "Calendario Semana"</li>
-                <li><strong>Función</strong>: Vista de calendario (lunes-viernes) con pedidos tipo REPARTO</li>
-                <li><strong>Filtro automático</strong>: Solo muestra pedidos donde <code>tipo = "REPARTO"</code> AND <code>estado != "Entregado"</code></li>
-            </ul>
-
-            <h4>Funcionalidad del calendario:</h4>
-            <ul>
-                <li>✅ Vista semanal (lunes a viernes) con capacidad por día</li>
-                <li>✅ Click en día → Abre vista detallada con pedidos del día</li>
-                <li>✅ Asignación de pedidos a vehículos (drag & drop o modal)</li>
-                <li>✅ Reordenamiento de pedidos dentro de cada vehículo (ruta)</li>
-                <li>✅ Exportación dual: CON precios (control) / SIN precios (chofer)</li>
-                <li>✅ Pedidos sin asignar ordenados alfabéticamente por ciudad</li>
-            </ul>
-
-            <h4>Flujo correcto de un pedido REPARTO:</h4>
-            <pre><code>1. COTIZADOR (modo REPARTO):
-   Usuario crea pedido → Selecciona fecha → Confirma
-        ↓
-   Estado: "EN TRÁNSITO"
-   Tipo: "REPARTO"
-   Fecha asignada: XX/XX/XXXX
-        ↓
-2. MÓDULO VENTAS:
-   Pedido aparece en TODAS las vistas:
-     - Tab "Lista Pedidos" → Filtro "En tránsito" ✅ (aparece aquí)
-     - Tab "Calendario Semana" → Día XX/XX ✅ (aparece aquí)
-     - Tab "Borradores" → ❌ (no aparece, no es borrador)
-        ↓
-3. MÓDULO VENTAS → Tab "Calendario Semana":
-   Usuario organiza repartos del día XX/XX:
-     - Click en día → Abre vista detallada
-     - Asigna pedido a vehículo (ej: Reparto 1)
-     - Reordena según ruta de entrega
-     - Exporta orden de reparto para chofer
-        ↓
-4. CHOFER entrega pedido:
-   Repartidor completa entrega física
-        ↓
-5. MÓDULO VENTAS → Tab "Lista Pedidos":
-   Usuario busca el pedido → Click "Marcar como Entregado"
-   Registra método de pago (efectivo/digital/mixto)
-   Confirma
-        ↓
-   Estado: "ENTREGADO"
-        ↓
-6. RESULTADO:
-   El pedido SIGUE en módulo VENTAS:
-     - Tab "Lista Pedidos" → Filtro "Entregado" ✅ (aparece aquí)
-     - Tab "Calendario Semana" → ❌ (YA NO aparece, filtrado automáticamente)
-
-   ⚠️ El pedido NO "desaparece de Repartos y aparece en Ventas"
-   ⚠️ El pedido SIEMPRE estuvo en VENTAS desde el paso 2
-   ⚠️ Solo cambia su visibilidad en la vista de calendario (filtrado)</code></pre>
-
-            <h4>Regla de oro:</h4>
-            <blockquote>
-                <strong>TODOS los pedidos están en VENTAS desde que salen del Cotizador.</strong><br><br>
-                El "Calendario" NO es un módulo, es una VISTA FILTRADA que solo muestra pedidos REPARTO pendientes de entrega.<br><br>
-                Cuando un pedido se marca como "Entregado", no "pasa a Ventas" porque YA ESTÁ en Ventas. Simplemente cambia de estado y el filtro del calendario lo oculta.
-            </blockquote>
-
-            <h4>Integración con vehículos:</h4>
-            <ul>
-                <li><strong>Asignación</strong>: Desde vista de calendario en VENTAS</li>
-                <li><strong>Vehículos disponibles</strong>: Configurados en módulo CONFIGURACIÓN</li>
-                <li><strong>Nomenclatura simple</strong>: "Reparto 1", "Reparto 2", "Reparto 3"</li>
-                <li><strong>Capacidad</strong>: Control de kg actual vs kg máximo por vehículo</li>
-                <li><strong>Exportación</strong>: Excel para chofer (sin precios) o control (con precios)</li>
-            </ul>
-
-            <h4>¿Por qué esta confusión?</h4>
-            <p>En versiones anteriores de la documentación (PRD inicial) se creó erróneamente un archivo <code>prd/repartos.html</code> como si fuera un módulo separado. <strong>Este concepto era INCORRECTO</strong> y ha sido eliminado.</p>
-
-            <p><strong>La realidad del sistema es</strong>:</p>
-            <ul>
-                <li>✅ Existe <strong>1 solo módulo</strong>: VENTAS</li>
-                <li>✅ VENTAS tiene <strong>3 tabs/vistas</strong>:
-                    <ul>
-                        <li>Calendario Semana (vista de repartos)</li>
-                        <li>Lista Pedidos (vista tabla completa)</li>
-                        <li>Borradores (vista borradores guardados)</li>
-                    </ul>
-                </li>
-                <li>✅ Los pedidos NO se "mueven entre módulos", solo cambian de estado y se filtran en vistas</li>
-            </ul>
-
-            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda; padding: 1rem; margin: 1.5rem 0;">
-                <h4>✅ DOCUMENTO CORREGIDO (31 Diciembre 2025)</h4>
-                <p><strong>Corrección aplicada</strong>: Eliminada documentación errónea de "Repartos" como módulo separado.</p>
-                <p><strong>Concepto correcto documentado</strong>: Calendario de repartos es vista filtrada dentro de VENTAS.</p>
-                <p><strong>Flujos actualizados</strong>: Todos los flujos ahora reflejan correctamente que pedidos están siempre en VENTAS.</p>
-            </div>
-
-            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda;">
-                <h3>✅ DOCUMENTO ACTUALIZADO - VERSIÓN MEJORADA</h3>
-                <p><strong>Mejoras incorporadas (27/12/2025):</strong></p>
-                <ul>
-                    <li>✅ <strong>Sistema híbrido de pagos</strong>: Pagos asociados a pedidos vs Pagos genéricos (sección 3.8.7.2)</li>
-                    <li>✅ <strong>Pagos parciales confirmados</strong>: Permitidos en AMBOS modos (REPARTO y FÁBRICA) - sección 3.8.7.1</li>
-                    <li>✅ <strong>Pedidos sin cliente</strong>: Cliente especial "Sin registro" para ventas casuales (sección 3.8.7.3)</li>
-                    <li>✅ <strong>Ejemplos completos</strong>: Casos de uso con pagos genéricos vs específicos (3 escenarios detallados)</li>
-                    <li>✅ <strong>Regla de oro documentada</strong>: Columna "Pagado" solo muestra pagos asociados al pedido</li>
-                    <li>✅ <strong>Tabla comparativa v1 vs v2</strong>: Diferencias claras entre sistema actual y propuesto (8 aspectos)</li>
-                    <li>✅ <strong>Flujos detallados completos</strong>: 10 pasos específicos para modo REPARTO con interacción VENTAS ↔ REPARTOS</li>
-                    <li>✅ <strong>Interacción entre módulos</strong>: Diagrama y tabla de responsabilidades COTIZADOR ↔ VENTAS ↔ REPARTOS</li>
-                    <li>✅ <strong>Historial de cambios OBLIGATORIO</strong>: Campos detallados para auditoría fiscal</li>
-                </ul>
-                <p><strong>Estado del documento</strong>: Especificación funcional técnica COMPLETA con sistema de pagos híbrido definido.</p>
-            </div>
-
-            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda;">
-                <h3>✅ PROTOTIPO HTML COMPLETADO (Diciembre 2025)</h3>
-                <p><strong>Ubicación</strong>: <code>sistema-version-2/prototipo-html-simple/ventas-v2.html</code></p>
-                <p><strong>Estado</strong>: ✅ Prototipo funcional implementado con feedback del cliente</p>
-
-                <h4>Cambios implementados en el prototipo:</h4>
-                <ul>
-                    <li>✅ <strong>Header rediseñado</strong>: Filtros integrados sin labels (placeholders en selects)</li>
-                    <li>✅ <strong>Tabs reordenados</strong>: Calendario Semana (activo) → Lista Pedidos → Borradores</li>
-                    <li>✅ <strong>Stats panel compacto</strong>: Una línea inline (reducción ~60% espacio vertical)</li>
-                    <li>✅ <strong>Vista por defecto</strong>: Calendario Semana (antes: Pedidos)</li>
-                    <li>✅ <strong>Tarjetas calendario simplificadas</strong>:
-                        <ul>
-                            <li>Solo capacidad diaria: "15 de 40 pedidos", "320 de 6500 kg"</li>
-                            <li>Eliminado: Estados (entregados/tránsito), Pagos (efectivo/digital)</li>
-                            <li>Justificación: Datos irreales antes de entrega real</li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>Tarjeta Fábrica clickeable</strong>:
-                        <ul>
-                            <li>Al hacer clic → Cambia a "Lista Pedidos"</li>
-                            <li>Aplica filtros: Tipo=Fábrica, Período=Semana actual</li>
-                            <li>Función JS: <code>verVentasFabrica()</code></li>
-                        </ul>
-                    </li>
-                    <li>✅ <strong>Sidebar auto-collapse</strong>: Todos los módulos (ver Cotizador)</li>
-                </ul>
-
-                <p><strong>Documentación técnica</strong>: Ver <code>_docs/VENTAS-ESPECIFICACION.md</code></p>
+            <div class="note" style="background: #f8d7da; border-left: 4px solid #dc3545; padding: 1rem; margin: 1rem 0;">
+                <strong>Aclaración crítica:</strong> NO existe módulo "Repartos" separado. El "Calendario de Repartos" es una VISTA dentro de VENTAS.
             </div>
         </section>
 
-        <section id="prototipo-ui">
-            <h2>7. Implementación del Prototipo HTML (Dic 2025)</h2>
+        <!-- VISTAS -->
+        <section id="vistas">
+            <h2>3. Vistas (Tabs)</h2>
 
-            <h3>7.1 Header con filtros integrados</h3>
-            <p><strong>Decisión de diseño</strong>: Eliminar barra de filtros separada e integrarlos en el header.</p>
-
-            <p><strong>Antes</strong>:</p>
-            <pre><code>┌──────────────────────────────────────────────┐
-│ Header: [💰 Ventas]      [Exportar Excel]   │
-├──────────────────────────────────────────────┤
-│ Filtros (barra separada):                   │
-│ Estado: [Todos ▼]                            │
-│ Período: [01/12] → [31/12]                   │
-│ Tipo: [Todos ▼]                              │
-│ ...                                          │
-└──────────────────────────────────────────────┘</code></pre>
-
-            <p><strong>Ahora</strong>:</p>
-            <pre><code>┌────────────────────────────────────────────────────────┐
-│ 💰 Ventas  [Estado: Todos ▼] [Período ▼] [Tipo ▼]    │
-│            [Vehículo ▼] [Pago ▼] [🔄] [📊 Exportar]   │
-└────────────────────────────────────────────────────────┘</code></pre>
-
-            <p><strong>Ventajas</strong>:</p>
+            <h3>3.1 Tab: Lista Pedidos</h3>
+            <p>Listado principal de todos los pedidos con filtros.</p>
+            <p><strong>Columnas:</strong></p>
             <ul>
-                <li>✅ Ahorra ~60px de altura vertical</li>
-                <li>✅ Filtros siempre visibles (sticky header)</li>
-                <li>✅ Placeholders auto-documentados (no necesita labels)</li>
-                <li>✅ Estilo consistente con módulo Clientes</li>
+                <li># Pedido, Fecha entrega, Cliente/Dirección</li>
+                <li>Estado (badge), Tipo (badge Fábrica/Reparto)</li>
+                <li>Vehículo (si aplica), Monto total</li>
+                <li>Método pago (icono), Acciones</li>
+            </ul>
+            <p><strong>Fila de totales:</strong> Al final, muestra suma de pedidos filtrados, monto total, desglose efectivo/digital.</p>
+
+            <h3>3.2 Tab: Calendario Semana</h3>
+            <p>Vista calendario (L-V) con pedidos tipo REPARTO pendientes de entrega.</p>
+            <ul>
+                <li>Filtro automático: solo pedidos REPARTO no entregados</li>
+                <li>Click en día → abre vista detallada con asignación de vehículos</li>
+                <li>Permite drag & drop entre vehículos</li>
             </ul>
 
-            <h3>7.2 Stats panel compacto</h3>
-            <p><strong>Decisión</strong>: Reducir altura del panel de estadísticas a una sola línea.</p>
-
-            <p><strong>Estructura anterior</strong> (2 líneas por stat):</p>
-            <pre><code>┌─────────────┬─────────────┬─────────────┐
-│  📦         │  💵         │  ⚖️         │
-│    87       │  $2.45M     │  661 kg     │
-│  Pedidos    │  Monto      │  Peso       │
-└─────────────┴─────────────┴─────────────┘
-Altura: ~80px</code></pre>
-
-            <p><strong>Estructura nueva</strong> (inline):</p>
-            <pre><code>📦 87 PEDIDOS | 💵 $2.45M MONTO | ⚖️ 661 kg PESO | 🏭 Fábrica: 23 | 🚚 Reparto: 64
-Altura: ~36px (reducción 55%)</code></pre>
-
-            <h3>7.3 Calendario simplificado - Capacidad diaria</h3>
-            <p><strong>Problema identificado</strong> (Feedback cliente - Dic 2025):</p>
-            <blockquote>
-                "Es irreal tener datos de entregados/tránsito/efectivo/digital ANTES de que pase el día de reparto. Estos datos se tienen 1-2 días después. El calendario debe mostrar CAPACIDAD del día."
-            </blockquote>
-
-            <p><strong>Solución implementada</strong>:</p>
-
-            <table>
-                <tr>
-                    <th>Dato</th>
-                    <th>Antes</th>
-                    <th>Ahora</th>
-                    <th>Justificación</th>
-                </tr>
-                <tr>
-                    <td>Pedidos</td>
-                    <td>"12 pedidos"</td>
-                    <td>"15 de 40 pedidos"</td>
-                    <td>Muestra capacidad usada vs total del día</td>
-                </tr>
-                <tr>
-                    <td>Peso</td>
-                    <td>"320 kg"</td>
-                    <td>"320 de 6500 kg"</td>
-                    <td>Control de capacidad de carga por vehículos</td>
-                </tr>
-                <tr>
-                    <td>Monto</td>
-                    <td>"$285,000"</td>
-                    <td>"$285,000"</td>
-                    <td>Se mantiene (dato válido)</td>
-                </tr>
-                <tr>
-                    <td>Entregados</td>
-                    <td>✅ "8 entregados"</td>
-                    <td>❌ ELIMINADO</td>
-                    <td>Dato irreal antes de que pase el día</td>
-                </tr>
-                <tr>
-                    <td>En tránsito</td>
-                    <td>🚚 "4 en tránsito"</td>
-                    <td>❌ ELIMINADO</td>
-                    <td>Dato irreal antes de que pase el día</td>
-                </tr>
-                <tr>
-                    <td>Efectivo</td>
-                    <td>💵 "$180k"</td>
-                    <td>❌ ELIMINADO</td>
-                    <td>Dato irreal, se registra post-entrega</td>
-                </tr>
-                <tr>
-                    <td>Digital</td>
-                    <td>💳 "$105k"</td>
-                    <td>❌ ELIMINADO</td>
-                    <td>Dato irreal, se registra post-entrega</td>
-                </tr>
-                <tr>
-                    <td>Botón</td>
-                    <td>"Ver detalle"</td>
-                    <td>❌ ELIMINADO</td>
-                    <td>Acción redundante</td>
-                </tr>
-            </table>
-
-            <p><strong>Capacidades configuradas</strong>:</p>
-            <pre><code>const CAPACIDADES = {
-    pedidosPorDia: 40,    // Capacidad según vehículos disponibles
-    pesoMaximoPorDia: 6500 // kg - Capacidad de carga total
-};</code></pre>
-
-            <h3>7.4 Tarjeta Fábrica clickeable</h3>
-            <p><strong>Funcionalidad nueva</strong>: Al hacer clic en tarjeta Fábrica, ir a Lista Pedidos filtrada.</p>
-
-            <p><strong>Flujo</strong>:</p>
-            <pre><code>Usuario ve calendario semanal
-            ↓
-Click en tarjeta FÁBRICA
-            ↓
-Sistema ejecuta: verVentasFabrica()
-            ↓
-1. Cambia a tab "Lista Pedidos"
-2. Aplica filtro Tipo: Fábrica
-3. Aplica filtro Período: Semana actual (23-27 Dic)
-4. Ejecuta aplicarFiltros()
-5. Scroll hacia arriba
-            ↓
-Usuario ve SOLO ventas de fábrica de esa semana</code></pre>
-
-            <p><strong>Código JS</strong>:</p>
-            <pre><code>function verVentasFabrica() {
-    switchView('pedidos');
-    document.getElementById('filter-tipo').value = 'fabrica';
-    document.getElementById('filter-fecha-desde').value = '2025-12-23';
-    document.getElementById('filter-fecha-hasta').value = '2025-12-27';
-    aplicarFiltros();
-    document.getElementById('view-pedidos').scrollTop = 0;
-}</code></pre>
-
-            <h3>7.5 Tabs reordenados - Calendario primero</h3>
-            <p><strong>Decisión</strong> (Feedback cliente):</p>
-            <blockquote>
-                "Quiero que siempre arranque con vista calendario semanal, porque es la que más me importa para trabajar el día a día."
-            </blockquote>
-
-            <p><strong>Orden anterior</strong>:</p>
-            <ol>
-                <li>📋 Pedidos (activo por defecto)</li>
-                <li>📄 Borradores</li>
-                <li>📅 Calendario Semana</li>
-            </ol>
-
-            <p><strong>Orden nuevo</strong>:</p>
-            <ol>
-                <li>📅 Calendario Semana (activo por defecto) ⭐</li>
-                <li>📋 Lista Pedidos (rename de "Pedidos")</li>
-                <li>📄 Borradores</li>
-            </ol>
-
-            <p><strong>Cambio en naming</strong>: "Pedidos" → "Lista Pedidos" (más descriptivo)</p>
-
-            <h3>7.6 Calendario interactivo - Selección de días y vehículos (NUEVO - Dic 29, 2025)</h3>
-            <p><strong>Funcionalidad nueva</strong>: Sistema de selección de días con vista de capacidades de vehículos.</p>
-
-            <p><strong>Componentes principales</strong>:</p>
-            <ol>
-                <li><strong>Highlight día actual</strong>: Background celeste suave para referencia rápida</li>
-                <li><strong>Día seleccionado</strong>: Borde azul al hacer clic</li>
-                <li><strong>Botón "Ver detalle"</strong>: Dentro de cada tarjeta de día</li>
-                <li><strong>Capacidades de vehículos</strong>: Se muestran al seleccionar un día</li>
-            </ol>
-
-            <p><strong>Flujo de interacción</strong>:</p>
-            <pre><code>Usuario ve calendario semanal
-            ↓
-Click en día (ej: Miércoles 25)
-            ↓
-Sistema ejecuta: seleccionarDia(element, 'miercoles')
-            ↓
-1. Remueve clase 'active' de todos los días
-2. Agrega clase 'active' al día clickeado
-3. Renderiza vehículos: renderVehiculosCapacidades('miercoles')
-            ↓
-Se muestra sección de vehículos abajo del calendario
-(Ver detalle en 7.7)
-            ↓
-Usuario ve capacidades actuales de R1, R2, R3</code></pre>
-
-            <p><strong>Diseño visual - Día actual vs Día seleccionado</strong>:</p>
-            <table>
-                <tr>
-                    <th>Estado</th>
-                    <th>Estilo</th>
-                    <th>Propósito</th>
-                </tr>
-                <tr>
-                    <td><strong>Día actual (hoy)</strong></td>
-                    <td>Background: <code>linear-gradient(#eff6ff, #ffffff)</code></td>
-                    <td>Referencia rápida del día presente</td>
-                </tr>
-                <tr>
-                    <td><strong>Día seleccionado</strong></td>
-                    <td>Border: <code>2px solid #0052cc</code><br>Box-shadow azul</td>
-                    <td>Indica selección activa del usuario</td>
-                </tr>
-            </table>
-
-            <p><strong>Botón "Ver detalle"</strong>:</p>
+            <h3>3.3 Tab: Borradores</h3>
+            <p>Pedidos guardados sin confirmar desde Cotizador.</p>
             <ul>
-                <li>Ubicación: Dentro de cada tarjeta de día</li>
-                <li>Función: Abre vista específica del día (detalle completo con pedidos agrupables)</li>
-                <li>Evento: <code>onclick="verDetalleDia(event, 'dia', 'numero')"</code></li>
-                <li>Previene propagación: No activa selección del día</li>
+                <li>No descuentan stock</li>
+                <li>No generan cargo en CC</li>
+                <li>Columna "Fecha" = fecha de creación del borrador</li>
             </ul>
-
-            <p><strong>Código HTML - Tarjeta de día</strong>:</p>
-            <pre><code>&lt;div class="dia-card dia-hoy active"
-     data-dia="miercoles"
-     onclick="seleccionarDia(this, 'miercoles')"&gt;
-    &lt;div class="dia-header"&gt;
-        &lt;span class="dia-label"&gt;MIÉRCOLES&lt;/span&gt;
-        &lt;span class="dia-numero"&gt;25&lt;/span&gt;
-        &lt;span class="dia-tipo"&gt;Reparto&lt;/span&gt;
-    &lt;/div&gt;
-    &lt;div class="dia-stats"&gt;
-        &lt;div class="dia-stat"&gt;
-            &lt;i class="fas fa-box"&gt;&lt;/i&gt;
-            &lt;span&gt;18/40 ped&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;div class="dia-stat"&gt;
-            &lt;i class="fas fa-weight"&gt;&lt;/i&gt;
-            &lt;span&gt;485/6500 kg&lt;/span&gt;
-        &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;button class="btn-ver-detalle-dia"
-            onclick="verDetalleDia(event, 'miercoles', '25')"&gt;
-        &lt;i class="fas fa-eye"&gt;&lt;/i&gt; Ver detalle
-    &lt;/button&gt;
-&lt;/div&gt;</code></pre>
-
-            <h3>7.7 Capacidades de vehículos por día (NUEVO - Dic 29, 2025)</h3>
-            <p><strong>Descripción</strong>: Vista compacta de ocupación de vehículos según el día seleccionado en el calendario.</p>
-
-            <p><strong>Layout diseño</strong>:</p>
-            <ul>
-                <li><strong>Disposición</strong>: Grid 3 columnas (R1 | R2 | R3)</li>
-                <li><strong>Diseño</strong>: Horizontal compacto (nombre + stats inline)</li>
-                <li><strong>Altura</strong>: ~50px por tarjeta (antes: ~120px - reducción 58%)</li>
-                <li><strong>Colores</strong>: Borde lateral según ocupación</li>
-            </ul>
-
-            <p><strong>Estructura de tarjeta vehículo</strong>:</p>
-            <pre><code>┌──────────────────────────────────────────────┐
-│ 🚚 Reparto 1   12/40 ped  ██████░░░░ 30%    │
-│                285/6500 kg ███░░░░░░░ 4%     │
-└──────────────────────────────────────────────┘
-  ↑              ↑            ↑
-Nombre      Capacidad     Barra visual</code></pre>
-
-            <p><strong>Indicadores de color</strong>:</p>
-            <table>
-                <tr>
-                    <th>Ocupación</th>
-                    <th>Color borde</th>
-                    <th>Color barra</th>
-                    <th>Clase CSS</th>
-                </tr>
-                <tr>
-                    <td>&lt; 50%</td>
-                    <td>Verde (#10b981)</td>
-                    <td>Verde (#10b981)</td>
-                    <td><code>.capacidad-baja</code></td>
-                </tr>
-                <tr>
-                    <td>50% - 80%</td>
-                    <td>Naranja (#f59e0b)</td>
-                    <td>Naranja (#f59e0b)</td>
-                    <td><code>.capacidad-media</code></td>
-                </tr>
-                <tr>
-                    <td>&gt; 80%</td>
-                    <td>Rojo (#ef4444)</td>
-                    <td>Rojo (#ef4444)</td>
-                    <td><code>.capacidad-alta</code></td>
-                </tr>
-            </table>
-
-            <p><strong>Datos mostrados por vehículo</strong>:</p>
-            <ul>
-                <li><strong>Pedidos</strong>: "12/40 ped" (ocupados/capacidad máxima)</li>
-                <li><strong>Peso</strong>: "285/6500 kg" (cargado/capacidad máxima)</li>
-                <li><strong>Barras visuales</strong>: % ocupación con animación</li>
-            </ul>
-
-            <p><strong>Mock data - Vehículos por día</strong>:</p>
-            <pre><code>const VEHICULOS_POR_DIA = {
-    lunes: [
-        { nombre: 'Reparto 1', capacidad: 15, capacidadMax: 40,
-          peso: 320, pesoMax: 6500 },
-        { nombre: 'Reparto 2', capacidad: 0, capacidadMax: 40,
-          peso: 0, pesoMax: 6500 },
-        { nombre: 'Reparto 3', capacidad: 0, capacidadMax: 40,
-          peso: 0, pesoMax: 6500 }
-    ],
-    miercoles: [
-        { nombre: 'Reparto 1', capacidad: 12, capacidadMax: 40,
-          peso: 285, pesoMax: 6500 },
-        { nombre: 'Reparto 2', capacidad: 6, capacidadMax: 40,
-          peso: 200, pesoMax: 6500 },
-        { nombre: 'Reparto 3', capacidad: 0, capacidadMax: 40,
-          peso: 0, pesoMax: 6500 }
-    ]
-    // ... otros días
-};</code></pre>
-
-            <p><strong>Código JS - Renderizar vehículos</strong>:</p>
-            <pre><code>function renderVehiculosCapacidades(dia) {
-    const container = document.getElementById('vehiculos-capacidades');
-    const vehiculos = VEHICULOS_POR_DIA[dia] || [];
-
-    container.innerHTML = vehiculos.map(vehiculo => {
-        const porcentajePedidos = (vehiculo.capacidad / vehiculo.capacidadMax) * 100;
-        const porcentajePeso = (vehiculo.peso / vehiculo.pesoMax) * 100;
-        const porcentajePromedio = (porcentajePedidos + porcentajePeso) / 2;
-
-        let colorClass = 'capacidad-baja';
-        if (porcentajePromedio >= 80) colorClass = 'capacidad-alta';
-        else if (porcentajePromedio >= 50) colorClass = 'capacidad-media';
-
-        return `
-            &lt;div class="vehiculo-card ${colorClass}"&gt;
-                &lt;div class="vehiculo-nombre"&gt;
-                    &lt;i class="fas fa-truck"&gt;&lt;/i&gt;
-                    &lt;strong&gt;${vehiculo.nombre}&lt;/strong&gt;
-                &lt;/div&gt;
-                &lt;div class="vehiculo-stats"&gt;
-                    &lt;div class="stat-row"&gt;
-                        &lt;span class="stat-text"&gt;${vehiculo.capacidad}/${vehiculo.capacidadMax} ped&lt;/span&gt;
-                        &lt;div class="capacidad-barra"&gt;
-                            &lt;div class="capacidad-fill" style="width: ${porcentajePedidos}%"&gt;&lt;/div&gt;
-                        &lt;/div&gt;
-                    &lt;/div&gt;
-                    &lt;div class="stat-row"&gt;
-                        &lt;span class="stat-text"&gt;${vehiculo.peso}/${vehiculo.pesoMax} kg&lt;/span&gt;
-                        &lt;div class="capacidad-barra"&gt;
-                            &lt;div class="capacidad-fill" style="width: ${porcentajePeso}%"&gt;&lt;/div&gt;
-                        &lt;/div&gt;
-                    &lt;/div&gt;
-                &lt;/div&gt;
-            &lt;/div&gt;
-        `;
-    }).join('');
-}</code></pre>
-
-            <p><strong>CSS - Estilos compactos</strong>:</p>
-            <pre><code>.vehiculos-capacidades {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-}
-
-.vehiculo-card {
-    padding: 10px 14px;  /* Reducido de 16px */
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.vehiculo-card.capacidad-baja {
-    border-left: 3px solid #10b981;
-}
-
-.capacidad-barra {
-    flex: 1;
-    height: 5px;  /* Reducido de 8px */
-    background: #e5e7eb;
-    border-radius: 3px;
-}</code></pre>
-
-            <h3>7.8 Bug fix - Filtro Fábrica (Dic 29, 2025)</h3>
-            <p><strong>Problema identificado</strong>: Al hacer clic en tarjeta Fábrica, el filtro no se aplicaba correctamente.</p>
-
-            <p><strong>Causa raíz</strong>:</p>
-            <ul>
-                <li>La función solo actualizaba el valor del <code>&lt;select&gt;</code> en el DOM</li>
-                <li>NO actualizaba <code>appState.filtros.tipo</code></li>
-                <li><code>aplicarFiltros()</code> lee desde <code>appState.filtros</code>, no del DOM</li>
-            </ul>
-
-            <p><strong>Solución aplicada</strong>:</p>
-            <pre><code>// ANTES (no funcionaba)
-function verVentasFabrica() {
-    switchView('pedidos');
-    document.getElementById('filter-tipo').value = 'fabrica';
-    aplicarFiltros();  // ❌ Lee appState.filtros, no el DOM
-}
-
-// AHORA (funciona correctamente)
-function verVentasFabrica() {
-    switchView('pedidos');
-
-    // Actualizar DOM
-    document.getElementById('filter-tipo').value = 'fabrica';
-    document.getElementById('filter-fecha-desde').value = '2025-12-23';
-    document.getElementById('filter-fecha-hasta').value = '2025-12-27';
-
-    // ✅ Actualizar appState.filtros (CRÍTICO)
-    appState.filtros.tipo = 'fabrica';
-    appState.filtros.fechaDesde = '2025-12-23';
-    appState.filtros.fechaHasta = '2025-12-27';
-
-    // ✅ Re-renderizar completo
-    render();  // Usa aplicarFiltros() + renderizarTabla() + renderizarPaginacion()
-
-    document.getElementById('view-pedidos').scrollTop = 0;
-}</code></pre>
-
-            <h3>7.9 Acciones rápidas desde calendario (Dic 29, 2025)</h3>
-            <p><strong>Cada día del calendario incluye 2 botones de acción en layout horizontal:</strong></p>
-
-            <table>
-                <tr>
-                    <th>Botón</th>
-                    <th>Función</th>
-                    <th>Descripción</th>
-                </tr>
-                <tr>
-                    <td><strong>Ver detalle</strong></td>
-                    <td>Abrir vista específica del día</td>
-                    <td>Acceso directo a vista de agrupación de pedidos por vehículos con drag & drop</td>
-                </tr>
-                <tr>
-                    <td><strong>Ver pedidos</strong></td>
-                    <td>Filtrar Lista Pedidos por fecha</td>
-                    <td>Abre tab "Lista Pedidos" con filtro de fecha específica del día seleccionado</td>
-                </tr>
-            </table>
-
-            <p><strong>Layout botones:</strong></p>
-            <pre><code>┌────────────────────────┐
-│ LUNES 23               │
-│ 15/40 ped | 3320/6250  │
-├────────────────────────┤
-│ [Ver detalle][Ver ped] │ ← Horizontal, 50% cada uno
-└────────────────────────┘</code></pre>
-
-            <p><strong>Tarjeta Fábrica:</strong></p>
-            <ul>
-                <li>Botón único "Ver detalle" (ancho completo)</li>
-                <li>Clic en tarjeta → Filtra Lista Pedidos tipo=Fábrica semana actual</li>
-            </ul>
-
-            <h3>7.10 Capacidades de vehículos - Especificaciones técnicas</h3>
-
-            <p><strong>Capacidades reales por vehículo:</strong></p>
-            <table>
-                <tr>
-                    <th>Vehículo</th>
-                    <th>Capacidad Máxima (kg)</th>
-                </tr>
-                <tr>
-                    <td>Reparto 1</td>
-                    <td>2,250 kg</td>
-                </tr>
-                <tr>
-                    <td>Reparto 2</td>
-                    <td>1,500 kg</td>
-                </tr>
-                <tr>
-                    <td>Reparto 3</td>
-                    <td>2,500 kg</td>
-                </tr>
-                <tr>
-                    <td><strong>TOTAL DÍA</strong></td>
-                    <td><strong>6,250 kg</strong></td>
-                </tr>
-            </table>
-
-            <p><strong>Datos mostrados en tarjetas de vehículos:</strong></p>
-            <ul>
-                <li><strong>Pedidos actuales</strong>: Número simple (sin "/40", capacidad total solo visible en día)</li>
-                <li><strong>Capacidad peso</strong>: "1680/2250 kg" (negrita, resaltado)</li>
-                <li><strong>Barra de progreso</strong>: Solo para peso, altura 10px (no para pedidos)</li>
-                <li><strong>Colores indicadores</strong>:
-                    <ul>
-                        <li>Verde (#10b981): &lt; 50% ocupación</li>
-                        <li>Naranja (#f59e0b): 50-80% ocupación</li>
-                        <li>Rojo (#ef4444): &gt; 80% ocupación</li>
-                    </ul>
-                </li>
-            </ul>
-
-            <p><strong>Layout tarjeta vehículo (horizontal):</strong></p>
-            <pre><code>┌────────────────────────────────────┐
-│ 🚚 Reparto 1    1680/2250 kg      │
-│ 8 pedidos       ████████ 75%       │
-│                 └─ Barra 10px      │
-└────────────────────────────────────┘
-  ↑ Izquierda          ↑ Derecha
-  Nombre+Pedidos    Capacidad+Barra</code></pre>
-
-            <p><strong>Coherencia de datos mock:</strong></p>
-            <ul>
-                <li>Pedidos del día = Suma de pedidos de los 3 repartos</li>
-                <li>Kg del día = Suma de kg de los 3 repartos</li>
-                <li>Ejemplo Miércoles: 18 ped (8+6+4), 4485 kg (1680+1120+1685)</li>
-            </ul>
-
-            <h3>7.11 Estados de días y control de reparto (Dic 29, 2025)</h3>
-            <p><strong>Problema identificado</strong>: Los datos de efectivo/digital en las tarjetas de días son irreales hasta que:</p>
-            <ol>
-                <li>Pase el día de reparto</li>
-                <li>Vuelva el repartidor con la hoja</li>
-                <li>Se haga el control manual del día (cambiar pedidos En tránsito → Entregado)</li>
-                <li>Se registren los pagos reales en Cuenta Corriente</li>
-            </ol>
-
-            <p><strong>Solución implementada</strong>: Sistema de estados de días con badges y datos progresivos.</p>
-
-            <h4>Estados de un día:</h4>
-            <table>
-                <tr>
-                    <th>Estado</th>
-                    <th>Condición</th>
-                    <th>Badge</th>
-                    <th>Datos de pago</th>
-                </tr>
-                <tr>
-                    <td><strong>Futuro</strong></td>
-                    <td>Fecha > Hoy</td>
-                    <td>"Planificado" (azul #3b82f6)</td>
-                    <td>❌ No (aún no pasó)</td>
-                </tr>
-                <tr>
-                    <td><strong>Hoy</strong></td>
-                    <td>Fecha = Hoy</td>
-                    <td>"HOY" (azul #3b82f6)</td>
-                    <td>❌ No (día en curso)</td>
-                </tr>
-                <tr>
-                    <td><strong>Sin control</strong></td>
-                    <td>Fecha < Hoy, no controlado</td>
-                    <td>Botón "Controlar" (naranja #f59e0b)</td>
-                    <td>💵 XXX 💳 XXX (ocultos)</td>
-                </tr>
-                <tr>
-                    <td><strong>Controlado</strong></td>
-                    <td>Fecha < Hoy, controlado manualmente</td>
-                    <td>"Controlado" (verde #10b981)</td>
-                    <td>✅ Sí (💵 $120k 💳 $75k)</td>
-                </tr>
-            </table>
-
-            <h4>Diseño visual - Tarjetas según estado:</h4>
-
-            <p><strong>1. Día FUTURO (Planificado)</strong>:</p>
-            <pre><code>┌────────────────────────────────┐
-│ VIERNES          [Planificado] │ ← Badge azul
-│ 27                             │
-│ Reparto                        │
-│                                │
-│ 📦 10/40 ped                   │
-│ ⚖️  2220/6250 kg               │
-│                                │ ← SIN datos de pago
-│ [Ver detalle] [Ver pedidos]    │
-└────────────────────────────────┘</code></pre>
-
-            <p><strong>2. Día HOY (Actual)</strong>:</p>
-            <pre><code>┌────────────────────────────────┐
-│ MIÉRCOLES              [HOY]   │ ← Badge azul
-│ 25                             │
-│ Reparto                        │
-│                                │
-│ 📦 18/40 ped                   │
-│ ⚖️  4485/6250 kg               │
-│                                │ ← SIN datos de pago
-│ [Ver detalle] [Ver pedidos]    │
-└────────────────────────────────┘
-Background: linear-gradient(#eff6ff, #fff) ← Destaque visual</code></pre>
-
-            <p><strong>3. Día SIN CONTROL (Pasado no controlado)</strong>:</p>
-            <pre><code>┌────────────────────────────────┐
-│ LUNES             [Controlar]  │ ← Botón naranja clickeable
-│ 23                             │
-│ Reparto                        │
-│                                │
-│ 📦 15/40 ped                   │
-│ ⚖️  3320/6250 kg               │
-│ 💵 XXX  💳 XXX                 │ ← Datos ocultos con XXX
-│                                │
-│ [Ver detalle] [Ver pedidos]    │
-└────────────────────────────────┘</code></pre>
-
-            <p><strong>Comportamiento botón "Controlar"</strong>:</p>
-            <ul>
-                <li>Click → NO marca el día como controlado directamente</li>
-                <li>Acción: Filtra la Lista Pedidos por fecha del día</li>
-                <li>Usuario revisa todos los pedidos del día en la lista</li>
-                <li>Usuario marca pedidos como entregados, registra pagos en CC</li>
-                <li>Cuando termina: Click en botón "MARCAR COMO CONTROLADO" desde la lista</li>
-            </ul>
-
-            <p><strong>4. Día CONTROLADO (Pasado controlado)</strong>:</p>
-            <pre><code>┌────────────────────────────────┐
-│ MARTES          [Controlado]   │ ← Badge verde
-│ 24                             │
-│ Reparto                        │
-│                                │
-│ 📦 12/40 ped                   │
-│ ⚖️  2280/6250 kg               │
-│ 💵 $120k  💳 $75k              │ ← Números reales
-│                                │
-│ [Ver detalle] [Ver pedidos]    │
-└────────────────────────────────┘</code></pre>
-
-            <p><strong>Cálculo de montos efectivo/digital</strong>:</p>
-            <pre><code>// Sumar todos los pedidos ENTREGADOS del día
-const pedidosDelDia = pedidos.filter(p =>
-  p.fecha === '2025-12-24' && p.estado === 'entregado'
-);
-
-// Efectivo (incluye pagos mixtos)
-const efectivo = pedidosDelDia
-  .filter(p => p.metodoPago === 'efectivo' || p.metodoPago === 'mixto')
-  .reduce((sum, p) => sum + (p.montoEfectivo || 0), 0);
-
-// Digital (incluye pagos mixtos)
-const digital = pedidosDelDia
-  .filter(p => p.metodoPago === 'digital' || p.metodoPago === 'mixto')
-  .reduce((sum, p) => sum + (p.montoDigital || 0), 0);</code></pre>
-
-            <h4>Badge en Lista Pedidos - Día filtrado:</h4>
-            <p><strong>Cuando se filtra la lista por un día específico</strong>, aparece un badge junto al contador de resultados:</p>
-
-            <pre><code>┌─────────────────────────────────────────────┐
-│ <strong>87 resultados</strong>  [HOY]                    │ ← Día actual
-├─────────────────────────────────────────────┤
-│ # │ Fecha │ Cliente │ ...                   │
-└─────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────┐
-│ <strong>45 resultados</strong>  [Planificado]            │ ← Día futuro
-├─────────────────────────────────────────────┤
-
-┌─────────────────────────────────────────────┐
-│ <strong>23 resultados</strong>  [MARCAR COMO CONTROLADO] │ ← Día sin control
-├─────────────────────────────────────────────┤
-
-┌─────────────────────────────────────────────┐
-│ <strong>12 resultados</strong>  [Controlado]              │ ← Día controlado
-├─────────────────────────────────────────────┤</code></pre>
-
-            <h4>Flujo completo - Controlar un día:</h4>
-            <pre><code>1. Usuario ve calendario semanal
-   ↓
-2. Día pasó (ej: Lunes 23) → Muestra badge [Controlar]
-   ↓
-3. Click en badge "Controlar"
-   ↓
-4. Sistema:
-   - Cambia a tab "Lista Pedidos"
-   - Filtra por fecha: 2025-12-23
-   - Muestra badge "MARCAR COMO CONTROLADO"
-   ↓
-5. Usuario revisa todos los pedidos del día:
-   - Marca pedidos En tránsito → Entregado
-   - Registra pagos en Cuenta Corriente
-   - Ajusta cantidades/precios si es necesario
-   ↓
-6. Click en botón "MARCAR COMO CONTROLADO"
-   ↓
-7. Modal de confirmación:
-   ⚠️ Si hay pedidos en tránsito:
-   "Hay 5 pedidos aún EN TRÁNSITO:
-    - Pedido #1240: Av. Mitre 123
-    - Pedido #1241: Calle 45
-    ...
-    ¿Marcar día como controlado de todas formas?"
-
-   ✅ Si todos están entregados:
-   "Todos los pedidos están ENTREGADOS.
-    ¿Confirmas que ya revisaste todos los pedidos?"
-   ↓
-8. Usuario confirma
-   ↓
-9. Sistema:
-   - Marca día: controlado = true
-   - Registra timestamp: fechaControl
-   - Actualiza badge: "Controlar" → "Controlado"
-   - Muestra datos reales: 💵 $180k 💳 $75k
-   ↓
-10. Día queda CONTROLADO (datos confirmados)</code></pre>
-
-            <h4>Tarjeta Fábrica - Badge especial:</h4>
-            <pre><code>┌────────────────────────────────┐
-│ Fábrica           [SEMANAL]    │ ← Badge gris
-│ Semana completa                │
-│                                │
-│ 📦 45 ped                      │
-│ ⚖️  520 kg                     │
-│ 💵 $XXX  💳 $XXX               │ ← Siempre XXX (no por día)
-│                                │
-│ [Ver pedidos]                  │ ← Un solo botón
-└────────────────────────────────┘</code></pre>
-
-            <p><strong>Comportamiento Fábrica</strong>:</p>
-            <ul>
-                <li>Badge: "SEMANAL" (color gris #6b7280)</li>
-                <li>Efectivo/Digital: Siempre XXX (no tiene concepto de "día controlado")</li>
-                <li>Click en tarjeta: Filtra Lista por tipo=Fábrica, semana actual</li>
-                <li>Un solo botón: "Ver pedidos"</li>
-            </ul>
-
-            <h4>Estructura de datos - Modelo día:</h4>
-            <pre><code>const DIAS_CALENDARIO = {
-  '2025-12-23': {
-    fecha: '2025-12-23',
-    dia: 'lunes',
-    numero: 23,
-    tipo: 'reparto',
-    pedidosCount: 15,
-    pesoTotal: 3320,
-    montoTotal: 285000,
-    // CONTROL DE DÍA
-    controlado: false,          // true cuando se marca como controlado
-    fechaControl: null,         // timestamp cuando se controló
-    notasControl: '',           // notas opcionales del control
-    // Pagos calculados (null si no controlado)
-    efectivoFinal: null,        // monto efectivo confirmado
-    digitalFinal: null          // monto digital confirmado
-  }
-};</code></pre>
-
-            <h4>Función cálculo de estado:</h4>
-            <pre><code>function calcularEstadoDia(fecha) {
-  const hoy = FECHA_HOY_MOCK; // '2025-12-25' en prototipo
-  const fechaDia = fecha;     // '2025-12-23'
-
-  if (fechaDia > hoy) {
-    return 'futuro';          // Badge: Planificado
-  } else if (fechaDia === hoy) {
-    return 'hoy';             // Badge: HOY
-  } else {
-    // Día pasado: verificar si está controlado
-    const diaData = DIAS_CALENDARIO[fecha];
-    return diaData?.controlado ? 'controlado' : 'sin-control';
-  }
-}</code></pre>
-
-            <h4>CSS - Estilos de badges:</h4>
-            <pre><code>/* Badge Planificado (azul) */
-.badge-estado-planificado {
-  background: #3b82f6;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 10px;
-  font-weight: 700;
-}
-
-/* Badge HOY (azul) */
-.badge-estado-hoy {
-  background: #3b82f6;
-  /* ... mismo estilo */
-}
-
-/* Botón Controlar (naranja, clickeable) */
-.badge-estado-controlar {
-  background: #f59e0b;
-  color: white;
-  /* ... */
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.badge-estado-controlar:hover {
-  background: #d97706;
-  transform: scale(1.05);
-}
-
-/* Badge Controlado (verde) */
-.badge-estado-controlado {
-  background: #10b981;
-  /* ... */
-}
-
-/* Badge SEMANAL (gris) */
-.badge-estado-semanal {
-  background: #6b7280;
-  /* ... */
-}</code></pre>
-
-            <h4>Integración con flujo existente:</h4>
-            <ol>
-                <li><strong>Cotizador</strong> → Crea pedido con fecha → Va a Ventas (estado: En tránsito)</li>
-                <li><strong>Día pasa</strong> → Badge cambia: "Planificado" → "Controlar"</li>
-                <li><strong>Usuario controla</strong>:
-                    <ul>
-                        <li>Click "Controlar" → Lista Pedidos filtrada</li>
-                        <li>Marca pedidos como entregados</li>
-                        <li>Registra pagos en CC</li>
-                        <li>Click "MARCAR COMO CONTROLADO"</li>
-                    </ul>
-                </li>
-                <li><strong>Día controlado</strong> → Badge: "Controlado", muestra 💵 $180k 💳 $75k</li>
-            </ol>
-
-            <div class="note" style="border-left: 4px solid #0052cc; background: #e3f2fd; padding: 1rem; margin: 1.5rem 0;">
-                <h4>📊 Exportar Excel - Columna "Estado Día"</h4>
-                <p>El reporte Excel incluye una columna "Estado Día" con valores:</p>
-                <ul>
-                    <li><strong>Futuro (Planificado)</strong>: Días que aún no pasaron</li>
-                    <li><strong>Hoy (En curso)</strong>: Día actual</li>
-                    <li><strong>Sin control</strong>: Días pasados sin revisar</li>
-                    <li><strong>Controlado</strong>: Días revisados y confirmados (+ fecha control)</li>
-                </ul>
-                <p>Útil para auditoría: saber qué días tienen datos confirmados vs estimados.</p>
-            </div>
-
-            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda; padding: 1rem; margin: 1.5rem 0;">
-                <h4>✅ PROTOTIPO COMPLETO (29 Diciembre 2025)</h4>
-                <p><strong>Estado</strong>: Módulo Ventas - Calendario Semana funcional al 100%</p>
-                <p><strong>Funcionalidades implementadas:</strong></p>
-                <ul>
-                    <li>Calendario interactivo con selección de días</li>
-                    <li>Día actual destacado (background celeste)</li>
-                    <li>Capacidades de vehículos por día (layout horizontal compacto)</li>
-                    <li>Botones de acción: Ver detalle + Ver pedidos</li>
-                    <li>Indicadores visuales de ocupación (verde/naranja/rojo)</li>
-                    <li>Stats en negrita para mejor legibilidad</li>
-                    <li>Filtros funcionales con appState sincronizado</li>
-                    <li><strong>Sistema de estados de días:</strong> Futuro/Hoy/Sin control/Controlado ⭐</li>
-                    <li><strong>Badges dinámicos:</strong> Planificado, HOY, Controlar, Controlado, SEMANAL ⭐</li>
-                    <li><strong>Datos progresivos:</strong> XXX (sin control) → Números reales (controlado) ⭐</li>
-                    <li><strong>Control manual con validación:</strong> Modal con advertencia de pedidos en tránsito ⭐</li>
-                </ul>
-                <p><strong>Próxima sesión</strong>: Nuevas features a agregar según feedback usuario</p>
-
-            <h3>7.12 Datos Mock actualizados - 60 pedidos con productos</h3>
-            <p><strong>Estructura de datos</strong>: Sistema de generación dinámica de pedidos y productos mock para demostración completa del flujo.</p>
-
-            <p><strong>Pedidos Mock</strong>:</p>
-            <ul>
-                <li><strong>Total</strong>: 60 pedidos variados</li>
-                <li><strong>Paginación</strong>: 12 pedidos por página → 5 páginas</li>
-                <li><strong>Distribución temporal</strong>:
-                    <ul>
-                        <li>Lunes 23: 11 pedidos (10 reparto + 1 fábrica) - 7 entregados, 4 en tránsito</li>
-                        <li>Martes 24: 11 pedidos (10 reparto + 1 fábrica) - 5 entregados, 6 en tránsito</li>
-                        <li>Miércoles 25: 14 pedidos (12 reparto + 2 fábrica) - 4 entregados, 10 en tránsito</li>
-                        <li>Jueves 26: 12 pedidos (10 reparto + 2 fábrica) - todos en tránsito</li>
-                        <li>Viernes 27: 12 pedidos (9 reparto + 3 fábrica) - todos en tránsito</li>
-                    </ul>
-                </li>
-                <li><strong>Variedad realista</strong>: Diferentes vehículos (R1/R2/R3), métodos de pago (efectivo/digital/mixto), ciudades</li>
-            </ul>
-
-            <p><strong>Productos Mock</strong>:</p>
-            <ul>
-                <li><strong>Catálogo</strong>: 15 productos químicos (detergentes, lavandinas, desinfectantes, etc.)</li>
-                <li><strong>Por pedido</strong>: 2-5 productos con cantidades variables (1-8 unidades)</li>
-                <li><strong>Generación automática</strong>: Función <code>generateProductosMock()</code></li>
-            </ul>
-
-            <h3>7.13 Acciones masivas (Bulk Actions)</h3>
-            <p><strong>Funcionalidad</strong>: Selección múltiple con acciones en batch.</p>
-
-            <p><strong>Componentes</strong>:</p>
-            <ol>
-                <li><strong>Check all</strong>: Checkbox en header selecciona todos</li>
-                <li><strong>Barra verde</strong>: Gradiente <code>#3d883d → #52943a</code>, padding 8px 16px</li>
-                <li><strong>Marcar como Entregado</strong>: Solo pedidos "EN TRÁNSITO", con confirmación</li>
-            </ol>
-
-            <h3>7.14 Enlaces de navegación</h3>
-            <p><strong>Conexiones implementadas</strong>:</p>
-            <ul>
-                <li>Cliente/Dirección → <code>cliente-detalle-v2.html</code></li>
-                <li>Modal Detalle → Modal Editar (botón "Editar Pedido")</li>
-                <li>Días semana → Lista filtrada (fecha + tipo "reparto")</li>
-                <li>Tarjeta Fábrica → Lista filtrada (tipo "fábrica")</li>
-            </ul>
-
-            <h3>7.15 Interfaz compacta</h3>
-            <p><strong>Reducciones de padding</strong>: Header -37%, Stats -16%, Bulk -42%, Tabla -37%</p>
-            <p><strong>Resultado</strong>: ~30% más contenido visible</p>
-
-            <h3>7.16 Estado simplificado</h3>
-            <p><strong>Cambio</strong>: Columna "Estado" solo muestra badge, sin fecha/hora de entrega</p>
-            <p><strong>Justificación</strong>: "No sabemos hora exacta, operario marca al día siguiente"</p>
-
-            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda; padding: 1rem; margin: 1.5rem 0;">
-                <h4>✅ PROTOTIPO ACTUALIZADO (30 Diciembre 2025)</h4>
-                <p><strong>Estado</strong>: Funcional con 60 pedidos mock, bulk actions, navegación entre módulos, interfaz compacta</p>
-                <p><strong>Listo para</strong>: Demostración completa al cliente</p>
-            </div>
-            </div>
         </section>
 
+        <!-- FILTROS -->
+        <section id="filtros">
+            <h2>4. Filtros Disponibles</h2>
 
+            <table>
+                <tr><th>Filtro</th><th>Opciones</th></tr>
+                <tr><td>Estado</td><td>En tránsito | Entregado | Todos</td></tr>
+                <tr><td>Período</td><td>Desde - Hasta (fechas)</td></tr>
+                <tr><td>Tipo</td><td>Fábrica | Reparto | Todos</td></tr>
+                <tr><td>Vehículo</td><td>Reparto 1 | Reparto 2 | Sin asignar | Todos</td></tr>
+                <tr><td>Método pago</td><td>Efectivo | Digital | Mixto | Sin registrar</td></tr>
+                <tr><td>Cliente</td><td>Búsqueda por dirección, incluye "Sin registro"</td></tr>
+            </table>
+            <p><strong>Todos los filtros son combinables.</strong></p>
+        </section>
+
+        <!-- ACCIONES -->
+        <section id="acciones">
+            <h2>5. Acciones por Pedido</h2>
+
+            <h3>5.1 Ver detalle</h3>
+            <p>Modal con información completa: cliente, productos, descuentos, ajustes, total, método pago, historial de cambios.</p>
+
+            <h3>5.2 Editar</h3>
+            <p>Abre cotizador en modo edición. Permite modificar productos, cantidades, precios, descuentos.</p>
+
+            <h3>5.3 Cambiar estado</h3>
+            <table>
+                <tr><th>Transición</th><th>Requisito</th></tr>
+                <tr><td>En tránsito → Entregado</td><td>Debe registrar método de pago</td></tr>
+                <tr><td>Entregado → En tránsito</td><td>Confirmación (casos de error)</td></tr>
+            </table>
+
+            <h3>5.4 Cambiar tipo (REPARTO ↔ FÁBRICA)</h3>
+            <ul>
+                <li><strong>REPARTO → FÁBRICA:</strong> Estado pasa a "Entregado", se elimina vehículo asignado</li>
+                <li><strong>FÁBRICA → REPARTO:</strong> Estado pasa a "En tránsito", abre calendario para seleccionar fecha</li>
+            </ul>
+
+            <h3>5.5 Eliminar</h3>
+            <p>Con confirmación. Reintegra stock y revierte cargo en CC.</p>
+        </section>
+
+        <!-- PAGOS -->
+        <section id="pagos">
+            <h2>6. Sistema de Pagos</h2>
+
+            <h3>6.1 Opciones de método de pago</h3>
+            <ul>
+                <li><strong>Efectivo:</strong> Pago en efectivo</li>
+                <li><strong>Digital:</strong> MercadoPago, transferencia, débito, crédito</li>
+                <li><strong>Mixto:</strong> Combinación de ambos (requiere desglose)</li>
+                <li><strong>Sin registrar:</strong> Estado temporal</li>
+            </ul>
+
+            <h3>6.2 Pagos parciales</h3>
+            <p><strong>Regla:</strong> El monto recibido NO tiene que igualar el total. Se permiten pagos parciales.</p>
+            <ul>
+                <li>Si monto &lt; total → saldo pendiente en cuenta corriente</li>
+                <li>Si monto &gt; total → saldo a favor del cliente</li>
+            </ul>
+
+            <h3>6.3 Pagos asociados vs genéricos</h3>
+            <table>
+                <tr><th>Tipo</th><th>Dónde se registra</th><th>Efecto en pedido</th></tr>
+                <tr><td><strong>Asociado</strong></td><td>Cotizador (fábrica) o CC → "Pago a pedido específico"</td><td>Actualiza campo <code>monto_pagado</code></td></tr>
+                <tr><td><strong>Genérico</strong></td><td>Cuenta Corriente → "Pago genérico"</td><td>NO actualiza pedido, solo reduce saldo CC</td></tr>
+            </table>
+
+            <h3>6.4 Sincronización bidireccional</h3>
+            <ul>
+                <li>Pago en VENTAS → se crea automáticamente en Cuenta Corriente</li>
+                <li>Pago a pedido específico desde CC → actualiza columna "Pagado" en VENTAS</li>
+                <li>Anti-duplicados: sistema verifica si ya existe pago antes de crear</li>
+            </ul>
+
+            <h3>6.5 Ventas sin cliente ("Sin registro")</h3>
+            <ul>
+                <li>Cliente ficticio para ventas casuales de mostrador</li>
+                <li>Solo modo FÁBRICA</li>
+                <li>Pago obligatorio completo (no permite fiado)</li>
+                <li>No genera cargo en Cuenta Corriente</li>
+            </ul>
+        </section>
+
+        <!-- EDICIÓN -->
+        <section id="edicion">
+            <h2>7. Edición Post-Entrega</h2>
+
+            <h3>7.1 Casos de uso</h3>
+            <ul>
+                <li>Cliente devolvió producto → restar cantidad</li>
+                <li>Se olvidó aplicar descuento → aplicar retroactivo</li>
+                <li>Cliente compró extra → sumar productos</li>
+                <li>Error en precio → corregir</li>
+            </ul>
+
+            <h3>7.2 Impacto automático</h3>
+            <p>Al editar un pedido, el sistema automáticamente:</p>
+            <ol>
+                <li>Ajusta stock (reintegra o descuenta según cambio)</li>
+                <li>Recalcula total del pedido</li>
+                <li>Genera AJUSTE en cuenta corriente (diferencia entre total anterior y nuevo)</li>
+                <li>El cargo original NUNCA se modifica (trazabilidad)</li>
+            </ol>
+
+            <h3>7.3 Ejemplo</h3>
+            <p>Pedido original: $10.000 (10 unidades). Cliente devolvió 1 unidad.</p>
+            <ul>
+                <li>Nuevo total: $9.000</li>
+                <li>Sistema reintegra 1 unidad al stock</li>
+                <li>Crea AJUSTE en CC: -$1.000</li>
+                <li>Saldo final cliente: correcto</li>
+            </ul>
+        </section>
+
+        <!-- CALENDARIO -->
+        <section id="calendario">
+            <h2>8. Calendario Semana (Vista de Repartos)</h2>
+
+            <h3>8.1 Concepto</h3>
+            <p>NO es un módulo separado. Es una vista filtrada dentro de VENTAS que muestra pedidos REPARTO pendientes organizados por día.</p>
+
+            <h3>8.2 Funcionalidades</h3>
+            <ul>
+                <li>Vista semanal (L-V) con capacidad por día</li>
+                <li>Asignación de pedidos a vehículos</li>
+                <li>Reordenamiento de pedidos (ruta de entrega)</li>
+                <li>Control de capacidad (kg actual vs máximo por vehículo)</li>
+            </ul>
+
+            <h3>8.3 Click en día</h3>
+            <p>Abre panel con:</p>
+            <ul>
+                <li>Pedidos por vehículo</li>
+                <li>Pedidos sin asignar</li>
+                <li>Acciones: mover, reasignar, desasignar</li>
+                <li>Link a vista completa</li>
+            </ul>
+
+            <h3>8.4 Flujo de pedido REPARTO</h3>
+            <ol>
+                <li>Cotizador crea pedido → Estado "En tránsito", aparece en calendario</li>
+                <li>Usuario asigna a vehículo desde calendario</li>
+                <li>Chofer entrega</li>
+                <li>Usuario marca como "Entregado" desde Lista Pedidos</li>
+                <li>Pedido desaparece del calendario (filtro automático), permanece en VENTAS</li>
+            </ol>
+        </section>
+
+        <!-- EXPORTAR -->
+        <section id="exportar">
+            <h2>9. Exportar Reportes</h2>
+
+            <h3>9.1 Exportar Excel</h3>
+            <p>Modal con selección de columnas:</p>
+            <ul>
+                <li><strong>Obligatorias:</strong> # Pedido, Fecha entrega</li>
+                <li><strong>Opcionales:</strong> Cliente, Dirección, Teléfono, Tipo, Vehículo, Repartidor, Productos, Subtotal, Descuentos, Ajustes, Total, Método pago, Estado</li>
+            </ul>
+            <p>El sistema recuerda última selección del usuario.</p>
+
+            <h3>9.2 Exportar hoja de reparto</h3>
+            <p>Desde vista de día en calendario:</p>
+            <ul>
+                <li><strong>Con precios:</strong> Para control interno</li>
+                <li><strong>Sin precios:</strong> Para chofer</li>
+            </ul>
+        </section>
+
+        <!-- AUDITORÍA -->
+        <section id="auditoria">
+            <h2>10. Auditoría y Trazabilidad</h2>
+
+            <h3>10.1 Historial de cambios</h3>
+            <p>Registro automático de todas las modificaciones post-entrega:</p>
+            <ul>
+                <li>Usuario que editó (nombre + ID)</li>
+                <li>Fecha/hora exacta</li>
+                <li>Campo modificado</li>
+                <li>Valor anterior → Valor nuevo</li>
+                <li>IP del usuario</li>
+                <li>(Opcional) Razón del cambio</li>
+            </ul>
+
+            <h3>10.2 Visualización</h3>
+            <p>Línea de tiempo cronológica en el detalle del pedido.</p>
+
+            <h3>10.3 Propósito</h3>
+            <ul>
+                <li>Trazabilidad total de cambios</li>
+                <li>Auditoría fiscal</li>
+                <li>Detección de errores o fraudes</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Bambu CRM V2 - PRD Ventas | Actualizado: Enero 2026</p>
+            <p><a href="index.html">← Volver al PRD General</a></p>
+        </footer>
     </main>
-
 </body>
 
 </html>

@@ -65,6 +65,55 @@ bambu_v2_prototipo/
 
 ---
 
+## Reglas para PRDs (Documentos de Especificación)
+
+**Stack final**: Laravel + Livewire + posiblemente React/Inertia para islas interactivas.
+
+**El PRD es un documento FUNCIONAL, no técnico.** Es la fuente de verdad contra la cual se escriben tests y se valida que el código hace lo correcto.
+
+### QUÉ INCLUIR en un PRD:
+- ✅ Descripción de funcionalidades (qué puede hacer el usuario)
+- ✅ Campos de cada entidad (nombre, tipo, obligatorio/opcional)
+- ✅ Validaciones y mensajes de error
+- ✅ Reglas de negocio (si X entonces Y)
+- ✅ Edge cases y comportamientos especiales
+- ✅ Estados posibles y transiciones
+- ✅ Permisos (quién puede hacer qué)
+
+### QUÉ NO INCLUIR en un PRD:
+- ❌ Bloques de código HTML/CSS/JS
+- ❌ Diagramas ASCII detallados de UI (para eso está el prototipo)
+- ❌ Queries SQL de ejemplo
+- ❌ Estructuras JSON de datos mock
+- ❌ Código de implementación
+
+### Al actualizar PRD por discrepancias con prototipo:
+1. El prototipo generalmente es la versión correcta (fue ajustado durante desarrollo)
+2. Actualizar el PRD con descripción funcional, NO copiar HTML del prototipo
+3. Describir QUÉ hace, no CÓMO se ve el código
+
+### Ejemplo CORRECTO:
+```
+Vehículos - Campos:
+- Nombre (texto, obligatorio, único)
+- Capacidad en kg (número, obligatorio, > 0)
+- Modelo (texto, opcional)
+- Patente (texto, opcional)
+
+Validación al eliminar: No permitir si tiene pedidos asignados.
+Mensaje: "No se puede eliminar porque tiene X pedidos asignados"
+```
+
+### Ejemplo INCORRECTO:
+```html
+<table class="config-table">
+  <tr><td>Nombre</td><td><input type="text"></td></tr>
+  ...
+</table>
+```
+
+---
+
 ## Regla de Comentarios en JavaScript
 
 **OBLIGATORIO**: Toda lógica de negocio en archivos `.js` debe estar comentada para facilitar auditorías y validación contra el PRD.
