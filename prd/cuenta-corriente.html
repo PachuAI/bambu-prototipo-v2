@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambu CRM v2 - Módulo Cuenta Corriente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰
+        Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Documentación</div>
+            <a href="index.html" class="nav-link">← Volver al PRD</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Índice</div>
+            <a href="#contexto" class="nav-link">1. Contexto y Objetivo</a>
+            <a href="#funcionalidad-principal" class="nav-link">2. Funcionalidad Principal</a>
+            <a href="#vista-cuenta-corriente" class="nav-link">3. Vista Cuenta Corriente</a>
+            <a href="#movimientos-automaticos" class="nav-link">4. Movimientos Automáticos</a>
+            <a href="#pagos-manuales" class="nav-link">5. Pagos Manuales</a>
+            <a href="#pagos-parciales" class="nav-link">6. Pagos Parciales</a>
+            <a href="#pagos-genericos" class="nav-link">7. Pagos Genéricos</a>
+            <a href="#ajustes-edicion-pedidos" class="nav-link">8. Ajustes por Edición</a>
+            <a href="#integracion-ventas" class="nav-link">9. Integración con Ventas</a>
+            <a href="#casos-de-uso" class="nav-link">10. Casos de Uso</a>
+            <a href="#flujos-usuario" class="nav-link">11. Flujos de Usuario</a>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div
+                style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.</div>
+            <h1>Bambu CRM v2 <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Módulo
+                    Cuenta Corriente - Especificación Completa</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Fecha</strong></td>
+                    <td>22 de Diciembre 2025</td>
+                </tr>
+                <tr>
+                    <td><strong>Sistema</strong></td>
+                    <td>Bambu CRM v2</td>
+                </tr>
+                <tr>
+                    <td><strong>Propósito</strong></td>
+                    <td>Gestión integral de saldos, pagos y historial por cliente</td>
+                </tr>
+            </table>
+        </header>
+
+        <section id="contexto">
+            <h2>1. Contexto y Objetivo</h2>
+
+            <h3>Situación</h3>
+            <p>En la versión 1 del sistema, la cuenta corriente era una funcionalidad básica sin integración completa
+                con el módulo de ventas y sin capacidad de registrar métodos de pago.</p>
+
+            <h3>Problema identificado (audios con Carlos)</h3>
+            <p><strong>Carlos necesita</strong>:</p>
+            <ul>
+                <li>Discriminar efectivo vs digital en todos los pagos</li>
+                <li>Registrar pagos parciales (cliente paga menos del total)</li>
+                <li>Registrar pagos genéricos (cliente transfiere sin especificar a qué pedido corresponde)</li>
+                <li>Tener historial completo de movimientos por cliente</li>
+                <li>Usar cliente genérico "Venta Fábrica" con cientos de transacciones</li>
+            </ul>
+
+            <p><strong>Cita textual</strong>:</p>
+            <blockquote>
+                "Me sirve especificar que de los 100.000 pesos, 80.000 fueron pagados en efectivo, y 20.000 por un medio
+                digital. Porque eso me hace después sacarme la cuenta de cuánto tengo que tener hecho en efectivo el
+                último día de la semana."
+            </blockquote>
+        </section>
+
+        <section id="funcionalidad-principal">
+            <h2>2. Funcionalidad Principal</h2>
+
+            <h3>Descripción</h3>
+            <p>El módulo Cuenta Corriente es el centro financiero de cada cliente, donde se registran:</p>
+            <ul>
+                <li>✅ Cargos automáticos (pedidos confirmados)</li>
+                <li>✅ Pagos manuales (totales, parciales, genéricos)</li>
+                <li>✅ Discriminación efectivo/digital</li>
+                <li>✅ Historial completo de movimientos</li>
+                <li>✅ Saldo actual (debe o a favor)</li>
+            </ul>
+
+            <h3>Características clave</h3>
+            <ol>
+                <li><strong>Todos los clientes tienen cuenta corriente</strong> (obligatorio)</li>
+                <li><strong>Cargos automáticos</strong> al confirmar pedidos</li>
+                <li><strong>Pagos manuales</strong> registrados por operadores</li>
+                <li><strong>Discriminación método de pago</strong> (efectivo, digital, mixto)</li>
+                <li><strong>Pagos parciales</strong> (monto < total pedido)</li>
+                <li><strong>Pagos genéricos</strong> (no asociados a pedido específico)</li>
+                <li><strong>Historial cronológico</strong> completo</li>
+                <li><strong>Exportar Excel</strong> para contabilidad</li>
+            </ol>
+        </section>
+
+        <section id="vista-cuenta-corriente">
+            <h2>3. Vista Cuenta Corriente</h2>
+
+            <h3>Ubicación</h3>
+            <p><strong>Ruta</strong>: Clientes → Seleccionar cliente → Pestaña "Cuenta Corriente"</p>
+
+            <h3>Panel superior: Resumen</h3>
+            <pre><code>┌─────────────────────────────────────────────────┐
+│  Cliente: Av. San Martín 1234                   │
+│  Teléfono: 299-1234567                          │
+├─────────────────────────────────────────────────┤
+│                                                 │
+│  Saldo actual: -$125.000 (debe)                │
+│                                                 │
+│  Total pedidos: 15                              │
+│  Última compra: 20/12/2025                      │
+│                                                 │
+│  [+ Registrar pago genérico]  [Exportar Excel] │
+│                                                 │
+└─────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Indicadores visuales saldo</strong>:</p>
+            <ul>
+                <li><strong>Negativo</strong> (debe): Texto rojo → -$125.000</li>
+                <li><strong>Cero</strong>: Texto gris → $0</li>
+                <li><strong>Positivo</strong> (a favor): Texto verde → +$50.000</li>
+            </ul>
+
+            <h3>Tabla: Historial de movimientos</h3>
+            <p><strong>Columnas</strong>:</p>
+            <table>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Cargo</th>
+                    <th>Pago</th>
+                    <th>Método</th>
+                    <th>Saldo</th>
+                </tr>
+                <tr>
+                    <td>20/12</td>
+                    <td>Cargo</td>
+                    <td>Pedido #155</td>
+                    <td>+$80.000</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-$80.000</td>
+                </tr>
+                <tr>
+                    <td>20/12</td>
+                    <td>Pago</td>
+                    <td>Pago pedido #155</td>
+                    <td>-</td>
+                    <td>-$80.000</td>
+                    <td>💵 Efectivo</td>
+                    <td>$0</td>
+                </tr>
+                <tr>
+                    <td>18/12</td>
+                    <td>Cargo</td>
+                    <td>Pedido #148</td>
+                    <td>+$45.000</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-$45.000</td>
+                </tr>
+                <tr>
+                    <td>18/12</td>
+                    <td>Pago</td>
+                    <td>Pago parcial #148</td>
+                    <td>-</td>
+                    <td>-$30.000</td>
+                    <td>💳 Digital</td>
+                    <td>-$15.000</td>
+                </tr>
+                <tr>
+                    <td>17/12</td>
+                    <td>Pago</td>
+                    <td>Pago genérico</td>
+                    <td>-</td>
+                    <td>-$15.000</td>
+                    <td>💵 Efectivo</td>
+                    <td>$0</td>
+                </tr>
+            </table>
+
+            <p><strong>Tipos de movimientos</strong>:</p>
+            <ol>
+                <li><strong>Cargo</strong>: Pedido confirmado (aumenta debe)</li>
+                <li><strong>Pago</strong>: Pago registrado (reduce debe)</li>
+            </ol>
+
+            <p><strong>Iconos método de pago</strong>:</p>
+            <ul>
+                <li>💵 Efectivo</li>
+                <li>💳 Digital (MercadoPago, transferencia)</li>
+                <li>💵💳 Mixto (efectivo + digital)</li>
+            </ul>
+
+            <p><strong>Ordenamiento</strong>: Cronológico descendente (más recientes primero)</p>
+
+            <h3>Detalle movimiento (expandible)</h3>
+            <p>Al hacer click en una fila, se expande mostrando:</p>
+
+            <pre><code>📦 Cargo pedido #155 - 20/12/2025
+───────────────────────────────────
+Monto total: $80.000
+Estado pedido: Entregado
+Tipo: Reparto
+Vehículo: Camión A
+
+Productos:
+- Producto A x 5 → $40.000
+- Producto B x 2 → $40.000
+
+[Ver pedido completo]</code></pre>
+
+            <pre><code>💵 Pago pedido #155 - 20/12/2025
+─────────────────────────────────
+Monto pagado: $80.000 (total)
+Método: Efectivo $80.000
+
+Registrado por: Usuario Vendedor
+Fecha registro: 20/12/2025 18:45
+
+Nota: Cliente pagó al recibir</code></pre>
+        </section>
+
+        <section id="movimientos-automaticos">
+            <h2>4. Movimientos Automáticos</h2>
+
+            <h3>Cargo al confirmar pedido + Pago opcional (modo fábrica)</h3>
+            <p><strong>Cuándo</strong>: Usuario confirma pedido en cotizador</p>
+
+            <p><strong>Flujo actualizado (con pago opcional en modo FÁBRICA)</strong>:</p>
+            <pre><code>Cotizador → Confirma pedido
+                ↓
+    ¿Tiene cliente seleccionado?
+                ↓
+           [SÍ] → Genera cargo automático en cuenta corriente
+           [NO] → No genera cargo (venta sin cliente)
+                ↓
+    <strong>¿Modo FÁBRICA + Registró pago?</strong>
+                ↓
+      [SÍ] → Genera pago automático en cuenta corriente
+           - Tipo: Pago
+           - Monto: Monto recibido
+           - Método: Efectivo/Digital/Mixto
+           - Saldo: Total - Monto recibido
+      [NO] → Solo cargo, sin pago
+           - Saldo: Total (cliente debe)
+                ↓
+    Registro en historial:
+    - Tipo: Cargo (siempre)
+    - Tipo: Pago (si se registró en cotizador)
+    - Descripción: Pedido #XXX / Pago pedido #XXX
+    - Saldo: Actualizado según pagos</code></pre>
+
+            <p><strong>Ejemplo 1 - Venta fábrica CON pago</strong>:</p>
+            <ul>
+                <li>Cliente: Av. San Martín 1234</li>
+                <li>Saldo anterior: -$50.000</li>
+                <li>Nuevo pedido: $80.000</li>
+                <li><strong>Usuario registra pago en cotizador: $80.000 (efectivo)</strong></li>
+                <li><strong>Resultado</strong>:
+                    <ul>
+                        <li>Cargo: +$80.000</li>
+                        <li>Pago: -$80.000 (efectivo)</li>
+                        <li>Saldo nuevo: -$50.000 (sin cambios, pago cubrió el pedido)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p><strong>Ejemplo 2 - Venta fábrica CON pago parcial</strong>:</p>
+            <ul>
+                <li>Cliente: Av. Mitre 567</li>
+                <li>Saldo anterior: $0</li>
+                <li>Nuevo pedido: $100.000</li>
+                <li><strong>Usuario registra pago parcial en cotizador: $30.000 (efectivo)</strong></li>
+                <li><strong>Resultado</strong>:
+                    <ul>
+                        <li>Cargo: +$100.000</li>
+                        <li>Pago: -$30.000 (efectivo)</li>
+                        <li>Saldo nuevo: -$70.000 (pendiente)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p><strong>Ejemplo 3 - Venta fábrica SIN pago (fiado)</strong>:</p>
+            <ul>
+                <li>Cliente: Calle Roca 890</li>
+                <li>Saldo anterior: -$20.000</li>
+                <li>Nuevo pedido: $50.000</li>
+                <li><strong>Usuario NO registra pago en cotizador</strong></li>
+                <li><strong>Resultado</strong>:
+                    <ul>
+                        <li>Cargo: +$50.000</li>
+                        <li>Saldo nuevo: -$70.000 (debe)</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="pagos-manuales">
+            <h2>5. Pagos Manuales</h2>
+
+            <h3>Pago desde módulo Ventas</h3>
+            <p><strong>Contexto</strong>: Al marcar pedido como "Entregado", es OBLIGATORIO registrar método de pago</p>
+
+            <p><strong>Flujo</strong>:</p>
+            <pre><code>Módulo VENTAS → Pedido en tránsito → [Marcar como entregado]
+                                              ↓
+                                Modal "Registrar pago"
+                                              ↓
+                        ¿Pago total o parcial?
+                                              ↓
+                    [TOTAL]              [PARCIAL]
+                       ↓                      ↓
+            Ver sección siguiente    Ver "Pagos parciales"</code></pre>
+
+            <p><strong>Modal "Registrar pago" (pago total)</strong>:</p>
+            <pre><code>┌─────────────────────────────────────────┐
+│  Registrar pago - Pedido #155           │
+├─────────────────────────────────────────┤
+│                                         │
+│  Total pedido: $80.000                  │
+│                                         │
+│  Método de pago:                        │
+│  ☐ Efectivo                             │
+│  ☐ Digital (MercadoPago/Transferencia)  │
+│                                         │
+│  Nota (opcional):                       │
+│  [____________________________________] │
+│                                         │
+│  [Cancelar]  [Guardar]                  │
+│                                         │
+└─────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Si selecciona ambos (mixto)</strong>:</p>
+            <pre><code>┌─────────────────────────────────────────┐
+│  ☑ Efectivo                             │
+│  Monto efectivo: [______] $50.000       │
+│                                         │
+│  ☑ Digital                              │
+│  Monto digital:  [______] $30.000       │
+│                                         │
+│  Total: $80.000 ✓                       │
+│  (Validación: suma debe igualar total)  │
+│                                         │
+└─────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Efecto al guardar</strong>:</p>
+            <ol>
+                <li>Pedido cambia a estado "Entregado"</li>
+                <li>Se registra pago en cuenta corriente del cliente</li>
+                <li>Saldo cliente se reduce</li>
+                <li>Método de pago queda asociado al pedido</li>
+            </ol>
+
+            <h3>5.1 Sincronización bidireccional VENTAS ↔ Cuenta Corriente ⭐ NUEVO (Dic 2025)</h3>
+
+            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda; padding: 1rem; margin: 1.5rem 0;">
+                <p><strong>Sistema híbrido de registro</strong>: Los pagos se pueden registrar desde <strong>AMBOS módulos</strong> (VENTAS y Cuenta Corriente) con sincronización automática para evitar duplicación.</p>
+            </div>
+
+            <h4>5.1.1 Flujo: Pago registrado desde VENTAS</h4>
+            <p><strong>Caso de uso</strong>: Operador controlando repartos desde módulo VENTAS</p>
+
+            <pre><code>Usuario en VENTAS → Marca pedido como "Entregado"
+                    ↓
+        Modal "Registrar entrega y pago"
+        - Monto recibido
+        - Método: Efectivo/Digital/Mixto
+        - Nota (opcional)
+                    ↓
+            Guarda pago desde VENTAS
+                    ↓
+    🔄 AUTOMÁTICO: Sistema crea movimiento en CC
+                    ↓
+    Registro en Cuenta Corriente:
+    - Tipo: Pago
+    - Descripción: "Pago pedido #XXX"
+    - Monto: $X
+    - Método: [Efectivo/Digital/Mixto]
+    - Origen: VENTAS ← Campo adicional
+    - Usuario: [Operador]
+    - Timestamp: [Fecha/hora]</code></pre>
+
+            <h4>5.1.2 Flujo: Pago registrado desde Cuenta Corriente</h4>
+            <p><strong>Caso de uso</strong>: Cliente paga en fábrica o ajuste manual puntual</p>
+
+            <pre><code>Usuario en CC → [+ Registrar pago]
+                    ↓
+        Modal "Registrar Pago"
+        Selecciona tipo:
+        ○ Pago genérico
+        ○ Pago a pedido específico #XXX ← Esta opción
+                    ↓
+        Guarda pago desde CC
+                    ↓
+    🔄 AUTOMÁTICO: Sistema actualiza pedido
+                    ↓
+    Actualización en módulo VENTAS:
+    - pedido.monto_pagado += monto
+    - Columna "Pagado" se actualiza
+    - Badge visual cambia color si pagado completo</code></pre>
+
+            <h4>5.1.3 Mecanismo anti-duplicados</h4>
+            <p><strong>Problema a prevenir</strong>: Registrar el mismo pago dos veces (una vez desde VENTAS, otra desde CC)</p>
+
+            <p><strong>Solución implementada</strong>:</p>
+            <ol>
+                <li><strong>Validación pre-registro</strong>:
+                    <ul>
+                        <li>Antes de crear movimiento, sistema consulta: ¿Ya existe pago para este pedido?</li>
+                        <li>Query: <code>SELECT * FROM movimientos_cc WHERE pedido_id = X AND tipo = 'pago'</code></li>
+                    </ul>
+                </li>
+                <li><strong>Campo origen</strong>:
+                    <ul>
+                        <li>Cada movimiento de pago registra su origen: "VENTAS" o "CC"</li>
+                        <li>Permite auditoría y debugging</li>
+                    </ul>
+                </li>
+                <li><strong>Bloqueo temporal</strong>:
+                    <ul>
+                        <li>Al registrar pago desde VENTAS → Modal queda deshabilitado hasta que se confirme guardado en CC</li>
+                        <li>Previene double-click accidental</li>
+                    </ul>
+                </li>
+                <li><strong>Advertencia visual</strong>:
+                    <ul>
+                        <li>Si usuario intenta registrar pago desde CC para pedido que ya tiene pago completo desde VENTAS:</li>
+                        <li>Sistema muestra: ⚠️ "Este pedido ya tiene pago registrado el [fecha] desde VENTAS por [usuario]. ¿Deseas agregar pago adicional?"</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4>5.1.4 Trazabilidad completa</h4>
+            <p><strong>Campos adicionales en tabla movimientos_cc</strong>:</p>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><code>origen</code></td>
+                    <td>ENUM('VENTAS', 'CC', 'COTIZADOR')</td>
+                    <td>Módulo desde donde se registró el pago</td>
+                </tr>
+                <tr>
+                    <td><code>usuario_id</code></td>
+                    <td>INT</td>
+                    <td>Usuario que registró el movimiento</td>
+                </tr>
+                <tr>
+                    <td><code>timestamp</code></td>
+                    <td>DATETIME</td>
+                    <td>Fecha/hora exacta del registro</td>
+                </tr>
+                <tr>
+                    <td><code>pedido_id</code></td>
+                    <td>INT (nullable)</td>
+                    <td>NULL si es pago genérico, ID si es pago específico</td>
+                </tr>
+            </table>
+
+            <h4>5.1.5 Beneficios del sistema híbrido</h4>
+            <ul>
+                <li>✅ <strong>Flexibilidad</strong>: Operadores eligen dónde registrar según contexto de trabajo</li>
+                <li>✅ <strong>Eficiencia</strong>: Control masivo de repartos desde tabla VENTAS sin navegación extra</li>
+                <li>✅ <strong>Precisión</strong>: Casos puntuales se manejan desde perfil cliente en CC</li>
+                <li>✅ <strong>Consistencia</strong>: Ambos módulos siempre muestran la misma información actualizada</li>
+                <li>✅ <strong>Auditoría</strong>: Trazabilidad completa de quién registró qué, cuándo y desde dónde</li>
+            </ul>
+        </section>
+
+        <section id="pagos-parciales">
+            <h2>6. Pagos Parciales</h2>
+
+            <h3>Descripción</h3>
+            <p>Casos donde el cliente no paga el 100% del pedido al momento de la entrega.</p>
+
+            <p><strong>Casos de uso</strong>:</p>
+            <ul>
+                <li>Cliente no tiene efectivo suficiente</li>
+                <li>Cliente acuerda pagar resto después</li>
+                <li>Error en el pedido (se devuelve producto)</li>
+            </ul>
+
+            <h3>Flujo pago parcial</h3>
+            <p><strong>Modal "Registrar pago" (modo avanzado)</strong>:</p>
+            <pre><code>┌─────────────────────────────────────────┐
+│  Registrar pago - Pedido #155           │
+├─────────────────────────────────────────┤
+│                                         │
+│  Total pedido: $100.000                 │
+│                                         │
+│  Monto recibido:                        │
+│  [______] $80.000                       │
+│                                         │
+│  ⚠️ Pago parcial detectado              │
+│  Saldo pendiente: $20.000               │
+│  (quedará en cuenta corriente)          │
+│                                         │
+│  Método de pago:                        │
+│  ☑ Efectivo  $80.000                    │
+│  ☐ Digital                              │
+│                                         │
+│  Nota:                                  │
+│  [Cliente pagará resto mañana_______]   │
+│                                         │
+│  [Cancelar]  [✓ Confirmar pago parcial] │
+│                                         │
+└─────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Efecto</strong>:</p>
+            <ol>
+                <li>Pedido: Estado "Entregado" (igual que pago total)</li>
+                <li>Pago registrado: $80.000 efectivo</li>
+                <li>Cuenta corriente: Saldo pendiente -$20.000</li>
+            </ol>
+
+            <p><strong>Registro en historial cuenta corriente</strong>:</p>
+            <pre><code>20/12 | Cargo  | Pedido #155      | +$100.000 | -      | -         | -$100.000
+20/12 | Pago   | Pago parcial #155| -         | -$80.000| 💵 Efectivo| -$20.000</code></pre>
+
+            <p><strong>Vista en módulo Ventas</strong>:</p>
+            <pre><code>Tabla pedidos:
+# 155 | 20/12 | Av. X | $100K | $80K | 💵 Efectivo | Entregado
+
+Detalle pedido #155:
+Total: $100.000
+Pagado: $80.000 (efectivo)
+Pendiente: $20.000 ⚠️</code></pre>
+
+            <h3>Completar pago pendiente</h3>
+            <p><strong>Cuando el cliente paga el resto de un pedido con pago parcial</strong>:</p>
+            <p>Ver <a href="#pagos-genericos" style="color: #0056b3; font-weight: 600;">→ Sección 7: Registrar Pagos Manuales</a> - Opción B: Pago a pedido específico</p>
+
+            <p><strong>Resumen rápido</strong>:</p>
+            <pre><code>Cuenta corriente cliente → [+ Registrar pago]
+
+Modal "Registrar pago":
+  Monto: $20,000
+  Aplicar a: ○ Pedido específico → Pedido #155
+  Método: ☑ Digital
+  [Guardar]
+
+Resultado:
+- pedido.monto_pagado actualizado
+- Saldo CC reducido
+- Historial: "Pago pedido #155 -$20k (digital)"</code></pre>
+        </section>
+
+        <section id="pagos-genericos">
+            <h2>7. Registrar Pagos Manuales (Genéricos o Específicos) ⭐ ACTUALIZADO</h2>
+
+            <h3>Descripción</h3>
+            <p>El sistema permite registrar pagos manualmente desde la Cuenta Corriente del cliente con <strong>dos opciones</strong>:</p>
+            <ol>
+                <li><strong>Pago genérico</strong>: NO asociado a ningún pedido específico</li>
+                <li><strong>Pago a pedido específico</strong>: Asociado y actualiza el pedido seleccionado</li>
+            </ol>
+
+            <p><strong>Cita Carlos</strong>:</p>
+            <blockquote>
+                "Los pagos no siempre responden a cada pedido, sino que manda plata. O sea, al total de la cuenta que
+                tengo, manda un poco de plata"
+            </blockquote>
+
+            <h3>7.1 Flujo: Registrar pago manual</h3>
+            <p><strong>Desde cuenta corriente del cliente</strong>:</p>
+            <pre><code>Cuenta corriente → Panel superior → [+ Registrar pago]</code></pre>
+
+            <p><strong>Modal "Registrar pago" (ACTUALIZADO)</strong>:</p>
+            <pre><code>┌─────────────────────────────────────────┐
+│  Registrar pago                         │
+├─────────────────────────────────────────┤
+│                                         │
+│  Cliente: Av. San Martín 1234           │
+│  Saldo actual: -$150.000 (debe)         │
+│                                         │
+│  Monto recibido:                        │
+│  [______] $50.000                       │
+│                                         │
+│  Método de pago:                        │
+│  ☑ Efectivo  $50.000                    │
+│  ☐ Digital                              │
+│                                         │
+│  Aplicar a:  ⭐ NUEVO                   │
+│  ○ Pago genérico                        │
+│     (reduce saldo total del cliente)    │
+│                                         │
+│  ○ Pedido específico                    │
+│     [Dropdown ▼]                        │
+│       • Pedido #100 (Pendiente $70k)    │
+│       • Pedido #101 (Pendiente $50k)    │
+│       • Pedido #155 (Pendiente $20k)    │
+│                                         │
+│  Fecha:                                 │
+│  [20/12/2025]                           │
+│                                         │
+│  Nota (opcional):                       │
+│  [________________________________]      │
+│                                         │
+│  Saldo después del pago: -$100.000      │
+│                                         │
+│  [Cancelar]  [Guardar]                  │
+│                                         │
+└─────────────────────────────────────────┘</code></pre>
+
+            <h3>7.2 Opción A: Pago genérico</h3>
+
+            <p><strong>Cuándo usar</strong>:</p>
+            <ul>
+                <li>Cliente transfiere sin especificar a qué pedido corresponde</li>
+                <li>Cliente paga adelanto general</li>
+                <li>Cliente paga saldo acumulado sin detallar</li>
+            </ul>
+
+            <p><strong>Efecto</strong>:</p>
+            <ol>
+                <li>✅ Reduce saldo total del cliente</li>
+                <li>✅ Queda registrado en historial CC</li>
+                <li>❌ NO actualiza ningún pedido individual</li>
+                <li>❌ Columna "Pagado" en pedidos NO cambia</li>
+            </ol>
+
+            <p><strong>Ejemplo</strong>:</p>
+            <pre><code>Cliente tiene:
+- Pedido #100: Total $100k, Pagado $30k, Pendiente $70k
+- Pedido #101: Total $50k,  Pagado $0,   Pendiente $50k
+- Saldo CC: -$120k (debe)
+
+Usuario registra: $80k digital → Opción: "Pago genérico"
+
+Resultado:
+- Saldo CC: -$40k (nuevo saldo)
+- Pedido #100: SIN CAMBIOS (sigue mostrando Pagado $30k)
+- Pedido #101: SIN CAMBIOS (sigue mostrando Pagado $0)
+- Historial CC: "Pago genérico -$80k (digital)"</code></pre>
+
+            <h3>7.3 Opción B: Pago a pedido específico ⭐ NUEVO</h3>
+
+            <p><strong>Cuándo usar</strong>:</p>
+            <ul>
+                <li>Cliente dice: "Esto es para completar el pedido #100"</li>
+                <li>Cliente paga exactamente lo pendiente de un pedido</li>
+                <li>Quieres cerrar un pedido específico</li>
+            </ul>
+
+            <p><strong>Efecto</strong>:</p>
+            <ol>
+                <li>✅ Reduce saldo total del cliente</li>
+                <li>✅ Queda registrado en historial CC</li>
+                <li>✅ Actualiza <code>pedido.monto_pagado</code></li>
+                <li>✅ Columna "Pagado" en VENTAS se actualiza</li>
+            </ol>
+
+            <p><strong>Validaciones</strong>:</p>
+            <ul>
+                <li>SI <code>monto = saldo_pendiente_pedido</code> → Pedido queda saldado ✅</li>
+                <li>SI <code>monto < saldo_pendiente_pedido</code> → Pago parcial adicional</li>
+                <li>SI <code>monto > saldo_pendiente_pedido</code> → ⚠️ ERROR: "El monto excede lo pendiente. Use pago genérico."</li>
+            </ul>
+
+            <p><strong>Ejemplo 1 - Pago completo</strong>:</p>
+            <pre><code>Pedido #100: Total $100k, Pagado $30k, Pendiente $70k
+
+Usuario registra: $70k digital
+→ Opción: "Pedido específico" → Selecciona: Pedido #100
+
+Resultado:
+- pedido.monto_pagado = $30k + $70k = $100k ✅
+- Saldo CC: Reduce en $70k
+- Historial CC: "Pago pedido #100 -$70k (digital)"
+- En VENTAS: Pedido #100 muestra Pagado $100k ✓ (verde)</code></pre>
+
+            <p><strong>Ejemplo 2 - Pago parcial adicional</strong>:</p>
+            <pre><code>Pedido #100: Total $100k, Pagado $30k, Pendiente $70k
+
+Usuario registra: $40k digital
+→ Opción: "Pedido específico" → Selecciona: Pedido #100
+
+Resultado:
+- pedido.monto_pagado = $30k + $40k = $70k
+- Saldo CC: Reduce en $40k
+- Historial CC: "Pago adicional pedido #100 -$40k (digital)"
+- En VENTAS: Pedido #100 muestra Pagado $70k ⚠️ (naranja)
+- Pendiente: $30k (aún falta)</code></pre>
+
+            <p><strong>Ejemplo 3 - Error: Monto excede pendiente</strong>:</p>
+            <pre><code>Pedido #100: Pendiente $70k
+
+Usuario intenta: $100k → Opción: "Pedido específico"
+
+Sistema muestra ERROR:
+┌─────────────────────────────────────────┐
+│ ⚠️ Error: Monto excede lo pendiente     │
+│                                         │
+│ Monto ingresado: $100,000               │
+│ Pendiente pedido #100: $70,000          │
+│ Excedente: $30,000                      │
+│                                         │
+│ Sugerencia:                             │
+│ 1. Use pago GENÉRICO si el cliente      │
+│    transfirió de más                    │
+│ 2. O ingrese exactamente $70,000        │
+│                                         │
+│ [Aceptar]                               │
+└─────────────────────────────────────────┘</code></pre>
+
+            <h3>7.4 Tabla comparativa: Genérico vs Específico</h3>
+            <table>
+                <tr>
+                    <th>Característica</th>
+                    <th>Pago genérico</th>
+                    <th>Pago a pedido específico</th>
+                </tr>
+                <tr>
+                    <td><strong>Asociación</strong></td>
+                    <td>Ninguna</td>
+                    <td>Pedido específico (#100)</td>
+                </tr>
+                <tr>
+                    <td><strong>Actualiza pedido</strong></td>
+                    <td>❌ NO</td>
+                    <td>✅ SÍ (monto_pagado)</td>
+                </tr>
+                <tr>
+                    <td><strong>Aparece en VENTAS</strong></td>
+                    <td>❌ NO (solo en CC)</td>
+                    <td>✅ SÍ (columna "Pagado")</td>
+                </tr>
+                <tr>
+                    <td><strong>Validación monto</strong></td>
+                    <td>Cualquier monto</td>
+                    <td>≤ Pendiente del pedido</td>
+                </tr>
+                <tr>
+                    <td><strong>Descripción historial</strong></td>
+                    <td>"Pago genérico"</td>
+                    <td>"Pago pedido #100"</td>
+                </tr>
+                <tr>
+                    <td><strong>Uso común</strong></td>
+                    <td>Cliente transfiere sin especificar</td>
+                    <td>Cliente paga pedido específico</td>
+                </tr>
+                <tr>
+                    <td><strong>Reduce saldo CC</strong></td>
+                    <td>✅ SÍ</td>
+                    <td>✅ SÍ</td>
+                </tr>
+            </table>
+
+            <h3>7.5 Caso de uso completo</h3>
+            <pre><code>Estado inicial:
+┌─────────────────────────────────────────────────────┐
+│ Cliente: Av. San Martín 1234                        │
+│ Saldo CC: -$120,000 (debe)                          │
+├─────────────────────────────────────────────────────┤
+│ Pedidos:                                            │
+│ • #100: Total $100k | Pagado $30k | Pend. $70k      │
+│ • #101: Total $50k  | Pagado $0   | Pend. $50k      │
+└─────────────────────────────────────────────────────┘
+
+─────────────────────────────────────────────────────
+
+Día 1: Cliente transfiere $50k sin especificar
+Usuario registra: $50k digital → "Pago genérico"
+
+Resultado:
+- Saldo CC: -$70k
+- Pedido #100: Pagado $30k (sin cambios)
+- Pedido #101: Pagado $0 (sin cambios)
+
+─────────────────────────────────────────────────────
+
+Día 3: Cliente paga específicamente el pedido #101
+Usuario registra: $50k efectivo → "Pedido #101"
+
+Resultado:
+- Saldo CC: -$20k
+- Pedido #100: Pagado $30k (sin cambios)
+- Pedido #101: Pagado $50k ✓ (saldado)
+
+─────────────────────────────────────────────────────
+
+Día 5: Cliente completa el pedido #100
+Usuario registra: $20k digital → "Pedido #100"
+
+Resultado:
+- Saldo CC: $0 ✅
+- Pedido #100: Pagado $50k ⚠️ (sigue pendiente $50k)
+- Pedido #101: Pagado $50k ✓
+
+NOTA: Pedido #100 muestra pendiente $50k aunque el
+cliente no deba nada (saldo $0) porque esos $50k
+fueron un pago genérico del Día 1.</code></pre>
+
+            <h3>7.6 Registro en historial cuenta corriente</h3>
+            <p><strong>Pago genérico</strong>:</p>
+            <pre><code>20/12 | Pago | Pago genérico | - | -$50.000 | 💵 Efectivo | -$100.000</code></pre>
+
+            <p><strong>Pago a pedido específico</strong>:</p>
+            <pre><code>20/12 | Pago | Pago pedido #100 | - | -$70.000 | 💳 Digital | -$30.000
+                                  └─ Referencia al pedido</code></pre>
+        </section>
+
+        <section id="ajustes-edicion-pedidos">
+            <h2>8. Ajustes por Edición de Pedidos</h2>
+
+            <h3>Descripción</h3>
+            <p><strong>Problema</strong>: Cuando se edita un pedido post-entrega (ajustar cantidades, cambiar productos), el total del pedido cambia y se debe reflejar en cuenta corriente.</p>
+
+            <p><strong>Solución</strong>: Sistema genera AJUSTE automático sin modificar el cargo original (trazabilidad).</p>
+
+            <h3>Regla crítica</h3>
+            <blockquote>
+                El cargo original del pedido NUNCA se modifica. Siempre se crea un NUEVO movimiento tipo "Ajuste" con la diferencia.
+            </blockquote>
+
+            <h3>Flujo de ajuste</h3>
+            <pre><code>Módulo VENTAS → Editar pedido entregado
+                    ↓
+    Modificar cantidades/productos
+    Total anterior: $10.000
+    Total nuevo: $9.000
+    Diferencia: -$1.000
+                    ↓
+    Sistema AUTOMÁTICO:
+    - NO modifica cargo original
+    - Crea movimiento tipo "Ajuste"
+    - Monto: -$1.000 (crédito a favor)
+    - Referencia: pedido_id #1234
+    - Flag: pedido_editado = true
+                    ↓
+    Cuenta corriente actualizada</code></pre>
+
+            <h3>Datos del ajuste</h3>
+            <table>
+                <tr>
+                    <th>Campo</th>
+                    <th>Descripción</th>
+                    <th>Ejemplo</th>
+                </tr>
+                <tr>
+                    <td><strong>Tipo movimiento</strong></td>
+                    <td>Ajuste por edición de pedido</td>
+                    <td>"Ajuste pedido #1234"</td>
+                </tr>
+                <tr>
+                    <td><strong>Monto</strong></td>
+                    <td>Diferencia (nuevo total - total original)</td>
+                    <td>-$1.000 (si se redujo el pedido)</td>
+                </tr>
+                <tr>
+                    <td><strong>Referencia</strong></td>
+                    <td>ID del pedido editado</td>
+                    <td>pedido_id: 1234</td>
+                </tr>
+                <tr>
+                    <td><strong>Flag especial</strong></td>
+                    <td>Marca para identificar ajustes</td>
+                    <td>pedido_editado: true</td>
+                </tr>
+                <tr>
+                    <td><strong>Usuario</strong></td>
+                    <td>Quien realizó la edición</td>
+                    <td>user_id: 5 (Juan Pérez)</td>
+                </tr>
+                <tr>
+                    <td><strong>Timestamp</strong></td>
+                    <td>Fecha/hora exacta</td>
+                    <td>2025-12-22 14:30:45</td>
+                </tr>
+                <tr>
+                    <td><strong>Nota</strong></td>
+                    <td>Razón del ajuste (opcional)</td>
+                    <td>"Cliente devolvió 1 unidad"</td>
+                </tr>
+            </table>
+
+            <h3>Ejemplo completo</h3>
+            <p><strong>Situación</strong>:</p>
+            <ul>
+                <li>Pedido original: $10.000 (10 unidades)</li>
+                <li>Edición: Cliente devolvió 1 unidad</li>
+                <li>Nuevo total: $9.000 (9 unidades)</li>
+            </ul>
+
+            <p><strong>Historial cuenta corriente ANTES de edición</strong>:</p>
+            <pre><code>Fecha       | Tipo         | Debe    | Haber | Saldo
+2025-12-20  | Pedido #1234 | $10.000 | -     | -$10.000</code></pre>
+
+            <p><strong>Historial cuenta corriente DESPUÉS de edición</strong>:</p>
+            <pre><code>Fecha       | Tipo              | Debe    | Haber   | Saldo
+2025-12-20  | Pedido #1234      | $10.000 | -       | -$10.000
+2025-12-22  | Ajuste pedido #1234| -      | $1.000  | -$9.000
+            (Cliente devolvió 1 unidad)</code></pre>
+
+            <p><strong>Resultado</strong>:</p>
+            <ul>
+                <li>✅ Cargo original intacto (auditoría)</li>
+                <li>✅ Ajuste visible separado (trazabilidad)</li>
+                <li>✅ Saldo final correcto: -$9.000</li>
+            </ul>
+
+            <h3>Validaciones del sistema</h3>
+            <ol>
+                <li>Si el pedido NO tiene cliente → NO genera ajuste en CC</li>
+                <li>Si el total NO cambió → NO genera ajuste (solo actualiza productos/cantidades)</li>
+                <li>Si el cambio es positivo → Genera ajuste de CARGO (+)</li>
+                <li>Si el cambio es negativo → Genera ajuste de CRÉDITO (-)</li>
+            </ol>
+
+            <h3>Caso: Ajuste positivo</h3>
+            <p><strong>Situación</strong>: Cliente compró 2 productos adicionales de último momento</p>
+            <pre><code>Pedido original: $10.000
+Edición: +2 productos
+Nuevo total: $12.000
+Diferencia: +$2.000
+
+Historial:
+2025-12-20  | Pedido #1234       | $10.000 | -      | -$10.000
+2025-12-22  | Ajuste pedido #1234| $2.000  | -      | -$12.000
+            (Cliente agregó 2 productos)</code></pre>
+        </section>
+
+        <section id="integracion-ventas">
+            <h2>9. Integración con Ventas</h2>
+
+            <h3>Relación bidireccional</h3>
+
+            <p><strong>1. Ventas → Cuenta Corriente</strong></p>
+            <pre><code>Módulo VENTAS:
+  Marcar pedido como "Entregado"
+        ↓
+  Registrar método de pago
+        ↓
+  AUTOMÁTICO: Crea movimiento en cuenta corriente
+  - Tipo: Pago
+  - Descripción: Pago pedido #XXX
+  - Monto: Según registrado
+  - Método: Efectivo/Digital/Mixto</code></pre>
+
+            <p><strong>2. Cuenta Corriente → Ventas</strong></p>
+            <pre><code>Cuenta Corriente:
+  Historial movimiento "Cargo pedido #155"
+        ↓
+  Click en [Ver pedido completo]
+        ↓
+  Abre detalle pedido en módulo VENTAS</code></pre>
+
+            <h3>Columna "Pagado" en módulo Ventas</h3>
+            <p><strong>Tabla pedidos (módulo Ventas)</strong>:</p>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Dirección</th>
+                    <th>Total</th>
+                    <th><strong>Pagado</strong></th>
+                    <th>Método</th>
+                    <th>Estado</th>
+                </tr>
+                <tr>
+                    <td>155</td>
+                    <td>20/12</td>
+                    <td>Av. X</td>
+                    <td>$100K</td>
+                    <td><strong>$100K ✓</strong></td>
+                    <td>💵</td>
+                    <td>Entregado</td>
+                </tr>
+                <tr>
+                    <td>148</td>
+                    <td>18/12</td>
+                    <td>Calle Y</td>
+                    <td>$80K</td>
+                    <td><strong>$60K ⚠️</strong></td>
+                    <td>💵💳</td>
+                    <td>Entregado</td>
+                </tr>
+                <tr>
+                    <td>140</td>
+                    <td>15/12</td>
+                    <td>Av. Z</td>
+                    <td>$50K</td>
+                    <td><strong>$0 ⚠️</strong></td>
+                    <td>-</td>
+                    <td>En tránsito</td>
+                </tr>
+            </table>
+
+            <p><strong>Indicadores visuales</strong>:</p>
+            <ul>
+                <li>✓ Verde: Pago completo (pagado = total)</li>
+                <li>⚠️ Naranja: Pago parcial (pagado < total)</li>
+                <li>⚠️ Rojo: Sin registrar (pagado = 0)</li>
+            </ul>
+        </section>
+
+        <section id="casos-de-uso">
+            <h2>10. Casos de Uso</h2>
+
+            <h3>Caso 1: Venta de reparto típica (98% casos)</h3>
+            <p><strong>Escenario</strong>: Cliente compra $80.000, paga completo en efectivo</p>
+            <pre><code>1. Cotizador → Confirma pedido
+   → Cargo: +$80.000 en cuenta corriente
+
+2. Módulo Ventas → Marca "Entregado"
+   → Registra pago: $80.000 efectivo
+   → Pago: -$80.000 en cuenta corriente
+   → Saldo: $0</code></pre>
+
+            <p><strong>Historial</strong>:</p>
+            <pre><code>20/12 | Cargo | Pedido #155 | +$80.000 | - | - | -$80.000
+20/12 | Pago  | Pago #155   | - | -$80.000 | 💵 | $0</code></pre>
+
+            <h3>Caso 2: Cliente genérico "Venta Fábrica"</h3>
+            <p><strong>Escenario</strong>: 8 ventas diarias sin cliente específico</p>
+            <pre><code>Cliente creado: "Venta Fábrica"
+
+Venta 1 (10:00):
+- Cargo: +$30.000
+- Pago: -$30.000 digital
+- Saldo: $0
+
+Venta 2 (11:30):
+- Cargo: +$15.000
+- Pago: -$15.000 efectivo
+- Saldo: $0
+
+... (6 ventas más en el día)</code></pre>
+
+            <p><strong>Historial cuenta corriente "Venta Fábrica"</strong>:</p>
+            <pre><code>Cientos de movimientos diarios
+Siempre saldo $0 (todo se paga al momento)
+Útil para estadísticas efectivo/digital</code></pre>
+
+            <h3>Caso 3: Cliente con cuenta corriente real</h3>
+            <p><strong>Escenario</strong>: Cliente compra seguido, paga cada semana</p>
+            <pre><code>Lunes:
+- Pedido #140: +$50.000 → Saldo: -$50.000
+
+Miércoles:
+- Pedido #145: +$40.000 → Saldo: -$90.000
+
+Viernes:
+- Pedido #150: +$60.000 → Saldo: -$150.000
+- Pago genérico: -$150.000 digital → Saldo: $0</code></pre>
+
+            <p><strong>Historial</strong>:</p>
+            <pre><code>15/12 | Cargo | Pedido #140 | +$50K | - | - | -$50K
+17/12 | Cargo | Pedido #145 | +$40K | - | - | -$90K
+19/12 | Cargo | Pedido #150 | +$60K | - | - | -$150K
+19/12 | Pago  | Pago genérico | - | -$150K | 💳 | $0</code></pre>
+
+            <h3>Caso 4: Pago parcial con complemento posterior</h3>
+            <p><strong>Escenario</strong>: Cliente paga $80K de $100K, resto al día siguiente</p>
+            <pre><code>Día 1 (entrega):
+- Pedido #155: +$100.000
+- Pago parcial: -$80.000 efectivo
+- Saldo: -$20.000
+
+Día 2 (complemento):
+- Pago complemento: -$20.000 digital
+- Saldo: $0</code></pre>
+
+            <p><strong>Historial</strong>:</p>
+            <pre><code>20/12 | Cargo | Pedido #155 | +$100K | - | - | -$100K
+20/12 | Pago | Pago parcial #155 | - | -$80K | 💵 | -$20K
+21/12 | Pago | Complemento #155 | - | -$20K | 💳 | $0</code></pre>
+        </section>
+
+        <section id="flujos-usuario">
+            <h2>11. Flujos de Usuario</h2>
+
+            <h3>Flujo 1: Consultar saldo de un cliente</h3>
+            <ol>
+                <li>Usuario abre "Clientes"</li>
+                <li>Busca cliente por dirección</li>
+                <li>Click en cliente</li>
+                <li>Abre pestaña "Cuenta Corriente"</li>
+                <li>Ve saldo actual en panel superior</li>
+                <li>Ve historial completo de movimientos</li>
+            </ol>
+
+            <h3>Flujo 2: Registrar pago genérico</h3>
+            <ol>
+                <li>Usuario abre cuenta corriente del cliente</li>
+                <li>Click "Registrar pago genérico"</li>
+                <li>Ingresa monto recibido</li>
+                <li>Selecciona método: Efectivo | Digital | Ambos</li>
+                <li>(Opcional) Agrega nota</li>
+                <li>Guarda</li>
+                <li>Sistema:
+                    <ul>
+                        <li>Reduce saldo cliente</li>
+                        <li>Registra en historial</li>
+                        <li>Actualiza totales efectivo/digital</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>Flujo 3: Completar pago pendiente</h3>
+            <ol>
+                <li>Usuario revisa cuenta corriente cliente</li>
+                <li>Ve pedido con saldo pendiente (ej: -$20.000)</li>
+                <li>Click en el cargo del pedido</li>
+                <li>Click "Registrar pago adicional"</li>
+                <li>Confirma monto pendiente o modifica</li>
+                <li>Selecciona método de pago</li>
+                <li>Guarda</li>
+                <li>Saldo del pedido queda en $0</li>
+            </ol>
+
+            <h3>Flujo 4: Exportar historial para contabilidad</h3>
+            <ol>
+                <li>Usuario abre cuenta corriente del cliente</li>
+                <li>(Opcional) Filtra por período</li>
+                <li>Click "Exportar Excel"</li>
+                <li>Descarga archivo con:
+                    <ul>
+                        <li>Fecha | Tipo | Descripción | Cargo | Pago | Método | Saldo</li>
+                    </ul>
+                </li>
+                <li>Envía a contador</li>
+            </ol>
+        </section>
+
+        <section id="nota-importante">
+            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda;">
+                <h3>✅ DOCUMENTO ACTUALIZADO - VERSIÓN MEJORADA</h3>
+                <p><strong>Mejoras incorporadas (27/12/2025):</strong></p>
+                <ul>
+                    <li>✅ <strong>Sección 7 rediseñada</strong>: Sistema híbrido de pagos (Genéricos + Específicos)</li>
+                    <li>✅ <strong>Modal "Registrar pago" actualizado</strong>: Dropdown para seleccionar pedido específico</li>
+                    <li>✅ <strong>Validaciones completas</strong>: Monto no puede exceder pendiente del pedido</li>
+                    <li>✅ <strong>Tabla comparativa</strong>: 7 diferencias entre pago genérico vs específico</li>
+                    <li>✅ <strong>Ejemplos exhaustivos</strong>: Pago completo, parcial adicional, error excede monto</li>
+                    <li>✅ <strong>Caso de uso completo</strong>: 3 días, combinando pagos genéricos y específicos</li>
+                    <li>✅ <strong>Sección 8: Ajustes por Edición de Pedidos</strong>: Mecanismo completo</li>
+                    <li>✅ <strong>Trazabilidad total</strong>: Usuario, timestamp, flag pedido_editado</li>
+                </ul>
+                <p><strong>Estado del documento</strong>: Especificación funcional técnica COMPLETA con sistema de pagos híbrido.</p>
+            </div>
+
+            <div class="note" style="border-left: 4px solid #ffc107; background: #fff3cd;">
+                <h3>⚠️ NOTA IMPORTANTE: PROTOTIPADO REQUERIDO</h3>
+                <p><strong>El módulo CUENTA CORRIENTE es crítico para la operación financiera del sistema.</strong></p>
+                <p>Dado su alto nivel de complejidad e importancia, se requiere:</p>
+                <ul>
+                    <li>✅ <strong>Prototipado de wireframes/mockups</strong> para definir:
+                        <ul>
+                            <li>Diseño visual de la interfaz</li>
+                            <li>Tabla historial de movimientos optimizada</li>
+                            <li>Modales de registro de pagos (genéricos, parciales)</li>
+                            <li>Indicadores visuales (saldos, métodos de pago)</li>
+                            <li>Integración con módulo Ventas</li>
+                        </ul>
+                    </li>
+                    <li>📝 <strong>Estado actual</strong>: Especificación funcional completa en texto</li>
+                    <li>🎨 <strong>Pendiente</strong>:
+                        <ul>
+                            <li>Diseño UI/UX detallado</li>
+                            <li>Wireframes interactivos</li>
+                            <li>Validación con cliente antes de desarrollo</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p><strong>Este documento define QUÉ hace el módulo. Los wireframes definirán CÓMO se ve y CÓMO se
+                        usa.</strong></p>
+            </div>
+        </section>
+
+        <section id="resumen-funcional">
+            <h2>11. Resumen Funcional</h2>
+
+            <h3>Funcionalidades clave:</h3>
+            <ol>
+                <li>✅ <strong>Cuenta corriente para todos los clientes</strong> (obligatorio)</li>
+                <li>✅ <strong>Cargos automáticos</strong> al confirmar pedidos</li>
+                <li>✅ <strong>Pagos totales</strong> (100% del pedido)</li>
+                <li>✅ <strong>Pagos parciales</strong> (< 100%, saldo queda pendiente)</li>
+                <li>✅ <strong>Pagos genéricos</strong> (no asociados a pedido)</li>
+                <li>✅ <strong>Discriminación efectivo/digital/mixto</strong> en todos los pagos</li>
+                <li>✅ <strong>Historial cronológico</strong> completo</li>
+                <li>✅ <strong>Saldo actualizado</strong> en tiempo real</li>
+                <li>✅ <strong>Integración bidireccional</strong> con módulo Ventas</li>
+                <li>✅ <strong>Exportar Excel</strong> para contabilidad</li>
+            </ol>
+
+            <h3>Integración con otros módulos:</h3>
+            <table>
+                <tr>
+                    <th>Módulo</th>
+                    <th>Relación</th>
+                </tr>
+                <tr>
+                    <td><strong>Cotizador</strong></td>
+                    <td>Genera cargos automáticos al confirmar + Genera pagos (si se registró en modo fábrica)</td>
+                </tr>
+                <tr>
+                    <td><strong>Ventas</strong></td>
+                    <td>Registra pagos al marcar "Entregado"</td>
+                </tr>
+                <tr>
+                    <td><strong>Clientes</strong></td>
+                    <td>Cada cliente tiene su cuenta corriente</td>
+                </tr>
+                <tr>
+                    <td><strong>Reportes</strong></td>
+                    <td>Estadísticas efectivo vs digital</td>
+                </tr>
+            </table>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

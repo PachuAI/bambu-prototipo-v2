@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Detalle Día Reparto</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/repartos/repartos-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR COLAPSABLE -->
+        <nav class="sidebar" id="main-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                    </li>
+                    <li title="Repartos">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    <li title="Reportes y Estadísticas">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                    <li title="Configuración">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER COMPACTO -->
+            <header class="header-dia-compact">
+                <div class="header-row-main">
+                    <button class="btn-nav-sm" onclick="cambiarDia(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h2 class="dia-fecha-titulo" id="dia-fecha-titulo">Mar, 24 Dic 2025</h2>
+                    <button class="btn-nav-sm" onclick="cambiarDia(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
+                    <div class="header-stats-inline">
+                        <span class="stat-chip" id="stats-mini-pedidos">16 pedidos</span>
+                        <span class="stat-chip" id="stats-mini-monto">$4.1M</span>
+                        <span class="stat-chip" id="stats-mini-peso">5,218 kg</span>
+                    </div>
+
+                    <div class="header-actions-right">
+                        <button class="btn-exportar-sm" onclick="exportarHojaReparto()">
+                            <i class="fas fa-file-excel"></i> Exportar
+                        </button>
+                        <button class="btn-volver-sm" onclick="location.href='ventas.html'">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </button>
+                    </div>
+                </div>
+
+                <div class="header-row-tabs">
+                    <button class="tab-btn-compact active" onclick="switchTab('vehiculo')" data-tab="vehiculo">
+                        <i class="fas fa-truck"></i> Por Vehículo
+                    </button>
+                    <button class="tab-btn-compact" onclick="switchTab('ciudad')" data-tab="ciudad">
+                        <i class="fas fa-map-marker-alt"></i> Por Ciudad
+                    </button>
+                </div>
+            </header>
+
+            <!-- VISTA POR VEHÍCULO -->
+            <div class="view-container" id="view-vehiculo">
+                <div id="vehiculos-container">
+                    <!-- Vehículos se renderizan aquí con JS -->
+                </div>
+
+                <!-- SECCIÓN SIN ASIGNAR -->
+                <div class="sin-asignar-container" id="sin-asignar-container" style="display: none;">
+                    <div class="vehicle-group">
+                        <div class="vehicle-header">
+                            <div class="vehicle-title">
+                                <i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i>
+                                <span>SIN ASIGNAR</span>
+                                <span class="badge-estado badge-pendiente">PENDIENTE</span>
+                            </div>
+                            <div class="vehicle-stats">
+                                <span><strong id="sin-asignar-count">0</strong> pedidos</span>
+                                <span>|</span>
+                                <span><strong id="sin-asignar-peso">0</strong> kg</span>
+                            </div>
+                        </div>
+
+                        <div class="collapsible-header" onclick="toggleGroup(this)">
+                            <span><i class="far fa-eye"></i> Ver <span id="sin-asignar-count-label">0</span> pedidos</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+
+                        <div class="collapsible-content">
+                            <table class="pedidos-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 8%;">#Pedido</th>
+                                        <th style="width: 25%;">Dirección</th>
+                                        <th style="width: 15%;">Ciudad</th>
+                                        <th style="width: 13%;">Teléfono</th>
+                                        <th style="width: 10%; text-align: right;">Peso</th>
+                                        <th style="width: 12%; text-align: right;">Monto</th>
+                                        <th style="width: 10%; text-align: center;">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-sin-asignar">
+                                    <!-- Pedidos sin asignar se renderizan aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA POR CIUDAD -->
+            <div class="view-container hidden" id="view-ciudad">
+                <div id="ciudades-container">
+                    <!-- Ciudades se renderizan aquí con JS -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL ASIGNAR VEHÍCULO -->
+    <div class="modal-asignar-vehiculo hidden" id="modal-asignar-vehiculo">
+        <div class="modal-content-asignar">
+            <div class="modal-header-asignar">
+                <div>
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 600;">
+                        <i class="fas fa-truck"></i> Asignar Vehículo
+                    </h3>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #6b7280;" id="modal-pedido-numero">
+                        Pedido #PED-000001
+                    </p>
+                </div>
+                <button class="btn-close" onclick="cerrarModalAsignar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body-asignar">
+                <!-- Info del pedido -->
+                <div class="pedido-info-card">
+                    <div class="pedido-info-title">
+                        <i class="fas fa-box"></i> Reparto programado
+                    </div>
+                    <div class="pedido-info-main" id="modal-pedido-cliente">
+                        Pepito - AV ROCA 123
+                    </div>
+                    <div style="font-size: 13px; opacity: 0.9;">
+                        Fecha: <span id="modal-pedido-fecha">30/12/2025</span>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span class="pedido-peso-badge" id="modal-pedido-peso">8KG</span>
+                    </div>
+                </div>
+
+                <!-- Título selector -->
+                <h4 style="font-size: 14px; font-weight: 600; color: #6b7280; margin-bottom: 12px;">
+                    Seleccionar vehículo:
+                </h4>
+
+                <!-- Opciones de vehículos -->
+                <div id="modal-vehiculos-list">
+                    <!-- Las opciones se renderizan dinámicamente con JS -->
+                </div>
+
+                <!-- Nota informativa -->
+                <div style="margin-top: 16px; padding: 12px; background: #1e3a5f; color: white; border-radius: 6px; font-size: 13px;">
+                    <i class="fas fa-info-circle"></i>
+                    Se asignará el vehículo seleccionado al reparto programado para el <span id="modal-info-fecha">30/12/2025</span>.
+                </div>
+            </div>
+
+            <div class="modal-footer-asignar">
+                <button class="btn-secondary" onclick="cerrarModalAsignar()">
+                    Cancelar
+                </button>
+                <button class="btn-primary" onclick="confirmarAsignacion()" id="btn-confirmar-asignacion" disabled>
+                    <i class="fas fa-truck"></i> Asignar Vehículo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="assets/repartos/script.js"></script>
+</body>
+
+</html>

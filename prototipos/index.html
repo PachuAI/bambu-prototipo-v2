@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambu CRM V2 - Índice de Prototipos</title>
+    <link rel="stylesheet" href="shared/common.css">
+    <style>
+        .prototype-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .prototype-card {
+            background: var(--color-bg-secondary);
+            border: var(--border-width) solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .prototype-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--color-primary);
+        }
+
+        .prototype-card h3 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .prototype-card p {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .prototype-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-ready {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-wip {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .header-info {
+            background: var(--color-bg-secondary);
+            border: var(--border-width) solid var(--color-border);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Bambu CRM V2 - Prototipos Interactivos</h1>
+            <p class="text-muted mt-sm">Navegá por los prototipos funcionales del sistema</p>
+        </div>
+
+        <div class="header-info">
+            <h3>📋 Sobre estos prototipos</h3>
+            <p class="text-muted mt-sm">
+                Estos son prototipos HTML interactivos con datos mock para validar funcionalidad y UX antes del desarrollo real en Laravel + Livewire.
+                <br><strong>Nota:</strong> Los datos se reinician al refrescar la página (no hay persistencia real).
+            </p>
+        </div>
+
+        <div class="prototype-grid">
+            <!-- Dashboard -->
+            <div class="prototype-card" onclick="location.href='dashboard.html'">
+                <span class="prototype-status status-ready">✓ Listo</span>
+                <h3>Dashboard</h3>
+                <p>Vista general del sistema con métricas clave y resumen de actividad.</p>
+            </div>
+
+            <!-- Ventas -->
+            <div class="prototype-card" onclick="location.href='ventas.html'">
+                <span class="prototype-status status-ready">✓ Listo</span>
+                <h3>Ventas / Pedidos</h3>
+                <p>Gestión de pedidos, borradores, y control de estado. Incluye navegación a repartos.</p>
+            </div>
+
+            <!-- Cotizador -->
+            <div class="prototype-card" onclick="location.href='cotizador.html'">
+                <span class="prototype-status status-ready">✓ Listo</span>
+                <h3>Cotizador</h3>
+                <p>Creación de cotizaciones con cálculo automático de precios, descuentos y promociones.</p>
+            </div>
+
+            <!-- Clientes -->
+            <div class="prototype-card" onclick="location.href='clientes.html'">
+                <span class="prototype-status status-ready">✓ Listo</span>
+                <h3>Clientes</h3>
+                <p>Listado y gestión de clientes. Incluye vista detalle de cliente individual.</p>
+            </div>
+
+            <!-- Detalle Cliente -->
+            <div class="prototype-card" onclick="location.href='cliente-detalle.html'">
+                <span class="prototype-status status-ready">✓ Listo</span>
+                <h3>Detalle Cliente</h3>
+                <p>Vista completa de un cliente: datos, historial de pedidos, cuenta corriente.</p>
+            </div>
+
+            <!-- Repartos del Día -->
+            <div class="prototype-card" onclick="location.href='repartos-dia.html'">
+                <span class="prototype-status status-ready">✓ Listo</span>
+                <h3>Repartos del Día</h3>
+                <p>Control y organización de repartos diarios por vehículo y ciudad.</p>
+            </div>
+
+            <!-- Productos (Pendiente) -->
+            <div class="prototype-card" style="opacity: 0.5; cursor: not-allowed;">
+                <span class="prototype-status status-wip">⏳ Pendiente</span>
+                <h3>Productos / Stock</h3>
+                <p>Gestión de productos, precios y stock. Por desarrollar.</p>
+            </div>
+
+            <!-- Cuenta Corriente (Pendiente) -->
+            <div class="prototype-card" style="opacity: 0.5; cursor: not-allowed;">
+                <span class="prototype-status status-wip">⏳ Pendiente</span>
+                <h3>Cuenta Corriente</h3>
+                <p>Gestión de cuentas corrientes, pagos y saldos. Por desarrollar.</p>
+            </div>
+        </div>
+
+        <div class="header-info mt-lg">
+            <h3>🔗 Flujo sugerido de navegación</h3>
+            <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li class="mt-sm"><strong>Dashboard</strong> → Vista general</li>
+                <li class="mt-sm"><strong>Cotizador</strong> → Crear cotización para cliente</li>
+                <li class="mt-sm"><strong>Ventas</strong> → Convertir cotización en pedido</li>
+                <li class="mt-sm"><strong>Repartos del Día</strong> → Asignar pedido a vehículo</li>
+                <li class="mt-sm"><strong>Clientes</strong> → Ver detalle y cuenta corriente</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

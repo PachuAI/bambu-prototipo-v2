@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Clientes | Bambu CRM V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Otros Módulos</div>
+            <a href="cotizador-especificacion.html" class="nav-link">Cotizador</a>
+            <a href="ventas.html" class="nav-link">Ventas</a>
+            <a href="cuenta-corriente.html" class="nav-link">Cuenta Corriente</a>
+            <a href="clientes.html" class="nav-link active">Clientes</a>
+            <a href="productos.html" class="nav-link">Productos</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">En esta página</div>
+            <ul id="toc" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Auto-generado desde los h2 -->
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.
+            </div>
+            <h1>PRD: Clientes <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Gestión de la base de clientes</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Versión</strong></td>
+                    <td>2.0</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha</strong></td>
+                    <td>31 Diciembre 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>En especificación</td>
+                </tr>
+            </table>
+        </header>
+
+        <!-- SECCIÓN 1: CONTEXTO Y OBJETIVO -->
+        <section id="contexto">
+            <h2>1. Contexto y Objetivo</h2>
+
+            <h3>1.1 Propósito del módulo</h3>
+            <p>El módulo <strong>Clientes</strong> gestiona la base de datos de todos los clientes de Química Bambu. Centraliza información de contacto, configuración comercial (lista de precios, descuentos) y acceso a cuenta corriente y historial de pedidos.</p>
+
+            <h3>1.2 Problema que resuelve</h3>
+            <ul>
+                <li>Gestión centralizada de datos de clientes</li>
+                <li>Configuración de descuentos fijos por cliente (L2/L3)</li>
+                <li>Acceso rápido a cuenta corriente y saldo</li>
+                <li>Historial completo de pedidos por cliente</li>
+                <li>Búsqueda y filtrado eficiente de clientes</li>
+            </ul>
+
+            <h3>1.3 Usuarios principales</h3>
+            <ul>
+                <li><strong>Administrador:</strong> CRUD completo, configuración de descuentos, acceso total a cuenta corriente</li>
+                <li><strong>Vendedor:</strong> Solo lectura + selección de clientes en cotizador</li>
+            </ul>
+
+            <h3>1.4 Simplificación v1 → v2</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>v1</th>
+                        <th>v2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Identificación principal</td>
+                        <td>CUIT + Razón Social</td>
+                        <td>Dirección (más natural para el negocio)</td>
+                    </tr>
+                    <tr>
+                        <td>Descuento fijo</td>
+                        <td>Campo porcentaje personalizado</td>
+                        <td>Radio buttons: Sin descuento / L2 (6.25%) / L3 (10%)</td>
+                    </tr>
+                    <tr>
+                        <td>Cuenta Corriente</td>
+                        <td>Pestaña dentro de Cliente</td>
+                        <td>Pestaña dentro de Cliente + Módulo independiente (sincronizados)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECCIÓN 2: FUNCIONALIDAD PRINCIPAL -->
+        <section id="funcionalidad">
+            <h2>2. Funcionalidad Principal</h2>
+
+            <h3>2.1 Descripción general</h3>
+            <p>El módulo Clientes permite gestionar toda la información comercial de cada cliente. Cada cliente almacena:</p>
+            <ul>
+                <li>Datos de contacto: Dirección (principal), teléfono, email, ciudad</li>
+                <li>Configuración comercial: Descuento fijo, lista de precios predeterminada</li>
+                <li>Datos financieros: Saldo en cuenta corriente</li>
+                <li>Historial: Pedidos realizados, movimientos de cuenta corriente</li>
+            </ul>
+
+            <p>La dirección es el identificador natural del cliente (no se usa CUIT ni razón social).</p>
+
+            <h3>2.2 Características clave</h3>
+            <ul>
+                <li>✅ CRUD completo de clientes (crear, leer, editar, eliminar)</li>
+                <li>✅ Dirección como identificador principal</li>
+                <li>✅ Descuento fijo configurable (Sin descuento / L2 / L3)</li>
+                <li>✅ Búsqueda por dirección, teléfono o ciudad</li>
+                <li>✅ Filtrado por ciudad, descuento, saldo</li>
+                <li>✅ Vista detallada con 2 pestañas: Información + Cuenta Corriente</li>
+                <li>✅ Historial de pedidos del cliente</li>
+                <li>✅ Acceso directo a cuenta corriente desde tabla</li>
+                <li>✅ Indicador visual de saldo (verde/rojo)</li>
+                <li>✅ Exportación de listado de clientes</li>
+            </ul>
+
+            <h3>2.3 Flujo de trabajo típico</h3>
+            <pre><code>Usuario accede a Clientes
+        ↓
+Visualiza tabla con todos los clientes
+        ↓
+Puede filtrar por: Ciudad | Descuento | Saldo positivo/negativo
+        ↓
+Acciones disponibles:
+├─ [+ Crear cliente]
+├─ Búsqueda por dirección/teléfono/ciudad
+├─ Click en cliente → Vista detallada
+│   ├─ Pestaña "Información": Datos + Editar
+│   └─ Pestaña "Cuenta Corriente": Movimientos + Registrar pago
+├─ Exportar listado Excel
+└─ Eliminar (si no tiene pedidos asociados)</code></pre>
+        </section>
+
+        <!-- SECCIÓN 3: INTERFAZ DE USUARIO -->
+        <section id="interfaz">
+            <h2>3. Interfaz de Usuario</h2>
+
+            <h3>3.1 Layout general</h3>
+            <p><strong>Vista principal:</strong> Tabla de clientes con filtros superiores y botón [+ Crear cliente]</p>
+
+            <p><strong>Estructura:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────────────┐
+│  CLIENTES                                     [+ Crear]       │
+├──────────────────────────────────────────────────────────────┤
+│  Filtros:  [Ciudad ▼]  [Descuento ▼]  [Saldo ▼]  [Búsqueda] │
+├──────────────────────────────────────────────────────────────┤
+│  Dirección              │ Teléfono    │ Ciudad  │ Saldo      │
+│  Calle Falsa 123        │ 299-1234567 │ Neuquén │ -$50.000 🔴│
+│  Av. Argentina 456      │ 299-7654321 │ Plottier│  $0      ✓ │
+│  Ruta 22 Km 5           │ 298-1112233 │ Centenar│ +$12.300 🟢│
+└──────────────────────────────────────────────────────────────┘
+        🔴 = Debe | 🟢 = A favor</code></pre>
+
+            <h3>3.2 Filtros y búsqueda</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filtro</th>
+                        <th>Tipo</th>
+                        <th>Opciones</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Ciudad</strong></td>
+                        <td>Dropdown</td>
+                        <td>Todas / Neuquén / Plottier / Centenario / Otras</td>
+                        <td>Filtra clientes por ciudad</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Descuento</strong></td>
+                        <td>Dropdown</td>
+                        <td>Todos / Sin descuento / L2 (6.25%) / L3 (10%)</td>
+                        <td>Filtra por descuento fijo configurado</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Saldo</strong></td>
+                        <td>Dropdown</td>
+                        <td>Todos / Debe (negativo) / A favor (positivo) / $0</td>
+                        <td>Filtra por estado de cuenta corriente</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Búsqueda</strong></td>
+                        <td>Input text</td>
+                        <td>Busca en dirección, teléfono, ciudad</td>
+                        <td>Filtrado en tiempo real</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.3 Tabla principal</h3>
+            <p><strong>Columnas visibles:</strong></p>
+            <ul>
+                <li><strong>Dirección</strong>: Identificador principal (clickeable → abre detalle)</li>
+                <li><strong>Teléfono</strong>: Número de contacto</li>
+                <li><strong>Email</strong>: Email del cliente (opcional, puede estar vacío)</li>
+                <li><strong>Ciudad</strong>: Ciudad del cliente</li>
+                <li><strong>Descuento</strong>: Badge indicando descuento fijo (Sin desc / L2 / L3)</li>
+                <li><strong>Saldo CC</strong>: Saldo cuenta corriente con indicador visual:
+                    <ul>
+                        <li>🔴 Rojo: Saldo negativo (debe)</li>
+                        <li>🟢 Verde: Saldo positivo (a favor)</li>
+                        <li>✓ Neutro: Saldo $0</li>
+                    </ul>
+                </li>
+                <li><strong>Acciones</strong>: Botones Ver detalle | Editar | Eliminar</li>
+            </ul>
+
+            <p><strong>Ordenamiento:</strong></p>
+            <ul>
+                <li>Default: Por dirección (A-Z)</li>
+                <li>Clickeable en headers: Permite ordenar por cualquier columna</li>
+            </ul>
+
+            <h3>3.4 Modal: Crear/Editar Cliente</h3>
+            <p><strong>Campos del formulario:</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Obligatorio</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombre</strong></td>
+                        <td>Text</td>
+                        <td>❌ No</td>
+                        <td>Nombre del cliente (opcional)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dirección</strong></td>
+                        <td>Text</td>
+                        <td>✅ Sí</td>
+                        <td>Identificador principal (único)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Teléfono</strong></td>
+                        <td>Text</td>
+                        <td>✅ Sí</td>
+                        <td>Número de contacto</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td>Email</td>
+                        <td>❌ No</td>
+                        <td>Email del cliente (opcional)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ciudad</strong></td>
+                        <td>Dropdown</td>
+                        <td>✅ Sí</td>
+                        <td>Neuquén / Plottier / Centenario / Otras</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Descuento fijo</strong></td>
+                        <td>Radio buttons</td>
+                        <td>-</td>
+                        <td>Sin descuento (default) / L2 (6.25%) / L3 (10%)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0.5rem 0;"><strong>⭐ Descuento fijo por cliente (NUEVO):</strong> En lugar de campo de texto personalizado, se usan <strong>radio buttons</strong> para seleccionar descuento estándar (L2/L3). Esto simplifica la gestión al usar solo las listas de precios estándar en lugar de porcentajes custom.</p>
+            </div>
+
+            <p><strong>Ejemplo visual del formulario - Sección descuento:</strong></p>
+            <pre><code>┌────────────────────────────────────┐
+│  Descuento fijo del cliente        │
+├────────────────────────────────────┤
+│  ● Sin descuento                   │
+│  ○ L2 (6.25%)                      │
+│  ○ L3 (10.00%)                     │
+└────────────────────────────────────┘</code></pre>
+
+            <h3>3.5 Vista detallada del cliente</h3>
+            <p><strong>Acceso:</strong> Click en dirección del cliente en la tabla principal</p>
+
+            <p><strong>Estructura con 2 pestañas:</strong></p>
+
+            <h4>3.5.1 Pestaña "Información"</h4>
+            <p><strong>Panel superior muestra:</strong></p>
+            <ul>
+                <li>Dirección (título principal)</li>
+                <li>Teléfono | Email | Ciudad</li>
+                <li>Descuento fijo configurado (badge)</li>
+                <li>Saldo actual en cuenta corriente (grande, con color)</li>
+                <li>Botones: [Editar cliente] [Eliminar cliente]</li>
+            </ul>
+
+            <p><strong>Panel inferior: Historial de pedidos</strong></p>
+            <ul>
+                <li>Tabla con últimos pedidos del cliente</li>
+                <li>Columnas: Fecha | Pedido # | Estado | Total | Método pago</li>
+                <li>Clickeable → Abre detalle del pedido en módulo Ventas</li>
+                <li>Ordenamiento: Cronológico descendente (más recientes primero)</li>
+            </ul>
+
+            <h4>3.5.2 Pestaña "Cuenta Corriente"</h4>
+            <p><strong>Contenido:</strong> Vista completa de la cuenta corriente del cliente</p>
+
+            <p><strong>📄 Especificación detallada:</strong> <a href="cuenta-corriente.html" target="_blank">Ver PRD Cuenta Corriente completo</a></p>
+
+            <p><strong>Panel superior muestra:</strong></p>
+            <ul>
+                <li><strong>Saldo actual:</strong> Indicador visual (rojo si debe, verde si a favor)</li>
+                <li>Total de pedidos realizados</li>
+                <li>Fecha de última compra</li>
+                <li>Botones: [+ Registrar pago genérico] [Exportar Excel]</li>
+            </ul>
+
+            <p><strong>Tabla de movimientos:</strong></p>
+            <ul>
+                <li>Fecha | Tipo (Cargo/Pago) | Descripción | Cargo | Pago | Método | Saldo</li>
+                <li>Ordenamiento cronológico descendente</li>
+                <li>Detalle expandible por movimiento</li>
+            </ul>
+
+            <h3>3.6 Barra de acciones rápidas</h3>
+            <p><strong>Ubicación:</strong> Columna "Acciones" a la derecha de cada fila</p>
+
+            <p><strong>Botones disponibles:</strong></p>
+            <ul>
+                <li><strong>[Ver detalle]</strong>: Abre vista detallada del cliente</li>
+                <li><strong>[Editar]</strong>: Abre modal Editar Cliente</li>
+                <li><strong>[Eliminar]</strong>: Confirmación → Elimina cliente (si no tiene pedidos asociados)</li>
+            </ul>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Restricción de eliminación:</strong> No se puede eliminar un cliente que tenga pedidos asociados (activos o históricos). La cuenta corriente siempre debe tener trazabilidad completa.</p>
+            </div>
+
+            <h3>3.7 Exportar listado de clientes</h3>
+            <p><strong>Ubicación:</strong> Botón [Exportar Excel] en header superior</p>
+
+            <p><strong>Archivo generado:</strong></p>
+            <ul>
+                <li>Nombre: <code>clientes_bambu_YYYY-MM-DD.xlsx</code></li>
+                <li>Columnas: Dirección | Teléfono | Email | Ciudad | Descuento | Saldo CC</li>
+                <li>Ordenado por ciudad y dirección</li>
+                <li>Filtros aplicados en la tabla se respetan en la exportación</li>
+            </ul>
+
+            <p><strong>Uso:</strong> Reporte para control administrativo, envío a contador, o análisis comercial</p>
+        </section>
+
+        <!-- SECCIÓN 4: REGLAS DE NEGOCIO -->
+        <section id="reglas">
+            <h2>4. Reglas de Negocio Específicas</h2>
+
+            <h3>4.1 Validaciones</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Validación</th>
+                        <th>Mensaje de error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Dirección</strong></td>
+                        <td>Único (no puede haber 2 clientes con misma dirección)</td>
+                        <td>"Ya existe un cliente con esta dirección"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Teléfono</strong></td>
+                        <td>Formato numérico (sin validación estricta)</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email</strong></td>
+                        <td>Formato email válido (si se completa)</td>
+                        <td>"Email inválido"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ciudad</strong></td>
+                        <td>Debe ser una ciudad existente en el sistema</td>
+                        <td>"Seleccione una ciudad válida"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.2 Descuento fijo por cliente</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Si tiene descuento L2 o L3, <strong>reemplaza</strong> el descuento de lista en todas sus compras</li>
+                <li>Pensado para empleados, VIPs, revendedores frecuentes</li>
+                <li>No se combina con el descuento de lista seleccionado en cotizador, lo sustituye</li>
+                <li>Al seleccionar el cliente en el cotizador, se aplica automáticamente su descuento fijo (L2 o L3)</li>
+            </ul>
+
+            <p><strong>Ventaja:</strong> Simplifica la gestión al usar solo las listas de precios estándar (L2 y L3) en lugar de porcentajes custom</p>
+
+            <p><strong>Ejemplo:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio L1</th>
+                        <th>Cliente sin descuento</th>
+                        <th>Cliente con L2</th>
+                        <th>Cliente con L3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Detergente</td>
+                        <td>$4.500</td>
+                        <td>$4.500</td>
+                        <td>$4.218 (L2 -6.25%)</td>
+                        <td>$4.050 (L3 -10%)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.3 Cuenta corriente automática</h3>
+            <p><strong>Regla:</strong> Todos los clientes tienen cuenta corriente (obligatorio)</p>
+
+            <p><strong>Características:</strong></p>
+            <ul>
+                <li>Cargos automáticos al confirmar pedidos</li>
+                <li>Pagos manuales (totales, parciales, genéricos)</li>
+                <li>Discriminación efectivo/digital/mixto</li>
+                <li>Historial cronológico completo</li>
+                <li>Saldo actualizado en tiempo real</li>
+            </ul>
+
+            <p><strong>No hay límite de crédito:</strong> El sistema no bloquea ventas por deuda. El control es manual por parte del administrador.</p>
+
+            <h3>4.4 Identificación por dirección</h3>
+            <p><strong>Razón:</strong> En el negocio de Química Bambu, los clientes se identifican naturalmente por su dirección (punto de entrega), no por CUIT o razón social.</p>
+
+            <p><strong>Implicaciones:</strong></p>
+            <ul>
+                <li>La dirección es única y obligatoria</li>
+                <li>El buscador del cotizador busca por dirección</li>
+                <li>Los reportes muestran dirección como identificador principal</li>
+                <li>En repartos, los pedidos se ordenan por dirección/ciudad</li>
+            </ul>
+
+            <h3>4.5 Restricciones de eliminación</h3>
+            <p><strong>No se puede eliminar un cliente si:</strong></p>
+            <ul>
+                <li>Tiene pedidos asociados (activos o históricos)</li>
+                <li>Tiene movimientos en cuenta corriente</li>
+                <li>Tiene saldo diferente de $0</li>
+            </ul>
+
+            <p><strong>Mensaje:</strong> "No se puede eliminar este cliente porque tiene pedidos o movimientos asociados"</p>
+
+            <p><strong>Alternativa:</strong> Marcar como "inactivo" (funcionalidad futura) en lugar de eliminar</p>
+        </section>
+
+        <!-- SECCIÓN 5: INTEGRACIÓN -->
+        <section id="integracion">
+            <h2>5. Integración con Otros Módulos</h2>
+
+            <h3>5.1 Cotizador</h3>
+            <p><strong>Relación:</strong> El cotizador selecciona clientes para asignar pedidos</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Buscador de clientes consume la tabla de clientes</li>
+                <li>Al seleccionar cliente, se carga automáticamente:
+                    <ul>
+                        <li>Dirección de entrega</li>
+                        <li>Ciudad (define disponibilidad de reparto)</li>
+                        <li>Descuento fijo (si tiene L2/L3 configurado)</li>
+                        <li>Saldo actual de cuenta corriente (visible para operador)</li>
+                    </ul>
+                </li>
+                <li>Al confirmar pedido → Cargo automático en cuenta corriente del cliente</li>
+            </ul>
+
+            <h3>5.2 Cuenta Corriente</h3>
+            <p><strong>Relación:</strong> Cuenta Corriente es una vista integrada dentro de Cliente + Módulo independiente</p>
+
+            <p><strong>Sincronización bidireccional:</strong></p>
+            <ul>
+                <li>Desde Cliente → Pestaña "Cuenta Corriente" muestra movimientos del cliente</li>
+                <li>Desde módulo CC independiente → Selecciona cliente y muestra mismos datos</li>
+                <li>Pagos registrados en cualquiera de los dos lados se sincronizan</li>
+                <li>Saldo mostrado en tabla de Clientes proviene de CC</li>
+            </ul>
+
+            <p><strong>📄 Especificación detallada:</strong> <a href="cuenta-corriente.html" target="_blank">Ver PRD Cuenta Corriente completo</a></p>
+
+            <h3>5.3 Ventas</h3>
+            <p><strong>Relación:</strong> Ventas muestra pedidos asociados a clientes</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Desde Clientes → Historial de pedidos clickeable abre pedido en Ventas</li>
+                <li>Desde Ventas → Click en cliente abre detalle de Cliente</li>
+                <li>Filtro por cliente en Ventas consume tabla de clientes</li>
+                <li>Pagos registrados en Ventas actualizan cuenta corriente del cliente</li>
+            </ul>
+
+            <h3>5.4 Configuración</h3>
+            <p><strong>Relación:</strong> Configuración define parámetros que afectan a clientes</p>
+
+            <p><strong>Dependencias:</strong></p>
+            <ul>
+                <li><strong>Listas de precio:</strong> Configuración define % de descuento L2 (6.25%) y L3 (10%)</li>
+                <li><strong>Ciudades:</strong> Dropdown de ciudades se alimenta desde Configuración</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 6: CASOS DE USO -->
+        <section id="casos-uso">
+            <h2>6. Casos de Uso</h2>
+
+            <h3>Caso 1: Crear cliente nuevo</h3>
+            <p><strong>Contexto:</strong> Administrador necesita agregar un cliente nuevo</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Clientes</li>
+                <li>Click en [+ Crear cliente]</li>
+                <li>Completa formulario:
+                    <ul>
+                        <li>Dirección: "Calle Falsa 123"</li>
+                        <li>Teléfono: "299-1234567"</li>
+                        <li>Email: "cliente@ejemplo.com"</li>
+                        <li>Ciudad: "Neuquén"</li>
+                        <li>Descuento fijo: ○ Sin descuento</li>
+                    </ul>
+                </li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Cliente creado correctamente</li>
+                <li>✅ Aparece en tabla de clientes</li>
+                <li>✅ Cuenta corriente creada automáticamente con saldo $0</li>
+                <li>✅ Ya disponible en buscador del cotizador</li>
+            </ul>
+
+            <h3>Caso 2: Configurar descuento fijo para cliente VIP</h3>
+            <p><strong>Contexto:</strong> Cliente frecuente merece descuento permanente</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario busca cliente "Av. Argentina 456"</li>
+                <li>Click en [Editar]</li>
+                <li>Cambia radio button de "Sin descuento" a "○ L2 (6.25%)"</li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Cliente configurado con descuento L2</li>
+                <li>✅ Badge "L2" visible en tabla de clientes</li>
+                <li>✅ Al crear pedidos en cotizador, se aplica automáticamente L2</li>
+                <li>✅ Todos los productos (excepto promocionales) se cobran con 6.25% descuento</li>
+            </ul>
+
+            <h3>Caso 3: Consultar cuenta corriente de un cliente</h3>
+            <p><strong>Contexto:</strong> Operador necesita verificar saldo antes de autorizar pedido</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario busca cliente "Ruta 22 Km 5" en tabla</li>
+                <li>Click en dirección → Vista detallada</li>
+                <li>Click en pestaña "Cuenta Corriente"</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Ve saldo actual: -$50.000 (debe)</li>
+                <li>✅ Ve historial completo de movimientos (cargos y pagos)</li>
+                <li>✅ Ve última compra: 28/12/2024</li>
+                <li>✅ Puede registrar pago genérico si cliente pagó</li>
+                <li>✅ Puede exportar Excel de movimientos</li>
+            </ul>
+
+            <h3>Caso 4: Filtrar clientes con saldo a favor</h3>
+            <p><strong>Contexto:</strong> Administrador quiere ver clientes que pagaron adelantos</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Clientes</li>
+                <li>Aplica filtro: Saldo → "A favor (positivo)"</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Tabla muestra solo clientes con saldo positivo</li>
+                <li>✅ Indicador 🟢 verde en columna Saldo</li>
+                <li>✅ Puede exportar Excel de esta selección</li>
+            </ul>
+
+            <h3>Caso 5: Ver historial de pedidos de un cliente</h3>
+            <p><strong>Contexto:</strong> Vendedor quiere revisar qué compra habitualmente un cliente</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario busca cliente en tabla</li>
+                <li>Click en dirección → Vista detallada</li>
+                <li>Pestaña "Información" muestra historial de pedidos</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Tabla con últimos pedidos del cliente (fecha, #, estado, total)</li>
+                <li>✅ Puede ver productos frecuentes</li>
+                <li>✅ Click en pedido → Abre detalle en módulo Ventas</li>
+            </ul>
+
+            <h3>Caso 6: Exportar listado de clientes por ciudad</h3>
+            <p><strong>Contexto:</strong> Administrador necesita reporte de clientes de Plottier</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Clientes</li>
+                <li>Aplica filtro: Ciudad → "Plottier"</li>
+                <li>Click en [Exportar Excel]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Descarga archivo <code>clientes_bambu_2024-12-31.xlsx</code></li>
+                <li>✅ Contiene solo clientes de Plottier</li>
+                <li>✅ Columnas: Dirección | Teléfono | Email | Ciudad | Descuento | Saldo CC</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 7: FLUJOS DE USUARIO -->
+        <section id="flujos">
+            <h2>7. Flujos de Usuario</h2>
+
+            <h3>7.1 Flujo principal: Gestión de cliente</h3>
+            <pre><code>Usuario accede a módulo Clientes
+        ↓
+Vista tabla completa de clientes
+        ↓
+Aplica filtros (opcional)
+├─ Por ciudad
+├─ Por descuento
+├─ Por saldo
+└─ Búsqueda por dirección/teléfono
+        ↓
+Selecciona acción:
+├─ [+ Crear cliente] → Modal crear → Guardar → Cliente agregado
+├─ Click en dirección → Vista detallada
+│   ├─ Pestaña "Información" → Ver datos + Historial pedidos
+│   └─ Pestaña "Cuenta Corriente" → Ver movimientos + Registrar pago
+├─ [Editar] → Modal editar → Guardar → Cliente actualizado
+├─ [Eliminar] → Confirmación → Cliente eliminado (si no tiene pedidos)
+└─ [Exportar Excel] → Descargar listado filtrado</code></pre>
+
+            <h3>7.2 Flujo: Configurar descuento fijo</h3>
+            <pre><code>Administrador identifica cliente VIP
+        ↓
+Busca cliente en tabla
+        ↓
+Click [Editar]
+        ↓
+Modal muestra formulario con radio buttons:
+├─ ● Sin descuento (default)
+├─ ○ L2 (6.25%)
+└─ ○ L3 (10.00%)
+        ↓
+Selecciona L2 o L3
+        ↓
+Click [Guardar]
+        ↓
+Sistema actualiza:
+- Badge en tabla de clientes
+- Descuento aplicado automáticamente en cotizador
+- Todos los pedidos futuros usan ese descuento
+        ↓
+Notificación: ✅ "Cliente actualizado correctamente"</code></pre>
+
+            <h3>7.3 Flujo: Consultar cuenta corriente</h3>
+            <pre><code>Usuario busca cliente en tabla
+        ↓
+Click en dirección → Vista detallada
+        ↓
+Click en pestaña "Cuenta Corriente"
+        ↓
+Sistema muestra:
+├─ Panel superior:
+│   ├─ Saldo actual (con color: rojo/verde)
+│   ├─ Total pedidos realizados
+│   ├─ Fecha última compra
+│   └─ Botones: [+ Pago genérico] [Exportar Excel]
+└─ Tabla de movimientos cronológicos:
+    ├─ Fecha | Tipo | Descripción
+    ├─ Cargo | Pago | Método | Saldo
+    └─ Expandible para ver detalles
+        ↓
+Usuario puede:
+├─ Registrar pago genérico
+├─ Exportar Excel de movimientos
+└─ Ver historial completo</code></pre>
+
+            <h3>7.4 Flujo: Seleccionar cliente en cotizador</h3>
+            <pre><code>Usuario crea pedido en Cotizador
+        ↓
+Click en campo "Cliente"
+        ↓
+Buscador muestra lista de clientes:
+- Búsqueda por dirección/teléfono
+- Ordenados alfabéticamente
+        ↓
+Usuario selecciona cliente
+        ↓
+Sistema carga automáticamente:
+├─ Dirección de entrega
+├─ Ciudad (define disponibilidad reparto)
+├─ Descuento fijo (si tiene L2/L3)
+└─ Saldo actual CC (visible para operador)
+        ↓
+Usuario continúa agregando productos
+        ↓
+Al confirmar pedido:
+- Se genera cargo en cuenta corriente del cliente
+- Saldo se actualiza automáticamente</code></pre>
+        </section>
+
+        <!-- SECCIÓN 8: NOTAS TÉCNICAS -->
+        <section id="notas-tecnicas">
+            <h2>8. Notas Técnicas para Desarrollo</h2>
+
+            <h3>8.1 Estructura de datos (Mock data)</h3>
+            <pre><code class="language-javascript">// Ejemplo de estructura para prototipos
+const CLIENTE_EJEMPLO = {
+    id: 1,
+    nombre: null, // Opcional
+    direccion: "Calle Falsa 123", // Identificador principal (único)
+    telefono: "299-1234567",
+    email: "cliente@ejemplo.com", // Opcional
+    ciudad: "Neuquén",
+    descuento_fijo: null, // null = sin descuento | "L2" | "L3"
+    saldo_cc: -50000, // Saldo cuenta corriente (negativo = debe)
+    total_pedidos: 15, // Cantidad de pedidos realizados
+    fecha_ultima_compra: "2024-12-28",
+    created_at: "2024-01-10",
+    updated_at: "2024-12-30"
+};
+
+// Ejemplo cliente con descuento L2
+const CLIENTE_VIP = {
+    id: 5,
+    nombre: "Juan Pérez", // Opcional
+    direccion: "Av. Argentina 456",
+    telefono: "299-7654321",
+    email: null,
+    ciudad: "Plottier",
+    descuento_fijo: "L2", // Descuento permanente 6.25%
+    saldo_cc: 0, // Saldo $0
+    total_pedidos: 42,
+    fecha_ultima_compra: "2024-12-29",
+    created_at: "2023-05-20",
+    updated_at: "2024-12-29"
+};
+
+// Ejemplo cliente con saldo a favor
+const CLIENTE_ADELANTO = {
+    id: 8,
+    nombre: null,
+    direccion: "Ruta 22 Km 5",
+    telefono: "298-1112233",
+    email: "contacto@empresa.com",
+    ciudad: "Centenario",
+    descuento_fijo: "L3", // Descuento permanente 10%
+    saldo_cc: 12300, // Saldo positivo (a favor)
+    total_pedidos: 8,
+    fecha_ultima_compra: "2024-12-20",
+    created_at: "2024-08-15",
+    updated_at: "2024-12-27"
+};
+</code></pre>
+
+            <h3>8.2 Consideraciones de implementación</h3>
+            <ul>
+                <li>⚠️ <strong>Dirección única:</strong> Implementar validación en tiempo real (al escribir) para evitar duplicados</li>
+                <li>⚠️ <strong>Saldo CC:</strong> Calculado en tiempo real desde tabla movimientos_cc (no almacenar redundante)</li>
+                <li>⚠️ <strong>Descuento fijo:</strong> Al seleccionar cliente en cotizador, aplicar descuento automáticamente</li>
+                <li>⚠️ <strong>Restricción de eliminación:</strong> Query pre-eliminación: <code>SELECT COUNT(*) FROM pedidos WHERE cliente_id = ?</code></li>
+                <li>💡 <strong>Búsqueda eficiente:</strong> Índice en columna dirección para búsquedas rápidas</li>
+                <li>💡 <strong>Indicador visual de saldo:</strong> Usar clases CSS condicionales (rojo/verde) según signo del saldo</li>
+                <li>💡 <strong>Exportación Excel:</strong> Respetar filtros activos en la tabla al exportar</li>
+            </ul>
+
+            <h3>8.3 Queries SQL útiles</h3>
+            <pre><code class="language-sql">-- Obtener clientes con saldo negativo (deben)
+SELECT c.*, cc.saldo
+FROM clientes c
+LEFT JOIN (
+    SELECT cliente_id, SUM(monto) as saldo
+    FROM movimientos_cuenta_corriente
+    GROUP BY cliente_id
+) cc ON c.id = cc.cliente_id
+WHERE cc.saldo < 0
+ORDER BY cc.saldo ASC;
+
+-- Obtener clientes con descuento L2 o L3
+SELECT * FROM clientes
+WHERE descuento_fijo IN ('L2', 'L3')
+ORDER BY direccion ASC;
+
+-- Obtener clientes de una ciudad específica
+SELECT * FROM clientes
+WHERE ciudad = ?
+ORDER BY direccion ASC;
+
+-- Verificar si cliente tiene pedidos (para permitir eliminación)
+SELECT COUNT(*) as total_pedidos
+FROM pedidos
+WHERE cliente_id = ?;</code></pre>
+
+            <h3>8.4 Estructura de base de datos sugerida</h3>
+            <pre><code class="language-sql">CREATE TABLE clientes (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255), -- Opcional
+    direccion VARCHAR(255) UNIQUE NOT NULL, -- Identificador principal
+    telefono VARCHAR(50) NOT NULL,
+    email VARCHAR(255), -- Opcional
+    ciudad VARCHAR(100) NOT NULL,
+    descuento_fijo VARCHAR(3) CHECK (descuento_fijo IN ('L2', 'L3')), -- null = sin descuento
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índice para búsquedas rápidas
+CREATE INDEX idx_clientes_direccion ON clientes(direccion);
+CREATE INDEX idx_clientes_ciudad ON clientes(ciudad);
+
+-- Trigger para actualizar updated_at
+CREATE TRIGGER update_clientes_updated_at
+    BEFORE UPDATE ON clientes
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();</code></pre>
+
+            <h3>8.5 Cálculo de saldo de cuenta corriente</h3>
+            <pre><code class="language-sql">-- Función para calcular saldo actual de un cliente
+CREATE OR REPLACE FUNCTION calcular_saldo_cliente(p_cliente_id INT)
+RETURNS DECIMAL(10,2) AS $$
+DECLARE
+    v_saldo DECIMAL(10,2);
+BEGIN
+    SELECT COALESCE(SUM(
+        CASE
+            WHEN tipo = 'CARGO' THEN -monto  -- Cargos son negativos (debe)
+            WHEN tipo = 'PAGO' THEN monto     -- Pagos son positivos (a favor)
+        END
+    ), 0)
+    INTO v_saldo
+    FROM movimientos_cuenta_corriente
+    WHERE cliente_id = p_cliente_id;
+
+    RETURN v_saldo;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Uso:
+SELECT direccion, calcular_saldo_cliente(id) as saldo
+FROM clientes
+WHERE id = ?;</code></pre>
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer>
+            <p>Bambu CRM V2 - PRD Técnico | Última actualización: 31 Diciembre 2024</p>
+            <p><a href="index.html">← Volver al PRD General</a></p>
+        </footer>
+    </main>
+
+    <!-- SCRIPT PARA TOC AUTO -->
+    <script>
+        // Auto-generar tabla de contenidos desde los h2
+        const toc = document.getElementById('toc');
+        const h2s = document.querySelectorAll('main h2');
+        h2s.forEach(h2 => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + h2.parentElement.id;
+            a.textContent = h2.textContent;
+            a.className = 'nav-link';
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>

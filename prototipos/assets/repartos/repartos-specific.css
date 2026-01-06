@@ -1,0 +1,777 @@
+/* ========================================
+   BAMBU CRM V2 - REPARTOS DIA (Specific)
+   Migrado a tokens.css - 05 Enero 2026
+   Optimizado para espacio - 05 Enero 2026
+   ======================================== */
+
+/* ===========================
+   HEADER COMPACTO (Nueva versión)
+   =========================== */
+
+.header-dia-compact {
+    background: var(--bg-white);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.header-row-main {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-2xl);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.btn-nav-sm {
+    width: 28px;
+    height: 28px;
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 11px;
+    transition: var(--transition-fast);
+}
+
+.btn-nav-sm:hover {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color-hover);
+}
+
+.dia-fecha-titulo {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+    white-space: nowrap;
+}
+
+.header-stats-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: var(--spacing-lg);
+}
+
+.stat-chip {
+    background: var(--color-primary-dark);
+    color: var(--text-white);
+    padding: 4px 10px;
+    border-radius: var(--border-radius-sm);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+}
+
+.header-actions-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: auto;
+}
+
+.btn-exportar-sm {
+    padding: 6px 12px;
+    background: var(--color-success);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-fast);
+}
+
+.btn-exportar-sm:hover {
+    background: var(--color-success-dark);
+}
+
+.btn-volver-sm {
+    padding: 6px 12px;
+    background: transparent;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-fast);
+}
+
+.btn-volver-sm:hover {
+    background: var(--bg-sidebar);
+    color: var(--text-primary);
+}
+
+/* Tabs compactas */
+.header-row-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-2xl);
+}
+
+.tab-btn-compact {
+    padding: 6px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-btn-compact:hover {
+    background: var(--bg-sidebar);
+}
+
+.tab-btn-compact.active {
+    background: var(--bg-sidebar);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* View container compacto */
+.view-container {
+    padding: var(--spacing-md) var(--spacing-2xl);
+}
+
+/* ===========================
+   VEHICLE GROUP COMPACTO
+   =========================== */
+
+.vehicle-group {
+    margin-bottom: var(--spacing-md);
+    background: var(--bg-white);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+/* Header compacto con capacidad inline */
+.vehicle-header-compact {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--bg-sidebar);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.vehicle-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    min-width: 280px;
+}
+
+.vehicle-info i {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+}
+
+.vehicle-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.vehicle-badges {
+    display: flex;
+    gap: 4px;
+}
+
+/* Badge modelo (clarito, muestra marca/modelo) */
+.badge-modelo {
+    padding: 2px 8px;
+    background: var(--bg-sidebar);
+    color: var(--text-secondary);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Badge reparto en vista ciudad */
+.badge-reparto-ciudad {
+    padding: 2px 8px;
+    background: var(--color-primary-dark);
+    color: var(--text-white);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Capacidad inline */
+.capacity-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+}
+
+.capacity-bar-inline {
+    width: 120px;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.capacity-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--color-primary-dark), var(--color-primary));
+    transition: width 200ms ease;
+}
+
+.capacity-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.capacity-info strong {
+    color: var(--text-primary);
+}
+
+.capacity-pct {
+    padding: 2px 8px;
+    background: var(--color-primary-dark);
+    color: var(--text-white);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+}
+
+.capacity-pct.medium {
+    border: 2px solid var(--color-warning);
+}
+
+.capacity-pct.high {
+    border: 2px solid var(--color-danger);
+}
+
+/* Stats del vehiculo */
+.vehicle-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-left: auto;
+}
+
+.badge-estado-sm {
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+}
+
+.badge-optima {
+    background: var(--color-success-light);
+    color: var(--color-success-dark);
+}
+
+.badge-alta {
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+.badge-casi-lleno {
+    background: var(--color-danger-border);
+    color: var(--color-danger-dark);
+}
+
+.badge-pendiente {
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+.vehicle-stats-mini {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.vehicle-stats-mini strong {
+    color: var(--text-primary);
+}
+
+/* Legacy badge-reparto y badge-estado para compatibilidad */
+.badge-reparto {
+    padding: 2px 8px;
+    background: var(--color-violet);
+    color: var(--text-white);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+}
+
+.badge-estado {
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+}
+
+/* Legacy vehicle-header para Sin Asignar */
+.vehicle-header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--bg-sidebar);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vehicle-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.vehicle-stats {
+    display: flex;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    align-items: center;
+}
+
+/* ===========================
+   COLLAPSIBLE COMPACTO
+   =========================== */
+
+.collapsible-header {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background: var(--bg-sidebar);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: var(--border-width) solid var(--border-color);
+    transition: var(--transition-fast);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+}
+
+.collapsible-header:hover {
+    background: var(--bg-hover);
+}
+
+.collapsible-header i {
+    font-size: 10px;
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 300ms ease;
+}
+
+.collapsible-content.open {
+    max-height: 3000px;
+}
+
+/* ===========================
+   TABLAS COMPACTAS
+   =========================== */
+
+.pedidos-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pedidos-table thead {
+    background: var(--bg-sidebar);
+}
+
+.pedidos-table th {
+    text-align: left;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.pedidos-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    border-bottom: var(--border-width) solid var(--border-color-light);
+    color: var(--text-primary);
+}
+
+.pedidos-table tr:hover {
+    background: var(--bg-sidebar);
+}
+
+/* ===========================
+   BOTONES ESPECIFICOS
+   =========================== */
+
+.btn-asignar-vehiculo {
+    padding: 6px 12px;
+    background: var(--color-violet);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--border-radius-base);
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-asignar-vehiculo:hover {
+    background: var(--color-violet-dark);
+}
+
+.btn-cambiar {
+    padding: 4px 10px;
+    background: transparent;
+    color: var(--color-accent);
+    border: var(--border-width) solid var(--color-accent);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-cambiar:hover {
+    background: rgba(0, 82, 204, 0.1);
+}
+
+.btn-desasignar {
+    padding: 4px 8px;
+    background: transparent;
+    color: var(--color-danger);
+    border: var(--border-width) solid var(--color-danger);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-desasignar:hover {
+    background: rgba(255, 86, 48, 0.1);
+}
+
+/* ===========================
+   MODAL ASIGNAR VEHICULO
+   =========================== */
+
+.modal-asignar-vehiculo {
+    position: fixed;
+    inset: 0;
+    background: var(--modal-backdrop);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+}
+
+.modal-content-asignar {
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header-asignar {
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    border-bottom: var(--border-width) solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.btn-close {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close:hover {
+    background: var(--bg-sidebar);
+    color: var(--text-primary);
+}
+
+.modal-body-asignar {
+    padding: var(--spacing-2xl);
+}
+
+/* Info del pedido (card azul oscuro) */
+.pedido-info-card {
+    background: var(--color-primary-dark);
+    color: var(--text-white);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.pedido-info-title {
+    font-size: var(--font-size-sm);
+    opacity: 0.8;
+    margin-bottom: var(--spacing-xs);
+}
+
+.pedido-info-main {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--spacing-sm);
+}
+
+.pedido-peso-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--color-violet);
+    border-radius: 12px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Lista de vehiculos seleccionables */
+.vehiculo-option {
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+    cursor: pointer;
+    transition: var(--transition-base);
+    position: relative;
+}
+
+.vehiculo-option:hover {
+    border-color: var(--color-accent);
+    background: var(--color-primary-light);
+}
+
+.vehiculo-option.selected {
+    border-color: var(--color-accent);
+    background: var(--bg-selected);
+}
+
+.vehiculo-option.selected::after {
+    content: "SELECCIONADO";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    background: var(--color-accent);
+    color: var(--text-white);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+}
+
+.vehiculo-option-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.vehiculo-option-badge {
+    padding: 4px 10px;
+    background: var(--color-violet);
+    color: var(--text-white);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+}
+
+.vehiculo-capacity-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Preview capacidad */
+.capacity-preview {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-success);
+}
+
+.capacity-preview.warning {
+    color: var(--color-warning);
+}
+
+.capacity-preview.danger {
+    color: var(--color-danger);
+}
+
+/* Barra mini */
+.capacity-bar-mini {
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: var(--spacing-sm);
+}
+
+.capacity-bar-fill-mini {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 300ms;
+}
+
+.modal-footer-asignar {
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    border-top: var(--border-width) solid var(--border-color);
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: flex-end;
+}
+
+/* ===========================
+   CIUDAD GROUP
+   =========================== */
+
+.city-group {
+    margin-bottom: var(--spacing-2xl);
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.city-header {
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    background: var(--bg-sidebar);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.city-header:hover {
+    background: var(--bg-hover);
+}
+
+.city-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.city-count {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-normal);
+    margin-left: var(--spacing-sm);
+}
+
+/* ===========================
+   SIN ASIGNAR
+   =========================== */
+
+.sin-asignar-container {
+    display: none;
+    padding: var(--spacing-lg);
+    background: var(--bg-sidebar);
+    border-radius: var(--border-radius-base);
+    margin-top: var(--spacing-lg);
+}
+
+/* ============================================================================
+   DARK MODE OVERRIDES - REPARTOS DIA
+   ============================================================================ */
+
+/* Badge capacidad - quitar borde rojo, solo fondo */
+[data-theme="dark"] .capacity-pct {
+    border: none !important;
+    background: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .capacity-pct.medium,
+[data-theme="dark"] .capacity-pct.high {
+    border: none !important;
+}
+
+/* Títulos tabla en blanco */
+[data-theme="dark"] .pedidos-table th {
+    color: var(--text-primary) !important;
+}
+
+/* Barra capacidad - más alta y azul uniforme */
+[data-theme="dark"] .capacity-bar-inline {
+    height: 10px !important;
+}
+
+[data-theme="dark"] .capacity-bar-fill {
+    background: var(--color-primary) !important;
+}
+
+/* Badge reparto programado más oscuro */
+[data-theme="dark"] .pedido-info-card {
+    background: var(--color-info) !important;
+}
+
+/* Modal asignar - botón asignar azul */
+[data-theme="dark"] .modal-footer-asignar .btn-primary {
+    background: var(--color-primary) !important;
+    color: white !important;
+}
+
+/* Botones nav */
+[data-theme="dark"] .btn-nav-sm {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .btn-volver-sm {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Tab btn compact */
+[data-theme="dark"] .tab-btn-compact.active {
+    background: var(--bg-hover) !important;
+}
+
+/* Vehiculo option */
+[data-theme="dark"] .vehiculo-option {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .vehiculo-option:hover {
+    border-color: var(--color-accent) !important;
+    background: var(--bg-hover) !important;
+}

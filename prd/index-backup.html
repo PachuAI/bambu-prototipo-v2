@@ -1,0 +1,2023 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Bambu CRM v2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰
+        Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <a href="propuesta-trimestral.html" class="nav-link"
+                style="color: var(--primary-color); font-weight: 500;">★ Ver Propuesta Trimestral</a>
+            <a href="presupuesto-sistema-v2.html" class="nav-link" style="color: #28a745; font-weight: 500;">$ Ver
+                propuesta individual</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">General</div>
+            <a href="#intro" class="nav-link">1. Introducción</a>
+            <a href="#usuarios" class="nav-link">2. Usuarios</a>
+            <a href="#navegacion" class="nav-link">2.2 Navegación del Sistema</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Módulos del Sistema</div>
+            <a href="#dashboard" class="nav-link">3.1 Dashboard</a>
+            <a href="#cotizador" class="nav-link">3.2 Cotizador</a>
+            <a href="#clientes" class="nav-link">3.3 Clientes</a>
+            <a href="#productos" class="nav-link">3.4 Productos y Stock</a>
+            <a href="#repartos" class="nav-link">3.5 Repartos</a>
+            <a href="#estadisticas" class="nav-link">3.6 Reportes y Estadísticas</a>
+            <a href="#backup" class="nav-link">3.7 Respaldos</a>
+            <a href="#ventas" class="nav-link">3.8 Ventas</a>
+            <a href="#configuracion" class="nav-link">3.9 Configuración General</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Lógica</div>
+            <a href="#reglas" class="nav-link">4. Reglas de Negocio</a>
+            <a href="#eliminados" class="nav-link">5. Eliminados</a>
+            <a href="#flujos" class="nav-link">6. Flujos de Usuario</a>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div
+                style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.</div>
+            <h1>Bambu CRM v2 <br><span
+                    style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Documento de Requisitos
+                    del Producto (PRD)</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Cliente</strong></td>
+                    <td>Química Bambu S.R.L.</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha</strong></td>
+                    <td>22 de Diciembre 2025</td>
+                </tr>
+                <tr>
+                    <td><strong>Versión</strong></td>
+                    <td>1.0 - Draft para aprobación</td>
+                </tr>
+                <tr>
+                    <td><strong>Preparado por</strong></td>
+                    <td>ÍTERA</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td><span class="badge">🟡 En revisión</span></td>
+                </tr>
+            </table>
+        </header>
+
+        <section id="intro">
+            <h2>1. Introducción</h2>
+
+            <h3>1.1 Propósito del documento</h3>
+            <p>Este documento describe todas las funcionalidades que tendrá Bambu CRM v2. Una vez aprobado, este PRD
+                será la referencia definitiva para el desarrollo.</p>
+
+            <h3>1.2 Contexto</h3>
+            <p>El sistema Bambu CRM está en producción desde Octubre 2025, sirviendo exitosamente la operación diaria de
+                Química Bambu. Después de 2 meses de uso real, se ha recopilado feedback valioso que permite identificar
+                con claridad qué funciona bien, qué necesita mejorar, y qué nuevas necesidades han surgido.</p>
+
+            <h3>1.3 Análisis de los cambios solicitados</h3>
+            <p>Se han recibido aproximadamente 30 cambios y mejoras. Al analizarlos en conjunto, se identificó que:</p>
+
+            <p><strong>Cambios estructurales (afectan la arquitectura del sistema):</strong></p>
+            <ul>
+                <li>Eliminación del sistema de combos como módulo separado</li>
+                <li>Simplificación de estados de pedido (de 6 a 3)</li>
+                <li>Eliminación del módulo de devoluciones</li>
+                <li>Eliminación del flujo de "asignación de pedidos" en dashboard</li>
+                <li>Cambio completo en el flujo del cotizador (orden de elementos, switch FÁBRICA/REPARTO)</li>
+            </ul>
+
+            <p><strong>Módulos nuevos a desarrollar:</strong></p>
+            <ul>
+                <li>Gestión de cuenta corriente por cliente (cargos, pagos, saldos)</li>
+                <li>Estadísticas de ventas por producto</li>
+                <li>Buscador global en dashboard</li>
+                <li>Módulo de configuración general unificado</li>
+            </ul>
+
+            <p><strong>Mejoras de interfaz:</strong></p>
+            <ul>
+                <li>Redistribución de elementos en múltiples pantallas</li>
+                <li>Optimización de espacio y densidad de información</li>
+                <li>Nuevos campos y controles en formularios existentes</li>
+            </ul>
+
+            <h3>1.4 Decisión técnica: Nueva versión (v2)</h3>
+            <p>Dado que los cambios solicitados afectan componentes estructurales del sistema (flujo de cotización,
+                estados de pedidos, módulos completos a eliminar), <strong>la opción más eficiente es desarrollar una
+                    nueva versión</strong> en lugar de modificar el sistema actual pieza por pieza.</p>
+
+            <p><strong>Esta decisión permite:</strong></p>
+            <ul>
+                <li>Implementar todos los cambios de forma coherente, sin parches sobre parches</li>
+                <li>Eliminar código y funcionalidades que ya no se usan (combos, devoluciones)</li>
+                <li>Optimizar la interfaz desde la base, no como ajustes superficiales</li>
+                <li>Aprovechar el conocimiento adquirido en estos 2 meses de operación real</li>
+                <li>Entregar un sistema más limpio y fácil de mantener a futuro</li>
+            </ul>
+
+            <p><strong>Qué se aprovecha del sistema actual:</strong></p>
+            <ul>
+                <li>Toda la lógica de negocio ya validada en producción</li>
+                <li>La estructura de base de datos (simplificada)</li>
+                <li>Los mecanismos de seguridad, autenticación y respaldos</li>
+                <li>El conocimiento del flujo de trabajo real de los usuarios</li>
+            </ul>
+
+            <h3>1.5 Objetivos del nuevo sistema</h3>
+            <ol>
+                <li>Mejorar la calidad de las estadísticas de ventas diarias</li>
+                <li>Mejorar la calidad de las estadísticas de stock</li>
+                <li>Mejorar la experiencia de cotización para optimizar el tiempo por cliente</li>
+                <li>Reducir errores y eliminar funcionalidades que no se usan</li>
+                <li>Agregar gestión de cuenta corriente por cliente</li>
+                <li>Facilitar la búsqueda rápida de información desde el dashboard</li>
+            </ol>
+        </section>
+
+        <section id="usuarios">
+            <h2>2. Usuarios del Sistema</h2>
+
+            <h3>2.1 Roles</h3>
+
+            <h3>Administrador</h3>
+            <ul>
+                <li>Acceso completo a todas las funcionalidades</li>
+                <li>Acceso a reportes, estadísticas e informes financieros</li>
+                <li>Gestión de configuraciones del sistema</li>
+            </ul>
+
+            <h3>Vendedor</h3>
+            <ul>
+                <li>Cotización y gestión de pedidos</li>
+                <li>Gestión de clientes</li>
+                <li>Gestión de productos y stock</li>
+                <li>Gestión de repartos</li>
+                <li>Registro de pagos en cuenta corriente</li>
+                <li>Tiene acceso a estadísticas de ventas y reportes operativos</li>
+                <li><strong>NO tiene acceso</strong> a reportes financieros avanzados</li>
+            </ul>
+        </section>
+
+        <section id="navegacion">
+            <h2>2.2 Navegación y Estructura del Sistema</h2>
+
+            <h3>Sidebar - Estructura definitiva v2</h3>
+            <p><strong>Orden de elementos en el menú lateral del sistema:</strong></p>
+
+            <div
+                style="background: #f8f9fa; border-left: 4px solid #2196F3; padding: 1.5rem; margin: 1.5rem 0; font-family: monospace;">
+                <p style="margin: 0 0 1rem 0;"><strong>📌 COTIZADOR</strong> (botón superior destacado)</p>
+
+                <p style="margin: 1rem 0 0.5rem 0;"><strong>Menú principal:</strong></p>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li>🏠 <strong>Dashboard</strong></li>
+                    <li>👥 <strong>Clientes</strong></li>
+                    <li>📦 <strong>Productos y Stock</strong></li>
+                    <li>💰 <strong>Ventas</strong> ⭐ NUEVO</li>
+                    <li>🚚 <strong>Repartos</strong></li>
+                    <li>📊 <strong>Reportes y Estadísticas</strong></li>
+                    <li>💾 <strong>Respaldos</strong></li>
+                    <li>⚙️ <strong>Configuración</strong></li>
+                </ul>
+            </div>
+
+            <h3>Comparativa v1 → v2</h3>
+            <table>
+                <tr>
+                    <th>Módulo v1</th>
+                    <th>Acción</th>
+                    <th>Módulo v2</th>
+                </tr>
+                <tr>
+                    <td>Cotizador</td>
+                    <td>✅ Se mantiene</td>
+                    <td>Cotizador (botón superior)</td>
+                </tr>
+                <tr>
+                    <td>Dashboard</td>
+                    <td>✅ Se mantiene</td>
+                    <td>Dashboard</td>
+                </tr>
+                <tr>
+                    <td>Clientes</td>
+                    <td>✅ Se mantiene</td>
+                    <td>Clientes</td>
+                </tr>
+                <tr>
+                    <td>Inventario (dropdown)</td>
+                    <td>🔄 Simplifica</td>
+                    <td>Productos y Stock (sección única)</td>
+                </tr>
+                <tr>
+                    <td>Pedidos</td>
+                    <td>❌ Elimina</td>
+                    <td>→ Fusionado en <strong>Ventas</strong></td>
+                </tr>
+                <tr>
+                    <td>Devoluciones</td>
+                    <td>❌ Elimina</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Repartos (dropdown con 4 subsecciones)</td>
+                    <td>🔄 Simplifica</td>
+                    <td>Repartos (sección única - solo calendario)</td>
+                </tr>
+                <tr>
+                    <td>Repartos → Histórico</td>
+                    <td>❌ Elimina</td>
+                    <td>→ Fusionado en <strong>Ventas</strong></td>
+                </tr>
+                <tr>
+                    <td>-</td>
+                    <td>➕ Nuevo</td>
+                    <td><strong>Ventas</strong> (fusión Pedidos + Histórico)</td>
+                </tr>
+                <tr>
+                    <td>Respaldos</td>
+                    <td>✅ Se mantiene</td>
+                    <td>Respaldos</td>
+                </tr>
+                <tr>
+                    <td>Reportes</td>
+                    <td>🔄 Amplía</td>
+                    <td>Reportes y Estadísticas</td>
+                </tr>
+                <tr>
+                    <td>Administración (Filament)</td>
+                    <td>🔄 Reemplaza</td>
+                    <td>Configuración (frontend nativo)</td>
+                </tr>
+            </table>
+
+            <h3>Detalles por módulo</h3>
+
+            <h4>📌 Cotizador (botón superior)</h4>
+            <ul>
+                <li>Botón destacado siempre visible</li>
+                <li>Acceso rápido desde cualquier sección</li>
+                <li>Al abrir: colapsa el menú lateral para maximizar espacio</li>
+            </ul>
+
+            <h4>🏠 Dashboard</h4>
+            <ul>
+                <li>Pantalla principal al ingresar</li>
+                <li>Buscador global + resumen diario + alertas stock</li>
+            </ul>
+
+            <h4>👥 Clientes</h4>
+            <ul>
+                <li>CRUD completo de clientes</li>
+                <li>Acceso a cuenta corriente por cliente (subsección expandida)</li>
+            </ul>
+
+            <h4>📦 Productos y Stock</h4>
+            <ul>
+                <li>Sección única (sin dropdown)</li>
+                <li>Combos = productos con precio promocional</li>
+                <li>Gestión de stock integrada</li>
+            </ul>
+
+            <h4>💰 Ventas ⭐ NUEVO</h4>
+            <ul>
+                <li><strong>Módulo central post-cotización</strong></li>
+                <li>Fusiona funcionalidades de "Pedidos" e "Histórico" de v1</li>
+                <li>Gestión completa: filtros, edición, métodos de pago, estados</li>
+                <li>Ver todos los pedidos (en tránsito + entregados)</li>
+            </ul>
+
+            <h4>🚚 Repartos</h4>
+            <ul>
+                <li>Sección única (sin dropdown)</li>
+                <li>Solo calendario semanal para organizar entregas</li>
+                <li>Asignación de pedidos a vehículos</li>
+                <li>Gestión de vehículos movida a Configuración</li>
+            </ul>
+
+            <h4>📊 Reportes y Estadísticas</h4>
+            <ul>
+                <li>Reportes financieros (solo admin)</li>
+                <li>Estadísticas de ventas por producto</li>
+                <li>Cuentas por cobrar</li>
+                <li>Ganancias semanales</li>
+            </ul>
+
+            <h4>💾 Respaldos</h4>
+            <ul>
+                <li>Crear respaldo de base de datos</li>
+                <li>Restaurar desde respaldo</li>
+                <li>Logs del sistema</li>
+            </ul>
+
+            <h4>⚙️ Configuración</h4>
+            <ul>
+                <li>Reemplaza panel Filament de v1</li>
+                <li>Frontend nativo (sin Filament)</li>
+                <li>Subsecciones:
+                    <ul>
+                        <li>Vehículos (CRUD: nombre, capacidad)</li>
+                        <li>Ciudades (CRUD)</li>
+                        <li>Listas de descuento (L1, L2, L3: %, umbrales)</li>
+                        <li>Comportamiento de stock (boolean: bloquear/advertir)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Resumen de cambios</h3>
+            <ul>
+                <li><strong>v1:</strong> 10 secciones (algunas con dropdowns = 14 subsecciones totales)</li>
+                <li><strong>v2:</strong> 8 secciones (sin dropdowns = estructura más simple)</li>
+                <li><strong>Simplificación:</strong> -20% secciones, -40% dropdowns</li>
+                <li><strong>Módulo nuevo clave:</strong> Ventas (fusiona Pedidos + Histórico)</li>
+            </ul>
+        </section>
+
+        <section id="modulos">
+            <h2>3. Módulos del Sistema</h2>
+
+            <div id="dashboard" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.1 Dashboard</h3>
+            <p><strong>Descripción:</strong> Pantalla principal al ingresar al sistema.</p>
+            <p><strong>Contenido:</strong></p>
+            <ul>
+                <li>Buscador global rápido <strong>(NUEVO)</strong></li>
+                <li>Resumen de cada día en términos de pedidos y kilos (carrusel de calendario)</li>
+                <li>Pedidos en tránsito del día (para repartos organizados)</li>
+                <li>Alertas de stock bajo (formato compacto optimizado - muestra 8-10 productos simultáneamente)
+                    <strong>(MEJORADO)</strong>
+                </li>
+            </ul>
+
+            <p><strong>Buscador global:</strong></p>
+            <ul>
+                <li>Campo de búsqueda prominente en la parte superior</li>
+                <li>Busca simultáneamente en: clientes (por nombre o dirección), productos (por nombre), pedidos (por
+                    número o dirección)</li>
+                <li>Muestra resultados agrupados por tipo con ícono identificador</li>
+                <li>Al hacer clic en un resultado, navega directamente al detalle correspondiente</li>
+                <li>Funciona con atajo de teclado (a designar atajo libre)</li>
+            </ul>
+
+            <p><strong>Se elimina de versión actual:</strong></p>
+            <ul>
+                <li>Zona que avisa “X pedidos pendientes de asignar día”.</li>
+            </ul>
+
+            <div id="cotizador" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.2 Cotizador (Nueva Cotización)</h3>
+            <p><strong>Descripción:</strong> Módulo central del sistema para crear pedidos. Rediseñado completamente
+                para optimizar el tiempo de cotización.</p>
+
+            <h3>3.2.1 Comportamiento general</h3>
+            <p><strong>Apertura:</strong></p>
+            <ul>
+                <li>Se busca aprovechar toda la pantalla asi que el menu izquierdo se colapsa</li>
+                <li>Rediseñado en terminos de espacios y tamaños de letra para aprovechar mejor el espacio</li>
+                <li>Al terminar una cotización, vuelve automáticamente al modo "nueva cotización" listo para el
+                    siguiente pedido (flujo continuo)</li>
+                <li>El título "Cotizador Bambu" se elimina para liberar espacio</li>
+            </ul>
+
+            <p><strong>Si el usuario cierra sin confirmar:</strong></p>
+            <ul>
+                <li>Se muestra advertencia: "¿Estás seguro? Se perderán los cambios no guardados"</li>
+                <li>Si confirma el cierre, se pierde todo (no hay guardado automático de borradores)</li>
+            </ul>
+
+            <p><strong>Orden de elementos en pantalla (de arriba hacia abajo):</strong></p>
+            <ol>
+                <li>Switch FÁBRICA / REPARTO</li>
+                <li>Buscador de productos</li>
+                <li>Selector de cliente (opcional)</li>
+                <li>Lista de productos agregados al pedido</li>
+                <li>Configuración de descuentos y ajustes</li>
+                <li>Totales y botón confirmar</li>
+            </ol>
+
+            <h3>3.2.2 Switch FÁBRICA / REPARTO</h3>
+            <p>El usuario elige uno de los dos modos. <strong>Cambiar el switch no reinicia los productos
+                    cargados</strong>, solo determina el estado final del pedido.</p>
+
+            <p><strong>Modo FÁBRICA:</strong></p>
+            <ul>
+                <li>Para ventas directas donde el cliente retira en el momento</li>
+                <li>Al confirmar el pedido, pasa directamente al estado "entregado"</li>
+                <li>El stock se descuenta inmediatamente</li>
+                <li>La fecha del pedido es la fecha actual</li>
+            </ul>
+
+            <p><strong>Modo REPARTO:</strong></p>
+            <ul>
+                <li>Para pedidos que serán entregados posteriormente</li>
+                <li>Al confirmar, se abre un calendario para elegir la fecha de entrega</li>
+                <li><strong>El calendario solo permite lunes a viernes</strong></li>
+                <li>Si no se elige fecha, se asigna la fecha actual</li>
+                <li>El pedido pasa al estado "en tránsito" con la fecha asignada</li>
+                <li>El stock se descuenta inmediatamente</li>
+            </ul>
+
+            <h3>3.2.3 Selector de productos</h3>
+            <p><strong>Buscador:</strong></p>
+            <ul>
+                <li>Campo de búsqueda con predicción</li>
+                <li>Los resultados respetan el campo "orden" de los productos (los más importantes aparecen primero,
+                    igual que en el resumen)</li>
+                <li>Toda la información aparece después del nombre en horizontal,
+                    en 1 sola linea para aprovechar el espacio</li>
+                <li>El espacio que ocupa cada producto en la lista es más compacto para ver más resultados</li>
+            </ul>
+
+            <p><strong>Agregar productos:</strong></p>
+            <ul>
+                <li>Botones +/- en disposición horizontal (menos a la izquierda, más a la derecha)</li>
+                <li>Si un producto ya está en el pedido y se vuelve a agregar, la cantidad se suma automáticamente (no
+                    se crea una línea duplicada o te dice que ya está agregado)</li>
+                <li>Los productos marcados como "no disponible" no aparecen en el buscador</li>
+            </ul>
+
+            <p><strong>Comportamiento con stock insuficiente:</strong></p>
+            <ul>
+                <li>Configurable desde el panel de administración (boolean)</li>
+                <li><strong>Opción 1 - Flexible (recomendada):</strong> Muestra advertencia visual pero permite agregar
+                    el producto</li>
+                <li><strong>Opción 2 - Estricto:</strong> Bloquea el agregado de productos sin stock</li>
+                <li>Los productos BAMBU (proveedor propio) siempre se pueden agregar aunque tengan stock negativo</li>
+            </ul>
+
+            <p><strong>Lista de productos agregados:</strong></p>
+            <ul>
+                <li>Se muestra en la parte superior del cotizador</li>
+                <li>Cada línea muestra: nombre del producto, cantidad, precio unitario, subtotal</li>
+                <li>Se puede modificar la cantidad o eliminar el producto</li>
+            </ul>
+
+            <h3>3.2.4 Selector de cliente</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Es opcional. Si no se selecciona cliente, el pedido se guarda como "Cliente sin nombre"</li>
+                <li>Se puede asignar un cliente después, editando el pedido</li>
+                <li>El buscador permite desplazarse correctamente entre todos los resultados con las flechas, siempre
+                    centrando la seleccion actual en la lista.</li>
+                <li>El espacio que ocupa cada cliente en la lista es más compacto para ver más resultados</li>
+            </ul>
+
+            <h3>3.2.5 Configuración de precios y descuentos</h3>
+            <p><strong>Lista de precios:</strong></p>
+            <ul>
+                <li>Si no se específica, hay un umbral de descuento automático para lista L1, L2 y L3.</li>
+                <li>Se puede elegir la lista (L1, L2, L3) manualmente al momento de cotizar, si así se desea</li>
+                <li>La lista se puede cambiar en cualquier momento, incluso después de confirmar el pedido</li>
+            </ul>
+
+            <p><strong>Descuento de cliente:</strong></p>
+            <ul>
+                <li>Si el cliente tiene un descuento fijo asignado en su perfil, <strong>reemplaza</strong> el descuento
+                    de lista</li>
+                <li>Está pensado para empleados, VIPs, clientes frecuentes o asociados de la empresa</li>
+                <li>Se puede configurar con cualquier porcentaje personalizado dentro del perfil del cliente</li>
+                <li>Se aplica automáticamente al seleccionar el cliente</li>
+            </ul>
+
+            <p><strong>Descuento porcentual personalizado:</strong></p>
+            <ul>
+                <li>Campo input numérico para ingresar un % de descuento manual</li>
+                <li>Se aplica sobre el subtotal antes de ajustes</li>
+                <li><strong>Reemplaza</strong> el descuento de lista o descuento fijo del cliente (no se acumulan)</li>
+                <li>En el resumen se muestra: "Descuento personalizado: X%"</li>
+                <li><strong>Jerarquía de descuentos:</strong> descuento manual > descuento fijo cliente > descuento por
+                    lista</li>
+                <li>Se puede aplicar en cotización nueva o al editar pedido existente</li>
+            </ul>
+
+            <p><strong>Ajuste de monto (+/-):</strong></p>
+            <ul>
+                <li>Campo para sumar o restar un monto fijo al total</li>
+                <li>Usos: cobrar deudas pendientes, devolver dinero a favor, redondeos, etc.</li>
+                <li><strong>El ajuste negativo no puede superar el total de la compra</strong> (el total nunca queda
+                    negativo)</li>
+                <li>Se muestra en el resumen como "Ajuste +X.XXX"o"Ajuste−X.XXX"</li>
+            </ul>
+
+            <p><strong>Nota del pedido:</strong></p>
+            <ul>
+                <li>Campo de texto opcional para agregar observaciones</li>
+                <li>Se puede editar o eliminar en cualquier estado del pedido</li>
+            </ul>
+
+            <h3>3.2.6 Totales y confirmación</h3>
+            <p><strong>Visualización:</strong></p>
+            <ul>
+                <li>Subtotal (suma de productos)</li>
+                <li>Descuento aplicado: Se muestra <strong>solo el porcentaje</strong> (ej: "Descuento: 6%") <strong>sin mencionar</strong> L1/L2/L3 para evitar confusiones</li>
+                <li>Jerarquía de descuentos: descuento personalizado manual > descuento de cliente > descuento por lista
+                    (es decir: no son acumulativos, si hay varios activos, se respetan en el orden mencionado de recién)
+                </li>
+                <li>Ajuste +/- (si aplica)</li>
+                <li><strong>Total final</strong></li>
+            </ul>
+
+            <p><strong>Al confirmar:</strong></p>
+            <ul>
+                <li>Se descuenta el stock de todos los productos</li>
+                <li>Si es FÁBRICA: estado = "entregado"</li>
+                <li>Si es REPARTO: estado = "en tránsito" + fecha asignada</li>
+                <li>Se abre calendario en modal para asignar fecha de reparto y que ya quede en ese dia a la espera de
+                    ser asignado a un vehículo</li>
+                <li>Se genera el número de pedido</li>
+                <li>Si se seleccionó cliente, y tiene cuenta corriente, se registra el cargo</li>
+                <li>Al confirmar la cotización, el sistema vuelve a modo "nueva cotización" con todos los campos limpios
+                    para comenzar otra vez</li>
+            </ul>
+
+            <div id="productos" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.4 Productos</h3>
+            <p><strong>Descripción:</strong> Gestión del catálogo de productos.</p>
+
+            <h3>3.4.1 Información del producto</h3>
+            <p>Cada producto tiene:</p>
+            <ul>
+                <li>Nombre</li>
+                <li>Precio base (lista 1)</li>
+                <li>Stock actual</li>
+                <li>Stock mínimo (para alertas)</li>
+                <li>Proveedor</li>
+                <li>Orden (determina prioridad en buscadores - se gestiona con drag & drop)</li>
+                <li>Estado: Disponible / No disponible</li>
+                <li>Promoción: Sí/No + Precio promocional</li>
+            </ul>
+
+            <div class="note"
+                style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0.5rem 0;"><strong>Campo SKU eliminado</strong> ⭐ NUEVO (Dic 2025): El campo SKU ha sido eliminado del sistema. Los productos se identifican únicamente por su nombre.</p>
+                <p style="margin: 0.5rem 0;"><strong>Orden de productos con drag & drop</strong> ⭐ NUEVO (Dic 2025):
+                    <ul style="margin: 0.5rem 0;">
+                        <li>Los productos nuevos se agregan automáticamente al final de la lista</li>
+                        <li>Se puede reordenar arrastrando y soltando productos</li>
+                        <li>El número de orden se ajusta automáticamente al reordenar</li>
+                        <li>Define el orden de aparición en el buscador del cotizador (productos prioritarios aparecen primero)</li>
+                        <li>Interfaz visual intuitiva sin necesidad de ingresar números manualmente</li>
+                    </ul>
+                </p>
+            </div>
+
+            <h3>3.4.2 Producto no disponible</h3>
+            <ul>
+                <li>Switch en la edición del producto</li>
+                <li>Los productos marcados como "no disponible" NO aparecen en el cotizador</li>
+                <li>Permanecen en el sistema para consulta, pero no se pueden vender</li>
+                <li>Los pedidos existentes que contengan este producto no se afectan</li>
+                <li>Es reversible (se puede volver a marcar como disponible)</li>
+            </ul>
+
+            <h3>3.4.3 Producto en promoción</h3>
+            <ul>
+                <li>Switch en la edición del producto</li>
+                <li>Al activar, se habilita un campo para ingresar el precio promocional</li>
+                <li>El precio promocional es fijo, <strong>independiente de la lista seleccionada</strong></li>
+                <li>Ejemplo: Un producto que normalmente vale $4.500 (L1), $4.300 (L2), $4.100 (L3), si está en
+                    promoción a $4.100, siempre se cobra $4.100 sin importar la lista</li>
+                <li>Esto se traduce como que los productos en promoción NO entran para el umbral de descuento automático
+                    (al igual que los combos)</li>
+            </ul>
+
+            <h3>3.4.4 Exportar inventario</h3>
+            <ul>
+                <li>Botón para descargar Excel con nombre de producto y stock</li>
+                <li>Selector de proveedor múltiple (filtrar por uno o varios proveedores)</li>
+                <li>Genera un reporte rápido de stock</li>
+            </ul>
+
+            <h3>3.4.5 Persistencia de filtros y búsqueda</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Al aplicar filtros o búsqueda en el módulo productos, estos se mantienen activos</li>
+                <li>Si el usuario sale del módulo y vuelve, los filtros siguen aplicados</li>
+                <li>Botón "Limpiar filtros" para resetear</li>
+                <li>Útil para trabajar con subconjuntos de productos (ej: solo productos de un proveedor)</li>
+            </ul>
+
+            <p><strong>Barra de acciones por producto:</strong></p>
+            <ul>
+                <li>Botones: Editar, Ajustar Stock, Eliminar</li>
+                <li>Posición: horizontal a la derecha de cada producto en el listado</li>
+                <li>Acceso rápido sin entrar al detalle</li>
+            </ul>
+
+            <h3>3.4.6 Gestión de productos y combos</h3>
+            <p>El sistema maneja un único tipo de producto con diferentes configuraciones:</p>
+
+            <p><strong>Producto estándar</strong></p>
+            <p>Todos los productos tienen los mismos campos disponibles:</p>
+            <ul>
+                <li>Nombre</li>
+                <li>Proveedor</li>
+                <li>Precio base (lista 1)</li>
+                <li>Stock actual</li>
+                <li>Stock mínimo</li>
+                <li>Peso en kg</li>
+                <li>Orden (se gestiona con drag & drop, número se ajusta automáticamente)</li>
+                <li>Disponible (sí/no)</li>
+                <li>En promoción (sí/no) + precio promocional</li>
+            </ul>
+
+            <p><strong>Para crear combos o packs:</strong></p>
+            <p>No existe una categoría separada de "Combo". Los combos se crean como productos normales activando el
+                campo <strong>"En promoción"</strong> con un precio fijo. Esto permite que el combo tenga siempre el
+                mismo precio independientemente de la lista seleccionada.</p>
+
+            <p><strong>Ejemplo de combo:</strong></p>
+            <ul>
+                <li>Producto: "Pack Limpieza Completo"</li>
+                <li>En promoción: ✓ Activado</li>
+                <li>Precio promocional: $15.000 (precio fijo)</li>
+                <li>Proveedor: Puede tener o no (según preferencia)</li>
+                <li>Stock: Se controla manualmente si se desea</li>
+            </ul>
+
+            <div class="note"
+                style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>Simplificación:</strong> Esta aproximación elimina la complejidad de tener
+                    dos tipos de productos diferentes. Todo es un "producto" con la opción de precio promocional para
+                    combos. El precio promocional actúa de forma independiente a las listas de descuento, permitiendo
+                    ofrecer combos a precio fijo.</p>
+            </div>
+
+            <div id="clientes" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.5 Clientes</h3>
+            <p><strong>Descripción:</strong> Gestión de la base de clientes.</p>
+
+            <h3>3.5.1 Información del cliente</h3>
+            <p>Cada cliente tiene:</p>
+            <ul>
+                <li>Nombre (opcional)</li>
+                <li>Dirección (obligatorio, dato principal para identificación)</li>
+                <li>Teléfono (obligatorio)</li>
+                <li>Email (opcional)</li>
+                <li>Ciudad</li>
+                <li>Descuento fijo (opcional, reemplaza descuento de lista)</li>
+                <li>Saldo en cuenta corriente</li>
+            </ul>
+
+            <h3>3.5.2 Descuento fijo por cliente</h3> ⭐ ACTUALIZADO (Dic 2025)
+            <p><strong>Interfaz de selección</strong>:</p>
+            <ul>
+                <li>En lugar de campo de texto personalizado, se usan <strong>botones de opción</strong> (radio buttons)</li>
+                <li>Opciones disponibles:
+                    <ul>
+                        <li>○ Sin descuento (default)</li>
+                        <li>○ L2 (6.25%)</li>
+                        <li>○ L3 (10.00%)</li>
+                    </ul>
+                </li>
+                <li>Selección exclusiva: solo una opción activa a la vez</li>
+            </ul>
+
+            <p><strong>Ejemplo visual del formulario</strong>:</p>
+            <pre><code>┌────────────────────────────────────┐
+│  Descuento fijo del cliente        │
+├────────────────────────────────────┤
+│  ● Sin descuento                   │
+│  ○ L2 (6.25%)                      │
+│  ○ L3 (10.00%)                     │
+└────────────────────────────────────┘</code></pre>
+
+            <p><strong>Comportamiento</strong>:</p>
+            <ul>
+                <li>Si tiene descuento L2 o L3, <strong>reemplaza</strong> el descuento de lista en todas sus compras</li>
+                <li>Pensado para empleados, VIPs, revendedores frecuentes</li>
+                <li>No se combina con el descuento de lista seleccionado en cotizador, lo sustituye</li>
+                <li>Al seleccionar el cliente en el cotizador, se aplica automáticamente su descuento fijo (L2 o L3)</li>
+            </ul>
+
+            <p><strong>Ventaja</strong>: Simplifica la gestión al usar solo las listas de precios estándar (L2 y L3) en lugar de porcentajes custom.</p>
+
+            <h3>3.5.3 Cuenta Corriente</h3>
+            <p><strong>Descripción:</strong> El módulo Cuenta Corriente es el centro financiero de cada cliente, donde
+                se registran todos los movimientos comerciales.</p>
+
+            <p><strong>📄 Especificación detallada:</strong> <a href="cuenta-corriente.html" target="_blank">Ver página
+                    especializada Cuenta Corriente</a></p>
+
+            <p><strong>Características clave:</strong></p>
+            <ul>
+                <li>✅ Todos los clientes tienen cuenta corriente (obligatorio)</li>
+                <li>✅ Cargos automáticos al confirmar pedidos</li>
+                <li>✅ Pagos manuales (totales, parciales, genéricos)</li>
+                <li>✅ Discriminación efectivo/digital/mixto</li>
+                <li>✅ Historial cronológico completo</li>
+                <li>✅ Saldo actualizado en tiempo real</li>
+            </ul>
+
+            <h4>3.5.3.1 Vista y resumen</h4>
+            <p><strong>Ubicación:</strong> Clientes → Seleccionar cliente → Pestaña "Cuenta Corriente"</p>
+
+            <p><strong>Panel superior muestra:</strong></p>
+            <ul>
+                <li><strong>Saldo actual:</strong> Indicador visual (rojo si debe, verde si a favor)</li>
+                <li>Total de pedidos realizados</li>
+                <li>Fecha de última compra</li>
+                <li>Botones: [+ Registrar pago genérico] [Exportar Excel]</li>
+            </ul>
+
+            <h4>3.5.3.2 Historial de movimientos</h4>
+            <p><strong>Tabla cronológica muestra:</strong></p>
+            <ul>
+                <li><strong>Fecha:</strong> Fecha del movimiento</li>
+                <li><strong>Tipo:</strong> Cargo o Pago</li>
+                <li><strong>Descripción:</strong> Pedido #XXX o "Pago genérico"</li>
+                <li><strong>Cargo:</strong> Monto agregado a la deuda (si aplica)</li>
+                <li><strong>Pago:</strong> Monto pagado (si aplica)</li>
+                <li><strong>Método:</strong> 💵 Efectivo | 💳 Digital | 💵💳 Mixto</li>
+                <li><strong>Saldo:</strong> Saldo resultante después del movimiento</li>
+            </ul>
+
+            <p><strong>Ordenamiento:</strong> Cronológico descendente (más recientes primero)</p>
+
+            <p><strong>Detalle expandible:</strong> Click en movimiento → Muestra detalles completos (productos, notas,
+                usuario que registró)</p>
+
+            <h4>3.5.3.3 Movimientos automáticos</h4>
+            <p><strong>Cargo al confirmar pedido:</strong></p>
+            <ul>
+                <li>Al confirmar pedido en cotizador → Si tiene cliente seleccionado → Genera cargo automático</li>
+                <li>Tipo: Cargo</li>
+                <li>Descripción: "Pedido #XXX"</li>
+                <li>Monto: Total del pedido</li>
+                <li>Efecto: Aumenta deuda del cliente</li>
+            </ul>
+
+            <p><strong>Ejemplo:</strong> Cliente con saldo -$50.000 compra pedido de $80.000 → Nuevo saldo: -$130.000
+            </p>
+
+            <h4>3.5.3.4 Pagos manuales ⭐ ACTUALIZADO (Dic 2025)</h4>
+            <p><strong>Sistema híbrido de registro:</strong> Los pagos se pueden registrar desde <strong>dos lugares</strong>:</p>
+
+            <p><strong>Opción 1 - Desde módulo VENTAS:</strong></p>
+            <ul>
+                <li>Al marcar pedido como "Entregado" → <strong>OBLIGATORIO</strong> registrar método de pago</li>
+                <li>Modal muestra:
+                    <ul>
+                        <li>Total pedido</li>
+                        <li>Checkboxes: ☐ Efectivo | ☐ Digital</li>
+                        <li>Si selecciona ambos: Campos para dividir montos (validación: suma = total)</li>
+                        <li>Nota opcional</li>
+                    </ul>
+                </li>
+                <li><strong>Efecto</strong>: Se registra pago en cuenta corriente + Método queda asociado al pedido</li>
+                <li><strong>Caso de uso</strong>: Operadores controlando repartos desde tabla de ventas pueden registrar pagos masivamente sin ir cliente por cliente</li>
+            </ul>
+
+            <p><strong>Opción 2 - Desde módulo CUENTA CORRIENTE:</strong></p>
+            <ul>
+                <li>Desde cuenta corriente del cliente → [+ Registrar pago]</li>
+                <li>Modal permite elegir:
+                    <ul>
+                        <li><strong>Pago genérico</strong>: Reduce saldo sin asociar a pedido</li>
+                        <li><strong>Pago a pedido específico</strong>: Actualiza pedido + reduce saldo</li>
+                    </ul>
+                </li>
+                <li><strong>Caso de uso</strong>: Clientes que pagan en fábrica o casos puntuales que requieren ajustes manuales</li>
+            </ul>
+
+            <p><strong>🔄 Sincronización automática:</strong></p>
+            <ul>
+                <li>✅ Si se registra pago desde VENTAS → Se crea automáticamente en cuenta corriente</li>
+                <li>✅ Si se registra pago desde CC a pedido específico → Se actualiza columna "Pagado" en VENTAS</li>
+                <li>✅ El sistema evita duplicados verificando si el pedido ya tiene pago registrado</li>
+                <li>✅ Trazabilidad completa: Cada pago registra usuario, timestamp y origen (VENTAS o CC)</li>
+            </ul>
+
+            <h4>3.5.3.5 Pagos parciales (NUEVO)</h4>
+            <p><strong>Descripción:</strong> Casos donde el cliente NO paga el 100% del pedido al momento de la entrega.
+            </p>
+
+            <p><strong>Casos de uso:</strong></p>
+            <ul>
+                <li>Cliente no tiene efectivo suficiente</li>
+                <li>Cliente acuerda pagar resto después</li>
+                <li>Error en el pedido (se devuelve producto)</li>
+            </ul>
+
+            <p><strong>Flujo:</strong></p>
+            <ul>
+                <li>Modal pago permite ingresar "Monto recibido" < Total pedido</li>
+                <li>Sistema muestra: ⚠️ Pago parcial detectado - Saldo pendiente: $XX.XXX</li>
+                <li>Pedido: Estado "Entregado" (igual que pago total)</li>
+                <li>Cuenta corriente: Saldo pendiente queda registrado</li>
+            </ul>
+
+            <p><strong>Completar pago pendiente:</strong></p>
+            <ul>
+                <li>Desde cuenta corriente → Busca pedido con saldo pendiente</li>
+                <li>[+ Registrar pago adicional]</li>
+                <li>Ingresa monto restante + método de pago</li>
+                <li>Saldo del pedido queda en $0</li>
+            </ul>
+
+            <h4>3.5.3.6 Pagos genéricos (NUEVO)</h4>
+            <p><strong>Descripción:</strong> Pagos del cliente que NO corresponden a un pedido específico.</p>
+
+            <p><strong>Casos de uso:</strong></p>
+            <ul>
+                <li>Cliente transfiere adelanto general</li>
+                <li>Cliente paga saldo acumulado sin especificar pedidos</li>
+                <li>Pago que reduce saldo total sin asociación a pedido concreto</li>
+            </ul>
+
+            <p><strong>Flujo:</strong></p>
+            <ul>
+                <li>Cuenta corriente → Panel superior → [+ Registrar pago genérico]</li>
+                <li>Modal muestra:
+                    <ul>
+                        <li>Saldo actual del cliente</li>
+                        <li>Campo: Monto recibido</li>
+                        <li>Método: ☐ Efectivo | ☐ Digital | ☐ Ambos</li>
+                        <li>Fecha</li>
+                        <li>Nota opcional</li>
+                        <li>Vista previa: "Saldo después del pago: $XX.XXX"</li>
+                    </ul>
+                </li>
+                <li>Efecto: NO se asocia a pedido - Reduce saldo general - Queda registrado en historial</li>
+            </ul>
+
+            <p><strong>Diferencia pago genérico vs pago a pedido:</strong></p>
+            <table>
+                <tr>
+                    <th>Característica</th>
+                    <th>Pago a pedido</th>
+                    <th>Pago genérico</th>
+                </tr>
+                <tr>
+                    <td>Asociación</td>
+                    <td>Pedido específico (#155)</td>
+                    <td>Ninguna</td>
+                </tr>
+                <tr>
+                    <td>Origen</td>
+                    <td>Módulo Ventas (marcar entregado)</td>
+                    <td>Cuenta corriente directa</td>
+                </tr>
+                <tr>
+                    <td>Descripción</td>
+                    <td>"Pago pedido #155"</td>
+                    <td>"Pago genérico"</td>
+                </tr>
+                <tr>
+                    <td>Monto</td>
+                    <td>Relacionado al total pedido</td>
+                    <td>Monto libre</td>
+                </tr>
+            </table>
+
+            <h4>3.5.3.7 Discriminación efectivo/digital</h4>
+            <p><strong>En todos los pagos es OBLIGATORIO especificar método:</strong></p>
+            <ul>
+                <li><strong>💵 Efectivo:</strong> Pago en efectivo</li>
+                <li><strong>💳 Digital:</strong> MercadoPago, transferencia, débito, crédito</li>
+                <li><strong>💵💳 Mixto:</strong> Combinación de ambos
+                    <ul>
+                        <li>Requiere dividir montos: Efectivo $X + Digital $Y</li>
+                        <li>Validación: X + Y = Total</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p><strong>Propósito:</strong> Permite generar estadísticas de efectivo vs digital para control de caja y
+                conciliación bancaria.</p>
+
+            <h4>3.5.3.8 Exportar Excel</h4>
+            <p><strong>Funcionalidad:</strong> Botón "Exportar Excel" en cuenta corriente del cliente</p>
+
+            <p><strong>Archivo incluye:</strong></p>
+            <ul>
+                <li>Fecha | Tipo | Descripción | Cargo | Pago | Método | Saldo</li>
+                <li>Filtrable por período (opcional)</li>
+                <li>Formato profesional para enviar a contador o al cliente</li>
+            </ul>
+
+            <p><strong>Uso:</strong> Saber cuánto debe cada cliente, discriminar método de pago, hacer seguimiento
+                financiero</p>
+
+            <p><strong>Reglas generales:</strong></p>
+            <ul>
+                <li>Todos los clientes tienen cuenta corriente (obligatorio)</li>
+                <li>Cargos automáticos al confirmar pedidos</li>
+                <li>Pagos manuales registrados por operadores</li>
+                <li>Método de pago obligatorio al marcar "Entregado"</li>
+                <li>Pagos parciales permitidos</li>
+                <li>Pagos genéricos permitidos</li>
+                <li>No hay límite de crédito (el sistema no bloquea ventas por deuda)</li>
+                <li>Saldo puede ser positivo (debe) o negativo (a favor)</li>
+                <li>Saldo en tiempo real se actualiza con cada cargo/pago</li>
+            </ul>
+
+            <div id="stock" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.6 Stock</h3>
+            <p><strong>Descripción:</strong> Gestión del inventario de productos.</p>
+
+            <h3>3.6.1 Movimientos automáticos</h3>
+            <p>El stock se actualiza automáticamente cuando:</p>
+            <ul>
+                <li>Se confirma un pedido → se descuenta</li>
+                <li>Se modifica un pedido → se ajusta (suma o resta según el cambio)</li>
+                <li>Se elimina un pedido → se reintegra</li>
+            </ul>
+
+            <h3>3.6.2 Movimientos manuales</h3>
+            <ul>
+                <li>Ingreso de stock (producción, compra)</li>
+                <li>Ajuste de stock (corrección de inventario)</li>
+                <li>Cada movimiento registra: cantidad, motivo, fecha, usuario</li>
+            </ul>
+
+            <h3>3.6.3 Historial</h3>
+            <ul>
+                <li>Cada producto tiene un historial de todos los movimientos</li>
+                <li>Muestra: fecha, tipo, cantidad, motivo, pedido relacionado (si aplica)</li>
+            </ul>
+
+            <h3>3.6.4 Alertas</h3>
+            <ul>
+                <li>Productos con stock por debajo del mínimo se muestran en el dashboard</li>
+                <li>Los productos BAMBU (proveedor propio) pueden tener stock negativo sin límite</li>
+            </ul>
+
+            <div id="repartos" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.7 Repartos</h3>
+            <p><strong>Descripción:</strong> Gestión de la logística de entregas.</p>
+
+            <h3>3.7.1 Calendario de repartos</h3>
+            <ul>
+                <li>Vista semanal con los pedidos asignados por día</li>
+                <li><strong>Solo muestra días lunes a viernes</strong></li>
+                <li>Los pedidos se pueden arrastrar y reordenar dentro de un vehículo</li>
+                <li>Los pedidos se pueden mover entre vehículos</li>
+                <li>Los pedidos pueden quedar en un día sin vehículo asignado</li>
+                <li><strong>Pedidos "Sin asignar" ordenados alfabéticamente por ciudad</strong> ⭐ NUEVO (Dic 2025)
+                    <ul>
+                        <li>Dentro de cada día, los pedidos sin vehículo asignado se muestran ordenados por ciudad (A-Z)</li>
+                        <li>Facilita la asignación al ver pedidos de la misma zona juntos</li>
+                        <li>Ejemplo orden: Bariloche → Neuquén → Plottier → San Martín de los Andes</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="note"
+                style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>Nota:</strong> La gestión de vehículos (crear, editar, eliminar) se
+                    encuentra en el módulo <a href="#configuracion">Configuración General</a>. En este módulo solo se
+                    visualizan y asignan pedidos a los vehículos existentes.</p>
+                <p style="margin: 0.5rem 0 0 0;"><strong>Nomenclatura de vehículos</strong> ⭐ NUEVO (Dic 2025): Los vehículos se nombran simplemente como <strong>"Reparto 1"</strong>, <strong>"Reparto 2"</strong>, etc. (sin incluir marca, modelo o patente en el nombre visible). Los datos técnicos (marca/modelo/patente/capacidad) se guardan en la configuración pero no se muestran en las vistas principales.</p>
+            </div>
+
+            <h3>3.7.2 Cambiar estado a entregado</h3>
+            <ul>
+                <li>Desde el modulo “listado de pedidos” o desde el detalle del pedido</li>
+                <li>Al marcar como entregado, el pedido pasa a figurar al nuevo módulo ventas.</li>
+            </ul>
+
+            <h3>3.7.3 Exportar orden de reparto</h3> ⭐ ACTUALIZADO (Dic 2025)
+            <p><strong>Dos botones de exportación</strong>:</p>
+            <ul>
+                <li><strong>[Exportar CON precios]</strong>: Incluye precios y totales (para control interno)</li>
+                <li><strong>[Exportar SIN precios]</strong>: Solo productos y cantidades (para entregar al chofer)</li>
+            </ul>
+
+            <p><strong>Contenido exportación CON precios</strong>:</p>
+            <ul>
+                <li># Pedido</li>
+                <li>Cliente (dirección)</li>
+                <li>Teléfono</li>
+                <li>Ciudad</li>
+                <li>Productos con cantidades</li>
+                <li><strong>Precio unitario</strong></li>
+                <li><strong>Subtotal por producto</strong></li>
+                <li><strong>Total pedido</strong></li>
+                <li>Método de pago (si está registrado)</li>
+                <li>Orden de visita (número de secuencia)</li>
+            </ul>
+
+            <p><strong>Contenido exportación SIN precios</strong>:</p>
+            <ul>
+                <li># Pedido</li>
+                <li>Cliente (dirección)</li>
+                <li>Teléfono</li>
+                <li>Ciudad</li>
+                <li>Productos con cantidades</li>
+                <li>Orden de visita (número de secuencia)</li>
+                <li><strong>NO incluye precios ni totales</strong></li>
+            </ul>
+
+            <p><strong>Nota</strong>: Carlos enviará ejemplos de formato deseado para ambas versiones.</p>
+
+            <p><strong>Elementos eliminados del Excel</strong> (en ambas versiones):</p>
+            <ul>
+                <li>Firma del repartidor</li>
+                <li>Kg totales</li>
+                <li>Saldo total</li>
+            </ul>
+
+            <div id="ventas" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.8 Ventas</h3>
+            <p><strong>Descripción:</strong> Módulo central para gestión, edición y seguimiento de todos los pedidos
+                post-cotización. <strong>Fusiona las funcionalidades de los antiguos módulos "Pedidos" e
+                    "Histórico".</strong></p>
+
+            <p><strong>📄 Especificación detallada:</strong> <a href="ventas.html" target="_blank">Ver página
+                    especializada Ventas</a></p>
+
+            <h3>3.8.1 Funcionalidad principal</h3>
+            <p><strong>Muestra:</strong> TODOS los pedidos (sin importar estado):</p>
+            <ul>
+                <li>En tránsito (con fecha asignada)</li>
+                <li>Entregados (fábrica o reparto)</li>
+            </ul>
+
+            <p><strong>Permite:</strong></p>
+            <ul>
+                <li>✅ Filtrar por múltiples criterios</li>
+                <li>✅ Editar pedidos (incluso entregados)</li>
+                <li>✅ Cambiar estados manualmente</li>
+                <li>✅ Registrar/modificar métodos de pago</li>
+                <li>✅ Ver totales y estadísticas</li>
+                <li>✅ Exportar reportes</li>
+            </ul>
+
+            <h3>3.8.2 Filtros disponibles</h3>
+            <table>
+                <tr>
+                    <th>Filtro</th>
+                    <th>Opciones</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>En tránsito | Entregado | Todos</td>
+                    <td>Filtra por estado actual</td>
+                </tr>
+                <tr>
+                    <td><strong>Período</strong></td>
+                    <td>Desde-Hasta (fechas)</td>
+                    <td>Rango de fechas de entrega</td>
+                </tr>
+                <tr>
+                    <td><strong>Tipo</strong></td>
+                    <td>Fábrica | Reparto | Todos</td>
+                    <td>Canal de venta</td>
+                </tr>
+                <tr>
+                    <td><strong>Vehículo</strong></td>
+                    <td>Camión A | Camión B | Sin vehículo | Todos</td>
+                    <td>Solo para repartos</td>
+                </tr>
+                <tr>
+                    <td><strong>Método pago</strong></td>
+                    <td>Efectivo | Digital | Mixto | Sin registrar</td>
+                    <td>Cómo pagó el cliente</td>
+                </tr>
+            </table>
+
+            <p><strong>Combinación:</strong> Todos los filtros son combinables.</p>
+            <p><strong>Ejemplo:</strong> "Pedidos entregados entre 10-15/12, tipo reparto, vehículo Camión A, pagados en
+                efectivo"</p>
+
+            <h3>3.8.3 Vista listado</h3>
+            <p><strong>Columnas tabla:</strong></p>
+            <ul>
+                <li># Pedido</li>
+                <li>Fecha entrega (o fecha asignada si en tránsito)</li>
+                <li>Dirección</li>
+                <li>Estado (badge: En tránsito / Entregado)</li>
+                <li>Tipo (badge: Fábrica / Reparto)</li>
+                <li>Vehículo (si aplica)</li>
+                <li>Monto total</li>
+                <li>Método pago (icon: 💵 efectivo / 💳 digital / ⚠️ sin registrar)</li>
+                <li>Acciones (Ver detalle, Editar, Cambiar estado)</li>
+            </ul>
+
+            <p><strong>Ordenamiento:</strong> Por defecto por fecha descendente (más recientes primero)</p>
+
+            <h3>3.8.4 Detalle de pedido</h3>
+            <p>Al hacer click en un pedido, se abre modal/página con:</p>
+
+            <p><strong>Información general:</strong></p>
+            <ul>
+                <li># Pedido</li>
+                <li>Cliente (nombre, dirección, teléfono)</li>
+                <li>Estado actual</li>
+                <li>Tipo (Fábrica/Reparto)</li>
+                <li>Fecha creación | Fecha entrega</li>
+                <li>Vehículo asignado (si aplica)</li>
+            </ul>
+
+            <p><strong>Productos:</strong></p>
+            <ul>
+                <li>Lista de productos con cantidades y precios</li>
+                <li>Subtotal</li>
+                <li>Descuentos aplicados</li>
+                <li>Ajustes (+/-)</li>
+                <li><strong>Total</strong></li>
+            </ul>
+
+            <p><strong>Método de pago (OBLIGATORIO):</strong></p>
+            <ul>
+                <li>Checkboxes múltiple selección: Efectivo | Digital (MercadoPago/Transferencia)</li>
+                <li>Permite seleccionar uno o ambos</li>
+                <li>Si selecciona ambos: Campos para dividir monto
+                    <ul>
+                        <li>Efectivo: $X</li>
+                        <li>Digital: $X</li>
+                        <li>Validación: Suma debe igualar total pedido</li>
+                    </ul>
+                </li>
+                <li>Notas sobre el pago (opcional)</li>
+            </ul>
+
+            <p><strong>Acciones disponibles:</strong></p>
+            <ul>
+                <li>✏️ Editar pedido (abre cotizador en modo edición)</li>
+                <li>🔄 Cambiar estado (En tránsito ↔ Entregado)</li>
+                <li>💰 Registrar/modificar método de pago</li>
+                <li>🗑️ Eliminar pedido (con confirmación + reintegro stock)</li>
+            </ul>
+
+            <h3>3.8.5 Editar pedido desde Ventas</h3>
+            <p><strong>Funcionalidad:</strong> Poder modificar pedidos incluso después de marcar como "entregado",
+                cuando el repartidor vuelve con novedades.</p>
+
+            <p><strong>Casos de uso:</strong></p>
+            <ol>
+                <li>Cliente devolvió 1 producto → Restar cantidad</li>
+                <li>Se olvidó aplicar descuento → Aplicar descuento retroactivo</li>
+                <li>Cliente compró 2 productos extra → Sumar productos</li>
+                <li>Error en precio → Corregir precio unitario</li>
+            </ol>
+
+            <p><strong>Impacto en stock:</strong></p>
+            <ul>
+                <li>Si se agrega un producto o aumenta cantidad → se descuenta stock</li>
+                <li>Si se quita un producto o reduce cantidad → se reintegra stock</li>
+                <li>El stock siempre refleja el estado real del pedido</li>
+            </ul>
+
+            <p><strong>Impacto en cuenta corriente:</strong></p>
+            <ul>
+                <li>Si se modifica el monto de un pedido ya confirmado, la cuenta corriente del cliente se actualiza
+                    automáticamente</li>
+            </ul>
+
+            <h3>3.8.6 Registrar método de pago</h3>
+            <p><strong>Campo nuevo en pedidos:</strong> <code>metodo_pago</code></p>
+
+            <p><strong>Opciones (selección múltiple):</strong></p>
+            <ul>
+                <li><strong>Efectivo:</strong> Cliente pagó en efectivo</li>
+                <li><strong>Digital:</strong> MercadoPago, transferencia, débito, crédito</li>
+                <li><strong>Ambos</strong> (Efectivo + Digital): Combinación de métodos
+                    <ul>
+                        <li>Requiere campos adicionales: <code>monto_efectivo</code>, <code>monto_digital</code></li>
+                        <li>Validación: <code>monto_efectivo + monto_digital = total_pedido</code></li>
+                    </ul>
+                </li>
+                <li><strong>Sin registrar:</strong> Estado temporal hasta que se registre (solo para pedidos en
+                    tránsito)</li>
+            </ul>
+
+            <p><strong>Visualización en cuenta corriente:</strong></p>
+            <ul>
+                <li>El cargo del pedido ya está registrado al confirmar</li>
+                <li>El método de pago es info adicional para estadísticas</li>
+                <li>NO afecta el saldo (eso ya se manejó con el cargo)</li>
+            </ul>
+
+            <h3>3.8.7 Cambiar estado manualmente</h3>
+            <p><strong>Estados disponibles:</strong></p>
+            <ol>
+                <li>Borrador (solo en cotizador)</li>
+                <li><strong>En tránsito</strong> (pedidos reparto con fecha asignada)</li>
+                <li><strong>Entregado</strong> (pedidos fábrica directos + repartos completados)</li>
+            </ol>
+
+            <p><strong>Flujo cambio de estado:</strong></p>
+            <ul>
+                <li>Pedido "En tránsito" → Click "Marcar como entregado"</li>
+                <li>Estado cambia a "Entregado"</li>
+                <li>Registra usuario + fecha/hora</li>
+                <li><strong>OBLIGATORIO:</strong> Solicita método de pago si no está registrado</li>
+                <li>No permite cerrar sin registrar método de pago</li>
+            </ul>
+
+            <p><strong>Cambio inverso (si es necesario):</strong></p>
+            <ul>
+                <li>Pedido "Entregado" → Click "Volver a En tránsito"</li>
+                <li>Confirma acción</li>
+                <li>Estado cambia a "En tránsito"</li>
+            </ul>
+
+            <h3>3.8.8 Totales y estadísticas</h3>
+            <p><strong>Panel superior del módulo:</strong></p>
+            <p>Con filtros aplicados, muestra:</p>
+            <ul>
+                <li>📦 Cantidad de pedidos (Ej: 45 pedidos)</li>
+                <li>💰 Monto total vendido (Ej: $1.245.000)</li>
+                <li>⚖️ Kg totales despachados (Ej: 2.350 kg)</li>
+            </ul>
+
+            <p><strong>Discriminado por tipo:</strong></p>
+            <ul>
+                <li>🏭 Fábrica: X pedidos - $XXX</li>
+                <li>🚚 Reparto: X pedidos - $XXX</li>
+            </ul>
+
+            <p><strong>Discriminado por método de pago:</strong></p>
+            <ul>
+                <li>💵 Efectivo: $XXX (X pedidos)</li>
+                <li>💳 Digital: $XXX (X pedidos)</li>
+                <li>💵💳 Mixto: $XXX (X pedidos)</li>
+                <li>⚠️ Sin registrar: $XXX (X pedidos)</li>
+            </ul>
+
+            <h3>3.8.9 Exportar reportes</h3>
+            <p><strong>Botón:</strong> "Exportar Excel"</p>
+
+            <p><strong>Incluye (según filtros activos):</strong></p>
+            <ul>
+                <li># Pedido</li>
+                <li>Fecha entrega</li>
+                <li>Cliente</li>
+                <li>Dirección</li>
+                <li>Tipo (Fábrica/Reparto)</li>
+                <li>Vehículo</li>
+                <li>Repartidor</li>
+                <li>Productos (detalle completo)</li>
+                <li>Subtotal</li>
+                <li>Descuentos</li>
+                <li>Ajustes</li>
+                <li><strong>Total</strong></li>
+                <li><strong>Método de pago</strong></li>
+                <li>Estado</li>
+            </ul>
+
+            <p><strong>Formato:</strong> Excel con formato profesional, lista para enviar al contador</p>
+
+            <p><strong>Propósito:</strong> Contrastar los datos del sistema con la realidad del negocio para tener
+                valores reales de ventas semanales.</p>
+
+            <div id="estadisticas" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.9 Estadísticas de Ventas por Producto</h3>
+            <p><strong>Acceso:</strong> Solo administrador</p>
+            <p><strong>Descripción:</strong> Módulo para analizar las ventas de cada producto en el tiempo.</p>
+
+            <h3>3.9.1 Funcionalidad</h3>
+            <ul>
+                <li>Selector de período (desde-hasta)</li>
+                <li>Lista de productos con cantidad vendida en el período</li>
+                <li>Ordenamiento por cantidad vendida</li>
+                <li>Gráfico de tendencia (opcional)</li>
+            </ul>
+
+            <h3>3.9.2 Exportar</h3>
+            <ul>
+                <li>Botón para descargar Excel con el resumen</li>
+                <li>Incluye: nombre del producto, cantidad vendida, monto total</li>
+            </ul>
+
+            <div id="configuracion" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.10 Configuración General</h3>
+            <p><strong>Acceso:</strong> Solo administrador</p>
+            <p><strong>Descripción:</strong> Apartado unificado para configuraciones del sistema.</p>
+
+            <h3>3.10.1 Contenido</h3>
+            <p><em>Nota</em>: CRUD = (Siglas de “Create-Read-Update-Delete), se refiere a todo lo que es carga de datos
+                en una base.</p>
+
+            <p><strong>Vehículos:</strong></p>
+            <ul>
+                <li>CRUD de vehículos (nombre, capacidad)</li>
+            </ul>
+
+            <p><strong>Ciudades:</strong></p>
+            <ul>
+                <li>CRUD de ciudades disponibles (crear, remover, actualizar ciudades)</li>
+            </ul>
+
+            <p><strong>Listas de descuento:</strong></p>
+            <ul>
+                <li>Configuración del porcentaje de cada lista (L1, L2, L3) y umbral para acceder a cada uno</li>
+                <li>Editable para ajustar cuando sea necesario</li>
+            </ul>
+
+            <p><strong>Comportamiento de stock:</strong></p>
+            <ul>
+                <li>Boolean para configurar si se bloquea o solo advierte cuando no hay stock suficiente</li>
+            </ul>
+
+            <div id="reportes" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.11 Reportes e Informes</h3>
+            <p><strong>Acceso:</strong> Solo administrador</p>
+
+            <h3>3.11.1 Reportes disponibles</h3>
+            <ul>
+                <li>Ganancias semanales</li>
+                <li>Ventas por período</li>
+                <li>Estadísticas de productos</li>
+                <li>Cuentas por cobrar (clientes con saldo pendiente)</li>
+            </ul>
+
+            <div id="backup" style="scroll-margin-top: 6rem;"></div>
+            <h3>3.12 Backup y Logs</h3>
+            <p><strong>Acceso:</strong> Solo administrador</p>
+
+            <p><strong>Backup:</strong></p>
+            <ul>
+                <li>Crear respaldo de la base de datos</li>
+                <li>Restaurar desde respaldo</li>
+            </ul>
+
+            <p><strong>Logs:</strong></p>
+            <ul>
+                <li>Registro de accesos al sistema</li>
+                <li>Registro de cambios críticos en stock</li>
+            </ul>
+
+        </section>
+
+        <section id="reglas">
+            <h2>4. Reglas de Negocio</h2>
+
+            <h3>4.1 Stock</h3>
+            <ol>
+                <li>El stock se descuenta al <strong>confirmar</strong> un pedido, no antes</li>
+                <li>El stock se reintegra al <strong>eliminar</strong> un pedido</li>
+                <li>El stock se ajusta al <strong>modificar</strong> un pedido (suma o resta según corresponda)</li>
+                <li>Los productos del proveedor BAMBU pueden tener stock negativo sin límite</li>
+                <li>Para otros productos, el comportamiento con stock insuficiente es configurable (bloquear o advertir)
+                </li>
+            </ol>
+
+            <h3>4.2 Precios y descuentos</h3>
+            <ol>
+                <li>Existen 3 listas de precios: L1 (base), L2, L3</li>
+                <li>El porcentaje de cada lista es configurable</li>
+                <li>Un producto en promoción tiene precio fijo independiente de la lista</li>
+                <li>Un cliente puede tener descuento fijo personalizado</li>
+                <li><strong>El descuento fijo del cliente REEMPLAZA el descuento de lista</strong> (no se suman)</li>
+                <li>El ajuste +/- es un monto fijo que se suma o resta del total</li>
+                <li>El ajuste negativo no puede superar el total (el pedido no puede quedar en negativo)</li>
+            </ol>
+
+            <h3>4.3 Pedidos</h3>
+            <ol>
+                <li>Solo existen 3 estados: borrador, en tránsito, entregado</li>
+                <li>Los pedidos de FÁBRICA van directo a entregado</li>
+                <li>Los pedidos de REPARTO van a en tránsito con fecha asignada</li>
+                <li><strong>Cualquier pedido puede modificarse en cualquier estado</strong></li>
+                <li>Eliminar un pedido es permanente (hard delete) y reintegra el stock</li>
+                <li>Un pedido puede existir sin cliente ("Cliente sin nombre")</li>
+                <li>Se puede asignar cliente a un pedido después de crearlo</li>
+            </ol>
+
+            <h3>4.4 Cuenta corriente</h3>
+            <ol>
+                <li>Los cargos se generan automáticamente al confirmar un pedido</li>
+                <li>Los pagos se registran manualmente</li>
+                <li>No hay límite de crédito</li>
+                <li>El saldo puede ser positivo (debe) o negativo (a favor)</li>
+                <li>Si se modifica un pedido, la cuenta corriente se actualiza automáticamente</li>
+            </ol>
+
+            <h3>4.5 Calendario</h3>
+            <ol>
+                <li>Solo se trabaja de lunes a viernes</li>
+                <li>Muestra capacidad en kilos y cantidad de pedidos.</li>
+            </ol>
+        </section>
+
+        <section id="eliminados">
+            <h2>5. Funcionalidades Eliminadas de v2</h2>
+            <p>Para claridad, estas funcionalidades <strong>NO existirán en v3:</strong></p>
+
+            <table>
+                <tr>
+                    <th>Funcionalidad</th>
+                    <th>Motivo</th>
+                </tr>
+                <tr>
+                    <td>Módulo de Devoluciones</td>
+                    <td>No se usa</td>
+                </tr>
+                <tr>
+                    <td>Combos como módulo separado</td>
+                    <td>Ahora son productos simples</td>
+                </tr>
+                <tr>
+                    <td>Estado "cancelado"</td>
+                    <td>Solo existe eliminar (hard delete)</td>
+                </tr>
+                <tr>
+                    <td>Estado "en tránsito"</td>
+                    <td>No es necesario</td>
+                </tr>
+                <tr>
+                    <td>Estado "confirmado"</td>
+                    <td>Eliminado, no aporta valor</td>
+                </tr>
+                <tr>
+                    <td>Ventanilla rápida</td>
+                    <td>Reemplazado por switch FÁBRICA/REPARTO</td>
+                </tr>
+                <tr>
+                    <td>Zona de asignación en dashboard</td>
+                    <td>Ya no es necesaria</td>
+                </tr>
+                <tr>
+                    <td>Histórico dentro de Repartos</td>
+                    <td>Ahora es módulo separado "Ventas"</td>
+                </tr>
+                <tr>
+                    <td>Título "Cotizador Bambu"</td>
+                    <td>Eliminado para liberar espacio</td>
+                </tr>
+                <tr>
+                    <td>Nombre de cliente en listados</td>
+                    <td>Se usa la dirección como identificador</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="flujos">
+            <h2>6. Flujos de Usuario Principales</h2>
+
+            <!-- 6.1 - 6.5 -->
+            <h3>6.1 Cotizar una venta de fábrica</h3>
+            <ol>
+                <li>Usuario abre "Nueva Cotización"</li>
+                <li>Selecciona switch en modo <strong>FÁBRICA</strong></li>
+                <li>Busca y agrega productos al pedido</li>
+                <li>(Opcional) Selecciona cliente o deja como "Cliente sin nombre"</li>
+                <li>(Opcional) Ajusta descuentos, notas</li>
+                <li>Confirma el pedido</li>
+                <li>El pedido queda en estado <strong>"entregado"</strong></li>
+                <li>El stock se descuenta</li>
+                <li>Si hay cliente, se genera cargo en cuenta corriente</li>
+                <li>El sistema vuelve a modo "nueva cotización"</li>
+            </ol>
+
+            <h3>6.2 Cotizar un pedido para reparto</h3>
+            <ol>
+                <li>Usuario abre "Nueva Cotización"</li>
+                <li>Selecciona switch en modo <strong>REPARTO</strong></li>
+                <li>Busca y agrega productos al pedido</li>
+                <li>Selecciona cliente</li>
+                <li>(Opcional) Ajusta descuentos, notas</li>
+                <li>Confirma el pedido</li>
+                <li>Se abre calendario para elegir fecha de entrega (solo lunes a viernes)</li>
+                <li>Selecciona fecha (o acepta la fecha actual)</li>
+                <li>El pedido queda en estado <strong>"en tránsito"</strong> con fecha asignada</li>
+                <li>El stock se descuenta</li>
+                <li>Se genera cargo en cuenta corriente del cliente</li>
+                <li>El sistema vuelve a modo "nueva cotización"</li>
+            </ol>
+
+            <h3>6.3 Modificar un pedido existente</h3>
+            <ol>
+                <li>Usuario busca el pedido (por número, cliente o dirección)</li>
+                <li>Abre el detalle del pedido</li>
+                <li>Hace clic en "Modificar"</li>
+                <li>Agrega/quita productos o cambia cantidades</li>
+                <li>(Opcional) Cambia lista, ajustes, nota</li>
+                <li>Guarda los cambios</li>
+                <li>El stock se ajusta automáticamente según los cambios</li>
+                <li>La cuenta corriente se actualiza si cambió el monto</li>
+            </ol>
+
+            <h3>6.4 Registrar un pago</h3>
+            <ol>
+                <li>Usuario busca el cliente</li>
+                <li>Abre la ficha del cliente</li>
+                <li>Ve el saldo actual en cuenta corriente</li>
+                <li>Hace clic en "Registrar pago"</li>
+                <li>Selecciona tipo: efectivo o digital</li>
+                <li>Ingresa el monto</li>
+                <li>(Opcional) Agrega nota</li>
+                <li>Confirma</li>
+                <li>El saldo se actualiza</li>
+            </ol>
+
+            <h3>6.5 Organizar repartos del día</h3>
+            <ol>
+                <li>Usuario abre el calendario de repartos</li>
+                <li>Selecciona un día</li>
+                <li>Ve los pedidos "en tránsito"</li>
+                <li>Selecciona pedidos para asignar a vehículos</li>
+                <li>Reordena según la ruta de entrega</li>
+                <li>(Opcional) Descarga Excel para el repartidor</li>
+                <li>Durante el día, marca pedidos como "entregado" cuando se entregan</li>
+            </ol>
+
+            <!-- 6.6 - 6.13 -->
+            <h3>6.6 Consultar estadísticas de ventas</h3>
+            <ol>
+                <li>Administrador abre "Estadísticas de Ventas"</li>
+                <li>Selecciona período (ej: último mes)</li>
+                <li>Ve la lista de productos con cantidades vendidas</li>
+                <li>(Opcional) Descarga Excel con el detalle</li>
+            </ol>
+
+            <h3>6.7 Buscar desde dashboard (buscador global)</h3>
+            <p><strong>Objetivo:</strong> Encontrar información rápidamente sin navegar módulo por módulo</p>
+            <ol>
+                <li>Usuario presiona atajo de teclado o hace clic en el buscador global</li>
+                <li>Escribe el término de búsqueda (nombre cliente, dirección, producto, # pedido)</li>
+                <li>Ve resultados agrupados por tipo: Clientes (3) | Productos (2) | Pedidos (1)</li>
+                <li>Hace clic en el resultado deseado</li>
+                <li>El sistema navega directamente al detalle correspondiente</li>
+                <li><strong>Ahorro de tiempo:</strong> No necesita entrar módulo por módulo buscando</li>
+            </ol>
+
+            <h3>6.8 Cotizar cliente ocasional (sin nombre)</h3>
+            <p><strong>Objetivo:</strong> Agilizar ventas ocasionales sin registro completo de cliente</p>
+            <ol>
+                <li>Usuario abre "Nueva Cotización"</li>
+                <li>Selecciona modo (FÁBRICA o REPARTO)</li>
+                <li>Agrega productos al pedido</li>
+                <li><strong>NO selecciona cliente</strong> (deja el campo vacío)</li>
+                <li>(Opcional) Configura descuentos, ajustes, notas</li>
+                <li>Confirma el pedido</li>
+                <li>El sistema guarda el pedido como "Cliente sin nombre"</li>
+                <li>El stock se descuenta normalmente</li>
+                <li><em>Opcional posterior:</em> Puede editar el pedido y asignar un cliente real</li>
+            </ol>
+
+            <h3>6.9 Cambiar lista de precio post-confirmación</h3>
+            <p><strong>Objetivo:</strong> Corregir lista de precio sin eliminar y rehacer el pedido</p>
+            <ol>
+                <li>Usuario busca y abre un pedido (en cualquier estado: en tránsito, entregado)</li>
+                <li>Hace clic en "Modificar" o "Cambiar lista"</li>
+                <li>Selecciona nueva lista de precios (ej: de L1 a L2)</li>
+                <li>El sistema recalcula todos los totales automáticamente</li>
+                <li>Guarda los cambios</li>
+                <li>Si el pedido tiene cliente con cuenta corriente, se actualiza automáticamente el cargo</li>
+            </ol>
+
+            <h3>6.10 Activar promoción en producto</h3>
+            <p><strong>Objetivo:</strong> Establecer precio especial independiente de las listas de descuento</p>
+            <ol>
+                <li>Usuario abre el módulo "Productos"</li>
+                <li>Selecciona un producto específico</li>
+                <li>Hace clic en "Editar"</li>
+                <li>Activa el switch "En promoción"</li>
+                <li>Ingresa el precio fijo promocional (ej: $4.100)</li>
+                <li>Guarda los cambios</li>
+                <li><strong>Efecto:</strong> En el cotizador, ese producto siempre se venderá a $4.100,
+                    independientemente de la lista seleccionada (L1, L2, L3)</li>
+            </ol>
+
+            <h3>6.11 Configurar descuento fijo para cliente VIP</h3>
+            <p><strong>Objetivo:</strong> Asignar precio preferencial permanente a clientes especiales (empleados,
+                revendedores, VIPs)</p>
+            <ol>
+                <li>Usuario abre la ficha de un cliente (ej: empleado de la empresa)</li>
+                <li>Hace clic en "Editar"</li>
+                <li>Activa el campo "Descuento fijo"</li>
+                <li>Ingresa el porcentaje personalizado (ej: 15%)</li>
+                <li>Guarda los cambios</li>
+                <li><strong>Efecto:</strong> Todas las compras futuras de ese cliente aplicarán automáticamente el 15%
+                    de descuento, reemplazando los descuentos de lista (L1, L2, L3)</li>
+            </ol>
+
+            <h3>6.12 Consultar cuenta corriente y saldos pendientes</h3>
+            <p><strong>Objetivo:</strong> Control financiero detallado por cliente</p>
+            <ol>
+                <li>Usuario abre la ficha del cliente</li>
+                <li>Ve el saldo actual en la parte superior: <strong>$12.500</strong> (debe) o <strong>-$3.000</strong>
+                    (saldo a favor)</li>
+                <li>Hace clic en "Ver historial de cuenta corriente"</li>
+                <li>Ve el listado completo de movimientos:
+                    <ul>
+                        <li>20/12: Cargo pedido #145 → +$8.000 | Saldo: $8.000</li>
+                        <li>21/12: Pago efectivo → -$5.000 | Saldo: $3.000</li>
+                        <li>22/12: Pago digital (transferencia) → -$3.500 | Saldo: -$500</li>
+                    </ul>
+                </li>
+                <li>Puede filtrar por tipo de movimiento: Todos | Solo efectivo | Solo digital | Solo cargos</li>
+                <li>(Opcional) Exporta el historial a Excel para enviar al cliente</li>
+                <li><strong>Uso:</strong> Saber cuánto debe cada cliente, discriminar método de pago, hacer seguimiento
+                    financiero</li>
+            </ol>
+
+            <h3>6.13 Exportar inventario por proveedor</h3>
+            <p><strong>Objetivo:</strong> Generar reporte rápido de stock para reposición</p>
+            <ol>
+                <li>Usuario abre el módulo "Productos"</li>
+                <li>Hace clic en "Exportar inventario"</li>
+                <li>Selecciona uno o varios proveedores (ej: Bambu, Proveedor A, Proveedor B)</li>
+                <li>Hace clic en "Descargar Excel"</li>
+                <li>El sistema genera archivo Excel con: Nombre del producto | Stock actual</li>
+                <li><strong>Uso:</strong> Enviar al proveedor para hacer pedido de reposición, análisis de stock por
+                    proveedor</li>
+            </ol>
+
+            <h3 style="margin-top: 3rem; color: var(--accent-color);">🔄 Flujos Operativos por Módulo</h3>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-bottom: 1rem;">
+                Productos</h4>
+
+            <h3>6.14 Crear producto nuevo</h3>
+            <p><strong>Objetivo:</strong> Agregar nuevo producto al catálogo</p>
+            <ol>
+                <li>Usuario abre "Productos" → Click "Nuevo"</li>
+                <li>Completa campos del producto:
+                    <ul>
+                        <li>Nombre (obligatorio)</li>
+                        <li>Proveedor (selecciona de lista)</li>
+                        <li>Precio base (obligatorio)</li>
+                        <li>Stock inicial</li>
+                        <li>Peso en kg</li>
+                        <li>Orden (número manual para prioridad en buscador)</li>
+                    </ul>
+                </li>
+                <li><strong>Si es un combo/pack:</strong> Activa switch "En promoción" e ingresa precio fijo</li>
+                <li>Guarda</li>
+                <li><strong>Efecto:</strong> Producto disponible inmediatamente en cotizador</li>
+            </ol>
+
+            <h3>6.15 Marcar producto como no disponible</h3>
+            <p><strong>Objetivo:</strong> Ocultar producto del cotizador sin eliminarlo del sistema</p>
+            <ol>
+                <li>Usuario busca el producto</li>
+                <li>Click "Editar"</li>
+                <li>Activa switch "No disponible"</li>
+                <li>Guarda</li>
+                <li><strong>Efecto:</strong> El producto ya no aparece en el buscador del cotizador, pero se mantiene en
+                    el sistema para consulta histórica</li>
+            </ol>
+
+            <h3>6.16 Ajustar stock manualmente</h3>
+            <p><strong>Objetivo:</strong> Ingresar o corregir stock de productos</p>
+            <ol>
+                <li>Usuario abre producto → Click "Ajustar stock"</li>
+                <li>Selecciona tipo de movimiento:
+                    <ul>
+                        <li><strong>Ingreso:</strong> Producción o compra a proveedor</li>
+                        <li><strong>Ajuste:</strong> Corrección de inventario (diferencias físicas)</li>
+                    </ul>
+                </li>
+                <li>Ingresa cantidad (positiva para suma, negativa para resta)</li>
+                <li>Escribe motivo del movimiento</li>
+                <li>Guarda</li>
+                <li><strong>Efecto:</strong> Stock actualizado + movimiento registrado en historial del producto</li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Clientes</h4>
+
+            <h3>6.17 Crear cliente nuevo</h3>
+            <p><strong>Objetivo:</strong> Registrar cliente en la base de datos</p>
+            <ol>
+                <li>Usuario abre "Clientes" → Click "Nuevo"</li>
+                <li>Completa campos:
+                    <ul>
+                        <li><strong>Dirección</strong> (obligatorio) - identificador principal</li>
+                        <li><strong>Teléfono</strong> (obligatorio)</li>
+                        <li><strong>Nombre</strong> (opcional)</li>
+                        <li><strong>Ciudad</strong> (selecciona de lista)</li>
+                    </ul>
+                </li>
+                <li>(Opcional) Configura "Descuento fijo" si es cliente preferencial</li>
+                <li>Guarda</li>
+                <li><strong>Efecto:</strong> Cliente disponible en buscador del cotizador</li>
+            </ol>
+
+            <h3>6.18 Ver historial completo de un cliente</h3>
+            <p><strong>Objetivo:</strong> Consultar toda la relación comercial con el cliente</p>
+            <ol>
+                <li>Usuario abre ficha del cliente</li>
+                <li>Ve resumen en la parte superior:
+                    <ul>
+                        <li>Total de pedidos realizados</li>
+                        <li>Saldo en cuenta corriente</li>
+                        <li>Fecha última compra</li>
+                    </ul>
+                </li>
+                <li>Click en "Historial de pedidos"</li>
+                <li>Ve listado completo: Fecha | # Pedido | Monto | Estado</li>
+                <li>Click en cualquier pedido → Abre detalle completo</li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Pedidos</h4>
+
+            <h3>6.19 Buscar y filtrar pedidos</h3>
+            <p><strong>Objetivo:</strong> Encontrar pedidos específicos o generar listados filtrados</p>
+            <ol>
+                <li>Usuario abre "Pedidos"</li>
+                <li>Aplica filtros combinados:
+                    <ul>
+                        <li><strong>Estado:</strong> Borrador | En tránsito | Entregado</li>
+                        <li><strong>Fecha:</strong> Desde-hasta (rango de fechas)</li>
+                        <li><strong>Vehículo:</strong> Camión A, Camión B, Sin vehículo</li>
+                    </ul>
+                </li>
+                <li>(Opcional) Usa buscador: # de pedido o dirección</li>
+                <li>Ve listado filtrado en tiempo real</li>
+                <li><strong>Uso:</strong> Auditoría, seguimiento, reportes</li>
+            </ol>
+
+            <h3>6.20 Eliminar pedido (con reintegro stock)</h3>
+            <p><strong>Objetivo:</strong> Eliminar definitivamente un pedido del sistema</p>
+            <ol>
+                <li>Usuario abre detalle del pedido</li>
+                <li>Click "Eliminar" (único botón, no existe opción "cancelar")</li>
+                <li>Sistema muestra advertencia: "Esto eliminará el pedido permanentemente y reintegrará el stock
+                    automáticamente"</li>
+                <li>Usuario confirma</li>
+                <li><strong>Efecto:</strong>
+                    <ul>
+                        <li>Pedido eliminado de la base de datos (hard delete)</li>
+                        <li>Stock de todos los productos reintegrado</li>
+                        <li>Si tenía cliente con cuenta corriente, el cargo se elimina</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>6.21 Descargar resumen diario de pedidos</h3>
+            <p><strong>Objetivo:</strong> Obtener listado de todos los pedidos de un día específico</p>
+            <ol>
+                <li>Usuario abre "Pedidos"</li>
+                <li>Selecciona fecha específica en el filtro</li>
+                <li>Click "Descargar resumen del día"</li>
+                <li>Sistema genera archivo compacto con todos los pedidos del día</li>
+                <li><strong>Uso:</strong> Enviar mensaje diario de ventas sin necesidad de asignar pedidos a vehículos
+                </li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Repartos</h4>
+
+            <h3>6.22 Asignar pedidos a vehículo</h3>
+            <p><strong>Objetivo:</strong> Organizar la logística de entrega del día</p>
+            <ol>
+                <li>Usuario abre "Repartos" → "Calendario"</li>
+                <li>Selecciona un día de la semana</li>
+                <li>Ve pedidos "en tránsito" de ese día sin vehículo asignado</li>
+                <li>Selecciona pedido → Click "Asignar a vehículo"</li>
+                <li>Se abre modal mostrando:
+                    <ul>
+                        <li><strong>Camión A:</strong> Capacidad actual 450kg / 800kg → Después de asignar: 520kg /
+                            800kg</li>
+                        <li><strong>Camión B:</strong> Capacidad actual 200kg / 600kg → Después de asignar: 270kg /
+                            600kg</li>
+                    </ul>
+                </li>
+                <li>Selecciona vehículo</li>
+                <li><strong>Efecto:</strong> Pedido asignado al vehículo elegido</li>
+            </ol>
+
+            <h3>6.23 Desasignar pedido de vehículo</h3>
+            <p><strong>Objetivo:</strong> Remover pedido de un vehículo sin cambiar su fecha</p>
+            <ol>
+                <li>Usuario abre "Repartos" → "Calendario"</li>
+                <li>Selecciona día y ve pedidos asignados a vehículos</li>
+                <li>Busca pedido a desasignar</li>
+                <li>Click "Desasignar de vehículo"</li>
+                <li><strong>Efecto:</strong> Pedido queda en el mismo día pero sin vehículo asignado (vuelve a lista de
+                    pendientes de asignar)</li>
+            </ol>
+
+            <h3>6.24 Descargar Excel de reparto</h3>
+            <p><strong>Objetivo:</strong> Generar planilla para el repartidor</p>
+            <ol>
+                <li>Usuario abre "Repartos" → "Calendario"</li>
+                <li>Selecciona vehículo y día específicos</li>
+                <li>Click "Descargar Excel"</li>
+                <li>Sistema genera archivo con:
+                    <ul>
+                        <li>Dirección de entrega</li>
+                        <li>Productos y cantidades</li>
+                        <li>Totales por pedido</li>
+                    </ul>
+                </li>
+                <li><strong>Excluye</strong> (según cambios cliente): Firma repartidor, kg totales, saldo total</li>
+                <li><strong>Uso:</strong> Entregar al repartidor para seguir la ruta del día</li>
+            </ol>
+
+            <h3>6.25 Marcar pedidos como entregados</h3>
+            <p><strong>Objetivo:</strong> Registrar la entrega efectiva del pedido</p>
+            <ol>
+                <li>Usuario abre "Repartos" → "Calendario" o "Listado de pedidos"</li>
+                <li>Selecciona pedido(s) en estado "en tránsito"</li>
+                <li>Click "Marcar como entregado"</li>
+                <li><strong>Efecto:</strong>
+                    <ul>
+                        <li>Pedido cambia a estado "entregado"</li>
+                        <li>Aparece automáticamente en el módulo "Ventas"</li>
+                        <li>Queda registrado para estadísticas</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Ventas</h4>
+
+            <h3>6.26 Consultar ventas de un período</h3>
+            <p><strong>Objetivo:</strong> Visualizar todos los pedidos entregados en un rango de fechas</p>
+            <ol>
+                <li>Usuario abre "Ventas" (módulo separado de Repartos)</li>
+                <li>Selecciona período: Desde 01/12 - Hasta 15/12</li>
+                <li>Ve listado de pedidos entregados (solo lectura)</li>
+                <li>Ve totales del período:
+                    <ul>
+                        <li>Cantidad de pedidos</li>
+                        <li>Monto total vendido</li>
+                        <li>Kilos totales despachados</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>6.27 Filtrar ventas por tipo (fábrica vs reparto)</h3>
+            <p><strong>Objetivo:</strong> Discriminar ventas según canal de venta</p>
+            <ol>
+                <li>Usuario en módulo "Ventas"</li>
+                <li>Aplica filtro: <strong>Solo FÁBRICA</strong> o <strong>Solo REPARTO</strong></li>
+                <li>Ve listado filtrado con totales discriminados</li>
+                <li>Compara montos entre ambos canales</li>
+            </ol>
+
+            <h3>6.28 Filtrar ventas por vehículo</h3>
+            <p><strong>Objetivo:</strong> Ver entregas realizadas por un vehículo específico</p>
+            <ol>
+                <li>Usuario en módulo "Ventas"</li>
+                <li>Selecciona vehículo: Camión A</li>
+                <li>Ve solo pedidos entregados por ese vehículo en el período</li>
+                <li>Ve totales: cantidad pedidos y monto total del vehículo</li>
+            </ol>
+
+            <h3>6.29 Contrastar ventas sistema vs realidad</h3>
+            <p><strong>Objetivo:</strong> Verificar que los pedidos marcados entregados coincidan con ingresos reales
+            </p>
+            <ol>
+                <li>Usuario abre "Ventas" → Selecciona semana (ej: 10-16 diciembre)</li>
+                <li>Ve total sistema: $245.000 (suma de todos los pedidos "entregados")</li>
+                <li>Compara con ingresos reales registrados (caja física, transferencias bancarias)</li>
+                <li>Identifica discrepancias:
+                    <ul>
+                        <li>Pedidos marcados como entregados pero no pagados</li>
+                        <li>Diferencias por ajustes, descuentos no registrados, etc.</li>
+                    </ul>
+                </li>
+                <li>Toma acciones correctivas según hallazgos</li>
+            </ol>
+
+            <h3>6.30 Exportar reporte ventas período</h3>
+            <p><strong>Objetivo:</strong> Generar archivo para análisis contable y gerencial</p>
+            <ol>
+                <li>Usuario en "Ventas", configura filtros:
+                    <ul>
+                        <li>Período (desde-hasta)</li>
+                        <li>Tipo (fábrica/reparto/todos)</li>
+                        <li>Vehículo (específico/todos)</li>
+                    </ul>
+                </li>
+                <li>Click "Exportar Excel"</li>
+                <li>Descarga archivo con columnas:
+                    <ul>
+                        <li>Fecha | # Pedido | Cliente | Dirección | Monto | Tipo | Vehículo</li>
+                    </ul>
+                </li>
+                <li>Utiliza para análisis contable y reportes gerenciales</li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Configuración General</h4>
+
+            <h3>6.31 Configurar listas de descuento</h3>
+            <p><strong>Objetivo:</strong> Ajustar porcentajes y umbrales de las listas de precios</p>
+            <ol>
+                <li>Administrador abre "General" → "Listas de descuento"</li>
+                <li>Ve configuración actual:
+                    <ul>
+                        <li><strong>L1:</strong> 0% descuento | Umbral: $0</li>
+                        <li><strong>L2:</strong> 5% descuento | Umbral: $50.000</li>
+                        <li><strong>L3:</strong> 10% descuento | Umbral: $100.000</li>
+                    </ul>
+                </li>
+                <li>Edita porcentajes o umbrales según necesidad comercial</li>
+                <li>Guarda cambios</li>
+                <li><strong>Efecto:</strong> Aplica inmediatamente en todas las cotizaciones nuevas</li>
+            </ol>
+
+            <h3>6.32 Administrar vehículos</h3>
+            <p><strong>Objetivo:</strong> Gestionar flota de reparto</p>
+            <ol>
+                <li>Administrador abre "General" → "Vehículos"</li>
+                <li>Ve listado actual:
+                    <ul>
+                        <li>Camión A - Capacidad: 800kg</li>
+                        <li>Camión B - Capacidad: 600kg</li>
+                    </ul>
+                </li>
+                <li>Operaciones CRUD:
+                    <ul>
+                        <li><strong>Crear:</strong> Agrega nuevo vehículo (nombre + capacidad)</li>
+                        <li><strong>Editar:</strong> Modifica nombre o capacidad</li>
+                        <li><strong>Eliminar:</strong> Remueve vehículo (solo si no tiene pedidos asignados)</li>
+                    </ul>
+                </li>
+                <li><strong>Efecto:</strong> Vehículos disponibles en módulo "Repartos" → "Calendario"</li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Reportes</h4>
+
+            <h3>6.33 Ver cuentas por cobrar</h3>
+            <p><strong>Objetivo:</strong> Identificar clientes con saldo pendiente para gestión de cobranzas</p>
+            <ol>
+                <li>Administrador abre "Reportes" → "Cuentas por cobrar"</li>
+                <li>Ve listado de clientes con deuda, ordenado de mayor a menor:
+                    <ul>
+                        <li>Cliente A - Dirección X - Saldo: $45.000</li>
+                        <li>Cliente B - Dirección Y - Saldo: $23.500</li>
+                        <li>Cliente C - Dirección Z - Saldo: $12.000</li>
+                    </ul>
+                </li>
+                <li>Click en cliente → Abre detalle de la deuda (historial completo)</li>
+                <li>(Opcional) Exporta Excel para seguimiento y gestión de cobranzas</li>
+            </ol>
+
+            <h4
+                style="color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; margin-top: 2rem; margin-bottom: 1rem;">
+                Backup y Seguridad</h4>
+
+            <h3>6.34 Crear respaldo de base de datos</h3>
+            <p><strong>Objetivo:</strong> Proteger información del sistema</p>
+            <ol>
+                <li>Administrador abre "Backup"</li>
+                <li>Click "Crear respaldo ahora"</li>
+                <li>Sistema genera archivo .sql con toda la base de datos</li>
+                <li>Descarga automática del archivo</li>
+                <li>Administrador guarda en ubicación segura (nube, disco externo)</li>
+                <li><strong>Uso:</strong> Recuperación ante fallos, migraciones de servidor, auditoría</li>
+            </ol>
+        </section>
+
+        <script>
+            // Active Link Highlighter
+            const sections = document.querySelectorAll("section");
+            const navLinks = document.querySelectorAll(".nav-link");
+
+            window.addEventListener("scroll", () => {
+                let current = "";
+                sections.forEach((section) => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 200) {
+                        current = section.getAttribute("id");
+                    }
+                });
+
+                navLinks.forEach((link) => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href").includes(current)) {
+                        link.classList.add("active");
+                    }
+                });
+            });
+        </script>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Clientes V2</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/clientes/clientes-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" class="active" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                    </li>
+                    <li title="Repartos">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    <li title="Reportes y Estadísticas">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER -->
+            <header class="header-toolbar">
+                <div class="page-header-title">
+                    <i class="fas fa-users" style="color: var(--text-secondary);"></i>
+                    Clientes
+                </div>
+
+                <!-- Central Search -->
+                <input type="text" class="input-search-header" placeholder="Buscar por nombre, teléfono o dirección...">
+
+                <!-- Actions -->
+                <div class="header-actions">
+                    <select class="select-filter">
+                        <option value="">Estado: Todos</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+
+                    <select class="select-filter">
+                        <option value="">Ciudad: Todas</option>
+                        <option value="neuquen">Neuquén</option>
+                        <option value="cipolletti">Cipolletti</option>
+                        <option value="allen">Allen</option>
+                    </select>
+
+                    <select class="select-filter">
+                        <option value="">Saldo: Todos</option>
+                        <option value="deudor">Con Deuda</option>
+                        <option value="favor">A Favor</option>
+                        <option value="dia">Al Día</option>
+                    </select>
+
+                    <button class="btn-primary"><i class="fas fa-plus"></i> Nuevo Cliente</button>
+                </div>
+            </header>
+
+            <!-- LIST CONTAINER -->
+            <div class="list-container">
+                <table class="table-v2">
+                    <thead>
+                        <tr>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Ciudad</th>
+                            <th>Saldo (CC)</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Client 1 -->
+                        <tr onclick="location.href='cliente-detalle.html'">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar-circle">D</div>
+                                    <div class="text-bold">9 DE JULIO 902</div>
+                                </div>
+                            </td>
+                            <td>2995 07-3355</td>
+                            <td>Cipolletti</td>
+                            <td class="amount-negative">-$150.000</td>
+                            <td><span class="badge-status active">Activo</span></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <button class="btn-icon-sm btn-view" title="Ver Detalle"
+                                        onclick="event.stopPropagation(); location.href='cliente-detalle.html'"><i
+                                            class="fas fa-eye"></i></button>
+                                    <button class="btn-icon-sm btn-delete" title="Eliminar"
+                                        onclick="event.stopPropagation(); alert('Eliminar cliente')"><i
+                                            class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Client 2 -->
+                        <tr onclick="location.href='cliente-detalle.html'">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar-circle">C</div>
+                                    <div class="text-bold">CUENCA 16 MZA 7</div>
+                                </div>
+                            </td>
+                            <td>2994 64-3435</td>
+                            <td>Neuquén</td>
+                            <td class="amount-positive">$0</td>
+                            <td><span class="badge-status active">Activo</span></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <button class="btn-icon-sm btn-view" title="Ver Detalle"
+                                        onclick="event.stopPropagation(); location.href='cliente-detalle.html'"><i
+                                            class="fas fa-eye"></i></button>
+                                    <button class="btn-icon-sm btn-delete" title="Eliminar"
+                                        onclick="event.stopPropagation(); alert('Eliminar cliente')"><i
+                                            class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Client 3 -->
+                        <tr onclick="location.href='cliente-detalle.html'">
+                            <td>
+                                <div class="user-cell">
+                                    <div class="avatar-circle">S</div>
+                                    <div class="text-bold">SAN LUIS 372</div>
+                                </div>
+                            </td>
+                            <td>2994 87-9633</td>
+                            <td>Allen</td>
+                            <td class="amount-negative">-$25.000</td>
+                            <td><span class="badge-status active">Activo</span></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <button class="btn-icon-sm btn-view" title="Ver Detalle"
+                                        onclick="event.stopPropagation(); location.href='cliente-detalle.html'"><i
+                                            class="fas fa-eye"></i></button>
+                                    <button class="btn-icon-sm btn-delete" title="Eliminar"
+                                        onclick="event.stopPropagation(); alert('Eliminar cliente')"><i
+                                            class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="assets/clientes/script.js"></script>
+</body>
+
+</html>

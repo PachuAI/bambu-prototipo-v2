@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Detalle Cliente V2</title>
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/clientes/clientes-specific.css">
+    <link rel="stylesheet" href="assets/clientes/cliente-detalle-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="main-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" class="active" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                    </li>
+                    <li title="Repartos">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    <li title="Reportes y Estadísticas">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER -->
+            <div class="detail-top-bar">
+                <div class="customer-profile-header">
+                    <div class="profile-main">
+                        <button class="btn-icon-sm" style="margin-right: 16px;"
+                            onclick="location.href='clientes.html'"><i class="fas fa-arrow-left"></i></button>
+                        <div class="profile-avatar-lg">9</div>
+                        <div class="profile-info">
+                            <h1>9 DE JULIO 902</h1>
+                            <div class="text-subtle">
+                                ID: 151
+                                <span class="badge-status active" style="margin: 0 8px;">ACTIVO</span>
+                                <span class="badge-new"
+                                    style="background:var(--color-accent); color:white; font-weight:600;"><i
+                                        class="fas fa-tag"></i> Desc. Fijo: 10%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Actions header removed, moved to sidebar -->
+                    <button class="btn-primary" onclick="alert('Nueva Cotización')"><i class="fas fa-plus"></i> Nueva
+                        Cotización</button>
+                </div>
+
+                <!-- TABS -->
+                <div class="tabs-nav">
+                    <div class="tab-link active" data-tab="cc">Cuenta Corriente</div>
+                    <div class="tab-link" data-tab="pedidos">Historial de Pedidos</div>
+                    <div class="tab-link" data-tab="info">Información</div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENTS AREA -->
+            <div class="tab-content-area">
+
+                <!-- TAB 1: CUENTA CORRIENTE -->
+                <div id="tab-cc" class="tab-pane active">
+                    <div class="cc-grid">
+                        <!-- Left: Ledger -->
+                        <div class="ledger-card">
+                            <table class="ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Descripción</th>
+                                        <th>Método</th>
+                                        <th class="text-right">Cargo</th>
+                                        <th class="text-right">Pago</th>
+                                        <th class="text-right">Saldo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Row 1: Partial Payment -->
+                                    <tr class="movimiento-row clickeable" data-movimiento-id="1" data-tipo="pago"
+                                        onclick="toggleDetalleMovimiento(1)">
+                                        <td>23/12/2025</td>
+                                        <td>
+                                            <i class="fas fa-chevron-right expand-icon"></i>
+                                            Pago Parcial Pedido #1435
+                                        </td>
+                                        <td><span class="method-badge partial"><i class="fas fa-money-bill"></i> Efvo
+                                                (Parcial)</span></td>
+                                        <td class="text-right text-subtle">-</td>
+                                        <td class="text-right amount-positive">$20.000</td>
+                                        <td class="text-right amount-negative">-$130.000</td>
+                                    </tr>
+                                    <tr class="detalle-expandido hidden" id="detalle-1">
+                                        <td colspan="6">
+                                            <div class="detalle-content">
+                                                <div class="detalle-info-grid">
+                                                    <div class="detalle-info-item">
+                                                        <span class="detalle-label">Registrado por:</span>
+                                                        <span class="detalle-value">Juan Pérez</span>
+                                                    </div>
+                                                    <div class="detalle-info-item">
+                                                        <span class="detalle-label">Fecha/Hora:</span>
+                                                        <span class="detalle-value">23/12/2025 14:30</span>
+                                                    </div>
+                                                    <div class="detalle-info-item">
+                                                        <span class="detalle-label">Nota:</span>
+                                                        <span class="detalle-value">Cliente pagó en efectivo</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 2: Full Order Charge -->
+                                    <tr class="movimiento-row clickeable" data-movimiento-id="2" data-tipo="cargo"
+                                        data-pedido-id="1435" onclick="toggleDetalleMovimiento(2)">
+                                        <td>22/12/2025</td>
+                                        <td class="text-bold">
+                                            <i class="fas fa-chevron-right expand-icon"></i>
+                                            Pedido #1435 <span class="text-subtle">(15 items)</span>
+                                        </td>
+                                        <td>-</td>
+                                        <td class="text-right amount-negative">$50.000</td>
+                                        <td class="text-right text-subtle">-</td>
+                                        <td class="text-right amount-negative">-$150.000</td>
+                                    </tr>
+                                    <tr class="detalle-expandido hidden" id="detalle-2">
+                                        <td colspan="6">
+                                            <div class="detalle-content">
+                                                <div class="detalle-productos-header">
+                                                    <span><i class="fas fa-box"></i> Productos del pedido</span>
+                                                    <button class="btn-link-small"
+                                                        onclick="window.open('ventas.html', '_blank')">
+                                                        <i class="fas fa-external-link-alt"></i> Ver pedido en VENTAS
+                                                    </button>
+                                                </div>
+                                                <table class="detalle-productos-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th style="text-align: center;">Cant.</th>
+                                                            <th style="text-align: right;">P. Unit.</th>
+                                                            <th style="text-align: right;">Subtotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><strong>Granel detergente</strong></td>
+                                                            <td style="text-align: center;">5</td>
+                                                            <td style="text-align: right;">$915</td>
+                                                            <td style="text-align: right;"><strong>$4.575</strong></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Lavandina x5</strong></td>
+                                                            <td style="text-align: center;">3</td>
+                                                            <td style="text-align: right;">$1.200</td>
+                                                            <td style="text-align: right;"><strong>$3.600</strong></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Desengrasante Magistral</strong></td>
+                                                            <td style="text-align: center;">2</td>
+                                                            <td style="text-align: right;">$2.800</td>
+                                                            <td style="text-align: right;"><strong>$5.600</strong></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 3: Full Payment -->
+                                    <tr class="movimiento-row clickeable" data-movimiento-id="3" data-tipo="pago"
+                                        onclick="toggleDetalleMovimiento(3)">
+                                        <td>20/12/2025</td>
+                                        <td>
+                                            <i class="fas fa-chevron-right expand-icon"></i>
+                                            Pago Total Pedido #1420
+                                        </td>
+                                        <td><span class="method-badge"><i class="fas fa-university"></i>
+                                                Transferencia</span></td>
+                                        <td class="text-right text-subtle">-</td>
+                                        <td class="text-right amount-positive">$120.000</td>
+                                        <td class="text-right amount-negative">-$100.000</td>
+                                    </tr>
+                                    <tr class="detalle-expandido hidden" id="detalle-3">
+                                        <td colspan="6">
+                                            <div class="detalle-content">
+                                                <div class="detalle-info-grid">
+                                                    <div class="detalle-info-item">
+                                                        <span class="detalle-label">Registrado por:</span>
+                                                        <span class="detalle-value">María García</span>
+                                                    </div>
+                                                    <div class="detalle-info-item">
+                                                        <span class="detalle-label">Fecha/Hora:</span>
+                                                        <span class="detalle-value">20/12/2025 10:15</span>
+                                                    </div>
+                                                    <div class="detalle-info-item">
+                                                        <span class="detalle-label">Nota:</span>
+                                                        <span class="detalle-value">Transferencia Banco Nación</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 4: Old Balance -->
+                                    <tr class="movimiento-row clickeable" data-movimiento-id="4" data-tipo="cargo"
+                                        data-pedido-id="1420" onclick="toggleDetalleMovimiento(4)">
+                                        <td>19/12/2025</td>
+                                        <td class="text-bold">
+                                            <i class="fas fa-chevron-right expand-icon"></i>
+                                            Pedido #1420
+                                        </td>
+                                        <td>-</td>
+                                        <td class="text-right amount-negative">$120.000</td>
+                                        <td class="text-right text-subtle">-</td>
+                                        <td class="text-right amount-negative">-$220.000</td>
+                                    </tr>
+                                    <tr class="detalle-expandido hidden" id="detalle-4">
+                                        <td colspan="6">
+                                            <div class="detalle-content">
+                                                <div class="detalle-productos-header">
+                                                    <span><i class="fas fa-box"></i> Productos del pedido</span>
+                                                    <button class="btn-link-small"
+                                                        onclick="window.open('ventas.html', '_blank')">
+                                                        <i class="fas fa-external-link-alt"></i> Ver pedido en VENTAS
+                                                    </button>
+                                                </div>
+                                                <table class="detalle-productos-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th style="text-align: center;">Cant.</th>
+                                                            <th style="text-align: right;">P. Unit.</th>
+                                                            <th style="text-align: right;">Subtotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><strong>Detergente Industrial x20L</strong></td>
+                                                            <td style="text-align: center;">2</td>
+                                                            <td style="text-align: right;">$52.000</td>
+                                                            <td style="text-align: right;"><strong>$104.000</strong>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Lavandina x5</strong></td>
+                                                            <td style="text-align: center;">5</td>
+                                                            <td style="text-align: right;">$1.200</td>
+                                                            <td style="text-align: right;"><strong>$6.000</strong></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Right: Actions & Balance -->
+                        <div class="cc-sidebar">
+                            <div class="cc-sidebar-card">
+                                <div class="sidebar-balance-container">
+                                    <span class="sidebar-balance-label">Saldo Actual</span>
+                                    <div class="sidebar-balance-amount negative">-$130.000</div>
+                                </div>
+
+                                <h3>Acciones Financieras</h3>
+                                <button class="btn-block-action" onclick="abrirModalPago()"><i
+                                        class="fas fa-hand-holding-usd"></i> Registrar Pago
+                                    Genérico</button>
+                                <button class="btn-block-action"><i class="fas fa-file-invoice-dollar"></i> Enviar
+                                    Estado de Cuenta</button>
+                                <button class="btn-block-action"><i class="fas fa-file-excel"></i> Exportar
+                                    Excel</button>
+
+                                <div
+                                    style="margin-top:24px; font-size:12px; color:var(--text-secondary); text-align:center;">
+                                    Límite de crédito: <strong>Ilimitado</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: HISTORIAL PEDIDOS -->
+                <div id="tab-pedidos" class="tab-pane">
+                    <div class="ledger-card">
+                        <table class="table-v2">
+                            <thead>
+                                <tr>
+                                    <th># Pedido</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-bold">#1435</td>
+                                    <td>22/12/2025</td>
+                                    <td><span class="badge-status entregado">Entregado</span></td>
+                                    <td>15 productos</td>
+                                    <td class="text-bold">$50.000</td>
+                                    <td class="text-right"><button class="btn-icon-sm btn-view"><i
+                                                class="fas fa-eye"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-bold">#1420</td>
+                                    <td>19/12/2025</td>
+                                    <td><span class="badge-status entregado">Entregado</span></td>
+                                    <td>8 productos</td>
+                                    <td class="text-bold">$120.000</td>
+                                    <td class="text-right"><button class="btn-icon-sm btn-view"><i
+                                                class="fas fa-eye"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: INFORMACIÓN -->
+                <div id="tab-info" class="tab-pane">
+                    <div class="cc-grid" style="grid-template-columns: 1fr 1fr;">
+                        <!-- Card 1: Datos Generales -->
+                        <div class="cc-sidebar-card">
+                            <h3>Datos del Cliente</h3>
+                            <div style="display:grid; gap:16px;">
+                                <div>
+                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Nombre / Razón
+                                        Social</label>
+                                    <input type="text" value="9 DE JULIO 902" class="input-search-header"
+                                        style="width:100%;">
+                                </div>
+                                <div>
+                                    <label class="text-subtle"
+                                        style="display:block; margin-bottom:4px;">Dirección</label>
+                                    <input type="text" value="9 de Julio 902" class="input-search-header"
+                                        style="width:100%;">
+                                </div>
+                                <div>
+                                    <label class="text-subtle"
+                                        style="display:block; margin-bottom:4px;">Teléfono</label>
+                                    <input type="text" value="2995 07-3355" class="input-search-header"
+                                        style="width:100%;">
+                                </div>
+                                <div>
+                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Ciudad</label>
+                                    <select class="input-search-header" style="width:100%;">
+                                        <option>Cipolletti</option>
+                                        <option>Neuquén</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Configuración -->
+                        <div class="cc-sidebar-card">
+                            <h3>Configuración Comercial</h3>
+                            <div style="display:grid; gap:16px;">
+                                <div>
+                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Descuento Fijo
+                                        (%)</label>
+                                    <input type="number" value="10" class="input-search-header" style="width:100%;">
+                                    <small class="text-subtle">Este descuento se aplicará automáticamente en el
+                                        cotizador.</small>
+                                </div>
+                                <div>
+                                    <label class="text-subtle" style="display:block; margin-bottom:4px;">Límite de
+                                        Crédito</label>
+                                    <input type="text" value="Ilimitado" class="input-search-header"
+                                        style="width:100%;">
+                                </div>
+                                <div style="margin-top:16px;">
+                                    <button class="btn-primary" style="width:100%; justify-content: center;">Guardar
+                                        Cambios</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MODAL: Registrar Pago -->
+            <div class="modal-overlay hidden" id="modal-registrar-pago">
+                <div class="modal-content modal-medium">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-hand-holding-usd"></i> Registrar Pago</h3>
+                        <button class="btn-close-modal" onclick="cerrarModalPago()">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Info Cliente y Saldo -->
+                        <div class="info-cliente-pago">
+                            <div class="info-row">
+                                <span class="label">Cliente:</span>
+                                <span class="value" id="modal-pago-cliente">9 DE JULIO 902</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Saldo actual:</span>
+                                <span class="value saldo-negativo" id="modal-pago-saldo">-$130.000</span>
+                            </div>
+                        </div>
+
+                        <!-- Monto Recibido -->
+                        <div class="form-group">
+                            <label>Monto recibido:</label>
+                            <input type="number" id="input-monto-pago" class="input-monto" placeholder="$0" min="0"
+                                step="1000">
+                        </div>
+
+                        <!-- Método de Pago -->
+                        <div class="metodo-pago-group">
+                            <label class="label-section">Método de pago:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="pago-modal-efectivo" onchange="toggleSplitPago()">
+                                    <span><i class="fas fa-money-bill-alt"></i> Efectivo</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="pago-modal-digital" onchange="toggleSplitPago()">
+                                    <span><i class="fas fa-credit-card"></i> Digital (MP/Transf)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Split Efectivo/Digital (hidden por defecto) -->
+                        <div id="split-pago-container" class="hidden">
+                            <div class="split-inputs">
+                                <div class="split-item">
+                                    <label>Efectivo:</label>
+                                    <input type="number" id="split-efectivo-pago" placeholder="$0" min="0" step="1000"
+                                        oninput="validarSumaPago()">
+                                </div>
+                                <div class="split-item">
+                                    <label>Digital:</label>
+                                    <input type="number" id="split-digital-pago" placeholder="$0" min="0" step="1000"
+                                        oninput="validarSumaPago()">
+                                </div>
+                            </div>
+                            <div class="suma-validacion">
+                                <span class="label">Total recibido:</span>
+                                <span class="value" id="suma-pago-valor">$0</span>
+                                <span class="validacion-ok hidden" id="suma-ok">✓</span>
+                                <span class="validacion-error hidden" id="suma-error">⚠️ No coincide</span>
+                            </div>
+                        </div>
+
+                        <!-- Radio: Genérico vs Específico -->
+                        <div class="tipo-pago-section">
+                            <label class="label-section">Aplicar a:</label>
+
+                            <label class="radio-option">
+                                <input type="radio" name="tipo-pago" id="radio-generico" value="generico" checked
+                                    onchange="toggleDropdownPedidos()">
+                                <div class="radio-content">
+                                    <strong>Pago genérico</strong>
+                                    <small class="text-muted">Reduce saldo total del cliente (no asociado a pedido
+                                        específico)</small>
+                                </div>
+                            </label>
+
+                            <label class="radio-option">
+                                <input type="radio" name="tipo-pago" id="radio-especifico" value="especifico"
+                                    onchange="toggleDropdownPedidos()">
+                                <div class="radio-content">
+                                    <strong>Pago a pedido específico</strong>
+                                    <small class="text-muted">Actualiza monto_pagado del pedido y reduce saldo</small>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Dropdown Pedidos (hidden por defecto) -->
+                        <div id="dropdown-pedidos-container" class="hidden">
+                            <label>Seleccionar pedido:</label>
+                            <select id="select-pedido-pago" class="select-filter" onchange="validarMontoPedido()">
+                                <option value="">-- Seleccionar pedido --</option>
+                                <option value="1435" data-pendiente="30000">Pedido #1435 (Pendiente $30.000)</option>
+                                <option value="1420" data-pendiente="0">Pedido #1420 (Saldado)</option>
+                            </select>
+                        </div>
+
+                        <!-- Error: Monto excede pendiente -->
+                        <div id="error-monto-excede" class="alert-warning hidden">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            El monto ingresado ($<span id="monto-ingresado-txt">0</span>) excede lo pendiente del pedido
+                            ($<span id="monto-pendiente-txt">0</span>).
+                            <br><small>Use "Pago genérico" si el cliente transfirió de más.</small>
+                        </div>
+
+                        <!-- Fecha y Nota -->
+                        <div class="form-group">
+                            <label>Fecha:</label>
+                            <input type="date" id="fecha-pago" class="input-date">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nota (opcional):</label>
+                            <textarea id="nota-pago" class="textarea-nota"
+                                placeholder="Ej: Cliente transfirió por MercadoPago" maxlength="500"
+                                rows="3"></textarea>
+                        </div>
+
+                        <!-- Saldo Resultante -->
+                        <div class="saldo-resultante">
+                            <span class="label">Saldo después del pago:</span>
+                            <span class="value" id="saldo-resultante-valor">-$130.000</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="cerrarModalPago()">Cancelar</button>
+                        <button class="btn-primary" onclick="guardarPago()">Guardar Pago</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="assets/clientes/script.js"></script>
+</body>
+
+</html>

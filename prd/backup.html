@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Backup y Logs | Bambu CRM V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Otros Módulos</div>
+            <a href="configuracion.html" class="nav-link">Configuración</a>
+            <a href="backup.html" class="nav-link active">Backup y Logs</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">En esta página</div>
+            <ul id="toc" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Auto-generado desde los h2 -->
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.
+            </div>
+            <h1>PRD: Backup y Logs <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Respaldos y auditoría del sistema</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Versión</strong></td>
+                    <td>2.0</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha</strong></td>
+                    <td>31 Diciembre 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>⚠️ Borrador (pendiente prototipar y validar)</td>
+                </tr>
+            </table>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Nota importante:</strong> Este PRD es documentación modular de referencia. Solo Cotizador y Ventas están prototipados/validados al 100%. El contenido de Backup y Logs probablemente cambie al prototipar e implementar.</p>
+            </div>
+        </header>
+
+        <!-- SECCIÓN 1: CONTEXTO Y OBJETIVO -->
+        <section id="contexto">
+            <h2>1. Contexto y Objetivo</h2>
+
+            <h3>1.1 Propósito del módulo</h3>
+            <p>El módulo <strong>Backup y Logs</strong> provee herramientas críticas para seguridad de datos y auditoría del sistema. Permite crear respaldos de la base de datos, restaurar desde respaldos existentes, y consultar logs de actividad del sistema.</p>
+
+            <h3>1.2 Problema que resuelve</h3>
+            <ul>
+                <li>Protección de datos mediante respaldos periódicos</li>
+                <li>Recuperación ante fallas o pérdida de datos</li>
+                <li>Auditoría de accesos y cambios críticos</li>
+                <li>Trazabilidad de operaciones del sistema</li>
+                <li>Cumplimiento de políticas de seguridad</li>
+            </ul>
+
+            <h3>1.3 Usuarios principales</h3>
+            <ul>
+                <li><strong>Administrador:</strong> Acceso completo (único usuario con acceso)</li>
+                <li><strong>Vendedor:</strong> SIN ACCESO (módulo exclusivo admin)</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 2: FUNCIONALIDAD PRINCIPAL -->
+        <section id="funcionalidad">
+            <h2>2. Funcionalidad Principal</h2>
+
+            <h3>2.1 Descripción general</h3>
+            <p>El módulo se divide en 2 áreas principales:</p>
+            <ul>
+                <li><strong>Backup (Respaldos):</strong> Crear y restaurar respaldos de la base de datos</li>
+                <li><strong>Logs (Auditoría):</strong> Consultar registros de accesos y cambios críticos</li>
+            </ul>
+
+            <h3>2.2 Características clave</h3>
+            <ul>
+                <li>✅ Crear respaldo manual de base de datos (dump SQL)</li>
+                <li>✅ Descargar archivo de respaldo (.sql o .zip)</li>
+                <li>✅ Restaurar desde respaldo (upload archivo)</li>
+                <li>✅ Historial de respaldos con fecha y tamaño</li>
+                <li>✅ Registro de accesos al sistema (login/logout)</li>
+                <li>✅ Registro de cambios críticos en stock</li>
+                <li>✅ Filtrado de logs por fecha, usuario, tipo de evento</li>
+            </ul>
+
+            <h3>2.3 Flujo de trabajo típico</h3>
+            <pre><code>Administrador accede a Backup y Logs
+        ↓
+Ve 2 pestañas:
+├─ Backup (Respaldos)
+└─ Logs (Auditoría)
+        ↓
+En Backup:
+├─ [Crear respaldo] → Genera archivo .sql
+├─ Ver historial de respaldos → Descargar/Eliminar
+└─ [Restaurar desde archivo] → Upload .sql
+        ↓
+En Logs:
+├─ Filtrar por fecha/usuario/tipo
+└─ Ver tabla cronológica de eventos</code></pre>
+        </section>
+
+        <!-- SECCIÓN 3: INTERFAZ DE USUARIO -->
+        <section id="interfaz">
+            <h2>3. Interfaz de Usuario</h2>
+
+            <h3>3.1 Layout general</h3>
+            <p><strong>Vista principal:</strong> Pantalla con 2 pestañas</p>
+
+            <p><strong>Estructura:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────────┐
+│  BACKUP Y LOGS                                           │
+├──────────────────────────────────────────────────────────┤
+│  Pestañas:  [Backup] [Logs]                             │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  [Contenido de la pestaña activa]                       │
+│                                                          │
+└──────────────────────────────────────────────────────────┘</code></pre>
+
+            <h3>3.2 Pestaña: Backup (Respaldos)</h3>
+            <p><strong>Contenido:</strong></p>
+
+            <p><strong>Sección superior:</strong></p>
+            <ul>
+                <li>Botón [Crear respaldo ahora]</li>
+                <li>Botón [Restaurar desde archivo]</li>
+            </ul>
+
+            <p><strong>Historial de respaldos:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tamaño</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>31/12/2024 14:30</td>
+                        <td>2.5 MB</td>
+                        <td>[Descargar] [Eliminar]</td>
+                    </tr>
+                    <tr>
+                        <td>30/12/2024 23:00</td>
+                        <td>2.4 MB</td>
+                        <td>[Descargar] [Eliminar]</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Crear respaldo:</strong></p>
+            <ul>
+                <li>Click en [Crear respaldo ahora]</li>
+                <li>Sistema genera dump de base de datos (archivo .sql)</li>
+                <li>Archivo se descarga automáticamente: <code>bambu_backup_YYYY-MM-DD_HH-MM-SS.sql</code></li>
+                <li>Backup queda registrado en historial</li>
+            </ul>
+
+            <p><strong>Restaurar desde archivo:</strong></p>
+            <ul>
+                <li>Click en [Restaurar desde archivo]</li>
+                <li>Modal se abre con:
+                    <ul>
+                        <li>Input file (solo archivos .sql)</li>
+                        <li>⚠️ Advertencia: "Esta acción sobrescribirá todos los datos actuales. ¿Estás seguro?"</li>
+                        <li>Botones: [Cancelar] [Restaurar]</li>
+                    </ul>
+                </li>
+                <li>Usuario selecciona archivo .sql</li>
+                <li>Click [Restaurar] → Sistema ejecuta SQL y restaura datos</li>
+            </ul>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Precaución:</strong> Restaurar desde backup sobrescribe TODOS los datos actuales. Se recomienda crear un backup antes de restaurar.</p>
+            </div>
+
+            <h3>3.3 Pestaña: Logs (Auditoría)</h3>
+            <p><strong>Contenido:</strong></p>
+
+            <p><strong>Filtros superiores:</strong></p>
+            <ul>
+                <li>Desde (fecha)</li>
+                <li>Hasta (fecha)</li>
+                <li>Usuario (dropdown)</li>
+                <li>Tipo de evento (dropdown):
+                    <ul>
+                        <li>Todos</li>
+                        <li>Accesos (login/logout)</li>
+                        <li>Cambios en stock</li>
+                        <li>Cambios en configuración</li>
+                    </ul>
+                </li>
+                <li>Botones: [Aplicar filtros] [Limpiar filtros]</li>
+            </ul>
+
+            <p><strong>Tabla de logs:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha/Hora</th>
+                        <th>Usuario</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>31/12/2024 14:35</td>
+                        <td>admin@bambu.com</td>
+                        <td>Stock</td>
+                        <td>Ajuste manual: Detergente X (+100 un)</td>
+                    </tr>
+                    <tr>
+                        <td>31/12/2024 14:20</td>
+                        <td>admin@bambu.com</td>
+                        <td>Acceso</td>
+                        <td>Login exitoso</td>
+                    </tr>
+                    <tr>
+                        <td>30/12/2024 23:05</td>
+                        <td>admin@bambu.com</td>
+                        <td>Configuración</td>
+                        <td>Modificó lista L2: 6.25% → 7%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Ordenamiento:</strong></p>
+            <ul>
+                <li>Default: Por fecha descendente (más recientes primero)</li>
+                <li>Clickeable en headers para ordenar por cualquier columna</li>
+            </ul>
+
+            <h3>3.4 Tipos de eventos registrados</h3>
+            <p><strong>Accesos:</strong></p>
+            <ul>
+                <li>Login exitoso</li>
+                <li>Login fallido (credenciales incorrectas)</li>
+                <li>Logout</li>
+            </ul>
+
+            <p><strong>Cambios en stock:</strong></p>
+            <ul>
+                <li>Ajuste manual de stock (ingreso/egreso)</li>
+                <li>Stock negativo crítico (< -50 unidades, por ejemplo)</li>
+            </ul>
+
+            <p><strong>Cambios en configuración:</strong></p>
+            <ul>
+                <li>Modificación de listas de precio</li>
+                <li>Creación/edición/eliminación de vehículos</li>
+                <li>Creación/edición/eliminación de ciudades</li>
+                <li>Cambio de comportamiento de stock</li>
+            </ul>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>💡 Pendiente definir:</strong> ¿Qué otros eventos se registrarán? (Eliminación de pedidos, cambios en cuenta corriente, etc.). Evaluar al prototipar.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: REGLAS DE NEGOCIO -->
+        <section id="reglas">
+            <h2>4. Reglas de Negocio Específicas</h2>
+
+            <h3>4.1 Creación de backups</h3>
+            <p><strong>Frecuencia recomendada:</strong></p>
+            <ul>
+                <li>Backup manual: A demanda del administrador</li>
+                <li>Backup automático (opcional): Diario a las 23:00 (pendiente implementar)</li>
+            </ul>
+
+            <p><strong>Contenido del backup:</strong></p>
+            <ul>
+                <li>Dump completo de la base de datos PostgreSQL</li>
+                <li>Todas las tablas (pedidos, productos, clientes, configuración, logs, etc.)</li>
+                <li>Formato: Archivo .sql con sentencias INSERT</li>
+                <li>Compresión opcional: .sql.zip para reducir tamaño</li>
+            </ul>
+
+            <p><strong>Almacenamiento:</strong></p>
+            <ul>
+                <li>Backups se guardan en servidor en carpeta <code>/backups</code></li>
+                <li>Administrador puede descargarlos localmente</li>
+                <li>Retención: Mantener últimos 30 backups (eliminar automáticamente los más antiguos)</li>
+            </ul>
+
+            <h3>4.2 Restauración desde backup</h3>
+            <p><strong>Validaciones:</strong></p>
+            <ul>
+                <li>Solo archivos .sql permitidos</li>
+                <li>Tamaño máximo: 100 MB (ajustable según servidor)</li>
+                <li>Advertencia obligatoria antes de confirmar</li>
+            </ul>
+
+            <p><strong>Proceso:</strong></p>
+            <ol>
+                <li>Sistema crea backup automático de seguridad antes de restaurar</li>
+                <li>Elimina todas las tablas existentes</li>
+                <li>Ejecuta sentencias SQL del archivo subido</li>
+                <li>Valida integridad de datos restaurados</li>
+                <li>Notifica éxito o error</li>
+            </ol>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Precaución:</strong> Durante la restauración, el sistema debe estar en modo mantenimiento (bloquear accesos de otros usuarios).</p>
+            </div>
+
+            <h3>4.3 Registro de logs</h3>
+            <p><strong>Eventos que se registran:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Información registrada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Login exitoso</strong></td>
+                        <td>Usuario, IP, timestamp</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Login fallido</strong></td>
+                        <td>Usuario intentado, IP, timestamp</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Logout</strong></td>
+                        <td>Usuario, timestamp</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ajuste stock manual</strong></td>
+                        <td>Usuario, producto, cantidad anterior, cantidad nueva, motivo, timestamp</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cambio configuración</strong></td>
+                        <td>Usuario, parámetro modificado, valor anterior, valor nuevo, timestamp</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Retención de logs:</strong></p>
+            <ul>
+                <li>Mantener logs de los últimos 365 días (1 año)</li>
+                <li>Eliminar automáticamente logs más antiguos (opcional: archivar antes de eliminar)</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 5: INTEGRACIÓN -->
+        <section id="integracion">
+            <h2>5. Integración con Otros Módulos</h2>
+
+            <h3>5.1 Productos (Logs de stock)</h3>
+            <p><strong>Relación:</strong> Cambios en stock se registran en Logs</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Al ajustar stock manualmente → Registro en tabla logs</li>
+                <li>Al detectar stock negativo crítico → Registro en tabla logs</li>
+            </ul>
+
+            <h3>5.2 Configuración (Logs de cambios)</h3>
+            <p><strong>Relación:</strong> Cambios en configuración se registran en Logs</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Al modificar listas de precio → Registro en tabla logs</li>
+                <li>Al crear/editar/eliminar vehículo → Registro en tabla logs</li>
+                <li>Al crear/editar/eliminar ciudad → Registro en tabla logs</li>
+            </ul>
+
+            <h3>5.3 Sistema de autenticación (Logs de accesos)</h3>
+            <p><strong>Relación:</strong> Accesos al sistema se registran en Logs</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Al hacer login exitoso → Registro en tabla logs</li>
+                <li>Al intentar login fallido → Registro en tabla logs</li>
+                <li>Al hacer logout → Registro en tabla logs</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 6: CASOS DE USO -->
+        <section id="casos-uso">
+            <h2>6. Casos de Uso</h2>
+
+            <h3>Caso 1: Crear backup manual</h3>
+            <p><strong>Contexto:</strong> Administrador quiere crear respaldo antes de hacer cambios importantes</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Backup y Logs → Pestaña "Backup"</li>
+                <li>Click en [Crear respaldo ahora]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Sistema genera dump de base de datos</li>
+                <li>✅ Archivo se descarga: <code>bambu_backup_2024-12-31_14-30-00.sql</code></li>
+                <li>✅ Backup queda registrado en historial con fecha y tamaño</li>
+                <li>✅ Notificación: "Backup creado correctamente"</li>
+            </ul>
+
+            <h3>Caso 2: Restaurar desde backup</h3>
+            <p><strong>Contexto:</strong> Se perdieron datos por error, necesitan restaurar backup de ayer</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Backup y Logs → Pestaña "Backup"</li>
+                <li>Click en [Restaurar desde archivo]</li>
+                <li>Modal se abre con advertencia</li>
+                <li>Selecciona archivo: <code>bambu_backup_2024-12-30_23-00-00.sql</code></li>
+                <li>Click [Restaurar]</li>
+                <li>Confirma advertencia</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Sistema crea backup automático de seguridad (antes de restaurar)</li>
+                <li>✅ Ejecuta SQL y restaura datos al estado del 30/12</li>
+                <li>✅ Notificación: "Datos restaurados correctamente"</li>
+                <li>✅ Administrador verifica que datos están correctos</li>
+            </ul>
+
+            <h3>Caso 3: Consultar logs de accesos</h3>
+            <p><strong>Contexto:</strong> Administrador quiere ver quién accedió al sistema en la última semana</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Backup y Logs → Pestaña "Logs"</li>
+                <li>Filtros:
+                    <ul>
+                        <li>Desde: 24/12/2024</li>
+                        <li>Hasta: 31/12/2024</li>
+                        <li>Tipo: Accesos</li>
+                    </ul>
+                </li>
+                <li>Click [Aplicar filtros]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Tabla muestra solo eventos de tipo "Accesos"</li>
+                <li>✅ Ve login/logout de usuarios en esa semana</li>
+                <li>✅ Puede identificar accesos inusuales o fuera de horario</li>
+            </ul>
+
+            <h3>Caso 4: Auditar cambios en stock</h3>
+            <p><strong>Contexto:</strong> Stock de un producto cambió inesperadamente, necesita investigar</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Backup y Logs → Pestaña "Logs"</li>
+                <li>Filtros:
+                    <ul>
+                        <li>Tipo: Cambios en stock</li>
+                    </ul>
+                </li>
+                <li>Click [Aplicar filtros]</li>
+                <li>Busca en tabla eventos relacionados con ese producto</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Ve registro: "31/12 14:35 | admin@bambu.com | Ajuste manual: Detergente X (+100 un)"</li>
+                <li>✅ Identifica quién hizo el cambio y cuándo</li>
+                <li>✅ Puede verificar si fue intencional o error</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 7: FLUJOS DE USUARIO -->
+        <section id="flujos">
+            <h2>7. Flujos de Usuario</h2>
+
+            <h3>7.1 Flujo: Crear backup</h3>
+            <pre><code>Administrador accede a Backup y Logs
+        ↓
+Selecciona pestaña "Backup"
+        ↓
+Click [Crear respaldo ahora]
+        ↓
+Sistema ejecuta:
+├─ pg_dump de base de datos PostgreSQL
+├─ Genera archivo .sql
+└─ Guarda en carpeta /backups
+        ↓
+Archivo se descarga automáticamente
+        ↓
+Backup registrado en historial
+        ↓
+Notificación: ✅ "Backup creado correctamente"</code></pre>
+
+            <h3>7.2 Flujo: Restaurar desde backup</h3>
+            <pre><code>Administrador accede a Backup y Logs
+        ↓
+Selecciona pestaña "Backup"
+        ↓
+Click [Restaurar desde archivo]
+        ↓
+Modal se abre con advertencia:
+⚠️ "Esta acción sobrescribirá todos los datos actuales"
+        ↓
+Usuario selecciona archivo .sql
+        ↓
+Click [Restaurar]
+        ↓
+Sistema ejecuta:
+├─ Crea backup automático de seguridad
+├─ Bloquea accesos de otros usuarios
+├─ Elimina tablas existentes
+├─ Ejecuta SQL del archivo
+├─ Valida integridad
+└─ Desbloquea accesos
+        ↓
+Notificación: ✅ "Datos restaurados correctamente"
+        ↓
+Administrador verifica datos</code></pre>
+
+            <h3>7.3 Flujo: Consultar logs</h3>
+            <pre><code>Administrador accede a Backup y Logs
+        ↓
+Selecciona pestaña "Logs"
+        ↓
+Aplica filtros (opcional):
+├─ Rango de fechas
+├─ Usuario específico
+└─ Tipo de evento
+        ↓
+Click [Aplicar filtros]
+        ↓
+Sistema ejecuta query a tabla logs
+        ↓
+Tabla muestra resultados:
+├─ Ordenados por fecha descendente
+├─ Con información completa del evento
+└─ Paginados si hay muchos resultados
+        ↓
+Administrador puede:
+├─ Reordenar por columna
+└─ Exportar logs (opcional)</code></pre>
+        </section>
+
+        <!-- SECCIÓN 8: NOTAS TÉCNICAS -->
+        <section id="notas-tecnicas">
+            <h2>8. Notas Técnicas para Desarrollo</h2>
+
+            <h3>8.1 Estructura de datos (Mock data)</h3>
+            <pre><code class="language-javascript">// Backup
+const BACKUP_EJEMPLO = {
+    id: 1,
+    fecha: "2024-12-31 14:30:00",
+    tamaño_bytes: 2621440, // 2.5 MB
+    archivo_path: "/backups/bambu_backup_2024-12-31_14-30-00.sql",
+    tipo: "MANUAL", // "MANUAL" | "AUTOMATICO"
+    created_at: "2024-12-31 14:30:00"
+};
+
+// Log de evento
+const LOG_EJEMPLO = {
+    id: 1,
+    fecha: "2024-12-31 14:35:00",
+    usuario_id: 1,
+    usuario_email: "admin@bambu.com",
+    tipo: "STOCK", // "ACCESO" | "STOCK" | "CONFIGURACION"
+    descripcion: "Ajuste manual: Detergente X (+100 un)",
+    ip_address: "192.168.1.100",
+    metadata: { producto_id: 1, cantidad_anterior: 50, cantidad_nueva: 150 }
+};
+</code></pre>
+
+            <h3>8.2 Consideraciones de implementación</h3>
+            <ul>
+                <li>⚠️ <strong>Backup automático:</strong> Usar cron job o task scheduler (Laravel: <code>Schedule::command('backup:run')->daily()</code>)</li>
+                <li>⚠️ <strong>Restauración:</strong> Bloquear sistema durante proceso (modo mantenimiento)</li>
+                <li>⚠️ <strong>Seguridad:</strong> Solo administrador puede acceder a este módulo (middleware auth + admin check)</li>
+                <li>⚠️ <strong>Tamaño archivos:</strong> Configurar upload_max_filesize en PHP para archivos grandes</li>
+                <li>💡 <strong>Compresión:</strong> Comprimir backups con gzip (.sql.gz) para reducir espacio</li>
+                <li>💡 <strong>Logs:</strong> Usar tabla separada para logs (no mezclar con otras tablas)</li>
+                <li>💡 <strong>Performance:</strong> Índice en tabla logs (fecha, usuario_id, tipo)</li>
+            </ul>
+
+            <h3>8.3 Comandos útiles</h3>
+            <pre><code class="language-bash"># Crear backup de PostgreSQL
+pg_dump -U postgres -h localhost bambu_crm > backup.sql
+
+# Restaurar backup
+psql -U postgres -h localhost bambu_crm < backup.sql
+
+# Comprimir backup
+gzip backup.sql
+
+# Descomprimir backup
+gunzip backup.sql.gz</code></pre>
+
+            <h3>8.4 Estructura de base de datos</h3>
+            <pre><code class="language-sql">-- Tabla de backups
+CREATE TABLE backups (
+    id SERIAL PRIMARY KEY,
+    fecha TIMESTAMP NOT NULL,
+    tamaño_bytes BIGINT NOT NULL,
+    archivo_path VARCHAR(500) NOT NULL,
+    tipo VARCHAR(20) NOT NULL, -- MANUAL | AUTOMATICO
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de logs
+CREATE TABLE logs (
+    id SERIAL PRIMARY KEY,
+    fecha TIMESTAMP NOT NULL,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
+    tipo VARCHAR(50) NOT NULL, -- ACCESO | STOCK | CONFIGURACION
+    descripcion TEXT NOT NULL,
+    ip_address VARCHAR(50),
+    metadata JSONB, -- Datos adicionales del evento
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Índices para performance
+CREATE INDEX idx_logs_fecha ON logs(fecha DESC);
+CREATE INDEX idx_logs_usuario ON logs(usuario_id);
+CREATE INDEX idx_logs_tipo ON logs(tipo);</code></pre>
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer>
+            <p>Bambu CRM V2 - PRD Técnico | Última actualización: 31 Diciembre 2024</p>
+            <p><a href="index.html">← Volver al PRD General</a></p>
+        </footer>
+    </main>
+
+    <!-- SCRIPT PARA TOC AUTO -->
+    <script>
+        // Auto-generar tabla de contenidos desde los h2
+        const toc = document.getElementById('toc');
+        const h2s = document.querySelectorAll('main h2');
+        h2s.forEach(h2 => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + h2.parentElement.id;
+            a.textContent = h2.textContent;
+            a.className = 'nav-link';
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>

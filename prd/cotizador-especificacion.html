@@ -1,0 +1,2597 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambu CRM v2 - Módulo Cotizador</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰
+        Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Documentación</div>
+            <a href="index.html" class="nav-link">← Volver al PRD</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Índice</div>
+            <a href="#contexto-general" class="nav-link">1. Contexto General</a>
+            <a href="#arquitectura-visual" class="nav-link">2. Arquitectura Visual</a>
+            <a href="#comportamiento-general" class="nav-link">3. Comportamiento General</a>
+            <a href="#switch-fabrica-reparto" class="nav-link">4. Switch FÁBRICA / REPARTO</a>
+            <a href="#buscador-de-productos" class="nav-link">5. Buscador de Productos</a>
+            <a href="#selector-de-cliente" class="nav-link">6. Selector de Cliente</a>
+            <a href="#lista-de-productos-agregados" class="nav-link">7. Lista de Productos</a>
+            <a href="#panel-lateral-resumen-y-totales" class="nav-link">8. Panel Lateral</a>
+            <a href="#configuracion-de-precios-y-descuentos" class="nav-link">9. Precios y Descuentos</a>
+            <a href="#ajustes-y-notas" class="nav-link">10. Ajustes y Notas</a>
+            <a href="#totales-y-confirmacion" class="nav-link">11. Totales y Confirmación</a>
+            <a href="#flujos-completos" class="nav-link">12. Flujos Completos</a>
+            <a href="#validaciones-y-reglas-de-negocio" class="nav-link">13. Validaciones</a>
+            <a href="#estados-y-transiciones" class="nav-link">14. Estados y Transiciones</a>
+            <a href="#integraciones-con-otros-modulos" class="nav-link">15. Integraciones</a>
+            <a href="#atajos-de-teclado" class="nav-link">16. Atajos</a>
+            <a href="#casos-de-uso-detallados" class="nav-link">17. Casos de Uso</a>
+            <a href="#especificaciones-tecnicas-ui-ux" class="nav-link">18. UI/UX</a>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div
+                style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.</div>
+            <h1>Bambu CRM v2 <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Módulo
+                    Cotizador - Especificación Completa</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Fecha</strong></td>
+                    <td>27 de Diciembre 2025</td>
+                </tr>
+                <tr>
+                    <td><strong>Sistema</strong></td>
+                    <td>Bambu CRM v2</td>
+                </tr>
+                <tr>
+                    <td><strong>Propósito</strong></td>
+                    <td>Especificación exhaustiva del módulo Cotizador para generación de HTML</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>Documento técnico completo para desarrollo</td>
+                </tr>
+            </table>
+        </header>
+
+        <section id="contexto-general">
+            <h2>1. CONTEXTO GENERAL</h2>
+
+            <h3>1.1 Descripción</h3>
+            <p>El <strong>Cotizador</strong> es el módulo central del sistema Bambu CRM v2 para crear pedidos. Ha sido
+                completamente rediseñado para optimizar el tiempo de cotización y maximizar la eficiencia operativa.</p>
+
+            <h3>1.2 Objetivos del rediseño</h3>
+            <ul>
+                <li>✅ Reducir tiempo de cotización de ~2 minutos a ~30 segundos</li>
+                <li>✅ Aprovechar máximo espacio en pantalla (diseño compacto)</li>
+                <li>✅ Flujo continuo: al terminar una cotización, volver automáticamente a "nueva cotización"</li>
+                <li>✅ Eliminar elementos innecesarios (título "Cotizador Bambu", etc.)</li>
+                <li>✅ Optimizar navegación con teclado (atajos: Shift+4, F4)</li>
+                <li>✅ Simplificar jerarquía de descuentos</li>
+            </ul>
+
+            <h3>1.3 Posición en el sistema</h3>
+            <ul>
+                <li><strong>Acceso</strong>: Botón superior del dashboard o sidebar "COTIZADOR"</li>
+                <li><strong>Visibilidad</strong>: Collapsa el menú lateral izquierdo al abrir para aprovechar espacio
+                    completo</li>
+                <li><strong>Cierre</strong>: Vuelve al dashboard (con advertencia si hay cambios sin guardar)</li>
+            </ul>
+        </section>
+
+        <section id="arquitectura-visual">
+            <h2>2. ARQUITECTURA VISUAL</h2>
+
+            <h3>2.1 Layout general</h3>
+            <pre><code>┌────────────────────────────────────────────────────────────────────────────┐
+│  [&lt;] [🚚 Reparto] [🏭 Fábrica]  [🔍 Buscar productos...]  [👤 Cliente ▼]    │
+├────────────────────────────────────────────────┬───────────────────────────┤
+│                                                │  PANEL LATERAL DERECHO    │
+│  TABLA PRODUCTOS AGREGADOS                     │  ┌─────────────────────┐ │
+│  ┌──────────────────────────────────────────┐  │  │ Subtotal: $8,315    │ │
+│  │ PRODUCTO | SUBTOTAL | UNIT. | CANT. | 🗑 │  │  │ 📦 Entrega: 12/27/25│ │
+│  ├──────────────────────────────────────────┤  │  │ ⚖️ Peso: 7.20kg      │ │
+│  │ Granel detergente                        │  │  └─────────────────────┘ │
+│  │ GRA-015                                  │  │                           │
+│  │         $915      $915    [-] 1 [+]   🗑 │  │  ☐ L1: 0.00% (Base)      │
+│  ├──────────────────────────────────────────┤  │  ☐ L2: 6.25% (>$250k)    │
+│  │ Detergente tipo magistral x1 lt          │  │  ☐ L3: 10.00% (>$1M)     │
+│  │ PRD-018                                  │  │  [% Aplicar L2] [% L3]   │
+│  │        $1,600    $1,600   [-] 1 [+]   🗑 │  │                           │
+│  ├──────────────────────────────────────────┤  │  Desc. Manual (%): [0]   │
+│  │ Detergente tipo magistral x5 lts         │  │  Ajuste ($): [0]         │
+│  │ ACC-017                                  │  │  📝 Agregar nota         │
+│  │        $5,800    $5,800   [-] 1 [+]   🗑 │  │                           │
+│  └──────────────────────────────────────────┘  │  TOTAL FINAL             │
+│                                                │  $8,315                   │
+│                                                │                           │
+│                                                │  [📄 Generar Resumen]     │
+│                                                │  [💾 Guardar Borrador]    │
+│                                                │  [✅ Confirmar Pedido]    │
+│                                                │     Agencias entrega      │
+│                                                │                           │
+│                                                │  ⌨️ Shift+4 · F4 Resumen │
+└────────────────────────────────────────────────┴───────────────────────────┘</code></pre>
+
+            <p><strong>Modo FÁBRICA (con método de pago visible):</strong> ⭐ NUEVO</p>
+            <pre><code>┌────────────────────────────────────────────────────────────────────────────┐
+│  [&lt;] [🚚 Reparto] [🏭 Fábrica]✓  [🔍 Buscar productos...]  [👤 Cliente ▼]   │
+├────────────────────────────────────────────────┬───────────────────────────┤
+│                                                │  PANEL LATERAL DERECHO    │
+│  TABLA PRODUCTOS AGREGADOS                     │  ┌─────────────────────┐ │
+│  ┌──────────────────────────────────────────┐  │  │ Subtotal: $8,315    │ │
+│  │ PRODUCTO | SUBTOTAL | UNIT. | CANT. | 🗑 │  │  │ ⚖️ Peso: 7.20kg      │ │
+│  ├──────────────────────────────────────────┤  │  └─────────────────────┘ │
+│  │ Granel detergente                        │  │                           │
+│  │ GRA-015                                  │  │ ┌─────────────────────┐ │
+│  │         $915      $915    [-] 1 [+]   🗑 │  │ │ MÉTODO DE PAGO ⭐   │ │
+│  ├──────────────────────────────────────────┤  │ │ ☐ Efectivo          │ │
+│  │ Detergente x1 lt                         │  │ │ ☐ Digital           │ │
+│  │ PRD-018                                  │  │ │ Monto: [$8,315]     │ │
+│  │        $1,600    $1,600   [-] 1 [+]   🗑 │  │ └─────────────────────┘ │
+│  ├──────────────────────────────────────────┤  │                           │
+│  │ Detergente x5 lts                        │  │  ☐ L1: 0.00% (Base)      │
+│  │ ACC-017                                  │  │  ☐ L2: 6.25% (>$250k)    │
+│  │        $5,800    $5,800   [-] 1 [+]   🗑 │  │  [% Aplicar L2] [% L3]   │
+│  └──────────────────────────────────────────┘  │                           │
+│                                                │  Desc. Manual (%): [0]   │
+│                                                │  Ajuste ($): [0]         │
+│                                                │  📝 Agregar nota         │
+│                                                │                           │
+│                                                │  TOTAL FINAL             │
+│                                                │  $8,315                   │
+│                                                │                           │
+│                                                │  [📄 Generar Resumen]     │
+│                                                │  [💾 Guardar Borrador]    │
+│                                                │  [✅ Confirmar Pedido]    │
+│                                                │     Agencias entrega      │
+│                                                │                           │
+│                                                │  ⌨️ Shift+4 · F4 Resumen │
+└────────────────────────────────────────────────┴───────────────────────────┘</code></pre>
+
+            <h3>2.2 Distribución de espacios</h3>
+            <p><strong>Pantalla completa dividida en 2 columnas:</strong></p>
+            <ol>
+                <li><strong>Columna izquierda (70% ancho)</strong>:
+                    <ul>
+                        <li>Header (switch + buscador + cliente)</li>
+                        <li>Tabla de productos agregados</li>
+                    </ul>
+                </li>
+                <li><strong>Columna derecha (30% ancho)</strong>:
+                    <ul>
+                        <li>Panel lateral fijo con scroll independiente</li>
+                        <li>Resumen, descuentos, totales y botones de acción</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>2.3 Sidebar lateral del sistema</h3>
+            <ul>
+                <li><strong>Estado al abrir cotizador</strong>: Colapsado automáticamente</li>
+                <li><strong>Ítem activo</strong>: "COTIZADOR" (resaltado en verde)</li>
+                <li><strong>Logo</strong>: Bambú CRM (parte superior)</li>
+                <li><strong>Configuración</strong>: Parte inferior</li>
+            </ul>
+        </section>
+
+        <section id="comportamiento-general">
+            <h2>3. COMPORTAMIENTO GENERAL</h2>
+
+            <h3>3.1 Apertura del cotizador</h3>
+            <p><strong>Trigger</strong>: Click en botón "COTIZADOR" (sidebar o header)</p>
+            <p><strong>Acciones automáticas:</strong></p>
+            <ol>
+                <li>Colapsa el menú lateral izquierdo</li>
+                <li>Carga vista limpia (sin productos, sin cliente, modo REPARTO por defecto)</li>
+                <li>Focus automático en campo "Buscar productos"</li>
+                <li>Estado inicial: Borrador vacío</li>
+            </ol>
+
+            <h3>3.2 Flujo continuo</h3>
+            <p><strong>Al confirmar un pedido:</strong></p>
+            <ul>
+                <li>✅ Muestra mensaje de éxito (toast notification)</li>
+                <li>✅ Limpia automáticamente todos los campos</li>
+                <li>✅ Vuelve a estado "nueva cotización"</li>
+                <li>✅ Focus en buscador de productos</li>
+                <li>✅ <strong>NO cierra el cotizador</strong> → Listo para siguiente pedido</li>
+            </ul>
+
+            <h3>3.3 Cierre del cotizador</h3>
+            <p><strong>Casos:</strong></p>
+            <ol>
+                <li><strong>Con cambios sin guardar:</strong>
+                    <pre><code>⚠️ ¿Estás seguro?
+Se perderán los cambios no guardados
+
+[Cancelar] [Sí, salir]</code></pre>
+                    <ul>
+                        <li>Si confirma: pierde todo (no hay guardado automático)</li>
+                        <li>Si cancela: permanece en cotizador</li>
+                    </ul>
+                </li>
+                <li><strong>Sin cambios:</strong>
+                    <ul>
+                        <li>Cierra directo sin advertencia</li>
+                        <li>Vuelve al dashboard</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>3.4 Orden de elementos en pantalla (top → bottom)</h3>
+            <ol>
+                <li><strong>Switch FÁBRICA / REPARTO</strong></li>
+                <li><strong>Buscador de productos</strong></li>
+                <li><strong>Selector de cliente</strong> (opcional)</li>
+                <li><strong>Lista de productos agregados al pedido</strong></li>
+                <li><strong>Panel lateral derecho</strong> (siempre visible):
+                    <ul>
+                        <li>Resumen (subtotal, fecha, peso)</li>
+                        <li>Listas de precio</li>
+                        <li>Descuento manual</li>
+                        <li>Ajuste de monto</li>
+                        <li>Notas</li>
+                        <li>Total final</li>
+                        <li>Botones de acción</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section id="switch-fabrica-reparto">
+            <h2>4. SWITCH FÁBRICA / REPARTO</h2>
+
+            <h3>4.1 Ubicación</h3>
+            <p><strong>Parte superior izquierda del cotizador</strong> (primer elemento visible)</p>
+
+            <h3>4.2 Diseño</h3>
+            <pre><code>┌─────────────────────────────────┐
+│ [🚚 Reparto] [🏭 Fábrica]        │  ← Toggle horizontal
+└─────────────────────────────────┘
+
+Estado activo: Fondo color naranja (Reparto) o azul (Fábrica)
+Estado inactivo: Fondo gris claro</code></pre>
+
+            <h3>4.3 Comportamiento</h3>
+            <p><strong>Regla crítica</strong>: Cambiar el switch <strong>NO reinicia los productos cargados</strong>,
+                solo determina el estado final del pedido.</p>
+
+            <h4>4.3.1 Modo FÁBRICA</h4>
+            <p><strong>Ícono</strong>: 🏭<br>
+                <strong>Color</strong>: Azul<br>
+                <strong>Uso</strong>: Ventas directas donde el cliente retira en el momento
+            </p>
+
+            <p><strong>Efectos al confirmar:</strong></p>
+            <ul>
+                <li>Estado del pedido: <code>"entregado"</code> (directo)</li>
+                <li>Stock: Se descuenta inmediatamente</li>
+                <li>Fecha del pedido: Fecha actual (timestamp del sistema)</li>
+                <li>Cuenta corriente: Si tiene cliente → genera cargo automático</li>
+                <li><strong>NO abre calendario</strong> (no hay fecha de entrega futura)</li>
+            </ul>
+
+            <p><strong>Flujo:</strong></p>
+            <pre><code>Modo FÁBRICA → Confirmar pedido
+       ↓
+Estado: "Entregado"
+Stock: Descontado
+Fecha: Hoy
+       ↓
+Aparece en módulo VENTAS (filtro: Entregado)</code></pre>
+
+            <h4>4.3.2 Modo REPARTO</h4>
+            <p><strong>Ícono</strong>: 🚚<br>
+                <strong>Color</strong>: Naranja<br>
+                <strong>Uso</strong>: Pedidos que serán entregados posteriormente
+            </p>
+
+            <p><strong>Efectos al confirmar:</strong></p>
+            <ol>
+                <li><strong>Abre calendario modal</strong> para elegir fecha de entrega</li>
+                <li>Calendario restringido: <strong>Solo lunes a viernes</strong></li>
+                <li>Si NO selecciona fecha → asigna fecha actual</li>
+                <li>Estado del pedido: <code>"en tránsito"</code> con fecha asignada</li>
+                <li>Stock: Se descuenta inmediatamente</li>
+                <li>Cuenta corriente: Si tiene cliente → genera cargo automático</li>
+            </ol>
+
+            <p><strong>Flujo:</strong></p>
+            <pre><code>Modo REPARTO → Confirmar pedido
+       ↓
+Modal calendario (L-V solamente)
+Selecciona: 27/12/2025
+       ↓
+Estado: "En tránsito"
+Fecha asignada: 27/12/2025
+Stock: Descontado
+       ↓
+Aparece en módulo VENTAS:
+  - Tab "Lista Pedidos" → Filtro: En tránsito ✅
+  - Tab "Calendario Semana" → Día 27/12 ✅</code></pre>
+
+            <h3>4.4 Cambio de modo durante edición</h3>
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>Usuario carga 3 productos → Selecciona FÁBRICA → Cambia a REPARTO
+
+Resultado:
+✅ Los 3 productos permanecen cargados
+✅ Solo cambia el comportamiento al confirmar</code></pre>
+        </section>
+
+        <section id="buscador-de-productos">
+            <h2>5. BUSCADOR DE PRODUCTOS</h2>
+
+            <h3>5.1 Ubicación</h3>
+            <p><strong>Header del cotizador</strong>, justo después del switch FÁBRICA/REPARTO</p>
+
+            <h3>5.2 Diseño</h3>
+            <pre><code>┌──────────────────────────────────────────────────────┐
+│ 🔍  Buscar productos (nombre)...                     │
+└──────────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Características visuales:</strong></p>
+            <ul>
+                <li>Campo de texto ancho (ocupa ~50% del header)</li>
+                <li>Placeholder: "Buscar productos (nombre)..."</li>
+                <li>Ícono de lupa (🔍) a la izquierda</li>
+                <li>Auto-focus al abrir cotizador</li>
+            </ul>
+
+            <h3>5.3 Comportamiento de búsqueda</h3>
+
+            <h4>5.3.1 Búsqueda predictiva</h4>
+            <p><strong>Trigger</strong>: Usuario escribe mínimo 2 caracteres</p>
+
+            <p><strong>Resultados:</strong></p>
+            <ul>
+                <li>Aparecen en dropdown debajo del campo</li>
+                <li>Búsqueda por: Nombre del producto (case-insensitive)</li>
+                <li>Ordenamiento: Respeta campo <code>orden</code> de productos (menor número = mayor prioridad)</li>
+                <li>Formato compacto: 1 línea por producto</li>
+            </ul>
+
+            <p><strong>Ejemplo de resultado:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────┐
+│ 🔍  deter                                            │
+├──────────────────────────────────────────────────────┤
+│ Granel detergente · GRA-015 · $915 · Stock: 150     │
+│ Detergente tipo magistral x1 lt · PRD-018 · $1,600  │
+│ Detergente tipo magistral x5 lts · ACC-017 · $5,800 │
+└──────────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Información mostrada por producto (en 1 línea):</strong></p>
+            <ul>
+                <li>Nombre del producto</li>
+                <li>Precio (lista actual aplicada)</li>
+                <li>Stock disponible</li>
+                <li><strong>NO se muestra</strong>: Descripción larga, categoría</li>
+            </ul>
+
+            <h4>5.3.2 Orden de resultados</h4>
+            <p><strong>Regla</strong>: Usa campo <code>orden</code> de la tabla productos</p>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>SELECT * FROM productos
+WHERE nombre LIKE '%deter%'
+  AND disponible = true
+ORDER BY orden ASC, nombre ASC
+LIMIT 10</code></pre>
+
+            <p><strong>Campo <code>orden</code>:</strong></p>
+            <ul>
+                <li>Asignado manualmente por administrador</li>
+                <li>Menor número = Mayor prioridad</li>
+                <li>Ejemplo: Producto estrella <code>orden = 1</code>, productos secundarios <code>orden = 10</code>
+                </li>
+            </ul>
+
+            <h4>5.3.3 Productos excluidos</h4>
+            <p><strong>NO aparecen en buscador:</strong></p>
+            <ul>
+                <li>Productos con <code>disponible = false</code></li>
+                <li>Productos eliminados (soft delete)</li>
+            </ul>
+
+            <p><strong>SÍ aparecen aunque tengan stock = 0:</strong></p>
+            <ul>
+                <li>Productos BAMBU (proveedor propio) → siempre se pueden vender</li>
+                <li>Productos de otros proveedores → depende de configuración (ver sección 5.5)</li>
+            </ul>
+
+            <h3>5.4 Agregar productos</h3>
+
+            <h4>5.4.1 Métodos de agregado</h4>
+            <p><strong>Opción 1: Click en resultado</strong></p>
+            <ul>
+                <li>Usuario hace click en un producto del dropdown</li>
+                <li>Se agrega con cantidad = 1</li>
+                <li>Dropdown se cierra</li>
+                <li>Campo de búsqueda se limpia</li>
+                <li>Focus vuelve al buscador (para continuar agregando)</li>
+            </ul>
+
+            <p><strong>Opción 2: Enter en resultado seleccionado</strong></p>
+            <ul>
+                <li>Usuario navega con flechas ↑↓ por resultados</li>
+                <li>Presiona Enter</li>
+                <li>Se agrega producto seleccionado con cantidad = 1</li>
+            </ul>
+
+            <p><strong>Opción 3: Botones +/- en dropdown</strong></p>
+            <ul>
+                <li>Cada resultado tiene botones <code>[-] 1 [+]</code> inline</li>
+                <li>Usuario puede incrementar cantidad antes de agregar</li>
+                <li>Click en <code>[+]</code> → agrega producto con cantidad actual</li>
+            </ul>
+
+            <h4>5.4.2 Producto ya agregado</h4>
+            <p><strong>Regla</strong>: Si un producto ya está en la lista y se vuelve a agregar → <strong>la cantidad se
+                    suma automáticamente</strong></p>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>Estado actual:
+- Granel detergente x 2
+
+Usuario busca "Granel" y lo agrega de nuevo:
+
+Resultado:
+- Granel detergente x 3  ← Cantidad sumada
+
+NO se crea línea duplicada
+NO se muestra advertencia "Ya está agregado"</code></pre>
+
+            <h3>5.5 Comportamiento con stock insuficiente</h3>
+            <p><strong>Configurable desde panel de administración</strong> (boolean global)</p>
+
+            <h4>5.5.1 Opción 1 - Modo FLEXIBLE (recomendado)</h4>
+            <pre><code>Producto: Detergente X
+Stock disponible: 5
+Usuario intenta agregar: 10
+
+Resultado:
+✅ Se permite agregar
+⚠️ Advertencia visual (badge naranja): "Stock bajo (5 disponibles)"</code></pre>
+
+            <p><strong>Diseño de advertencia:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────┐
+│ Detergente tipo magistral x1 lt · PRD-018            │
+│ ⚠️ Stock bajo (5 disponibles) · $1,600               │
+└──────────────────────────────────────────────────────┘</code></pre>
+
+            <h4>5.5.2 Opción 2 - Modo ESTRICTO</h4>
+            <pre><code>Producto: Detergente X
+Stock disponible: 5
+Usuario intenta agregar: 10
+
+Resultado:
+❌ Bloquea el agregado
+❌ Botón [+] deshabilitado al llegar al límite
+ℹ️ Tooltip: "Stock insuficiente (máx: 5)"</code></pre>
+
+            <h4>5.5.3 Excepción: Productos BAMBU</h4>
+            <p><strong>Regla especial</strong>: Los productos con <code>proveedor = "BAMBU"</code> (proveedor propio)
+                <strong>siempre se pueden agregar</strong> aunque tengan:
+            </p>
+            <ul>
+                <li>Stock = 0</li>
+                <li>Stock negativo (-5, -10, etc.)</li>
+            </ul>
+
+            <p><strong>Motivo</strong>: BAMBU fabrica sus propios productos, no depende de proveedores externos.</p>
+
+            <p><strong>Diseño:</strong></p>
+            <pre><code>Granel detergente · GRA-015 · $915 · Stock: -5
+← Se puede agregar sin restricciones</code></pre>
+        </section>
+
+        <section id="selector-de-cliente">
+            <h2>6. SELECTOR DE CLIENTE</h2>
+
+            <h3>6.1 Ubicación</h3>
+            <p><strong>Esquina superior derecha del header</strong> (después del buscador de productos)</p>
+
+            <h3>6.2 Diseño</h3>
+            <pre><code>┌──────────────────────────────┐
+│ 👤 Cliente sin nombre    ▼   │  ← Dropdown
+└──────────────────────────────┘
+
+Al hacer click:
+┌──────────────────────────────┐
+│ 🔍 Buscar cliente...         │
+├──────────────────────────────┤
+│ Av. San Martín 1234          │
+│ Calle Mitre 567              │
+│ Venta Fábrica (genérico)     │
+│ Av. Roca 890                 │
+└──────────────────────────────┘</code></pre>
+
+            <h3>6.3 Comportamiento</h3>
+
+            <h4>6.3.1 Estado por defecto</h4>
+            <p><strong>Valor inicial</strong>: "Cliente sin nombre"</p>
+
+            <p><strong>Significado</strong>:</p>
+            <ul>
+                <li>Pedido sin cliente asignado</li>
+                <li><strong>NO genera cargo en cuenta corriente</strong></li>
+                <li>Se puede asignar cliente después (editando el pedido)</li>
+            </ul>
+
+            <h4>6.3.2 Búsqueda de clientes</h4>
+            <p><strong>Campo de búsqueda</strong> (dentro del dropdown):</p>
+            <ul>
+                <li>Placeholder: "Buscar cliente..."</li>
+                <li>Búsqueda por: Dirección (nombre del cliente en Bambu CRM)</li>
+                <li>Case-insensitive</li>
+                <li>Mínimo 2 caracteres</li>
+            </ul>
+
+            <p><strong>Resultados:</strong></p>
+            <ul>
+                <li>Formato compacto (1 línea por cliente)</li>
+                <li>Información mostrada:
+                    <ul>
+                        <li>Dirección (principal)</li>
+                        <li>Teléfono (opcional, si existe)</li>
+                        <li>Saldo cuenta corriente (si tiene deuda/a favor)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────┐
+│ 🔍 Buscar cliente...                         │
+├──────────────────────────────────────────────┤
+│ Av. San Martín 1234 · 299-123456 · -$15.000 │
+│ Av. Mitre 567 · 298-765432 · $0              │
+│ Calle Roca 890 · +$5.000                     │
+└──────────────────────────────────────────────┘
+
+Indicadores de saldo:
+-$15.000 (rojo)  → Debe $15.000
+$0 (gris)        → Al día
++$5.000 (verde)  → A favor $5.000</code></pre>
+
+            <h4>6.3.3 Navegación con teclado</h4>
+            <p><strong>Problema identificado en v1</strong>: Buscador no permitía desplazarse correctamente entre
+                resultados con flechas ↑↓</p>
+
+            <p><strong>Solución v2</strong>:</p>
+            <ul>
+                <li>✅ Flechas ↑↓ navegan entre resultados</li>
+                <li>✅ <strong>Resultado seleccionado siempre centrado en la lista</strong> (auto-scroll)</li>
+                <li>✅ Enter selecciona cliente</li>
+                <li>✅ Esc cierra dropdown sin seleccionar</li>
+            </ul>
+
+            <h4>6.3.4 Selección de cliente</h4>
+            <p><strong>Al seleccionar:</strong></p>
+            <ol>
+                <li>Dropdown se cierra</li>
+                <li>Se muestra dirección del cliente en el selector</li>
+                <li><strong>Descuento fijo del cliente se aplica automáticamente</strong> (si tiene)</li>
+                <li>Se actualiza el total</li>
+            </ol>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>Cliente seleccionado: Av. San Martín 1234
+Descuento fijo configurado: 8%
+
+Resultado:
+✅ Selector muestra: "Av. San Martín 1234"
+✅ Panel lateral muestra: "Descuento cliente: 8%"
+✅ Total recalculado automáticamente</code></pre>
+
+            <h4>6.3.5 Cambiar o quitar cliente</h4>
+            <p><strong>Cambiar cliente:</strong></p>
+            <ul>
+                <li>Click en selector → Abre dropdown nuevamente</li>
+                <li>Busca y selecciona otro cliente</li>
+                <li>Descuentos se actualizan según nuevo cliente</li>
+            </ul>
+
+            <p><strong>Quitar cliente:</strong></p>
+            <ul>
+                <li>Botón <code>[×]</code> al lado del nombre del cliente</li>
+                <li>Vuelve a "Cliente sin nombre"</li>
+                <li>Descuentos de cliente se eliminan</li>
+            </ul>
+        </section>
+
+        <section id="lista-de-productos-agregados">
+            <h2>7. LISTA DE PRODUCTOS AGREGADOS</h2>
+
+            <h3>7.1 Ubicación</h3>
+            <p><strong>Columna izquierda principal del cotizador</strong> (debajo del header)</p>
+
+            <h3>7.2 Diseño de tabla</h3>
+            <pre><code>┌────────────────────────────────────────────────────────────────────┐
+│  PRODUCTO            │ SUBTOTAL │ UNITARIO │ CANT.        │ 🗑      │
+├────────────────────────────────────────────────────────────────────┤
+│  Granel detergente   │  $915    │  $915    │ [-] 1 [+]    │  🗑     │
+│  GRA-015             │          │          │              │        │
+├────────────────────────────────────────────────────────────────────┤
+│  Detergente magistral│ $1,600   │ $1,600   │ [-] 1 [+]    │  🗑     │
+│  PRD-018             │          │          │              │        │
+├────────────────────────────────────────────────────────────────────┤
+│  Detergente x5 lts   │ $5,800   │ $5,800   │ [-] 1 [+]    │  🗑     │
+│  ACC-017             │          │          │              │        │
+└────────────────────────────────────────────────────────────────────┘</code></pre>
+
+            <h3>7.3 Columnas de la tabla</h3>
+
+            <h4>7.3.1 PRODUCTO</h4>
+            <p><strong>Contenido:</strong></p>
+            <ul>
+                <li>Nombre del producto (truncado si es muy largo)</li>
+            </ul>
+
+            <p><strong>Formato:</strong></p>
+            <pre><code>Granel detergente             ← Nombre (font-size: 14px, bold)</code></pre>
+
+            <h4>7.3.2 SUBTOTAL</h4>
+            <p><strong>Contenido</strong>: Precio unitario × Cantidad</p>
+            <p><strong>Formato:</strong></p>
+            <ul>
+                <li>Moneda: <code>$</code> + número con separador de miles</li>
+                <li>Ejemplo: <code>$5,800</code>, <code>$915</code></li>
+            </ul>
+            <p><strong>Actualización</strong>: Se recalcula automáticamente al cambiar cantidad</p>
+
+            <h4>7.3.3 UNITARIO</h4>
+            <p><strong>Contenido</strong>: Precio por unidad (según lista de precios aplicada)</p>
+            <p><strong>Formato:</strong></p>
+            <ul>
+                <li>Moneda: <code>$</code> + número con separador de miles</li>
+                <li>Ejemplo: <code>$1,600</code></li>
+            </ul>
+
+            <p><strong>Variación según descuentos:</strong></p>
+            <pre><code>Precio base: $1,000
+Lista L2 aplicada (6.25% desc): $937.50
+Precio unitario mostrado: $937.50
+
+Subtotal con cantidad 5: $4,687.50</code></pre>
+
+            <h4>7.3.4 CANT. (Cantidad)</h4>
+            <p><strong>Diseño:</strong></p>
+            <pre><code>[-]  1  [+]</code></pre>
+
+            <p><strong>Botones:</strong></p>
+            <ul>
+                <li><code>[-]</code>: Restar 1 unidad</li>
+                <li><code>[+]</code>: Sumar 1 unidad</li>
+                <li>Centro: Número actual (puede ser input editable)</li>
+            </ul>
+
+            <p><strong>Comportamiento:</strong></p>
+            <p><strong>Botón <code>[-]</code>:</strong></p>
+            <ul>
+                <li>Si cantidad = 1 → Deshabilita botón (no permite cantidad = 0)</li>
+                <li>Si cantidad > 1 → Resta 1</li>
+                <li><strong>Alternativa</strong>: Al llegar a 0, elimina el producto automáticamente</li>
+            </ul>
+
+            <p><strong>Botón <code>[+]</code>:</strong></p>
+            <ul>
+                <li>Suma 1 sin límite (excepto si modo ESTRICTO de stock)</li>
+            </ul>
+
+            <p><strong>Input numérico central:</strong></p>
+            <ul>
+                <li>Permite edición directa: Usuario puede escribir cantidad</li>
+                <li>Validación: Solo números enteros positivos</li>
+                <li>Si escribe 0 o negativo → Muestra advertencia o revierte a 1</li>
+            </ul>
+
+            <h3>7.4 Columna de acciones (🗑)</h3>
+            <p><strong>Botón eliminar:</strong></p>
+            <ul>
+                <li>Ícono: 🗑 (basura) en rojo</li>
+                <li>Hover: Cambia a rojo más intenso</li>
+                <li>Click: Elimina la línea del producto</li>
+            </ul>
+
+            <p><strong>Confirmación</strong>: NO solicita confirmación (eliminación directa)</p>
+
+            <p><strong>Efecto</strong>:</p>
+            <ul>
+                <li>Producto desaparece de la tabla</li>
+                <li>Subtotal y total se recalculan</li>
+                <li>Si no quedan productos → Tabla queda vacía</li>
+            </ul>
+        </section>
+
+        <section id="panel-lateral-resumen-y-totales">
+            <h2>8. PANEL LATERAL: RESUMEN Y TOTALES</h2>
+
+            <h3>8.1 Ubicación</h3>
+            <p><strong>Columna derecha del cotizador</strong> (30% del ancho, fija con scroll independiente)</p>
+
+            <h3>8.2 Estructura completa</h3>
+            <pre><code>┌───────────────────────────────┐
+│ RESUMEN                       │
+├───────────────────────────────┤
+│ Subtotal:          $8,315     │
+│ 📦 Entrega:    [12/27/2025]   │
+│ ⚖️ Peso total:      7.20kg     │
+├───────────────────────────────┤
+│ LISTAS DE PRECIO              │
+│ ☐ L1: 0.00% (Base)            │
+│ ☐ L2: 6.25% (>$250k)          │
+│ ☐ L3: 10.00% (>$1M)           │
+│                               │
+│ [% Aplicar L2] [% Aplicar L3] │
+├───────────────────────────────┤
+│ Desc. Manual (%): [0______]   │
+│ Ajuste ($):      [0______]    │
+│ 📝 Agregar nota               │
+├───────────────────────────────┤
+│ TOTAL FINAL                   │
+│ $8,315                        │
+├───────────────────────────────┤
+│ [📄 Generar Resumen]          │
+│ [💾 Guardar Borrador]         │
+│ [✅ Confirmar Pedido]         │
+│    Agencias entrega           │
+├───────────────────────────────┤
+│ ⌨️ Shift+4 Confirmar          │
+│ ⌨️ F4 Resumen                 │
+└───────────────────────────────┘</code></pre>
+
+            <h3>8.3 Sección: Resumen superior</h3>
+
+            <h4>8.3.1 Subtotal</h4>
+            <p><strong>Contenido</strong>: Suma de todos los productos antes de descuentos y ajustes</p>
+            <p><strong>Cálculo</strong>:</p>
+            <pre><code>subtotal = productos.reduce((sum, p) => sum + (p.cantidad * p.precio_unitario), 0)</code></pre>
+            <p><strong>Formato</strong>: <code>$8,315</code> (grande, destacado)</p>
+
+            <h4>8.3.2 Fecha de entrega (solo modo REPARTO)</h4>
+            <p><strong>Diseño:</strong></p>
+            <pre><code>📦 Entrega:  [12/27/2025] 📅
+              └─ Input date con ícono calendario</code></pre>
+
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li><strong>Modo FÁBRICA</strong>: NO se muestra (entrega inmediata)</li>
+                <li><strong>Modo REPARTO</strong>: Se muestra con fecha seleccionable</li>
+            </ul>
+
+            <p><strong>Restricciones:</strong></p>
+            <ul>
+                <li>Solo lunes a viernes (JavaScript valida fin de semana)</li>
+                <li>Si selecciona sábado/domingo → Alerta: "Solo días laborables (L-V)"</li>
+                <li>Fecha mínima: Hoy</li>
+                <li>Fecha máxima: Ninguna (puede agendar a futuro)</li>
+            </ul>
+
+            <p><strong>Valor por defecto:</strong></p>
+            <ul>
+                <li>Si modo REPARTO → Fecha actual</li>
+                <li>Usuario puede cambiarla antes de confirmar</li>
+            </ul>
+
+            <h4>8.3.3 Peso total</h4>
+            <p><strong>Contenido</strong>: Suma de pesos de todos los productos</p>
+            <p><strong>Prerequisito</strong>: Productos deben tener campo <code>peso</code> en base de datos</p>
+            <p><strong>Cálculo:</strong></p>
+            <pre><code>peso_total = productos.reduce((sum, p) => sum + (p.cantidad * p.peso), 0)</code></pre>
+            <p><strong>Formato</strong>: <code>7.20kg</code></p>
+            <p><strong>Uso</strong>: Informativo para repartos (conocer capacidad de vehículos)</p>
+
+            <h4>8.3.4 Método de pago (SOLO modo FÁBRICA) ⭐ NUEVO</h4>
+            <p><strong>Condición de visibilidad</strong>: Solo se muestra si <code>switch = FÁBRICA</code></p>
+            <p><strong>Propósito</strong>: Registrar pago EN EL MOMENTO de la venta, evitando el doble paso de confirmar
+                pedido y luego ir a VENTAS a registrar pago.</p>
+
+            <p><strong>Diseño:</strong></p>
+            <pre><code>┌───────────────────────────────┐
+│ MÉTODO DE PAGO (Opcional)     │
+│ ☐ Efectivo                    │
+│ ☐ Digital (MP/Transf)         │
+│                               │
+│ Monto recibido: [$8,315]      │
+└───────────────────────────────┘</code></pre>
+
+            <p><strong>Comportamiento:</strong></p>
+            <ol>
+                <li><strong>Usuario NO marca nada</strong> (por defecto):
+                    <ul>
+                        <li>Pedido se confirma SIN pago registrado</li>
+                        <li>Cliente queda con saldo pendiente</li>
+                        <li>Caso de uso: Cliente retira fiado</li>
+                    </ul>
+                </li>
+                <li><strong>Usuario marca Efectivo</strong>:
+                    <ul>
+                        <li>Input "Monto recibido" se auto-completa con total del pedido</li>
+                        <li>Usuario puede editar monto (permite pago parcial)</li>
+                    </ul>
+                </li>
+                <li><strong>Usuario marca Digital</strong>:
+                    <ul>
+                        <li>Igual que efectivo (auto-completa, permite pago parcial)</li>
+                    </ul>
+                </li>
+                <li><strong>Usuario marca AMBOS (pago mixto)</strong>:
+                    <ul>
+                        <li>Se despliegan 2 inputs:
+                            <pre><code>☑ Efectivo: [$5,000]
+☑ Digital:  [$3,315]
+Total recibido: $8,315 ✓</code></pre>
+                        </li>
+                        <li>Validación: <code>efectivo + digital = monto_recibido</code></li>
+                        <li>Si no coincide → Error: "⚠️ La suma debe igualar el monto recibido"</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <p><strong>Pago parcial (CRÍTICO según feedback Carlos):</strong></p>
+            <p><strong>Regla</strong>: El monto recibido <strong>NO tiene que igualar el total del pedido</strong></p>
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>Total pedido: $100,000
+Monto recibido: $30,000 (efectivo)
+
+Sistema muestra:
+⚠️ Pago parcial detectado
+Saldo pendiente: $70,000
+(quedará en cuenta corriente)
+
+Al confirmar:
+- Cargo CC: +$100,000
+- Pago CC: -$30,000 (efectivo)
+- Saldo cliente: -$70,000 (debe)</code></pre>
+
+            <p><strong>Monto recibido > Total</strong> (cliente paga de más):</p>
+            <pre><code>Total pedido: $8,000
+Monto recibido: $10,000
+
+Sistema muestra:
+ℹ️ Pago excede el total
+A favor del cliente: +$2,000
+(quedará en cuenta corriente)
+
+Al confirmar:
+- Cargo CC: +$8,000
+- Pago CC: -$10,000
+- Saldo cliente: +$2,000 (a favor)</code></pre>
+            <p><strong>Nota importante</strong>: Los pagos <strong>NO están atados al pedido específico</strong>, solo
+                reducen el saldo total del cliente (ver sección 8.3.5).</p>
+
+            <h4>8.3.5 Concepto: Pagos "asociados al momento" vs "atados al pedido" ⭐ NUEVO</h4>
+            <p><strong>Regla fundamental</strong>: Los pagos en Bambu CRM <strong>NO están ATADOS a pedidos
+                    específicos</strong>, pero <strong>SÍ pueden registrarse EN EL MOMENTO de crear un pedido</strong>.
+            </p>
+
+            <p><strong>Diferencia clave entre "asociado" y "atado":</strong></p>
+
+            <table>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Significado</th>
+                </tr>
+                <tr>
+                    <td><strong>Pago ASOCIADO</strong></td>
+                    <td>Se registra EN EL MOMENTO de crear el pedido (desde cotizador). El pedido guarda
+                        <code>metodo_pago</code> y <code>monto_pagado</code>.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Pago ATADO</strong></td>
+                    <td>❌ El pago debe igualar exactamente el total del pedido. NO se permite pago parcial. El pago
+                        "cierra" el pedido.</td>
+                </tr>
+            </table>
+
+            <p><strong>Lo que Bambu CRM hace:</strong></p>
+            <ul>
+                <li>✅ Permite pagos ASOCIADOS al momento de crear el pedido</li>
+                <li>✅ NO exige que el pago iguale el total (permite parciales)</li>
+                <li>✅ Los pagos reducen el SALDO TOTAL del cliente (no un pedido específico)</li>
+                <li>✅ Pagos posteriores son completamente genéricos (no dicen "es para completar el pedido X")</li>
+            </ul>
+
+            <p><strong>Ejemplo conceptual completo:</strong></p>
+
+            <p><strong>Día 1: Venta en fábrica con pago parcial (desde COTIZADOR)</strong></p>
+            <pre><code>COTIZADOR modo FÁBRICA:
+- Usuario crea pedido: $100,000
+- Marca: ☑ Efectivo
+- Monto recibido: $30,000 (pago parcial)
+- Confirma pedido
+
+Sistema registra:
+├─ Pedido #100:
+│  ├─ Total: $100,000
+│  ├─ metodo_pago: "efectivo"
+│  ├─ monto_pagado: $30,000  ← ASOCIADO al momento de crear pedido
+│  └─ estado: "entregado"
+│
+└─ Cuenta Corriente:
+   ├─ Cargo: +$100,000 (por pedido #100)
+   ├─ Pago: -$30,000 (efectivo)
+   └─ Saldo: -$70,000 (debe)
+
+En módulo VENTAS se ve:
+Pedido #100: Total $100k | Pagado $30k efectivo | Pendiente $70k</code></pre>
+
+            <p><strong>Días después: Cliente hace otra compra (desde COTIZADOR)</strong></p>
+            <pre><code>COTIZADOR modo FÁBRICA:
+- Usuario crea pedido: $50,000
+- NO registra pago (cliente retira fiado)
+- Confirma pedido
+
+Sistema registra:
+├─ Pedido #101:
+│  ├─ Total: $50,000
+│  ├─ metodo_pago: null
+│  └─ estado: "entregado"
+│
+└─ Cuenta Corriente:
+   ├─ Cargo: +$50,000 (por pedido #101)
+   └─ Saldo: -$120,000 (debe) ← $70k anterior + $50k nuevo</code></pre>
+
+            <p><strong>Días después: Cliente paga (desde CUENTA CORRIENTE)</strong></p>
+            <pre><code>MÓDULO CUENTA CORRIENTE:
+- Usuario ve saldo: -$120,000
+- [+ Registrar pago genérico]
+- Monto: $80,000
+- Método: Digital (transferencia)
+- Confirma
+
+Sistema registra:
+└─ Cuenta Corriente:
+   ├─ Pago genérico: -$80,000 (digital)
+   └─ Saldo: -$40,000 (debe)
+
+⚠️ Este pago NO dice "es para completar pedido #100" o "#101"
+✅ Solo dice "pago genérico que reduce saldo total"
+
+Pedidos NO cambian:
+- Pedido #100 sigue mostrando: Pagado $30k, Pendiente $70k
+- Pedido #101 sigue mostrando: Pagado $0, Pendiente $50k
+
+El pago genérico $80k simplemente redujo el saldo total de -$120k a -$40k</code></pre>
+
+            <p><strong>Resumen del comportamiento:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────────────┐
+│ Pagos EN EL COTIZADOR (al crear pedido):                    │
+│ ✅ Se registran "asociados" al pedido                        │
+│ ✅ El pedido guarda metodo_pago y monto_pagado               │
+│ ✅ Pueden ser parciales (no exige cubrir 100% del total)     │
+│ ✅ Reducen el saldo total del cliente                        │
+│                                                              │
+│ Pagos POSTERIORES (desde Cuenta Corriente):                 │
+│ ✅ Son completamente genéricos (no vinculados a pedidos)     │
+│ ✅ Solo reducen el saldo total del cliente                   │
+│ ✅ NO actualizan campos del pedido                           │
+└──────────────────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Beneficios de este enfoque:</strong></p>
+            <ul>
+                <li>✅ Más flexible (cliente paga $X sin especificar a qué pedido corresponde)</li>
+                <li>✅ Refleja la realidad del negocio (clientes pagan "a cuenta")</li>
+                <li>✅ Evita complejidad de asociar pagos a pedidos específicos</li>
+                <li>✅ Permite pagos parciales y acumulativos</li>
+            </ul>
+
+            <p><strong>Dónde se registran pagos:</strong></p>
+            <ol>
+                <li><strong>COTIZADOR modo FÁBRICA</strong>: Al momento de la venta (sección 8.3.4)</li>
+                <li><strong>MÓDULO CUENTA CORRIENTE</strong>: Pago genérico manual (ver cuenta-corriente.html)</li>
+                <li><strong>MÓDULO VENTAS</strong>: Al marcar pedido como "Entregado" (solo modo REPARTO)</li>
+            </ol>
+        </section>
+
+        <section id="configuracion-de-precios-y-descuentos">
+            <h2>9. CONFIGURACIÓN DE PRECIOS Y DESCUENTOS</h2>
+
+            <h3>9.1 Jerarquía de descuentos (IMPORTANTE)</h3>
+            <p><strong>Regla de oro</strong>: Los descuentos <strong>NO son acumulativos</strong>. Solo se aplica UNO a
+                la vez.</p>
+
+            <p><strong>Prioridad (de mayor a menor):</strong></p>
+            <ol>
+                <li>🥇 <strong>Descuento manual personalizado</strong> (input %)</li>
+                <li>🥈 <strong>Descuento fijo del cliente</strong> (configurado en perfil)</li>
+                <li>🥉 <strong>Descuento por lista de precios</strong> (L1, L2, L3)</li>
+            </ol>
+
+            <p><strong>Ejemplo:</strong></p>
+            <pre><code>Cliente: Av. San Martín 1234
+Descuento fijo cliente: 8%
+Lista L2 seleccionada: 6.25%
+Descuento manual: 10%
+
+Descuento aplicado: 10% (manual tiene prioridad)</code></pre>
+
+            <h4>9.1.1 Base de cálculo de descuentos</h4> ⭐ NUEVO (Dic 2025)
+            <p><strong>Regla crítica</strong>: Los descuentos (listas, descuento fijo, descuento manual) se aplican sobre el <strong>subtotal MENOS los productos con precio promocional y combos</strong>.</p>
+
+            <p><strong>Motivo</strong>: Los productos en promoción y combos ya tienen un precio especial fijo. Aplicar descuentos adicionales sobre ellos sería duplicar el beneficio.</p>
+
+            <p><strong>Cálculo correcto</strong>:</p>
+            <pre><code>Pedido:
+- Producto A (normal): $1,000 x 5 = $5,000
+- Producto B (promoción): $800 x 2 = $1,600 (precio promo fijo)
+- Producto C (combo): $2,500 x 1 = $2,500 (precio promo fijo)
+
+Subtotal total: $9,100
+
+Base para descuento:
+$9,100 - $1,600 (promo) - $2,500 (combo) = $5,000
+
+Descuento (6.25%):
+$5,000 × 6.25% = $312.50
+
+Total final:
+Subtotal: $9,100
+Descuento: -$312.50
+Total: $8,787.50</code></pre>
+
+            <p><strong>Identificación de productos promocionales</strong>:</p>
+            <ul>
+                <li>Campo <code>en_promocion = true</code> en la base de datos</li>
+                <li>Si <code>en_promocion = true</code> → El producto NO entra en el cálculo de descuentos</li>
+                <li>Su precio promocional se suma directo al total sin descuentos adicionales</li>
+            </ul>
+
+            <p><strong>Visualización en resumen</strong>:</p>
+            <pre><code>┌────────────────────────────────────┐
+│ Subtotal productos: $9,100         │
+│ - Productos en promo: $4,100       │
+│ Base descuento: $5,000             │
+│                                    │
+│ Descuento (6.25%): -$312.50        │
+│ TOTAL: $8,787.50                   │
+└────────────────────────────────────┘</code></pre>
+
+            <h3>9.2 Listas de precio</h3>
+
+            <h4>9.2.1 Estructura de listas</h4>
+            <p><strong>3 listas predefinidas:</strong></p>
+            <table>
+                <tr>
+                    <th>Lista</th>
+                    <th>Descuento</th>
+                    <th>Umbral</th>
+                    <th>Descripción</th>
+                </tr>
+                <tr>
+                    <td>L1</td>
+                    <td>0.00%</td>
+                    <td>Sin umbral</td>
+                    <td>Precio base (por defecto)</td>
+                </tr>
+                <tr>
+                    <td>L2</td>
+                    <td>6.25%</td>
+                    <td>Compras >$250k</td>
+                    <td>Mayoristas nivel 1</td>
+                </tr>
+                <tr>
+                    <td>L3</td>
+                    <td>10.00%</td>
+                    <td>Compras >$1M</td>
+                    <td>Mayoristas nivel 2 / VIP</td>
+                </tr>
+            </table>
+
+            <p><strong>Nota</strong>: Los umbrales son informativos (mostrados en paréntesis), NO se aplican
+                automáticamente.</p>
+
+            <h4>9.2.2 Diseño en panel lateral</h4>
+            <pre><code>LISTAS DE PRECIO
+☐ L1: 0.00% (Base)
+☐ L2: 6.25% (>$250k)
+☐ L3: 10.00% (>$1M)
+
+[% Aplicar L2]  [% Aplicar L3]</code></pre>
+
+            <p><strong>Checkboxes:</strong></p>
+            <ul>
+                <li>Solo visual (readonly)</li>
+                <li>Indica cuál está activa actualmente</li>
+                <li>Usuario NO puede seleccionar directamente</li>
+            </ul>
+
+            <p><strong>Botones de aplicación:</strong></p>
+            <ul>
+                <li><code>[% Aplicar L2]</code>: Aplica descuento L2 (6.25%)</li>
+                <li><code>[% Aplicar L3]</code>: Aplica descuento L3 (10.00%)</li>
+            </ul>
+
+            <p><strong>Comportamiento al hacer click:</strong></p>
+            <ol>
+                <li>Desmarca lista anterior</li>
+                <li>Marca lista seleccionada (✓)</li>
+                <li>Recalcula precios de productos</li>
+                <li>Actualiza total</li>
+            </ol>
+
+            <h4>9.2.3 Aplicación de lista</h4>
+            <p><strong>Por defecto:</strong> L1 (sin descuento)</p>
+
+            <p><strong>Cambio de lista:</strong></p>
+            <pre><code>Estado inicial:
+- Producto A: $1,000 x 5 = $5,000
+- Lista: L1 (0%)
+- Subtotal: $5,000
+
+Usuario click en [% Aplicar L2]:
+- Producto A: $937.50 x 5 = $4,687.50 (6.25% desc)
+- Lista: L2 (6.25%)
+- Subtotal: $4,687.50
+
+Diferencia: -$312.50</code></pre>
+
+            <p><strong>Edición posterior:</strong></p>
+            <ul>
+                <li>La lista se puede cambiar incluso después de confirmar el pedido</li>
+                <li>Al editar pedido existente → cambiar lista → guardar → totales se actualizan</li>
+            </ul>
+
+            <h3>9.3 Descuento fijo de cliente</h3>
+            <p><strong>Origen</strong>: Configurado en el perfil del cliente (campo <code>descuento_fijo</code>)</p>
+
+            <p><strong>Aplicación automática:</strong></p>
+            <pre><code>Selector de cliente → Selecciona "Av. San Martín 1234"
+                           ↓
+          Cliente tiene descuento_fijo = 8%
+                           ↓
+  Descuento se aplica automáticamente al subtotal</code></pre>
+
+            <p><strong>Visualización:</strong></p>
+            <pre><code>Panel lateral:
+─────────────────────
+Subtotal: $10,000
+Descuento cliente (8%): -$800
+Total: $9,200</code></pre>
+
+            <p><strong>Reemplazo de lista:</strong></p>
+            <ul>
+                <li>Si cliente tiene descuento fijo → <strong>ignora</strong> lista de precios</li>
+                <li>Prioridad: Descuento fijo > Lista</li>
+            </ul>
+
+            <p><strong>Edición:</strong></p>
+            <ul>
+                <li>Si usuario cambia cliente → descuento se actualiza según nuevo cliente</li>
+                <li>Si quita cliente → descuento desaparece</li>
+            </ul>
+
+            <h3>9.4 Descuento manual personalizado</h3>
+
+            <h4>9.4.1 Campo de entrada</h4>
+            <p><strong>Diseño:</strong></p>
+            <pre><code>Desc. Manual (%):  [0_____]
+                    └─ Input numérico</code></pre>
+
+            <p><strong>Características:</strong></p>
+            <ul>
+                <li>Type: <code>number</code></li>
+                <li>Min: 0</li>
+                <li>Max: 100</li>
+                <li>Step: 0.01 (permite decimales: 5.5%, 12.75%, etc.)</li>
+                <li>Placeholder: <code>0</code></li>
+            </ul>
+
+            <h4>9.4.2 Aplicación</h4>
+            <p><strong>Trigger</strong>: Usuario escribe un número y presiona Enter o pierde focus</p>
+            <p><strong>Cálculo:</strong></p>
+            <pre><code>descuento_monto = (subtotal * descuento_manual) / 100
+total_con_descuento = subtotal - descuento_monto</code></pre>
+
+            <h4>9.4.3 Prioridad máxima</h4>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Si hay descuento manual > 0 → <strong>Ignora</strong> descuento de cliente y lista</li>
+                <li>Se muestra en resumen como: "Descuento personalizado: X%"</li>
+            </ul>
+
+            <h4>9.4.4 Visualización en resumen</h4>
+            <pre><code>Subtotal:                  $10,000
+Descuento personalizado (12%): -$1,200
+Total:                      $8,800</code></pre>
+        </section>
+
+        <section id="ajustes-y-notas">
+            <h2>10. AJUSTES Y NOTAS</h2>
+
+            <h3>10.1 Ajuste de monto (+/-)</h3>
+
+            <h4>10.1.1 Campo de entrada</h4>
+            <p><strong>Diseño:</strong></p>
+            <pre><code>Ajuste ($):  [0_____]
+              └─ Input numérico (puede ser positivo o negativo)</code></pre>
+
+            <p><strong>Características:</strong></p>
+            <ul>
+                <li>Type: <code>number</code></li>
+                <li>Permite valores positivos y negativos</li>
+                <li>Placeholder: <code>0</code></li>
+                <li>Sin decimales (solo enteros)</li>
+            </ul>
+
+            <h4>10.1.2 Usos comunes</h4>
+            <p><strong>Casos de uso:</strong></p>
+            <ul>
+                <li>➕ Cobrar deudas pendientes (<code>+$5,000</code>)</li>
+                <li>➖ Devolver dinero a favor (<code>-$2,000</code>)</li>
+                <li>➕ Redondeo hacia arriba (<code>+$15</code>)</li>
+                <li>➖ Descuento fijo en pesos (no porcentaje) (<code>-$500</code>)</li>
+            </ul>
+
+            <h4>10.1.3 Validación crítica</h4>
+            <p><strong>Regla</strong>: El ajuste negativo <strong>NO puede superar el total de la compra</strong></p>
+
+            <p><strong>Ejemplo válido:</strong></p>
+            <pre><code>Subtotal: $10,000
+Descuento: -$1,000
+Total antes de ajuste: $9,000
+
+Usuario ingresa ajuste: -$500
+Total final: $8,500 ✅ Válido</code></pre>
+
+            <p><strong>Ejemplo inválido:</strong></p>
+            <pre><code>Subtotal: $10,000
+Descuento: -$1,000
+Total antes de ajuste: $9,000
+
+Usuario ingresa ajuste: -$10,000
+Total final: -$1,000 ❌ INVÁLIDO
+
+Advertencia:
+"⚠️ El ajuste no puede superar el total ($9,000)"</code></pre>
+
+            <h4>10.1.4 Visualización en resumen</h4>
+            <p><strong>Ajuste positivo:</strong></p>
+            <pre><code>Subtotal:        $10,000
+Descuento (8%):   -$800
+Ajuste:         +$1,200  ← En verde
+─────────────────────────
+Total final:    $10,400</code></pre>
+
+            <p><strong>Ajuste negativo:</strong></p>
+            <pre><code>Subtotal:        $10,000
+Descuento (8%):   -$800
+Ajuste:           -$500  ← En rojo
+─────────────────────────
+Total final:     $8,700</code></pre>
+
+            <h3>10.2 Notas del pedido</h3>
+
+            <h4>10.2.1 Botón "Agregar nota"</h4>
+            <p><strong>Diseño:</strong></p>
+            <pre><code>📝 Agregar nota</code></pre>
+
+            <p><strong>Comportamiento:</strong> Click → Abre textarea expandible</p>
+
+            <p><strong>Vista expandida:</strong></p>
+            <pre><code>┌──────────────────────────────┐
+│ Nota del pedido:             │
+│ ┌──────────────────────────┐ │
+│ │ Cliente pidió envoltorio │ │
+│ │ especial para regalo     │ │
+│ │                          │ │
+│ └──────────────────────────┘ │
+│ [Cancelar] [Guardar]         │
+└──────────────────────────────┘</code></pre>
+
+            <h4>10.2.2 Características del campo</h4>
+            <ul>
+                <li>Type: <code>textarea</code></li>
+                <li>Max length: 500 caracteres</li>
+                <li>Placeholder: "Ejemplo: Cliente pidió entrega antes de las 10am"</li>
+                <li>Opcional (puede quedar vacío)</li>
+            </ul>
+
+            <h4>10.2.3 Guardar nota</h4>
+            <p><strong>Trigger</strong>: Click en botón [Guardar]</p>
+            <p><strong>Efecto:</strong></p>
+            <ul>
+                <li>Nota se guarda en pedido</li>
+                <li>Textarea se colapsa</li>
+                <li>Botón cambia a: "📝 Editar nota" (si hay nota guardada)</li>
+            </ul>
+
+            <h4>10.2.4 Visualización con nota guardada</h4>
+            <pre><code>📝 "Cliente pidió envoltorio especial..."  [✏️ Editar]</code></pre>
+            <p>Click en [✏️ Editar] → Vuelve a abrir textarea con texto cargado</p>
+        </section>
+
+        <section id="totales-y-confirmacion">
+            <h2>11. TOTALES Y CONFIRMACIÓN</h2>
+
+            <h3>11.1 Cálculo de total final</h3>
+            <p><strong>Fórmula completa:</strong></p>
+            <pre><code>subtotal = sum(productos.precio_unitario * productos.cantidad)
+
+// Aplicar descuento (solo uno según jerarquía)
+if (descuento_manual > 0) {
+  descuento = (subtotal * descuento_manual) / 100
+} else if (cliente.descuento_fijo > 0) {
+  descuento = (subtotal * cliente.descuento_fijo) / 100
+} else if (lista_seleccionada != 'L1') {
+  descuento = (subtotal * lista_seleccionada.porcentaje) / 100
+} else {
+  descuento = 0
+}
+
+total_con_descuento = subtotal - descuento
+
+// Aplicar ajuste
+total_final = total_con_descuento + ajuste
+
+// Validar que no sea negativo
+if (total_final < 0) {
+  error("El total no puede ser negativo")
+}</code></pre>
+
+            <h3>11.2 Visualización del total</h3>
+            <p><strong>Diseño:</strong></p>
+            <pre><code>┌───────────────────────────────┐
+│ TOTAL FINAL                   │
+│ $8,315                        │
+└───────────────────────────────┘</code></pre>
+
+            <p><strong>Características:</strong></p>
+            <ul>
+                <li>Font-size: 32px (grande y destacado)</li>
+                <li>Font-weight: bold</li>
+                <li>Color: Verde oscuro (#2d7a3e)</li>
+                <li>Actualización: Tiempo real (al cambiar productos, descuentos, ajustes)</li>
+            </ul>
+
+            <h3>11.3 Botones de acción</h3>
+
+            <h4>11.3.1 [📄 Generar Resumen]</h4>
+            <p><strong>Diseño:</strong></p>
+            <ul>
+                <li>Color: Blanco con borde gris</li>
+                <li>Ícono: 📄</li>
+            </ul>
+
+            <p><strong>Función</strong>:</p>
+            <ul>
+                <li>Abre modal/vista previa con resumen del pedido</li>
+                <li>Formato imprimible (similar a factura)</li>
+                <li><strong>NO confirma el pedido</strong> (solo visualización)</li>
+            </ul>
+
+            <p><strong>Contenido del resumen:</strong></p>
+            <pre><code>═══════════════════════════════════
+     QUÍMICA BAMBU S.R.L.
+     Resumen de Pedido
+═══════════════════════════════════
+
+Cliente: Av. San Martín 1234
+Fecha: 27/12/2025
+Tipo: REPARTO
+Entrega: 12/27/2025
+
+───────────────────────────────────
+PRODUCTOS
+───────────────────────────────────
+Granel detergente (GRA-015)
+Cantidad: 1 × $915 = $915
+
+Detergente magistral x1 (PRD-018)
+Cantidad: 1 × $1,600 = $1,600
+
+Detergente x5 lts (ACC-017)
+Cantidad: 1 × $5,800 = $5,800
+
+───────────────────────────────────
+Subtotal:           $8,315
+Descuento (0%):         $0
+Ajuste:                 $0
+───────────────────────────────────
+TOTAL:              $8,315
+───────────────────────────────────
+
+Peso total: 7.20kg
+
+Nota: [Si existe, mostrar aquí]
+
+═══════════════════════════════════</code></pre>
+
+            <h4>11.3.1.1 Presentación clara del descuento en resumen</h4> ⭐ NUEVO (Dic 2025)
+            <p><strong>Objetivo</strong>: Hacer más evidente y comprensible el descuento aplicado en el resumen del pedido.</p>
+
+            <p><strong>Formato MEJORADO para descuentos</strong>:</p>
+
+            <p><strong>Caso 1: Sin descuento (0%)</strong></p>
+            <pre><code>───────────────────────────────────
+Subtotal:                    $8,315
+───────────────────────────────────
+TOTAL:                       $8,315
+───────────────────────────────────
+(No se muestra línea de descuento si es $0)</code></pre>
+
+            <p><strong>Caso 2: Con descuento por lista (ej: L2)</strong> ⭐ ACTUALIZADO (Dic 2025)</p>
+            <pre><code>───────────────────────────────────
+Subtotal:                    $10,000
+Descuento (6.25%):             -$625
+───────────────────────────────────
+TOTAL:                        $9,375
+───────────────────────────────────</code></pre>
+            <p><em>⚠️ IMPORTANTE: NO se menciona "L2" en el resumen para evitar confusión. Solo se muestra el porcentaje de descuento aplicado.</em></p>
+
+            <p><strong>Caso 3: Con descuento fijo de cliente</strong></p>
+            <pre><code>───────────────────────────────────
+Subtotal:                    $10,000
+Descuento (8%):                -$800
+───────────────────────────────────
+TOTAL:                        $9,200
+───────────────────────────────────</code></pre>
+
+            <p><strong>Caso 4: Con descuento manual personalizado</strong></p>
+            <pre><code>───────────────────────────────────
+Subtotal:                    $10,000
+Descuento (12%):             -$1,200
+───────────────────────────────────
+TOTAL:                        $8,800
+───────────────────────────────────</code></pre>
+
+            <p><strong>Caso 5: Con descuento + ajuste</strong></p>
+            <pre><code>───────────────────────────────────
+Subtotal:                    $10,000
+Descuento (10%):             -$1,000
+Ajuste (redondeo):              +$15
+───────────────────────────────────
+TOTAL:                        $9,015
+───────────────────────────────────</code></pre>
+
+            <p><strong>Caso 6: Con productos en promoción (NUEVO)</strong></p>
+            <pre><code>───────────────────────────────────
+Subtotal total:              $12,000
+  • Productos normales: $10,000
+  • Productos en promo: $2,000
+
+Base descuento: $10,000
+Descuento (6.25%):             -$625
+───────────────────────────────────
+TOTAL:                       $11,375
+───────────────────────────────────
+
+NOTA: Los productos en promoción
+      NO reciben descuentos adicionales</code></pre>
+
+            <p><strong>Reglas de formato</strong> ⭐ ACTUALIZADO (Dic 2025):</p>
+            <ul>
+                <li>✅ <strong>Solo mostrar porcentaje de descuento</strong>: "Descuento (6.25%)" <strong>SIN mencionar</strong> L1/L2/L3/cliente/aplicado</li>
+                <li>✅ <strong>Razón del cambio</strong>: Evita confusión. Clientes mal interpretaban "Descuento L1 6%" como "se aplicó el descuento DE L1" cuando en realidad significa "6% de descuento SOBRE precio L1"</li>
+                <li>✅ <strong>Mostrar porcentaje entre paréntesis</strong>: "(6.25%)"</li>
+                <li>✅ <strong>Monto con signo negativo</strong>: "-$625"</li>
+                <li>✅ <strong>Alineación derecha</strong> para todos los montos</li>
+                <li>✅ <strong>Ocultar línea de descuento</strong> si el monto es $0</li>
+                <li>✅ <strong>Si hay productos promocionales</strong>: Mostrar desglose de subtotal</li>
+            </ul>
+
+            <p><strong>Acciones en modal:</strong></p>
+            <ul>
+                <li>[Imprimir]: Abre ventana de impresión del navegador</li>
+                <li>[Descargar PDF]: Genera PDF del resumen</li>
+                <li>[Cerrar]: Vuelve al cotizador</li>
+            </ul>
+
+            <h4>11.3.1.1 📤 Generar Resumen para Compartir ⭐ NUEVO (Dic 2025)</h4>
+
+            <p><strong>Funcionalidad</strong>: Genera resumen de cotización en formatos listos para compartir con el cliente.</p>
+
+            <p><strong>Acceso</strong>: Botón [📤 Compartir] en sidebar derecho del cotizador (después de agregar productos)</p>
+
+            <div class="note" style="border-left: 4px solid #ffc107; background: #fff3cd; padding: 1rem; margin: 1.5rem 0;">
+                <p><strong>⚠️ IMPORTANTE - Eliminación de versión Email</strong></p>
+                <p>La versión "Email" ha sido <strong>eliminada</strong> del sistema ya que nunca se usó ni se usará. En su lugar, se implementa un <strong>Remito PDF formal</strong> profesional para enviar al cliente.</p>
+            </div>
+
+            <p><strong>Modal "Generar Resumen de Cotización"</strong>:</p>
+            <pre><code>┌─────────────────────────────────────────────┐
+│ 📤 Generar Resumen de Cotización            │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Selecciona el formato para compartir:      │
+│                                             │
+│  [  WhatsApp  ] [  Remito PDF  ]            │
+│  └─ Activo ──┘  └─ No activo ─┘             │
+│                                             │
+│  ┌─────────────────────────────────────┐   │
+│  │ [Contenido del resumen aquí]        │   │
+│  │                                     │   │
+│  │ (Preview dinámico según tab activo) │   │
+│  │                                     │   │
+│  └─────────────────────────────────────┘   │
+│                                             │
+│  [Copiar]  [Descargar PDF]  [Cerrar]        │
+│                                             │
+└─────────────────────────────────────────────┘</code></pre>
+
+            <h5>Opción 1: WhatsApp Business (Formato actual - SE MANTIENE)</h5>
+
+            <p><strong>Diseño</strong>:</p>
+            <ul>
+                <li>Formato de texto plano con emojis</li>
+                <li>Optimizado para copiar/pegar en WhatsApp Business</li>
+                <li>Incluye: 🔥 COTIZACIÓN BAMBU 🔥, fecha, cliente, productos, resumen financiero</li>
+            </ul>
+
+            <p><strong>Ejemplo de contenido</strong>:</p>
+            <pre><code>🔥 COTIZACIÓN BAMBU 🔥
+
+📅 Fecha: 31/12/2025
+👤 Cliente: -
+📍 Dirección: AVELINO GUTIERREZ 227
+📞 Teléfono: 298-467-3861
+
+📦 PRODUCTOS:
+• x1 - Detergente tipo magistral x5 lts - $5,800
+• x1 - Detergente tipo magistral xl lt - $1,600
+• x1 - Granel detergente - $915
+
+💰 RESUMEN:
+• Subtotal: $8,315
+• TOTAL: $8,315
+
+⚡ Copia el texto y pégalo en WhatsApp Business. Los emojis y formato se mantendrán.</code></pre>
+
+            <p><strong>Botón de acción</strong>:</p>
+            <ul>
+                <li>[📋 Copiar]: Copia el texto al portapapeles</li>
+                <li>Toast de confirmación: "✅ Texto copiado. Listo para pegar en WhatsApp"</li>
+            </ul>
+
+            <h5>Opción 2: Remito PDF Formal ⭐ NUEVO (Reemplaza a "versión Email")</h5>
+
+            <p><strong>Diseño</strong>:</p>
+            <ul>
+                <li>Documento PDF profesional con formato de remito comercial</li>
+                <li>Sin emojis, texto formal</li>
+                <li>Incluye: Logo Bambu, datos empresa, tabla productos, totales, condiciones</li>
+                <li>Listo para descargar y enviar por email/WhatsApp como archivo adjunto</li>
+            </ul>
+
+            <p><strong>Estructura del PDF</strong>:</p>
+            <pre><code>┌─────────────────────────────────────────────┐
+│  [LOGO BAMBU]           REMITO Nº XXXX       │
+│                                              │
+│  Química Bambu S.R.L.                        │
+│  [Dirección - Teléfono - Email]              │
+│                                              │
+│─────────────────────────────────────────────│
+│                                              │
+│  Asunto: Cotización BAMBU - - 31/12/2025    │
+│                                              │
+│  Estimado/a -,                               │
+│                                              │
+│  Adjuntamos la cotización solicitada con     │
+│  el detalle de productos BAMBU:              │
+│                                              │
+│─────────────────────────────────────────────│
+│  INFORMACIÓN DEL CLIENTE:                    │
+│  Nombre: -                                   │
+│  Dirección: BARRIO COSTA NORTE SECTOR H 17  │
+│  Teléfono: 2995-33-4101                      │
+│  Email: No especificado                      │
+│─────────────────────────────────────────────│
+│  DETALLE DE PRODUCTOS:                       │
+│                                              │
+│  Código  | Descripción           | Cant | Precio Unit. | Subtotal │
+│  ─────────────────────────────────────────  │
+│  BAM-007 | Cherry desd. x5 1lts  | x3   | $2,950       | $8,850   │
+│  QJT-000 | Lavanda desd. x5 1lts | x5   | $2,950       | $14,750  │
+│  LJM-010 | Marina desd. x5 1lts  | x2   | $2,950       | $5,900   │
+│  ...                                         │
+│                                              │
+│─────────────────────────────────────────────│
+│  RESUMEN FINANCIERO:                         │
+│                                              │
+│  Subtotal:          $88,750                  │
+│  Descuento (0%):    $0                       │
+│  ─────────────────────────────                │
+│  TOTAL:             $88,750                  │
+│                                              │
+│─────────────────────────────────────────────│
+│  Validez de la cotización: 15 días           │
+│  Condiciones de pago: [Según acuerdo]        │
+│                                              │
+│  Gracias por su consulta.                    │
+│                                              │
+│  Química Bambu S.R.L.                        │
+│  [Contacto - Web - Redes sociales]           │
+└─────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Campos del remito</strong>:</p>
+            <table>
+                <tr>
+                    <th>Sección</th>
+                    <th>Campos incluidos</th>
+                </tr>
+                <tr>
+                    <td><strong>Encabezado</strong></td>
+                    <td>Logo Bambu, datos empresa, Nº remito, fecha</td>
+                </tr>
+                <tr>
+                    <td><strong>Info cliente</strong></td>
+                    <td>Nombre (dirección si no tiene nombre), teléfono, email (opcional)</td>
+                </tr>
+                <tr>
+                    <td><strong>Tabla productos</strong></td>
+                    <td>Código producto, descripción, cantidad, precio unitario, subtotal</td>
+                </tr>
+                <tr>
+                    <td><strong>Totales</strong></td>
+                    <td>Subtotal, descuento (% sin mencionar L1/L2/L3), total</td>
+                </tr>
+                <tr>
+                    <td><strong>Pie</strong></td>
+                    <td>Validez cotización, condiciones pago, firma empresa, contacto</td>
+                </tr>
+            </table>
+
+            <p><strong>Botón de acción</strong>:</p>
+            <ul>
+                <li>[📥 Descargar PDF]: Descarga archivo "Remito_Bambu_[fecha]_[nro].pdf"</li>
+                <li>Toast de confirmación: "✅ Remito descargado correctamente"</li>
+            </ul>
+
+            <p><strong>Uso del remito</strong>:</p>
+            <ul>
+                <li>✅ Comprobante formal para cliente</li>
+                <li>✅ Adjuntar en emails comerciales</li>
+                <li>✅ Enviar por WhatsApp como archivo (más profesional que texto plano)</li>
+                <li>✅ Imprimir para entregas en fábrica</li>
+            </ul>
+
+            <p><strong>Diferencias Email (ELIMINADO) vs Remito PDF (NUEVO)</strong>:</p>
+            <table>
+                <tr>
+                    <th>Característica</th>
+                    <th>Versión Email (ELIMINADA)</th>
+                    <th>Remito PDF (NUEVO)</th>
+                </tr>
+                <tr>
+                    <td><strong>Formato</strong></td>
+                    <td>Texto plano para copiar en email</td>
+                    <td>PDF descargable profesional</td>
+                </tr>
+                <tr>
+                    <td><strong>Diseño</strong></td>
+                    <td>Texto simple sin formato</td>
+                    <td>Logo, tablas, colores corporativos</td>
+                </tr>
+                <tr>
+                    <td><strong>Uso</strong></td>
+                    <td>❌ Nunca se usó</td>
+                    <td>✅ Comprobante oficial</td>
+                </tr>
+                <tr>
+                    <td><strong>Profesionalismo</strong></td>
+                    <td>Básico</td>
+                    <td>Alto - Imagen corporativa</td>
+                </tr>
+            </table>
+
+            <h4>11.3.2 [💾 Guardar Borrador]</h4>
+            <p><strong>Diseño:</strong></p>
+            <ul>
+                <li>Color: Azul oscuro</li>
+                <li>Ícono: 💾</li>
+            </ul>
+
+            <p><strong>Función</strong>:</p>
+            <ul>
+                <li>Guarda el pedido en estado "Borrador"</li>
+                <li><strong>NO descuenta stock</strong></li>
+                <li><strong>NO genera cargo en cuenta corriente</strong></li>
+                <li>Permite continuar editando después</li>
+            </ul>
+
+            <p><strong>Flujo:</strong></p>
+            <pre><code>Usuario click [Guardar Borrador]
+       ↓
+Sistema genera pedido_id
+Estado: "borrador"
+Stock: NO se descuenta
+Cuenta corriente: NO se afecta
+       ↓
+Toast: "✅ Borrador guardado (#1234)"
+       ↓
+Cotizador se limpia → Nueva cotización</code></pre>
+
+            <p><strong>Recuperar borrador:</strong></p>
+            <ul>
+                <li>Desde módulo VENTAS → Filtrar por "Borrador"</li>
+                <li>Click en pedido → Botón "Editar"</li>
+                <li>Se abre cotizador con datos cargados</li>
+            </ul>
+
+            <h4>11.3.3 [✅ Confirmar Pedido] (Principal)</h4>
+            <p><strong>Diseño:</strong></p>
+            <ul>
+                <li>Color: Verde brillante (#28a745)</li>
+                <li>Ícono: ✅</li>
+                <li>Texto secundario: "Agencias entrega" (en gris, más pequeño)</li>
+                <li><strong>Botón más prominente</strong> (height mayor que otros)</li>
+            </ul>
+
+            <p><strong>Función</strong>: Confirma el pedido y ejecuta acciones según modo</p>
+
+            <p><strong>Flujo MODO FÁBRICA (actualizado con método de pago):</strong> ⭐</p>
+            <pre><code>Usuario click [Confirmar Pedido]
+       ↓
+Validaciones (ver sección 13)
+       ↓
+Sistema genera pedido_id
+Estado: "entregado"
+Fecha: Hoy (timestamp actual)
+Descuenta stock de productos
+       ↓
+┌─────────────────────────────────────────────────┐
+│ SI usuario registró método de pago:            │
+├─────────────────────────────────────────────────┤
+│ Cuenta Corriente:                               │
+│ 1. Cargo: +Total pedido                         │
+│ 2. Pago: -Monto recibido (efectivo/digital)     │
+│ 3. Saldo: Total - Monto recibido                │
+│                                                 │
+│ Pedido guarda:                                  │
+│ - metodo_pago: "efectivo"/"digital"/"mixto"     │
+│ - monto_pagado: $X                              │
+│ - monto_efectivo: $X (si aplica)                │
+│ - monto_digital: $X (si aplica)                 │
+└─────────────────────────────────────────────────┘
+       ↓
+┌─────────────────────────────────────────────────┐
+│ SI usuario NO registró pago:                    │
+├─────────────────────────────────────────────────┤
+│ Cuenta Corriente:                               │
+│ 1. Cargo: +Total pedido                         │
+│ 2. Saldo: Total (cliente debe)                  │
+│                                                 │
+│ Pedido guarda:                                  │
+│ - metodo_pago: null                             │
+│ - monto_pagado: null                            │
+└─────────────────────────────────────────────────┘
+       ↓
+Toast según caso:
+- Con pago completo: "✅ Pedido #1234 confirmado y pagado"
+- Con pago parcial: "✅ Pedido #1234 confirmado (pago parcial $X)"
+- Sin pago: "✅ Pedido #1234 confirmado"
+       ↓
+Cotizador se limpia → Nueva cotización
+Focus en buscador de productos</code></pre>
+
+            <p><strong>Ejemplos concretos:</strong></p>
+            <p><strong>Caso 1: Pago completo efectivo</strong></p>
+            <pre><code>Total: $8,315
+Usuario marca: ☑ Efectivo
+Monto recibido: $8,315
+
+Resultado:
+- Cargo CC: +$8,315
+- Pago CC: -$8,315 (efectivo)
+- Saldo cliente: $0
+- metodo_pago: "efectivo"</code></pre>
+
+            <p><strong>Caso 2: Pago parcial efectivo</strong></p>
+            <pre><code>Total: $100,000
+Usuario marca: ☑ Efectivo
+Monto recibido: $30,000
+
+Resultado:
+- Cargo CC: +$100,000
+- Pago CC: -$30,000 (efectivo)
+- Saldo cliente: -$70,000 (debe)
+- metodo_pago: "efectivo_parcial"
+- monto_pagado: $30,000</code></pre>
+
+            <p><strong>Caso 3: Pago mixto</strong></p>
+            <pre><code>Total: $10,000
+Usuario marca: ☑ Efectivo + ☑ Digital
+Efectivo: $6,000
+Digital: $4,000
+
+Resultado:
+- Cargo CC: +$10,000
+- Pago CC efectivo: -$6,000
+- Pago CC digital: -$4,000
+- Saldo cliente: $0
+- metodo_pago: "mixto"
+- monto_efectivo: $6,000
+- monto_digital: $4,000</code></pre>
+
+            <p><strong>Caso 4: Sin pago</strong></p>
+            <pre><code>Total: $8,315
+Usuario NO marca nada
+
+Resultado:
+- Cargo CC: +$8,315
+- Saldo cliente: -$8,315 (debe)
+- metodo_pago: null
+- Cliente pagará después</code></pre>
+
+            <p><strong>Flujo MODO REPARTO:</strong></p>
+            <pre><code>Usuario click [Confirmar Pedido]
+       ↓
+Validaciones (ver sección 13)
+       ↓
+Modal calendario:
+┌───────────────────────────────┐
+│ Seleccionar fecha de entrega  │
+│ ┌───────────────────────────┐ │
+│ │  [Calendario L-V]         │ │
+│ │  Fecha seleccionada:      │ │
+│ │  📅 27/12/2025            │ │
+│ └───────────────────────────┘ │
+│ [Cancelar] [Confirmar]        │
+└───────────────────────────────┘
+       ↓
+Usuario selecciona fecha y confirma
+       ↓
+Sistema:
+- Genera pedido_id
+- Estado: "en tránsito"
+- Fecha entrega: 27/12/2025
+- Descuenta stock
+- Si tiene cliente → Cargo en cuenta corriente
+       ↓
+Toast: "✅ Pedido #1234 agendado para 27/12"
+       ↓
+Cotizador se limpia → Nueva cotización
+Focus en buscador de productos</code></pre>
+
+            <h3>11.4 Atajos de teclado</h3>
+            <p><strong>Mostrados en panel lateral:</strong></p>
+            <pre><code>⌨️ Shift+4 Confirmar
+⌨️ F4 Resumen</code></pre>
+
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li><code>Shift + 4</code>: Ejecuta [Confirmar Pedido]</li>
+                <li><code>F4</code>: Ejecuta [Generar Resumen]</li>
+            </ul>
+            <p><strong>Disponibilidad</strong>: Activos en cualquier momento dentro del cotizador</p>
+        </section>
+
+        <section id="flujos-completos">
+            <h2>12. FLUJOS COMPLETOS</h2>
+
+            <h3>12.1 Flujo: Venta de fábrica rápida (30 segundos)</h3>
+            <p><strong>Escenario</strong>: Cliente retira producto en fábrica, paga en efectivo</p>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Usuario abre COTIZADOR</li>
+                <li>Switch en "FÁBRICA" (por defecto)</li>
+                <li>Busca "detergente" → Enter</li>
+                <li>Producto "Granel detergente" se agrega con cantidad 1</li>
+                <li>Click en [+] para aumentar a 2</li>
+                <li><strong>NO selecciona cliente</strong> (deja "Cliente sin nombre")</li>
+                <li>Click [Confirmar Pedido] o <code>Shift+4</code></li>
+                <li>Sistema:
+                    <ul>
+                        <li>Genera pedido #1234</li>
+                        <li>Estado: "entregado"</li>
+                        <li>Stock: Descuenta 2 unidades de Granel detergente</li>
+                        <li>Fecha: 27/12/2025 14:35:22</li>
+                        <li><strong>NO genera cargo CC</strong> (sin cliente)</li>
+                    </ul>
+                </li>
+                <li>Toast: "✅ Pedido #1234 confirmado"</li>
+                <li>Cotizador se limpia automáticamente</li>
+                <li>Listo para siguiente venta</li>
+            </ol>
+            <p><strong>Tiempo total</strong>: ~30 segundos ✅</p>
+
+            <h3>12.2 Flujo: Pedido reparto con descuento cliente</h3>
+            <p><strong>Escenario</strong>: Cliente mayorista compra para entregar el viernes</p>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Usuario abre COTIZADOR</li>
+                <li>Switch en "REPARTO"</li>
+                <li>Busca y selecciona cliente: "Av. San Martín 1234"
+                    <ul>
+                        <li>Sistema aplica automáticamente descuento fijo del cliente (8%)</li>
+                    </ul>
+                </li>
+                <li>Busca "detergente" → Agrega 3 productos:
+                    <ul>
+                        <li>Granel detergente x 5</li>
+                        <li>Detergente magistral x1 x 10</li>
+                        <li>Detergente x5 lts x 3</li>
+                    </ul>
+                </li>
+                <li>Subtotal mostrado: $50,000</li>
+                <li>Descuento cliente (8%): -$4,000</li>
+                <li>Total: $46,000</li>
+                <li>Agrega nota: "Cliente pidió entrega antes de las 10am"</li>
+                <li>Click [Confirmar Pedido]</li>
+                <li>Modal calendario abre → Selecciona 29/12/2025 (viernes)</li>
+                <li>Click [Confirmar] en modal</li>
+                <li>Sistema:
+                    <ul>
+                        <li>Genera pedido #1235</li>
+                        <li>Estado: "en tránsito"</li>
+                        <li>Fecha entrega: 29/12/2025</li>
+                        <li>Stock: Descuenta todos los productos</li>
+                        <li>Cuenta corriente: Cargo +$46,000</li>
+                    </ul>
+                </li>
+                <li>Toast: "✅ Pedido #1235 agendado para 29/12"</li>
+                <li>Pedido aparece en:
+                    <ul>
+                        <li>Módulo VENTAS → Tab "Lista Pedidos" (filtro: En tránsito)</li>
+                        <li>Módulo VENTAS → Tab "Calendario Semana" → Día 29/12</li>
+                    </ul>
+                </li>
+                <li>Cotizador se limpia → Nueva cotización</li>
+            </ol>
+
+            <h3>12.3 Flujo: Editar pedido existente desde VENTAS</h3>
+            <p><strong>Escenario</strong>: Usuario necesita cambiar cantidad de un producto ya confirmado</p>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Usuario abre módulo VENTAS</li>
+                <li>Busca pedido #1234</li>
+                <li>Click en botón [✏️ Editar]</li>
+                <li><strong>Se abre COTIZADOR en modo edición</strong></li>
+                <li>Cotizador carga:
+                    <ul>
+                        <li>Productos del pedido con cantidades actuales</li>
+                        <li>Cliente seleccionado</li>
+                        <li>Descuentos aplicados</li>
+                        <li>Notas (si existen)</li>
+                        <li>Switch en el modo correcto (FÁBRICA/REPARTO)</li>
+                    </ul>
+                </li>
+                <li>Usuario modifica:
+                    <ul>
+                        <li>Cambia cantidad de "Granel detergente" de 2 a 3</li>
+                    </ul>
+                </li>
+                <li>Subtotal y total se recalculan automáticamente</li>
+                <li>Click [Confirmar Pedido]</li>
+                <li>Sistema:
+                    <ul>
+                        <li>Actualiza pedido #1234</li>
+                        <li>Recalcula stock (reintegra diferencia o descuenta adicional)</li>
+                        <li>Genera AJUSTE en cuenta corriente (si cambia total)</li>
+                        <li>Registra historial de cambios (ver sección Auditoría)</li>
+                    </ul>
+                </li>
+                <li>Toast: "✅ Pedido #1234 actualizado"</li>
+                <li>Vuelve a módulo VENTAS</li>
+                <li>Pedido muestra totales actualizados</li>
+            </ol>
+
+            <h3>12.4 Flujo: Guardar borrador y recuperar</h3>
+            <p><strong>Escenario</strong>: Usuario necesita pausar cotización para atender otro cliente</p>
+            <p><strong>Pasos:</strong></p>
+            <ol>
+                <li>Usuario está cotizando:
+                    <ul>
+                        <li>3 productos agregados</li>
+                        <li>Cliente: Av. Mitre 567</li>
+                        <li>Total: $25,000</li>
+                    </ul>
+                </li>
+                <li>Click [💾 Guardar Borrador]</li>
+                <li>Sistema:
+                    <ul>
+                        <li>Genera pedido #1236</li>
+                        <li>Estado: "borrador"</li>
+                        <li>Stock: NO se descuenta</li>
+                        <li>Cuenta corriente: NO se afecta</li>
+                    </ul>
+                </li>
+                <li>Toast: "✅ Borrador guardado (#1236)"</li>
+                <li>Cotizador se limpia</li>
+                <li><strong>1 hora después</strong>: Usuario quiere retomar</li>
+                <li>Abre módulo VENTAS → Filtro "Borradores"</li>
+                <li>Ve pedido #1236 (estado: Borrador)</li>
+                <li>Click [✏️ Editar]</li>
+                <li>Cotizador se abre con todos los datos cargados</li>
+                <li>Usuario puede:
+                    <ul>
+                        <li>Modificar productos</li>
+                        <li>Cambiar descuentos</li>
+                        <li>Confirmar pedido → Pasa a "entregado" o "en tránsito"</li>
+                        <li>Eliminar borrador</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section id="validaciones-y-reglas-de-negocio">
+            <h2>13. VALIDACIONES Y REGLAS DE NEGOCIO</h2>
+
+            <h3>13.1 Stock</h3>
+            <ul>
+                <li><strong>Modo FLEXIBLE</strong>: Permite agregar sin límite. Advierte si
+                    <code>cantidad > stock</code>.</li>
+                <li><strong>Modo ESTRICTO</strong>: Bloquea si <code>cantidad > stock</code>.</li>
+                <li><strong>Productos BAMBU</strong>: Siempre permite agregar (stock infinito).</li>
+            </ul>
+
+            <h3>13.2 Cuenta Corriente</h3>
+            <p><strong>Bloqueo por deuda (Opcional)</strong></p>
+            <ul>
+                <li>Si <code>cliente.saldo < limite_credito</code> → Muestra alerta "Cliente excede límite de crédito".
+                </li>
+                <li>Permite continuar solo con autorización (password admin) o si paga en el momento.</li>
+            </ul>
+
+            <h3>13.3 Descuentos</h3>
+            <ul>
+                <li><strong>Prioridad</strong>: Manual > Cliente > Lista.</li>
+                <li><strong>Tope máximo</strong>: Configurable (ej. máx 50%). Si usuario ingresa más → Error.</li>
+            </ul>
+
+            <h3>13.4 "Cliente sin nombre"</h3>
+            <ul>
+                <li>Permite cotizar sin restricciones.</li>
+                <li><strong>NO permite confirmar en modo REPARTO</strong> (requiere dirección/cliente real).</li>
+                <li>Permite confirmar en modo FÁBRICA (venta mostrador anónima).</li>
+            </ul>
+        </section>
+
+        <section id="estados-y-transiciones">
+            <h2>14. ESTADOS Y TRANSICIONES</h2>
+
+            <table>
+                <tr>
+                    <th>Estado</th>
+                    <th>Descripción</th>
+                    <th>Stock</th>
+                    <th>Cuenta Cte.</th>
+                </tr>
+                <tr>
+                    <td><strong>Borrador</strong></td>
+                    <td>Guardado temporalmente. No confirmado.</td>
+                    <td>Intacto</td>
+                    <td>Intacto</td>
+                </tr>
+                <tr>
+                    <td><strong>En tránsito</strong></td>
+                    <td>Confirmado para reparto. Pendiente de entrega.</td>
+                    <td>Descontado</td>
+                    <td>Cargado</td>
+                </tr>
+                <tr>
+                    <td><strong>Entregado</strong></td>
+                    <td>Venta finalizada (fábrica) o reparto completado.</td>
+                    <td>Descontado</td>
+                    <td>Cargado</td>
+                </tr>
+                <tr>
+                    <td><strong>Cancelado</strong></td>
+                    <td>Pedido anulado.</td>
+                    <td>Reintegrado</td>
+                    <td>Anulado</td>
+                </tr>
+            </table>
+
+            <h3>14.1 Transiciones permitidas</h3>
+            <ul>
+                <li>Borrador → En tránsito (Modo Reparto)</li>
+                <li>Borrador → Entregado (Modo Fábrica)</li>
+                <li>En tránsito → Entregado (Desde módulo VENTAS)</li>
+                <li>En tránsito → Cancelado (Desde VENTAS)</li>
+                <li>Entregado → Cancelado (Reintegra stock y saldo)</li>
+            </ul>
+        </section>
+
+        <section id="integraciones-con-otros-modulos">
+            <h2>15. INTEGRACIONES CON OTROS MÓDULOS</h2>
+
+            <h3>15.1 Módulo VENTAS</h3>
+            <ul>
+                <li>Visualiza todos los pedidos generados.</li>
+                <li>Permite editar (reabre cotizador).</li>
+                <li>Permite cambiar estado (En tránsito ↔ Entregado).</li>
+            </ul>
+
+            <h3>15.2 Módulo CLIENTES</h3>
+            <ul>
+                <li>Provee datos para el selector de clientes.</li>
+                <li>Provee <code>descuento_fijo</code> y <code>saldo</code> actual.</li>
+            </ul>
+
+            <h3>15.3 Módulo PRODUCTOS</h3>
+            <ul>
+                <li>Provee lista de productos, precios y stock.</li>
+                <li>Define si es "Producto BAMBU" (siempre disponible).</li>
+            </ul>
+
+            <h3>15.4 Módulo CONFIGURACIÓN</h3>
+            <ul>
+                <li>Define listas de precios (L1, L2, L3).</li>
+                <li>Define modo de stock (Flexible/Estricto).</li>
+            </ul>
+        </section>
+
+        <section id="atajos-de-teclado">
+            <h2>16. ATAJOS DE TECLADO</h2>
+
+            <table>
+                <tr>
+                    <th>Tecla</th>
+                    <th>Acción</th>
+                    <th>Ámbito</th>
+                </tr>
+                <tr>
+                    <td><code>F4</code></td>
+                    <td>Generar Resumen (Vista previa)</td>
+                    <td>Global Cotizador</td>
+                </tr>
+                <tr>
+                    <td><code>Shift + 4</code></td>
+                    <td>Confirmar Pedido ($)</td>
+                    <td>Global Cotizador</td>
+                </tr>
+                <tr>
+                    <td><code>Esc</code></td>
+                    <td>Cerrar dropdowns / modals / cotizador</td>
+                    <td>Global</td>
+                </tr>
+                <tr>
+                    <td><code>Enter</code></td>
+                    <td>Agregar producto seleccionado / Confirmar</td>
+                    <td>Buscador / Modals</td>
+                </tr>
+                <tr>
+                    <td><code>Flecha ↑/↓</code></td>
+                    <td>Navegar resultados búsqueda</td>
+                    <td>Buscadores</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="casos-de-uso-detallados">
+            <h2>17. CASOS DE USO DETALLADOS</h2>
+
+            <h3>17.1 Venta Fábrica con Pago Parcial (Usuario registrado)</h3>
+            <p><strong>Actor</strong>: Vendedor de mostrador<br>
+                <strong>Condición previa</strong>: Cliente "Juan Pérez" debe $10,000.
+            </p>
+
+            <ol>
+                <li>Vendedor selecciona "Fábrica".</li>
+                <li>Selecciona cliente "Juan Pérez".</li>
+                <li>Agrega productos. Total: $5,000.</li>
+                <li>Check "Efectivo", ingresa $2,000.</li>
+                <li>Cliente dice "anótame el resto".</li>
+                <li>Confirmar.</li>
+            </ol>
+
+            <p><strong>Resultado sistema</strong>:</p>
+            <ul>
+                <li>Pedido guardado.</li>
+                <li>Saldo Juan Pérez: -$10,000 + $5,000 (compra) - $2,000 (pago) = <strong>-$13,000</strong>.</li>
+            </ul>
+
+            <h3>17.2 Reparto con fecha futura y stock crítico</h3>
+            <p><strong>Actor</strong>: Administrativo teléfono<br>
+                <strong>Condición</strong>: Producto X tiene stock 2. Cliente quiere 10 para la próxima semana.
+                Reposición llega en 2 días.
+            </p>
+
+            <ol>
+                <li>Vendedor selecciona "Reparto".</li>
+                <li>Agrega 10 unidades de Producto X.</li>
+                <li>Alerta: "Stock insuficiente (2). ¿Agregar igual?".</li>
+                <li>Vendedor confirma (sabe que llega reposición).</li>
+                <li>Elige fecha: Viernes próximo.</li>
+                <li>Confirmar.</li>
+            </ol>
+
+            <p><strong>Resultado sistema</strong>:</p>
+            <ul>
+                <li>Pedido "En tránsito" para el viernes.</li>
+                <li>Stock Producto X: 2 - 10 = -8.</li>
+                <li>Reporte de stock crítico alerta la necesidad de reposición.</li>
+            </ul>
+        </section>
+
+        <section id="especificaciones-tecnicas-ui-ux">
+            <h2>18. ESPECIFICACIONES TÉCNICAS UI/UX</h2>
+
+            <h3>18.1 Colores (Variables CSS)</h3>
+            <pre><code>:root {
+  --color-primary: #007bff;        /* Azul Bambu */
+  --color-success: #28a745;        /* Verde Confirmar/Totales */
+  --color-warning: #ffc107;        /* Alertas */
+  --color-danger: #dc3545;         /* Borrar/Errores */
+  --color-text: #333333;           /* Texto principal */
+  --color-text-secondary: #6c757d; /* Notas secundarias */
+  --color-border: #dee2e6;         /* Bordes de tablas/inputs */
+  --bg-panel: #f8f9fa;             /* Fondo panel lateral */
+}</code></pre>
+
+            <h3>18.2 Tipografía</h3>
+            <ul>
+                <li>Familia: <strong>Inter</strong> o sistema sans-serif.</li>
+                <li>Tamaños:
+                    <ul>
+                        <li>Total Final: <code>2rem (32px)</code> bold.</li>
+                        <li>Subtotales: <code>1.2rem</code> bold.</li>
+                        <li>Texto base: <code>1rem (16px)</code>.</li>
+                        <li>Small (notas, fechas): <code>0.875rem (14px)</code>.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>18.3 Espaciado</h3>
+            <ul>
+                <li>Padding celdas tabla: <code>12px 16px</code> (confortable pero compacto).</li>
+                <li>Gap entre botones: <code>8px</code>.</li>
+                <li>Margin secciones panel: <code>24px</code>.</li>
+            </ul>
+
+            <h3>18.4 Breakpoints (Responsividad)</h3>
+            <ul>
+                <li><strong>Desktop (>1200px)</strong>: Layout 2 columnas (70/30).</li>
+                <li><strong>Tablet (768px - 1199px)</strong>: Layout 2 columnas ajustado (60/40) o Stack vertical.</li>
+                <li><strong>Mobile (<768px)< /strong>: Stack vertical.
+                            <ul>
+                                <li>Panel lateral pasa debajo de la tabla.</li>
+                                <li>Sticky bottom para botón "Confirmar" y "Total".</li>
+                            </ul>
+                </li>
+            </ul>
+
+            <h3>18.5 Estados de interacción</h3>
+            <ul>
+                <li><strong>Focus</strong>: Outline azul (<code>box-shadow: 0 0 0 3px rgba(0,123,255,.25)</code>).</li>
+                <li><strong>Hover tabla</strong>: Row background <code>#f1f1f1</code>.</li>
+                <li><strong>Disabled</strong>: Opacidad 0.6, cursor <code>not-allowed</code>.</li>
+            </ul>
+
+            <h3>18.6 Animaciones</h3>
+            <ul>
+                <li><strong>Agregar producto</strong>: Flash verde suave en la fila.</li>
+                <li><strong>Eliminar producto</strong>: Fade out rápido (200ms).</li>
+                <li><strong>Cambio de total</strong>: Transición de número (opcional).</li>
+            </ul>
+
+            <h3>18.7 Toast Notifications</h3>
+            <p><strong>Posición</strong>: Superior central o inferior derecha (configurable).</p>
+            <p><strong>Diseño</strong>:</p>
+            <pre><code>[ Icono ]  Mensaje breve             [ x ]
+Fondo: Negro/Gris muy oscuro. Texto: Blanco.</code></pre>
+
+            <h3>18.8 Accesibilidad</h3>
+            <ul>
+                <li>Navegación completa por teclado (Tab indexing lógico).</li>
+                <li>Contraste suficiente en textos (WCAG AA).</li>
+                <li>Labels visibles o `aria-label` en inputs/botones sin texto.</li>
+            </ul>
+        </section>
+
+        <section id="prototipo-actualizaciones">
+            <h2>19. ACTUALIZACIONES DEL PROTOTIPO HTML (Diciembre 2025)</h2>
+
+            <div class="note" style="border-left: 4px solid #28a745; background: #d4edda; padding: 1rem; margin: 1.5rem 0;">
+                <h3>✅ PROTOTIPO HTML COMPLETADO</h3>
+                <p><strong>Ubicación</strong>: <code>sistema-version-2/prototipo-html-simple/cotizador-v2.html</code></p>
+                <p><strong>Estado</strong>: ✅ Prototipo funcional implementado con feedback del cliente</p>
+                <p><strong>Documentación técnica</strong>: Ver <code>_docs/COTIZADOR-ESPECIFICACION.md</code></p>
+            </div>
+
+            <h3>19.1 Funciones unificadas REPARTO + FÁBRICA</h3>
+            <p><strong>Decisión crítica</strong> (Feedback cliente - Dic 2025):</p>
+            <blockquote>
+                "Simplificar todo poniendo ambas funciones en ambas modalidades. Siempre que esté tanto el calendario como los métodos de pago, en reparto y fábrica. La única diferencia es dónde va a parar (ventas fábrica vs días de reparto)."
+            </blockquote>
+
+            <p><strong>Cambios implementados</strong>:</p>
+
+            <table>
+                <tr>
+                    <th>Elemento</th>
+                    <th>Antes (v1)</th>
+                    <th>Ahora (v2)</th>
+                    <th>Impacto</th>
+                </tr>
+                <tr>
+                    <td><strong>Campo Fecha Entrega</strong></td>
+                    <td>Solo REPARTO</td>
+                    <td>✅ AMBOS modos</td>
+                    <td>Flexibilidad para ventas fábrica programadas</td>
+                </tr>
+                <tr>
+                    <td><strong>Métodos de pago</strong></td>
+                    <td>Solo FÁBRICA</td>
+                    <td>✅ AMBOS modos</td>
+                    <td>Permite registrar pagos en reparto si se cobró al confirmar</td>
+                </tr>
+                <tr>
+                    <td><strong>Checkboxes pago</strong></td>
+                    <td>Efectivo | Digital (solo Fábrica)</td>
+                    <td>✅ Efectivo | Digital (ambos)</td>
+                    <td>Unificación de flujo</td>
+                </tr>
+                <tr>
+                    <td><strong>Input monto</strong></td>
+                    <td>Solo visible en Fábrica</td>
+                    <td>✅ Siempre visible</td>
+                    <td>Split efectivo/digital en ambos modos</td>
+                </tr>
+                <tr>
+                    <td><strong>Validación monto</strong></td>
+                    <td>Solo en Fábrica</td>
+                    <td>✅ En ambos modos</td>
+                    <td>Consistencia de validaciones</td>
+                </tr>
+            </table>
+
+            <p><strong>Ubicación código</strong>:</p>
+            <ul>
+                <li>HTML: <code>cotizador-v2.html</code> líneas 171-294</li>
+                <li>CSS: Estilos ya existentes (sin cambios)</li>
+                <li>JS: <code>script-v2.js</code> función <code>updateModeUI()</code> simplificada (líneas 208-218)</li>
+            </ul>
+
+            <p><strong>Lógica JS simplificada</strong>:</p>
+            <pre><code>// ANTES: Condicional complejo
+function updateModeUI() {
+    if (state.mode === 'FABRICA') {
+        els.rowDeliveryDate.classList.add('hidden');      // ❌ Ocultar fecha
+        els.paymentSection.classList.remove('hidden');    // ✅ Mostrar pago
+        els.btnConfirm.textContent = "Entregar ahora";
+    } else {
+        els.rowDeliveryDate.classList.remove('hidden');   // ✅ Mostrar fecha
+        els.paymentSection.classList.add('hidden');       // ❌ Ocultar pago
+        els.btnConfirm.textContent = "Agendar entrega";
+    }
+}
+
+// AHORA: Simplificado
+function updateModeUI() {
+    // Ambas secciones siempre visibles
+    // Solo cambia texto del botón
+    if (state.mode === 'FABRICA') {
+        els.btnConfirm.textContent = "Entregar ahora";
+    } else {
+        els.btnConfirm.textContent = "Agendar entrega";
+    }
+}</code></pre>
+
+            <h3>19.2 Selector de cliente DIRECTO (sin dropdown)</h3>
+            <p><strong>Problema identificado</strong>:</p>
+            <ul>
+                <li>❌ Cliente debía hacer clic en "Cliente sin nombre" para abrir dropdown</li>
+                <li>❌ Luego hacer clic en input de búsqueda</li>
+                <li>❌ Total: 2 clics antes de buscar</li>
+            </ul>
+
+            <p><strong>Solución implementada</strong>:</p>
+            <ul>
+                <li>✅ Input directo con placeholder "Buscar cliente..."</li>
+                <li>✅ Resultados aparecen al escribir (como productos)</li>
+                <li>✅ Input vacío = "Cliente sin nombre"</li>
+                <li>✅ **Reducción: 1 clic menos**</li>
+            </ul>
+
+            <p><strong>Estructura HTML</strong>:</p>
+            <pre><code>&lt;!-- ANTES: Widget con dropdown --&gt;
+&lt;div class="client-widget"&gt;
+    &lt;div class="client-status" id="client-status-display"&gt;
+        &lt;span&gt;Cliente sin nombre&lt;/span&gt;
+        &lt;i class="fas fa-chevron-down"&gt;&lt;/i&gt;
+    &lt;/div&gt;
+    &lt;div class="client-dropdown hidden"&gt;
+        &lt;input type="text" id="input-cliente" placeholder="Buscar..."&gt;
+        &lt;div id="results-cliente"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- AHORA: Input directo --&gt;
+&lt;div class="client-search-container"&gt;
+    &lt;i class="fas fa-user-circle"&gt;&lt;/i&gt;
+    &lt;input type="text" id="input-cliente" placeholder="Buscar cliente..." autocomplete="off"&gt;
+    &lt;div id="results-cliente" class="floating-results hidden"&gt;
+        &lt;!-- Resultados inyectados aquí --&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+            <p><strong>Estilos CSS</strong>:</p>
+            <pre><code>.client-search-container {
+    margin-left: auto;
+    position: relative;
+    width: 300px;           /* Alineado con panel derecho */
+    flex-shrink: 0;
+}
+
+.client-search-container input {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.client-search-container input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.2);
+}
+
+.client-search-container i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}</code></pre>
+
+            <p><strong>Lógica JS actualizada</strong>:</p>
+            <pre><code>// Event listeners simplificados
+els.inputClientSearch.addEventListener('input', (e) => searchClients(e.target.value));
+els.inputClientSearch.addEventListener('focus', () => {
+    if (els.inputClientSearch.value.length >= 2)
+        els.resultsCliente.classList.remove('hidden');
+});
+
+// Búsqueda de clientes
+function searchClients(query) {
+    if (query.length < 2) {
+        els.resultsCliente.classList.add('hidden');
+        if (query.length === 0) {
+            state.selectedClient = null;  // Reset a "sin nombre"
+            updateTotals();
+        }
+        return;
+    }
+
+    const matches = MOCK_CLIENTS.filter(c =>
+        c.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    els.resultsCliente.innerHTML = matches.map(c => `
+        &lt;div class="prod-row compact" onclick="selectClient(${c.id})"&gt;
+            &lt;div class="prod-info-line"&gt;
+                &lt;span class="p-name"&gt;${c.name}&lt;/span&gt;
+                &lt;span class="p-meta"&gt;${c.address}&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class="prod-add"&gt;&lt;i class="fas fa-check-circle"&gt;&lt;/i&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    `).join('');
+
+    els.resultsCliente.classList.remove('hidden');
+}
+
+// Selección de cliente
+function selectClient(id) {
+    const client = MOCK_CLIENTS.find(c => c.id === id);
+    state.selectedClient = client;
+
+    els.inputClientSearch.value = client.name;  // Muestra nombre en input
+    updateTotals();
+    els.resultsCliente.classList.add('hidden');
+}</code></pre>
+
+            <h3>19.3 Sidebar Auto-Collapse (todos los módulos)</h3>
+            <p><strong>Comportamiento implementado</strong>:</p>
+            <ol>
+                <li>Al cargar página: Sidebar expandido por 5 segundos → auto-collapse</li>
+                <li><code>mouseenter</code> sobre sidebar → expand</li>
+                <li><code>mouseleave</code> de sidebar → collapse</li>
+                <li>Click en navegación → expandido 5 segundos → auto-collapse</li>
+                <li>Botón toggle manual: sigue funcionando</li>
+            </ol>
+
+            <p><strong>Ventajas</strong>:</p>
+            <ul>
+                <li>✅ Maximiza espacio de trabajo</li>
+                <li>✅ Sidebar disponible al pasar mouse (sin clic)</li>
+                <li>✅ Se oculta automáticamente (no molesta)</li>
+                <li>✅ Consistente en todos los módulos</li>
+            </ul>
+
+            <p><strong>Ubicación código</strong>:</p>
+            <ul>
+                <li>JS: <code>assets-cotizador/script-v2.js</code> función <code>setupSidebarAutoCollapse()</code> (líneas 580-630)</li>
+                <li>También en: <code>assets-ventas/script.js</code>, <code>assets-dashboard/script-v2.js</code>, <code>assets-clientes/script-v2.js</code></li>
+            </ul>
+
+            <p><strong>Código implementado</strong>:</p>
+            <pre><code>function setupSidebarAutoCollapse() {
+    let collapseTimer = null;
+
+    function startCollapseTimer() {
+        clearTimeout(collapseTimer);
+        collapseTimer = setTimeout(() => {
+            els.sidebar.classList.add('collapsed');
+        }, 5000); // 5 segundos
+    }
+
+    function expandSidebar() {
+        els.sidebar.classList.remove('collapsed');
+        clearTimeout(collapseTimer);
+    }
+
+    function collapseSidebar() {
+        clearTimeout(collapseTimer);
+        els.sidebar.classList.add('collapsed');
+    }
+
+    // Inicio: expandido, luego auto-collapse
+    startCollapseTimer();
+
+    // Hover behavior
+    els.sidebar.addEventListener('mouseenter', expandSidebar);
+    els.sidebar.addEventListener('mouseleave', collapseSidebar);
+
+    // Navegación: expand y reinicia timer
+    const navItems = els.sidebar.querySelectorAll('.nav-menu li, .btn-cotizador-nav');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            expandSidebar();
+            startCollapseTimer();
+        });
+    });
+
+    // Toggle button: mantiene funcionalidad
+    els.btnToggleSidebar.addEventListener('click', () => {
+        if (els.sidebar.classList.contains('collapsed')) {
+            expandSidebar();
+            startCollapseTimer();
+        } else {
+            collapseSidebar();
+        }
+    });
+}</code></pre>
+
+            <div class="note" style="border-left: 4px solid #0052cc; background: #e3f2fd; padding: 1rem; margin: 1.5rem 0;">
+                <h3>📋 RESUMEN DE CAMBIOS DEL PROTOTIPO</h3>
+                <p><strong>Archivos modificados</strong>:</p>
+                <ul>
+                    <li><code>cotizador-v2.html</code>: Estructura unificada + selector cliente directo</li>
+                    <li><code>assets-cotizador/styles-v2.css</code>: Estilos <code>.client-search-container</code></li>
+                    <li><code>assets-cotizador/script-v2.js</code>: Lógica simplificada + sidebar auto-collapse</li>
+                </ul>
+                <p><strong>Impacto</strong>:</p>
+                <ul>
+                    <li>✅ Reducción 1 clic por cotización (selector cliente)</li>
+                    <li>✅ Flujo unificado REPARTO/FÁBRICA (menos confusión)</li>
+                    <li>✅ Mejor UX con sidebar auto-collapse</li>
+                    <li>✅ Código más simple y mantenible</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+</body>
+
+</html>

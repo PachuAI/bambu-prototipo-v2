@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Estadísticas | Bambu CRM V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Otros Módulos</div>
+            <a href="ventas.html" class="nav-link">Ventas</a>
+            <a href="productos.html" class="nav-link">Productos</a>
+            <a href="configuracion.html" class="nav-link">Configuración</a>
+            <a href="estadisticas.html" class="nav-link active">Estadísticas</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">En esta página</div>
+            <ul id="toc" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Auto-generado desde los h2 -->
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.
+            </div>
+            <h1>PRD: Estadísticas de Ventas <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Análisis de ventas por producto</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Versión</strong></td>
+                    <td>2.0</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha</strong></td>
+                    <td>31 Diciembre 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>⚠️ Borrador (pendiente prototipar y validar)</td>
+                </tr>
+            </table>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Nota importante:</strong> Este PRD es documentación modular de referencia. Solo Cotizador y Ventas están prototipados/validados al 100%. El contenido de Estadísticas probablemente cambie al prototipar e implementar.</p>
+            </div>
+        </header>
+
+        <!-- SECCIÓN 1: CONTEXTO Y OBJETIVO -->
+        <section id="contexto">
+            <h2>1. Contexto y Objetivo</h2>
+
+            <h3>1.1 Propósito del módulo</h3>
+            <p>El módulo <strong>Estadísticas de Ventas por Producto</strong> permite analizar el desempeño comercial de cada producto en períodos de tiempo específicos. Provee métricas clave para decisiones de inventario, producción y estrategia comercial.</p>
+
+            <h3>1.2 Problema que resuelve</h3>
+            <ul>
+                <li>Identificar productos más vendidos vs menos vendidos</li>
+                <li>Analizar tendencias de ventas por período</li>
+                <li>Tomar decisiones de stock basadas en datos</li>
+                <li>Detectar productos de baja rotación</li>
+                <li>Generar reportes de ventas por producto</li>
+            </ul>
+
+            <h3>1.3 Usuarios principales</h3>
+            <ul>
+                <li><strong>Administrador:</strong> Acceso completo a estadísticas y reportes</li>
+                <li><strong>Vendedor:</strong> SIN ACCESO (módulo exclusivo admin)</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 2: FUNCIONALIDAD PRINCIPAL -->
+        <section id="funcionalidad">
+            <h2>2. Funcionalidad Principal</h2>
+
+            <h3>2.1 Descripción general</h3>
+            <p>El módulo muestra una tabla con todos los productos del catálogo y sus métricas de venta en un período seleccionado. Permite filtrar por fecha, ordenar por cantidad vendida o monto total, y exportar resultados a Excel.</p>
+
+            <h3>2.2 Características clave</h3>
+            <ul>
+                <li>✅ Selector de período (desde-hasta)</li>
+                <li>✅ Tabla de productos con métricas de venta</li>
+                <li>✅ Ordenamiento por cantidad vendida o monto total</li>
+                <li>✅ Gráfico de tendencia (opcional, pendiente definir)</li>
+                <li>✅ Exportación Excel con resumen detallado</li>
+                <li>✅ Filtros adicionales: Por proveedor, por categoría (si aplica)</li>
+            </ul>
+
+            <h3>2.3 Flujo de trabajo típico</h3>
+            <pre><code>Administrador accede a Estadísticas
+        ↓
+Selecciona período (ej: Diciembre 2024)
+        ↓
+Sistema calcula métricas por producto:
+├─ Cantidad vendida
+├─ Monto total
+└─ Participación en ventas (%)
+        ↓
+Tabla muestra productos ordenados por cantidad vendida
+        ↓
+Administrador puede:
+├─ Reordenar por monto total
+├─ Filtrar por proveedor
+├─ Exportar Excel
+└─ Ver gráfico de tendencia</code></pre>
+        </section>
+
+        <!-- SECCIÓN 3: INTERFAZ DE USUARIO -->
+        <section id="interfaz">
+            <h2>3. Interfaz de Usuario</h2>
+
+            <h3>3.1 Layout general</h3>
+            <p><strong>Vista principal:</strong> Filtros superiores + Tabla de resultados + Botón exportar</p>
+
+            <p><strong>Estructura:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────────┐
+│  ESTADÍSTICAS DE VENTAS POR PRODUCTO                     │
+├──────────────────────────────────────────────────────────┤
+│  Período:  [Desde: 01/12/2024] [Hasta: 31/12/2024]      │
+│  Filtros:  [Proveedor ▼]  [Buscar producto...]          │
+│            [Aplicar filtros]  [Exportar Excel]           │
+├──────────────────────────────────────────────────────────┤
+│  Producto          │ Cant. vendida │ Monto total │ %    │
+│  Detergente X      │ 350 un        │ $1.575.000  │ 25%  │
+│  Lavandina Y       │ 280 un        │ $896.000    │ 14%  │
+│  Cloro Z           │ 150 un        │ $675.000    │ 11%  │
+│  ...               │               │             │      │
+│  TOTAL             │ 1.200 un      │ $6.300.000  │ 100% │
+└──────────────────────────────────────────────────────────┘</code></pre>
+
+            <h3>3.2 Filtros superiores</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filtro</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Desde (fecha)</strong></td>
+                        <td>Date picker</td>
+                        <td>Fecha inicial del período (obligatorio)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hasta (fecha)</strong></td>
+                        <td>Date picker</td>
+                        <td>Fecha final del período (obligatorio)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Proveedor</strong></td>
+                        <td>Dropdown</td>
+                        <td>Filtrar solo productos de un proveedor específico (opcional)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Buscar producto</strong></td>
+                        <td>Input text</td>
+                        <td>Buscar producto por nombre (opcional)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.3 Tabla de resultados</h3>
+            <p><strong>Columnas:</strong></p>
+            <ul>
+                <li><strong>Producto:</strong> Nombre del producto</li>
+                <li><strong>Cantidad vendida:</strong> Total de unidades vendidas en el período (clickeable para ordenar)</li>
+                <li><strong>Monto total:</strong> Suma de ventas en pesos (clickeable para ordenar)</li>
+                <li><strong>% Participación:</strong> Porcentaje del total de ventas</li>
+                <li><strong>Acciones:</strong> [Ver detalle] (abre modal con ventas individuales)</li>
+            </ul>
+
+            <p><strong>Fila TOTAL:</strong></p>
+            <ul>
+                <li>Al final de la tabla</li>
+                <li>Suma total de cantidades, montos y 100%</li>
+                <li>Fondo destacado para diferenciarlo</li>
+            </ul>
+
+            <p><strong>Ordenamiento:</strong></p>
+            <ul>
+                <li>Default: Por cantidad vendida (descendente)</li>
+                <li>Clickeable en headers: Permite ordenar por cualquier columna</li>
+            </ul>
+
+            <h3>3.4 Gráfico de tendencia (opcional)</h3>
+            <p><strong>Tipo:</strong> Gráfico de barras o líneas</p>
+
+            <p><strong>Contenido:</strong></p>
+            <ul>
+                <li>Eje X: Productos (top 10 más vendidos)</li>
+                <li>Eje Y: Cantidad vendida</li>
+                <li>Permite visualizar rápidamente los productos líderes</li>
+            </ul>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>💡 Pendiente definir:</strong> Tipo de gráfico específico (barras horizontales, verticales, líneas). Evaluar si usar librería como Chart.js o similar.</p>
+            </div>
+
+            <h3>3.5 Modal: Ver detalle de producto</h3>
+            <p><strong>Acceso:</strong> Click en [Ver detalle] de un producto en la tabla</p>
+
+            <p><strong>Contenido:</strong></p>
+            <ul>
+                <li>Nombre del producto (header)</li>
+                <li>Período seleccionado</li>
+                <li>Tabla con pedidos individuales:
+                    <ul>
+                        <li>Fecha del pedido</li>
+                        <li>Pedido # (clickeable → abre pedido en Ventas)</li>
+                        <li>Cliente</li>
+                        <li>Cantidad vendida</li>
+                        <li>Precio unitario</li>
+                        <li>Subtotal</li>
+                    </ul>
+                </li>
+                <li>Total al final de la tabla</li>
+            </ul>
+
+            <h3>3.6 Exportar Excel</h3>
+            <p><strong>Ubicación:</strong> Botón [Exportar Excel] en header superior</p>
+
+            <p><strong>Archivo generado:</strong></p>
+            <ul>
+                <li>Nombre: <code>estadisticas_ventas_YYYY-MM-DD.xlsx</code></li>
+                <li>Columnas: Producto | Cantidad vendida | Monto total | % Participación</li>
+                <li>Fila TOTAL al final</li>
+                <li>Filtros aplicados se incluyen como información en el archivo (período, proveedor si aplica)</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 4: REGLAS DE NEGOCIO -->
+        <section id="reglas">
+            <h2>4. Reglas de Negocio Específicas</h2>
+
+            <h3>4.1 Validaciones</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Validación</th>
+                        <th>Mensaje de error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Desde (fecha)</strong></td>
+                        <td>No puede ser mayor que "Hasta"</td>
+                        <td>"La fecha inicial no puede ser posterior a la fecha final"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hasta (fecha)</strong></td>
+                        <td>No puede ser anterior a "Desde"</td>
+                        <td>"La fecha final no puede ser anterior a la fecha inicial"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Período máximo</strong></td>
+                        <td>No más de 1 año (opcional, por performance)</td>
+                        <td>"El período máximo es de 1 año"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.2 Cálculo de métricas</h3>
+            <p><strong>Cantidad vendida:</strong></p>
+            <ul>
+                <li>Suma de cantidades de ese producto en TODOS los pedidos confirmados (estado != borrador)</li>
+                <li>Incluye pedidos entregados y en tránsito</li>
+                <li>NO incluye borradores (nunca confirmados)</li>
+            </ul>
+
+            <p><strong>Monto total:</strong></p>
+            <ul>
+                <li>Suma de (cantidad * precio_unitario) en cada pedido</li>
+                <li>Usa el precio al momento de la venta (histórico)</li>
+                <li>Incluye descuentos aplicados en ese momento</li>
+            </ul>
+
+            <p><strong>% Participación:</strong></p>
+            <ul>
+                <li>Fórmula: (Monto total del producto / Monto total de todos) * 100</li>
+                <li>Permite identificar productos que representan mayor porcentaje de ventas</li>
+            </ul>
+
+            <h3>4.3 Productos sin ventas</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Por defecto, NO se muestran productos con 0 ventas en el período</li>
+                <li>Toggle opcional: "Mostrar productos sin ventas" (marca productos inactivos)</li>
+                <li>Si se activa, productos con 0 ventas aparecen al final con cantidad = 0, monto = $0</li>
+            </ul>
+
+            <h3>4.4 Pedidos incluidos en estadísticas</h3>
+            <p><strong>Regla:</strong> Solo se cuentan pedidos con estado != "borrador"</p>
+
+            <p><strong>Estados incluidos:</strong></p>
+            <ul>
+                <li>✅ Pendiente</li>
+                <li>✅ Asignado</li>
+                <li>✅ En tránsito</li>
+                <li>✅ Entregado</li>
+            </ul>
+
+            <p><strong>Estados NO incluidos:</strong></p>
+            <ul>
+                <li>❌ Borrador (nunca confirmado)</li>
+                <li>❌ Cancelado (si existe el estado)</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 5: INTEGRACIÓN -->
+        <section id="integracion">
+            <h2>5. Integración con Otros Módulos</h2>
+
+            <h3>5.1 Ventas</h3>
+            <p><strong>Relación:</strong> Estadísticas consume datos de pedidos del módulo Ventas</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Query a tabla de pedidos filtrando por rango de fechas</li>
+                <li>Click en pedido individual en modal "Ver detalle" abre ese pedido en Ventas</li>
+                <li>Los cambios en pedidos (ediciones, eliminaciones) se reflejan inmediatamente en estadísticas</li>
+            </ul>
+
+            <h3>5.2 Productos</h3>
+            <p><strong>Relación:</strong> Estadísticas muestra productos del catálogo</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Lista de productos se obtiene de la tabla de productos</li>
+                <li>Productos eliminados del catálogo siguen apareciendo en estadísticas si tuvieron ventas históricas</li>
+                <li>Filtro por proveedor consume tabla de proveedores</li>
+            </ul>
+
+            <h3>5.3 Dashboard (opcional)</h3>
+            <p><strong>Relación:</strong> Dashboard puede mostrar widget con top 5 productos más vendidos</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Widget en Dashboard usa misma query que Estadísticas pero limitado a top 5</li>
+                <li>Click en widget redirige a Estadísticas con período del mes actual</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 6: CASOS DE USO -->
+        <section id="casos-uso">
+            <h2>6. Casos de Uso</h2>
+
+            <h3>Caso 1: Consultar ventas del mes actual</h3>
+            <p><strong>Contexto:</strong> Administrador quiere saber qué productos se vendieron en Diciembre 2024</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre módulo Estadísticas</li>
+                <li>Selecciona período:
+                    <ul>
+                        <li>Desde: 01/12/2024</li>
+                        <li>Hasta: 31/12/2024</li>
+                    </ul>
+                </li>
+                <li>Click [Aplicar filtros]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Tabla muestra todos los productos con ventas en Diciembre</li>
+                <li>✅ Ordenados por cantidad vendida (descendente)</li>
+                <li>✅ Fila TOTAL al final con suma de cantidades y montos</li>
+            </ul>
+
+            <h3>Caso 2: Identificar top 5 productos más vendidos</h3>
+            <p><strong>Contexto:</strong> Administrador necesita saber cuáles son los productos líderes en el año</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Estadísticas</li>
+                <li>Selecciona período: 01/01/2024 → 31/12/2024</li>
+                <li>Click [Aplicar filtros]</li>
+                <li>Tabla ya ordenada por cantidad vendida (descendente)</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Los primeros 5 productos en la tabla son los más vendidos del año</li>
+                <li>✅ Puede ver cantidad exacta y participación %</li>
+            </ul>
+
+            <h3>Caso 3: Filtrar ventas de un proveedor específico</h3>
+            <p><strong>Contexto:</strong> Administrador quiere analizar solo productos del "Proveedor A"</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Estadísticas</li>
+                <li>Selecciona período (ej: Diciembre 2024)</li>
+                <li>Selecciona filtro: Proveedor → "Proveedor A"</li>
+                <li>Click [Aplicar filtros]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Tabla muestra SOLO productos del "Proveedor A"</li>
+                <li>✅ % Participación se recalcula en base a ese subconjunto</li>
+                <li>✅ Fila TOTAL suma solo productos filtrados</li>
+            </ul>
+
+            <h3>Caso 4: Ver detalle de ventas de un producto</h3>
+            <p><strong>Contexto:</strong> Administrador quiere ver cuándo y a quiénes se vendió "Detergente X"</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador aplica filtros de período</li>
+                <li>Busca "Detergente X" en la tabla</li>
+                <li>Click en [Ver detalle]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Modal muestra tabla con pedidos individuales:
+                    <ul>
+                        <li>Pedido #152 | 25/12/2024 | Cliente "Av. Argentina 456" | 10 un | $4.500 | $45.000</li>
+                        <li>Pedido #165 | 28/12/2024 | Cliente "Calle Falsa 123" | 5 un | $4.500 | $22.500</li>
+                        <li>... (resto de pedidos)</li>
+                        <li><strong>TOTAL: 350 un | $1.575.000</strong></li>
+                    </ul>
+                </li>
+                <li>✅ Puede hacer click en pedido # para abrirlo en Ventas</li>
+            </ul>
+
+            <h3>Caso 5: Exportar estadísticas a Excel</h3>
+            <p><strong>Contexto:</strong> Administrador necesita enviar reporte de ventas al contador</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador aplica filtros de período y proveedor (si aplica)</li>
+                <li>Click en [Exportar Excel]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Descarga archivo <code>estadisticas_ventas_2024-12-31.xlsx</code></li>
+                <li>✅ Contiene:
+                    <ul>
+                        <li>Encabezado: "Estadísticas de Ventas | Período: 01/12/2024 - 31/12/2024"</li>
+                        <li>Tabla: Producto | Cantidad | Monto | %</li>
+                        <li>Fila TOTAL al final</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Caso 6: Detectar productos de baja rotación</h3>
+            <p><strong>Contexto:</strong> Administrador quiere identificar productos que casi no se venden</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Estadísticas</li>
+                <li>Selecciona período amplio (ej: último trimestre)</li>
+                <li>Click [Aplicar filtros]</li>
+                <li>Click en columna "Cantidad vendida" para ordenar ascendente</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Productos con menos ventas aparecen primero</li>
+                <li>✅ Puede detectar productos con 0, 1 o 2 ventas en 3 meses</li>
+                <li>✅ Toma decisiones: Descontinuar, hacer promoción, ajustar stock</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 7: FLUJOS DE USUARIO -->
+        <section id="flujos">
+            <h2>7. Flujos de Usuario</h2>
+
+            <h3>7.1 Flujo principal: Consultar estadísticas</h3>
+            <pre><code>Administrador accede a Estadísticas
+        ↓
+Selecciona período (desde-hasta)
+        ↓
+(Opcional) Aplica filtros:
+├─ Proveedor
+└─ Buscar producto
+        ↓
+Click [Aplicar filtros]
+        ↓
+Sistema calcula métricas:
+├─ Query a tabla pedidos (fecha BETWEEN desde AND hasta)
+├─ Agrupa por producto_id
+├─ Suma cantidad y monto por producto
+└─ Calcula % participación
+        ↓
+Tabla muestra resultados ordenados por cantidad vendida
+        ↓
+Administrador puede:
+├─ Reordenar por columna (click en header)
+├─ Ver detalle de producto (click [Ver detalle])
+├─ Exportar Excel
+└─ (Opcional) Ver gráfico de tendencia</code></pre>
+
+            <h3>7.2 Flujo: Ver detalle de producto</h3>
+            <pre><code>Administrador en tabla de estadísticas
+        ↓
+Click [Ver detalle] en producto específico
+        ↓
+Modal se abre mostrando:
+├─ Header: Nombre del producto + período
+├─ Tabla de pedidos individuales:
+│   ├─ Fecha | Pedido # | Cliente
+│   ├─ Cantidad | Precio unitario | Subtotal
+│   └─ (Ordenado por fecha descendente)
+└─ Fila TOTAL al final
+        ↓
+Administrador puede:
+├─ Click en Pedido # → Redirige a Ventas (abre pedido)
+└─ [Cerrar modal]</code></pre>
+
+            <h3>7.3 Flujo: Exportar Excel</h3>
+            <pre><code>Administrador en Estadísticas con filtros aplicados
+        ↓
+Click [Exportar Excel]
+        ↓
+Sistema genera archivo:
+├─ Encabezado con período y filtros aplicados
+├─ Tabla con columnas: Producto | Cantidad | Monto | %
+├─ Fila TOTAL al final
+└─ Formato: estadisticas_ventas_YYYY-MM-DD.xlsx
+        ↓
+Archivo se descarga automáticamente
+        ↓
+Notificación: ✅ "Reporte exportado correctamente"</code></pre>
+        </section>
+
+        <!-- SECCIÓN 8: NOTAS TÉCNICAS -->
+        <section id="notas-tecnicas">
+            <h2>8. Notas Técnicas para Desarrollo</h2>
+
+            <h3>8.1 Estructura de datos (Mock data)</h3>
+            <pre><code class="language-javascript">// Estadística de producto
+const ESTADISTICA_PRODUCTO = {
+    producto_id: 1,
+    producto_nombre: "Detergente Concentrado 5L",
+    cantidad_vendida: 350, // Suma de cantidades en pedidos
+    monto_total: 1575000, // Suma de subtotales en pedidos
+    participacion_porcentaje: 25.0 // (monto_total / monto_total_todos) * 100
+};
+
+// Detalle de venta individual (para modal "Ver detalle")
+const DETALLE_VENTA = {
+    pedido_id: 152,
+    fecha: "2024-12-25",
+    cliente_direccion: "Av. Argentina 456",
+    cantidad: 10,
+    precio_unitario: 4500,
+    subtotal: 45000
+};
+</code></pre>
+
+            <h3>8.2 Consideraciones de implementación</h3>
+            <ul>
+                <li>⚠️ <strong>Performance:</strong> Query agregada puede ser pesada en períodos largos → Usar índices en tabla pedidos (fecha, producto_id)</li>
+                <li>⚠️ <strong>Caché:</strong> Considerar cachear resultados de períodos cerrados (ej: meses completos) para mejorar velocidad</li>
+                <li>⚠️ <strong>Paginación:</strong> Si catálogo es muy grande (100+ productos), paginar tabla de resultados</li>
+                <li>💡 <strong>Gráficos:</strong> Evaluar librería Chart.js (vanilla JS) para implementar gráficos de tendencia</li>
+                <li>💡 <strong>Exportación Excel:</strong> Usar librería SheetJS (xlsx) para generar archivos</li>
+            </ul>
+
+            <h3>8.3 Queries SQL útiles</h3>
+            <pre><code class="language-sql">-- Estadísticas de ventas por producto en un período
+SELECT
+    p.id as producto_id,
+    p.nombre as producto_nombre,
+    SUM(pp.cantidad) as cantidad_vendida,
+    SUM(pp.cantidad * pp.precio_unitario) as monto_total,
+    (SUM(pp.cantidad * pp.precio_unitario) / (
+        SELECT SUM(pp2.cantidad * pp2.precio_unitario)
+        FROM pedidos_productos pp2
+        JOIN pedidos ped2 ON pp2.pedido_id = ped2.id
+        WHERE ped2.fecha BETWEEN ? AND ?
+        AND ped2.estado != 'borrador'
+    ) * 100) as participacion_porcentaje
+FROM productos p
+LEFT JOIN pedidos_productos pp ON p.id = pp.producto_id
+LEFT JOIN pedidos ped ON pp.pedido_id = ped.id
+WHERE ped.fecha BETWEEN ? AND ?
+AND ped.estado != 'borrador'
+GROUP BY p.id, p.nombre
+HAVING SUM(pp.cantidad) > 0
+ORDER BY cantidad_vendida DESC;
+
+-- Detalle de ventas de un producto específico
+SELECT
+    ped.id as pedido_id,
+    ped.fecha,
+    c.direccion as cliente_direccion,
+    pp.cantidad,
+    pp.precio_unitario,
+    (pp.cantidad * pp.precio_unitario) as subtotal
+FROM pedidos_productos pp
+JOIN pedidos ped ON pp.pedido_id = ped.id
+LEFT JOIN clientes c ON ped.cliente_id = c.id
+WHERE pp.producto_id = ?
+AND ped.fecha BETWEEN ? AND ?
+AND ped.estado != 'borrador'
+ORDER BY ped.fecha DESC;</code></pre>
+
+            <h3>8.4 Cálculo de porcentaje de participación</h3>
+            <pre><code class="language-javascript">// Función para calcular participación de cada producto
+function calcularParticipacion(productos, montoTotalGeneral) {
+    return productos.map(producto => ({
+        ...producto,
+        participacion_porcentaje: (producto.monto_total / montoTotalGeneral) * 100
+    }));
+}
+
+// Función para formatear resultados de estadísticas
+function formatearEstadisticas(productos) {
+    const montoTotalGeneral = productos.reduce((sum, p) => sum + p.monto_total, 0);
+    const cantidadTotalGeneral = productos.reduce((sum, p) => sum + p.cantidad_vendida, 0);
+
+    const productosConParticipacion = calcularParticipacion(productos, montoTotalGeneral);
+
+    return {
+        productos: productosConParticipacion,
+        totales: {
+            cantidad_vendida: cantidadTotalGeneral,
+            monto_total: montoTotalGeneral,
+            participacion_porcentaje: 100
+        }
+    };
+}
+</code></pre>
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer>
+            <p>Bambu CRM V2 - PRD Técnico | Última actualización: 31 Diciembre 2024</p>
+            <p><a href="index.html">← Volver al PRD General</a></p>
+        </footer>
+    </main>
+
+    <!-- SCRIPT PARA TOC AUTO -->
+    <script>
+        // Auto-generar tabla de contenidos desde los h2
+        const toc = document.getElementById('toc');
+        const h2s = document.querySelectorAll('main h2');
+        h2s.forEach(h2 => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + h2.parentElement.id;
+            a.textContent = h2.textContent;
+            a.className = 'nav-link';
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>

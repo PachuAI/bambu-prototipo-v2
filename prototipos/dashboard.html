@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Dashboard</title>
+    <!-- Sistema de diseño: tokens + components + específicos -->
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/dashboard/dashboard-specific.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR (V2 Structure - Collapsible) -->
+        <nav class="sidebar" id="main-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <!-- Highlighted Action (Still Cotizador for Quick Access) -->
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" class="active" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                    </li>
+                    <li title="Repartos">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    <li title="Reportes y Estadísticas">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER TOOLBAR (Dashboard Version) -->
+            <header class="header-toolbar" style="padding-left: 32px; padding-right: 32px;">
+                <!-- Global Search (Protagonist) -->
+                <div class="search-container-global">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="global-search" placeholder="Buscar clientes, productos, pedidos..."
+                        autocomplete="off">
+                    <span class="search-shortcut-badge">Ctrl + K</span>
+
+                    <!-- Search Results Dropdown -->
+                    <div id="global-search-results" class="global-results-dropdown hidden">
+                    </div>
+                </div>
+
+                <!-- Quick User Actions -->
+                <div style="display:flex; gap:16px; margin-left: 24px;">
+                    <button class="btn-xs-outline" style="height: 36px; padding: 0 12px; border-radius: 20px;">
+                        <i class="far fa-bell"></i>
+                    </button>
+                    <div class="client-status" style="background:transparent; border:1px solid #ebecf0;">
+                        <div
+                            style="width:24px; height:24px; background:#172b4d; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-size:10px;">
+                            AD</div>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- DASHBOARD CONTENT (Canvas) -->
+            <div class="dashboard-content">
+                <div class="dashboard-sections">
+
+                    <!-- 1. CALENDAR CAROUSEL -->
+                    <section class="section-carousel">
+                        <div class="carousel-header">
+                            <div>
+                                <h2 class="carousel-title">Resumen Semanal</h2>
+                                <span class="text-muted" style="font-size:13px;">Diciembre 2025</span>
+                            </div>
+                            <div class="carousel-controls">
+                                <button class="btn-nav-day"><i class="fas fa-chevron-left"></i></button>
+                                <button class="btn-nav-day"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="days-row">
+                            <!-- Cards -->
+                            <div class="day-card-v2">
+                                <span class="day-label">LUNES</span>
+                                <span class="day-number-big">22</span>
+                                <span class="metric-pill">38 PEDIDOS</span>
+                                <span class="metric-pill">95% CARGA</span>
+                            </div>
+                            <div class="day-card-v2 active">
+                                <span class="day-label">MARTES</span>
+                                <span class="day-number-big">23</span>
+                                <span class="metric-pill">43 PEDIDOS</span>
+                                <span class="metric-pill">94% CARGA</span>
+                            </div>
+                            <div class="day-card-v2">
+                                <span class="day-label">MIÉRCOLES</span>
+                                <span class="day-number-big">24</span>
+                                <span class="metric-pill">25 PEDIDOS</span>
+                                <span class="metric-pill">48% CARGA</span>
+                            </div>
+                            <div class="day-card-v2">
+                                <span class="day-label">JUEVES</span>
+                                <span class="day-number-big">25</span>
+                                <span class="metric-pill">21 PEDIDOS</span>
+                                <span class="metric-pill">30% CARGA</span>
+                            </div>
+                            <div class="day-card-v2">
+                                <span class="day-label">VIERNES</span>
+                                <span class="day-number-big">26</span>
+                                <span class="metric-pill">10 PEDIDOS</span>
+                                <span class="metric-pill">15% CARGA</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 2. SPLIT SECTION -->
+                    <section class="split-section">
+
+                        <!-- Col 1: Orders Ready -->
+                        <div class="orders-list-container">
+                            <div class="clean-list-header">
+                                <div class="clean-list-title">
+                                    <i class="fas fa-shipping-fast" style="color:#0052cc;"></i>
+                                    Listos para Despacho (Mañana)
+                                </div>
+                                <button class="btn-xs-outline">Ver Todo</button>
+                            </div>
+
+                            <div class="orders-groups">
+                                <!-- Order Item -->
+                                <div class="order-row-item">
+                                    <div class="order-icon">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="order-info">
+                                        <span class="order-main-text">Pedido #1204 - Ingeniero Huergo</span>
+                                        <span class="order-sub-text">24 Items • Cliente: 12345</span>
+                                    </div>
+                                    <div class="order-meta">
+                                        <div class="tag-status tag-ready">LISTO</div>
+                                        <div style="font-size:11px; color:#6b778c; margin-top:2px;">644kg</div>
+                                    </div>
+                                </div>
+
+                                <!-- Order Item -->
+                                <div class="order-row-item">
+                                    <div class="order-icon">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+                                    <div class="order-info">
+                                        <span class="order-main-text">Pedido #1205 - Choele Choel</span>
+                                        <span class="order-sub-text">10 Items • Cliente: Juan Pérez</span>
+                                    </div>
+                                    <div class="order-meta">
+                                        <div class="tag-status tag-ready">LISTO</div>
+                                        <div style="font-size:11px; color:#6b778c; margin-top:2px;">465kg</div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top:16px; text-align:center;">
+                                    <button class="btn-xs-outline" style="width:100%;">+ 23 Pedidos más</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Stock Alerts -->
+                        <div class="stock-alerts-container">
+                            <div class="clean-list-header" style="border-bottom-color: #ffebe6; margin-bottom:16px;">
+                                <div class="clean-list-title" style="color:#bf2600;">
+                                    <i class="fas fa-exclamation-triangle"></i> Criticos
+                                </div>
+                            </div>
+
+                            <div class="alert-item">
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <div class="product-alert-name">BOTELLA PET CRISTAL XL 1L</div>
+                                        <span class="alert-badge">AGOTADO</span>
+                                    </div>
+                                    <div class="stock-meter">Stock actual: 0 / Min: 10</div>
+                                </div>
+                                <i class="fas fa-chevron-right" style="font-size:12px; color:#c1c7d0;"></i>
+                            </div>
+
+                            <div class="alert-item">
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <div class="product-alert-name">KIT BARREDOR ALGODÓN</div>
+                                        <span class="alert-badge">AGOTADO</span>
+                                    </div>
+                                    <div class="stock-meter">Stock actual: 0 / Min: 10</div>
+                                </div>
+                                <i class="fas fa-chevron-right" style="font-size:12px; color:#c1c7d0;"></i>
+                            </div>
+
+                            <div class="alert-item">
+                                <div class="alert-content">
+                                    <div class="alert-header">
+                                        <div class="product-alert-name">BOLSAS CONSORCIO 50X70</div>
+                                        <span class="alert-badge">AGOTADO</span>
+                                    </div>
+                                    <div class="stock-meter">Stock actual: 0 / Min: 10</div>
+                                </div>
+                                <i class="fas fa-chevron-right" style="font-size:12px; color:#c1c7d0;"></i>
+                            </div>
+
+                            <div class="list-footer-action">
+                                <button class="btn-xs-outline">Ver todo el inventario</button>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="assets/dashboard/script.js"></script>
+    <script>
+        // Inline Sidebar Toggle Logic (Shared)
+        const sidebar = document.getElementById('main-sidebar');
+        const toggleBtn = document.getElementById('btn-toggle-sidebar');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+    </script>
+</body>
+
+</html>

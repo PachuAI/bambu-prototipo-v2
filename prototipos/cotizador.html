@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bambú CRM - Cotizador v3</title>
+    <!-- Sistema de diseño V2 -->
+    <link rel="stylesheet" href="shared/tokens.css">
+    <link rel="stylesheet" href="shared/components.css">
+    <link rel="stylesheet" href="assets/cotizador/cotizador-specific.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR (V2 Structure - Collapsible) -->
+        <nav class="sidebar" id="main-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <span class="logo-text">Bambú CRM</span>
+            </div>
+
+            <button class="toggle-sidebar-float" id="btn-toggle-sidebar" title="Expandir/Colapsar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="nav-content">
+                <!-- Highlighted Action -->
+                <div class="nav-highlight">
+                    <button class="btn-cotizador-nav" onclick="location.href='cotizador.html'">
+                        <i class="fas fa-calculator"></i>
+                        <span>COTIZADOR</span>
+                    </button>
+                </div>
+
+                <ul class="nav-menu">
+                    <li title="Dashboard" onclick="location.href='dashboard.html'">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </li>
+                    <li title="Clientes" onclick="location.href='clientes.html'">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </li>
+                    <li title="Productos y Stock">
+                        <i class="fas fa-box"></i>
+                        <span>Productos y Stock</span>
+                    </li>
+                    <li title="Ventas" class="new-badge-item" onclick="location.href='ventas.html'">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Ventas <small class="badge-new">NUEVO</small></span>
+                    </li>
+                    <li title="Repartos">
+                        <i class="fas fa-truck"></i>
+                        <span>Repartos</span>
+                    </li>
+                    <li title="Reportes y Estadísticas">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Reportes</span>
+                    </li>
+                    <li title="Respaldos">
+                        <i class="fas fa-server"></i>
+                        <span>Respaldos</span>
+                    </li>
+                </ul>
+
+                <div class="nav-footer">
+                    <li title="Configuración">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </li>
+                    <li title="Cambiar tema" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="theme-icon"></i>
+                        <span>Tema</span>
+                    </li>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT -->
+        <main class="main-layout">
+
+            <!-- HEADER TOOLBAR (V3 Redesign) -->
+            <header class="header-toolbar">
+
+                <!-- 1. Mode Switch -->
+                <div class="mode-switch-container">
+                    <div class="mode-switch">
+                        <input type="radio" name="mode" id="mode-reparto" value="REPARTO" checked>
+                        <label for="mode-reparto" class="switch-label">
+                            <i class="fas fa-truck"></i> Reparto
+                        </label>
+
+                        <input type="radio" name="mode" id="mode-fabrica" value="FABRICA">
+                        <label for="mode-fabrica" class="switch-label">
+                            <i class="fas fa-industry"></i> Fábrica
+                        </label>
+                        <div class="switch-selection"></div>
+                    </div>
+                </div>
+
+                <!-- 2. Product Search (Protagonist) -->
+                <div class="product-search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="input-producto" placeholder="Buscar productos (nombre)..."
+                        autocomplete="off">
+                    <div id="results-producto" class="floating-results hidden">
+                        <!-- Search Results Injected Here -->
+                    </div>
+                </div>
+
+                <!-- 3. Client Search (Secondary - Right Aligned) -->
+                <div class="client-search-container">
+                    <i class="fas fa-user-circle"></i>
+                    <input type="text" id="input-cliente" placeholder="Buscar cliente..." autocomplete="off">
+                    <div id="results-cliente" class="floating-results hidden">
+                        <!-- Client Results Injected Here -->
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-grid">
+
+                <!-- LEFT PANEL: CANVAS -->
+                <div class="left-panel">
+
+                    <!-- Order Table -->
+                    <div class="order-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 45%">Producto</th>
+                                    <th class="text-right" style="width: 15%">Subtotal</th>
+                                    <th class="text-right" style="width: 15%">Unitario</th>
+                                    <th class="text-center" style="width: 15%">Cant.</th>
+                                    <th class="text-center" style="width: 10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pedido-body">
+                                <!-- Empty State Row injected by JS if empty -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT PANEL: TOTALS & ACTIONS -->
+                <aside class="right-panel">
+                    <div class="sticky-container">
+
+                        <!-- Financials Inputs & Levels -->
+                        <div class="financials-block">
+                            <div class="field-row">
+                                <label>Subtotal</label>
+                                <span class="align-right" id="txt-subtotal">$0</span>
+                            </div>
+
+                            <!-- Weight Display -->
+                            <div class="field-row text-muted">
+                                <label>Peso total</label>
+                                <span class="align-right" id="txt-peso">0kg</span>
+                            </div>
+
+                            <!-- Delivery Date (Always visible) -->
+                            <div class="field-row delivery-date-row" id="row-delivery-date">
+                                <label><i class="fas fa-calendar-alt"></i> Entrega</label>
+                                <input type="date" id="input-date-inline" class="date-input-inline">
+                            </div>
+
+                            <!-- Discount Levels (Manual application) -->
+                            <div class="discount-levels-section">
+                                <div class="level-row">
+                                    <input type="checkbox" id="chk-l1" checked disabled> <small>L1: 0% (Base)</small>
+                                </div>
+                                <div class="level-row">
+                                    <input type="checkbox" id="chk-l2" disabled> <small>L2: 6.25%</small>
+                                    <button id="btn-apply-l2" class="btn-xs-outline ml-auto">Aplicar</button>
+                                </div>
+                                <div class="level-row">
+                                    <input type="checkbox" id="chk-l3" disabled> <small>L3: 10%</small>
+                                    <button id="btn-apply-l3" class="btn-xs-outline ml-auto">Aplicar</button>
+                                </div>
+                            </div>
+
+                            <!-- Client Discount Row (Hidden by default) -->
+                            <div class="field-row client-discount-row hidden" id="row-client-discount">
+                                <label><i class="fas fa-star"></i> Desc. Cliente</label>
+                                <span class="align-right" id="txt-client-discount">-$0</span>
+                            </div>
+
+                            <hr class="divider-compact">
+
+                            <!-- Manual Overrides -->
+                            <div class="field-row">
+                                <label>Desc. Manual (%)</label>
+                                <input type="number" id="input-disc-manual" class="money-input" placeholder="0" min="0"
+                                    max="100">
+                            </div>
+
+                            <div class="field-row">
+                                <label>Ajuste ($)</label>
+                                <input type="number" id="input-adjustment" class="money-input" placeholder="0">
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="notes-section">
+                                <button class="btn-toggle-notes" id="btn-toggle-notes"><i
+                                        class="far fa-comment-alt"></i> Agregar nota</button>
+                                <textarea id="input-notes" class="notes-area hidden"
+                                    placeholder="Observaciones del pedido..."></textarea>
+                            </div>
+
+                            <!-- Payment Method Section (Always visible) -->
+                            <div class="payment-section-compact" id="payment-section">
+                                <div class="payment-header">
+                                    <label><i class="fas fa-money-bill-wave"></i> Método de pago</label>
+                                    <span class="optional-tag">Opcional</span>
+                                </div>
+
+                                <!-- Payment Method Checkboxes -->
+                                <div class="payment-options">
+                                    <label class="payment-option-label">
+                                        <input type="checkbox" id="chk-efectivo">
+                                        <span><i class="fas fa-money-bill-alt icon-efectivo"></i> Efectivo</span>
+                                    </label>
+                                    <label class="payment-option-label">
+                                        <input type="checkbox" id="chk-digital">
+                                        <span><i class="fas fa-credit-card icon-digital"></i> Digital</span>
+                                    </label>
+                                </div>
+
+                                <!-- Single Amount Input (Default) -->
+                                <div id="single-amount-container" class="payment-input-group">
+                                    <label>Monto recibido</label>
+                                    <input type="number" id="input-monto-recibido" class="payment-input-full" placeholder="$0">
+                                </div>
+
+                                <!-- Split Amount Inputs (Visible when both checked) -->
+                                <div id="split-amount-container" class="hidden">
+                                    <div class="payment-input-group efectivo">
+                                        <label><i class="fas fa-money-bill-alt"></i> Efectivo</label>
+                                        <input type="number" id="input-monto-efectivo" class="payment-input-full efectivo" placeholder="$0">
+                                    </div>
+                                    <div class="payment-input-group digital">
+                                        <label><i class="fas fa-credit-card"></i> Digital</label>
+                                        <input type="number" id="input-monto-digital" class="payment-input-full digital" placeholder="$0">
+                                    </div>
+                                    <div class="payment-validation" id="payment-validation">
+                                        Total recibido: <strong id="txt-total-recibido">$0</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Payment Info/Warning -->
+                                <div id="payment-info" class="hidden payment-validation">
+                                    <!-- Dynamic messages injected here -->
+                                </div>
+                            </div>
+
+                            <!-- Final Total -->
+                            <div class="total-final-v3">
+                                <span class="label">TOTAL FINAL</span>
+                                <span class="amount" id="txt-total">$0</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions Stack [RESTORED] -->
+                        <div class="actions-stack">
+                            <button class="btn-black-block" id="btn-resumen">
+                                <i class="far fa-file-alt"></i> Generar Resumen
+                            </button>
+
+                            <button class="btn-black-block" id="btn-borrador">
+                                <i class="fas fa-save"></i> Guardar Borrador
+                            </button>
+
+                            <button class="btn-confirm-v3" id="btn-confirmar">
+                                <span class="main-text">Confirmar Pedido</span>
+                                <span class="sub-text" id="confirm-subtext">Entregar ahora</span>
+                            </button>
+                        </div>
+
+                        <!-- [RESTORED] Shortcuts Hint -->
+                        <div class="shortcuts-hint">
+                            <i class="fas fa-lightbulb"></i> Atajos: <strong>Shift+4</strong> Confirmar •
+                            <strong>F4</strong> Resumen
+                        </div>
+
+                    </div>
+                </aside>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- MODAL CONFIRMATION -->
+    <div id="modal-confirm-action" class="modal-backdrop hidden">
+        <div class="modal-card small">
+            <div class="modal-head">
+                <h3>Confirmar Pedido</h3>
+                <button class="close-modal" id="close-confirm-action">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:666; font-size: 15px;">¿Estás seguro de que deseas confirmar este pedido? Esta acción no
+                    se puede deshacer.</p>
+            </div>
+            <div class="modal-foot flex-end">
+                <button class="btn-secondary" id="btn-cancel-confirm" style="margin-right: 10px;">Cancelar</button>
+                <button class="btn-primary" id="btn-do-confirm">Sí, Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- [RESTORED] MODAL RESUMEN -->
+    <div id="modal-resumen" class="modal-backdrop hidden">
+        <div class="modal-card medium">
+            <div class="modal-head">
+                <h3><i class="far fa-file-text"></i> Generar Resumen</h3>
+                <button class="close-modal" id="close-resumen">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="subtitle" style="font-size:13px; color:#666; margin-bottom:8px;">Selecciona el formato para compartir:</p>
+                <div class="tabs-simple" style="margin-bottom:12px;">
+                    <button class="tab active"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                    <button class="tab"><i class="far fa-envelope"></i> Email</button>
+                </div>
+
+                <div class="whatsapp-preview-box">
+                    <div class="preview-header">
+                        <span><i class="fas fa-check-circle"></i> Formato para WhatsApp Business</span>
+                        <button class="btn-copy-sm">Copiar</button>
+                    </div>
+                    <div class="preview-content">
+                        <strong>🔥 COTIZACIÓN BAMBU 🔥</strong><br><br>
+                        📅 Fecha: <span id="preview-date">--/--/--</span><br>
+                        👤 Cliente: <span id="preview-client">Consumidor Final</span><br>
+                        <br>
+                        🛒 PRODUCTOS:<br>
+                        <div id="preview-items-list" style="margin-left:8px;">
+                            <!-- Items -->
+                        </div>
+                        <br>
+                        💰 RESUMEN:<br>
+                        • Subtotal: <span id="preview-subtotal">$0</span><br>
+                        • TOTAL: <span id="preview-total-display">$0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-foot flex-between">
+                <span style="font-size:12px; color:#888;">⚡ Atajo: F4</span>
+                <button class="btn-secondary" id="btn-close-resumen-2">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared/utils.js"></script>
+    <script src="assets/cotizador/script.js"></script>
+</body>
+
+</html>

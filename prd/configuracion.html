@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Configuración | Bambu CRM V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Otros Módulos</div>
+            <a href="cotizador-especificacion.html" class="nav-link">Cotizador</a>
+            <a href="ventas.html" class="nav-link">Ventas</a>
+            <a href="productos.html" class="nav-link">Productos</a>
+            <a href="clientes.html" class="nav-link">Clientes</a>
+            <a href="configuracion.html" class="nav-link active">Configuración</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">En esta página</div>
+            <ul id="toc" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Auto-generado desde los h2 -->
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.
+            </div>
+            <h1>PRD: Configuración General <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Parámetros del sistema</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Versión</strong></td>
+                    <td>2.0</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha</strong></td>
+                    <td>31 Diciembre 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>⚠️ Borrador (pendiente prototipar y validar)</td>
+                </tr>
+            </table>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Nota importante:</strong> Este PRD es documentación modular de referencia. Solo Cotizador y Ventas están prototipados/validados al 100%. El contenido de Configuración probablemente cambie al prototipar e implementar.</p>
+            </div>
+        </header>
+
+        <!-- SECCIÓN 1: CONTEXTO Y OBJETIVO -->
+        <section id="contexto">
+            <h2>1. Contexto y Objetivo</h2>
+
+            <h3>1.1 Propósito del módulo</h3>
+            <p>El módulo <strong>Configuración General</strong> centraliza todos los parámetros del sistema que afectan el comportamiento transversal del CRM. Permite al administrador ajustar precios, vehículos, ciudades, y reglas de negocio sin tocar código.</p>
+
+            <h3>1.2 Problema que resuelve</h3>
+            <ul>
+                <li>Gestión centralizada de parámetros del sistema</li>
+                <li>Configuración de listas de precios (L1, L2, L3) y umbrales</li>
+                <li>Administración de vehículos de reparto</li>
+                <li>Gestión de ciudades habilitadas</li>
+                <li>Configuración de comportamiento de stock</li>
+                <li>Evita hard-coding de valores que deben ser configurables</li>
+            </ul>
+
+            <h3>1.3 Usuarios principales</h3>
+            <ul>
+                <li><strong>Administrador:</strong> Acceso completo a todas las configuraciones</li>
+                <li><strong>Vendedor:</strong> SIN ACCESO (módulo exclusivo admin)</li>
+            </ul>
+
+            <h3>1.4 Simplificación v1 → v2</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>v1</th>
+                        <th>v2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ubicación configuraciones</td>
+                        <td>Dispersas en diferentes módulos</td>
+                        <td>Centralizadas en un solo módulo</td>
+                    </tr>
+                    <tr>
+                        <td>Vehículos</td>
+                        <td>Marca/modelo/patente detallados</td>
+                        <td>Solo nombre simple ("Reparto 1, 2, 3")</td>
+                    </tr>
+                    <tr>
+                        <td>Listas de precio</td>
+                        <td>Fijas en código</td>
+                        <td>Configurables desde UI</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECCIÓN 2: FUNCIONALIDAD PRINCIPAL -->
+        <section id="funcionalidad">
+            <h2>2. Funcionalidad Principal</h2>
+
+            <h3>2.1 Descripción general</h3>
+            <p>El módulo Configuración General agrupa 4 áreas principales:</p>
+            <ul>
+                <li><strong>Vehículos:</strong> CRUD de vehículos de reparto (nombre, capacidad en kg)</li>
+                <li><strong>Ciudades:</strong> CRUD de ciudades disponibles para entregas</li>
+                <li><strong>Listas de precios:</strong> Configuración de % descuento L2/L3 y umbrales de acceso</li>
+                <li><strong>Comportamiento stock:</strong> Bloquear vs advertir cuando no hay stock suficiente</li>
+            </ul>
+
+            <p><strong>Nota importante:</strong> CRUD = Create-Read-Update-Delete (alta, consulta, modificación, baja)</p>
+
+            <h3>2.2 Características clave</h3>
+            <ul>
+                <li>✅ Acceso exclusivo para administrador</li>
+                <li>✅ CRUD de vehículos (nombre, capacidad kg)</li>
+                <li>✅ CRUD de ciudades</li>
+                <li>✅ Configuración de listas de precios (L2/L3 porcentajes + umbrales)</li>
+                <li>✅ Toggle comportamiento stock (bloquear/advertir)</li>
+                <li>✅ Cambios aplicados inmediatamente en todo el sistema</li>
+                <li>✅ Validaciones para evitar configuraciones inválidas</li>
+                <li>✅ Historial de cambios (auditoría)</li>
+            </ul>
+
+            <h3>2.3 Flujo de trabajo típico</h3>
+            <pre><code>Administrador accede a Configuración
+        ↓
+Ve 4 secciones principales:
+├─ Vehículos
+├─ Ciudades
+├─ Listas de precio
+└─ Comportamiento stock
+        ↓
+Selecciona sección a configurar
+        ↓
+Acciones disponibles:
+├─ CRUD de elementos (vehículos/ciudades)
+├─ Editar parámetros (listas de precio, stock)
+└─ Guardar cambios
+        ↓
+Sistema aplica cambios inmediatamente</code></pre>
+        </section>
+
+        <!-- SECCIÓN 3: INTERFAZ DE USUARIO -->
+        <section id="interfaz">
+            <h2>3. Interfaz de Usuario</h2>
+
+            <h3>3.1 Layout general</h3>
+            <p><strong>Vista principal:</strong> Panel con 4 secciones principales en pestañas o acordeón</p>
+
+            <p><strong>Estructura:</strong></p>
+            <pre><code>┌──────────────────────────────────────────────────────────┐
+│  CONFIGURACIÓN GENERAL                                   │
+├──────────────────────────────────────────────────────────┤
+│  Pestañas:  [Vehículos] [Ciudades] [Precios] [Stock]    │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│  [Contenido de la pestaña activa]                       │
+│                                                          │
+│  [Botón Guardar cambios]                                │
+└──────────────────────────────────────────────────────────┘</code></pre>
+
+            <h3>3.2 Pestaña: Vehículos</h3>
+            <p><strong>Contenido:</strong> Tabla de vehículos de reparto + Botón [+ Agregar vehículo]</p>
+
+            <p><strong>Tabla de vehículos:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Columna</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombre</strong></td>
+                        <td>Nombre del vehículo (ej: "Reparto 1", "Reparto 2")</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Capacidad (kg)</strong></td>
+                        <td>Capacidad máxima de carga en kilogramos</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acciones</strong></td>
+                        <td>Botones: [Editar] [Eliminar]</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Modal: Crear/Editar Vehículo</strong></p>
+            <ul>
+                <li><strong>Nombre:</strong> Text input (obligatorio, único)</li>
+                <li><strong>Capacidad (kg):</strong> Number input (obligatorio, mayor a 0)</li>
+                <li><strong>Botones:</strong> [Cancelar] [Guardar]</li>
+            </ul>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⭐ Simplificación v2:</strong> Solo nombre y capacidad. Se eliminaron campos innecesarios como marca, modelo, patente, color. Nomenclatura simple: "Reparto 1", "Reparto 2", "Reparto 3".</p>
+            </div>
+
+            <h3>3.3 Pestaña: Ciudades</h3>
+            <p><strong>Contenido:</strong> Lista de ciudades habilitadas + Botón [+ Agregar ciudad]</p>
+
+            <p><strong>Lista de ciudades:</strong></p>
+            <ul>
+                <li>Neuquén</li>
+                <li>Plottier</li>
+                <li>Centenario</li>
+                <li>San Martín de los Andes</li>
+                <li>Bariloche</li>
+                <li>... (otras ciudades configuradas)</li>
+            </ul>
+
+            <p><strong>Acciones por ciudad:</strong></p>
+            <ul>
+                <li>[Editar]: Cambiar nombre de la ciudad</li>
+                <li>[Eliminar]: Borrar ciudad (solo si no tiene clientes asociados)</li>
+            </ul>
+
+            <p><strong>Modal: Crear/Editar Ciudad</strong></p>
+            <ul>
+                <li><strong>Nombre:</strong> Text input (obligatorio, único)</li>
+                <li><strong>Botones:</strong> [Cancelar] [Guardar]</li>
+            </ul>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Restricción de eliminación:</strong> No se puede eliminar una ciudad que tenga clientes asociados. Mensaje: "No se puede eliminar esta ciudad porque tiene X clientes asociados".</p>
+            </div>
+
+            <h3>3.4 Pestaña: Listas de Precio</h3>
+            <p><strong>Contenido:</strong> Formulario de configuración de listas L1, L2, L3</p>
+
+            <p><strong>Estructura:</strong></p>
+            <pre><code>┌─────────────────────────────────────────────────┐
+│  LISTA 1 (L1) - Precio base                    │
+│  └─ Precio de referencia (sin descuento)       │
+│                                                 │
+│  LISTA 2 (L2)                                   │
+│  └─ Descuento: [ 6.25 ] %                      │
+│  └─ Umbral mínimo: [ $10,000 ] (opcional)      │
+│                                                 │
+│  LISTA 3 (L3)                                   │
+│  └─ Descuento: [ 10.00 ] %                     │
+│  └─ Umbral mínimo: [ $20,000 ] (opcional)      │
+│                                                 │
+│  [Guardar cambios]                              │
+└─────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Campos configurables:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Descuento L2 (%)</strong></td>
+                        <td>Number</td>
+                        <td>Porcentaje de descuento sobre L1 (default: 6.25%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Descuento L3 (%)</strong></td>
+                        <td>Number</td>
+                        <td>Porcentaje de descuento sobre L1 (default: 10%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Umbral L2 ($)</strong></td>
+                        <td>Number (opcional)</td>
+                        <td>Monto mínimo de pedido para acceder a L2 (si se usa)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Umbral L3 ($)</strong></td>
+                        <td>Number (opcional)</td>
+                        <td>Monto mínimo de pedido para acceder a L3 (si se usa)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>💡 Umbrales de acceso:</strong> Si se configuran umbrales, el cotizador solo permitirá seleccionar L2/L3 si el subtotal del pedido supera esos montos. Dejar en blanco para permitir acceso sin restricciones.</p>
+            </div>
+
+            <h3>3.5 Pestaña: Comportamiento Stock</h3>
+            <p><strong>Contenido:</strong> Toggle para configurar qué hace el sistema cuando no hay stock suficiente</p>
+
+            <p><strong>Opciones:</strong></p>
+            <pre><code>┌─────────────────────────────────────────────────┐
+│  COMPORTAMIENTO CUANDO NO HAY STOCK SUFICIENTE │
+│                                                 │
+│  ○ Bloquear venta (no permite confirmar)       │
+│  ● Advertir pero permitir (solo muestra alerta)│
+│                                                 │
+│  Nota: Productos del proveedor "BAMBU" siempre │
+│  permiten stock negativo sin límite.           │
+│                                                 │
+│  [Guardar cambios]                              │
+└─────────────────────────────────────────────────┘</code></pre>
+
+            <p><strong>Comportamiento según configuración:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Opción</th>
+                        <th>Comportamiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Bloquear venta</strong></td>
+                        <td>Si no hay stock suficiente, el botón "Confirmar pedido" queda deshabilitado con mensaje: "Stock insuficiente en: [producto]"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Advertir pero permitir</strong></td>
+                        <td>Muestra alerta ⚠️ "Stock insuficiente en: [producto]" pero permite confirmar de todos modos (stock queda negativo)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Excepción proveedor BAMBU:</strong> Los productos del proveedor "BAMBU" (producción propia) siempre pueden tener stock negativo sin límite, sin importar esta configuración. Esto permite seguir vendiendo mientras se produce más.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: REGLAS DE NEGOCIO -->
+        <section id="reglas">
+            <h2>4. Reglas de Negocio Específicas</h2>
+
+            <h3>4.1 Validaciones - Vehículos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Validación</th>
+                        <th>Mensaje de error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombre</strong></td>
+                        <td>Único, no puede haber 2 vehículos con mismo nombre</td>
+                        <td>"Ya existe un vehículo con este nombre"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Capacidad (kg)</strong></td>
+                        <td>Mayor a 0</td>
+                        <td>"La capacidad debe ser mayor a 0"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Eliminar vehículo</strong></td>
+                        <td>No puede tener pedidos asignados</td>
+                        <td>"No se puede eliminar este vehículo porque tiene X pedidos asignados"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.2 Validaciones - Ciudades</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Validación</th>
+                        <th>Mensaje de error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombre</strong></td>
+                        <td>Único, no puede haber 2 ciudades con mismo nombre</td>
+                        <td>"Ya existe una ciudad con este nombre"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Eliminar ciudad</strong></td>
+                        <td>No puede tener clientes asociados</td>
+                        <td>"No se puede eliminar esta ciudad porque tiene X clientes asociados"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.3 Validaciones - Listas de precio</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Validación</th>
+                        <th>Mensaje de error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Descuento L2 (%)</strong></td>
+                        <td>Entre 0% y 100%</td>
+                        <td>"El descuento debe estar entre 0 y 100"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Descuento L3 (%)</strong></td>
+                        <td>Entre 0% y 100%, mayor que L2</td>
+                        <td>"L3 debe ser mayor que L2"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Umbral L2 ($)</strong></td>
+                        <td>Mayor a 0 (si se completa)</td>
+                        <td>"El umbral debe ser mayor a 0"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Umbral L3 ($)</strong></td>
+                        <td>Mayor que umbral L2 (si se completa)</td>
+                        <td>"El umbral L3 debe ser mayor que L2"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.4 Impacto de cambios en el sistema</h3>
+            <p><strong>Cambios en listas de precio:</strong></p>
+            <ul>
+                <li>Se aplican inmediatamente a todos los pedidos nuevos</li>
+                <li>Los pedidos existentes (borradores o confirmados) NO se modifican</li>
+                <li>Al editar un pedido existente, se recalculan precios con la configuración actual</li>
+            </ul>
+
+            <p><strong>Cambios en vehículos:</strong></p>
+            <ul>
+                <li>Se aplican inmediatamente en calendario de repartos</li>
+                <li>Los pedidos ya asignados a un vehículo mantienen la asignación</li>
+                <li>Si se elimina un vehículo, sus pedidos asignados quedan "sin vehículo"</li>
+            </ul>
+
+            <p><strong>Cambios en ciudades:</strong></p>
+            <ul>
+                <li>Se aplican inmediatamente en dropdowns de clientes y filtros</li>
+                <li>Los clientes con ciudades eliminadas mantienen el valor (pero aparece como "Ciudad inválida")</li>
+            </ul>
+
+            <p><strong>Cambios en comportamiento stock:</strong></p>
+            <ul>
+                <li>Se aplican inmediatamente en el cotizador</li>
+                <li>No afecta pedidos ya confirmados</li>
+            </ul>
+
+            <h3>4.5 Regla especial: Productos del proveedor BAMBU</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Los productos del proveedor "BAMBU" (producción propia) pueden tener stock negativo sin límite</li>
+                <li>Esto permite seguir vendiendo mientras se produce más</li>
+                <li>La configuración "Bloquear venta" NO aplica para productos BAMBU</li>
+                <li>Solo muestra advertencia informativa: ℹ️ "Stock negativo en producto BAMBU: X unidades"</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 5: INTEGRACIÓN -->
+        <section id="integracion">
+            <h2>5. Integración con Otros Módulos</h2>
+
+            <h3>5.1 Cotizador</h3>
+            <p><strong>Relación:</strong> El cotizador consume configuración de precios y stock</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Listas de precio (L1/L2/L3) se calculan según % configurados</li>
+                <li>Umbrales de acceso a L2/L3 se validan al seleccionar lista</li>
+                <li>Comportamiento stock (bloquear/advertir) se aplica al confirmar pedido</li>
+                <li>Productos BAMBU siempre permiten stock negativo</li>
+            </ul>
+
+            <h3>5.2 Ventas (Calendario de Repartos)</h3>
+            <p><strong>Relación:</strong> El calendario de repartos muestra vehículos configurados</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Vehículos configurados aparecen como opciones en asignación de pedidos</li>
+                <li>Capacidad (kg) se usa para calcular carga total por vehículo</li>
+                <li>Si se elimina vehículo, pedidos asignados quedan "sin vehículo"</li>
+            </ul>
+
+            <h3>5.3 Productos</h3>
+            <p><strong>Relación:</strong> Los productos calculan precios según listas configuradas</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Precio L1 se ingresa manualmente en producto</li>
+                <li>Precio L2 = L1 - (L1 * descuento_l2_porciento / 100)</li>
+                <li>Precio L3 = L1 - (L1 * descuento_l3_porciento / 100)</li>
+                <li>Productos en promoción ignoran listas (precio fijo)</li>
+            </ul>
+
+            <h3>5.4 Clientes</h3>
+            <p><strong>Relación:</strong> Los clientes usan ciudades configuradas</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Dropdown de ciudad en formulario cliente consume lista configurada</li>
+                <li>Filtros por ciudad en tabla clientes usan ciudades configuradas</li>
+                <li>Si se elimina ciudad, clientes asociados quedan con "Ciudad inválida"</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 6: CASOS DE USO -->
+        <section id="casos-uso">
+            <h2>6. Casos de Uso</h2>
+
+            <h3>Caso 1: Agregar nuevo vehículo de reparto</h3>
+            <p><strong>Contexto:</strong> La empresa adquiere un vehículo nuevo para repartos</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Configuración → Pestaña "Vehículos"</li>
+                <li>Click en [+ Agregar vehículo]</li>
+                <li>Completa formulario:
+                    <ul>
+                        <li>Nombre: "Reparto 4"</li>
+                        <li>Capacidad: 800 kg</li>
+                    </ul>
+                </li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Vehículo creado correctamente</li>
+                <li>✅ Aparece en tabla de vehículos</li>
+                <li>✅ Ya disponible en calendario de repartos para asignar pedidos</li>
+            </ul>
+
+            <h3>Caso 2: Modificar descuento de lista L2</h3>
+            <p><strong>Contexto:</strong> La empresa decide aumentar descuento L2 de 6.25% a 7%</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Configuración → Pestaña "Listas de Precio"</li>
+                <li>Cambia campo "Descuento L2": de 6.25% a 7%</li>
+                <li>Click [Guardar cambios]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Configuración actualizada</li>
+                <li>✅ Todos los pedidos nuevos usan L2 = L1 - 7%</li>
+                <li>✅ Pedidos existentes NO se modifican</li>
+                <li>✅ Al editar pedido existente, se recalcula con nuevo 7%</li>
+            </ul>
+
+            <h3>Caso 3: Agregar nueva ciudad</h3>
+            <p><strong>Contexto:</strong> La empresa comienza a hacer entregas en Cipolletti</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Configuración → Pestaña "Ciudades"</li>
+                <li>Click en [+ Agregar ciudad]</li>
+                <li>Nombre: "Cipolletti"</li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Ciudad agregada correctamente</li>
+                <li>✅ Aparece en dropdown de ciudades en formulario cliente</li>
+                <li>✅ Aparece en filtro de ciudades en tabla clientes</li>
+            </ul>
+
+            <h3>Caso 4: Cambiar comportamiento stock</h3>
+            <p><strong>Contexto:</strong> La empresa decide bloquear ventas cuando no hay stock (antes solo advertía)</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Configuración → Pestaña "Comportamiento Stock"</li>
+                <li>Cambia de "Advertir pero permitir" a "Bloquear venta"</li>
+                <li>Click [Guardar cambios]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Configuración actualizada</li>
+                <li>✅ Al crear pedido en cotizador, si no hay stock suficiente:
+                    <ul>
+                        <li>Botón "Confirmar pedido" se deshabilita</li>
+                        <li>Mensaje: ❌ "Stock insuficiente en: [producto]"</li>
+                    </ul>
+                </li>
+                <li>✅ Productos BAMBU siguen permitiendo stock negativo (excepción)</li>
+            </ul>
+
+            <h3>Caso 5: Intentar eliminar vehículo con pedidos asignados</h3>
+            <p><strong>Contexto:</strong> Administrador quiere eliminar "Reparto 2" pero tiene pedidos asignados</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Configuración → Pestaña "Vehículos"</li>
+                <li>Click en [Eliminar] en "Reparto 2"</li>
+                <li>Modal de confirmación: "¿Eliminar vehículo Reparto 2?"</li>
+                <li>Click [Confirmar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>❌ Operación bloqueada</li>
+                <li>⚠️ Mensaje: "No se puede eliminar este vehículo porque tiene 15 pedidos asignados"</li>
+                <li>💡 Sugerencia: "Reasigne los pedidos a otro vehículo antes de eliminar"</li>
+            </ul>
+
+            <h3>Caso 6: Configurar umbrales de acceso a listas</h3>
+            <p><strong>Contexto:</strong> La empresa quiere que L2 solo esté disponible si el pedido supera $10.000 y L3 si supera $20.000</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Administrador abre Configuración → Pestaña "Listas de Precio"</li>
+                <li>Completa umbrales:
+                    <ul>
+                        <li>Umbral L2: $10.000</li>
+                        <li>Umbral L3: $20.000</li>
+                    </ul>
+                </li>
+                <li>Click [Guardar cambios]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Configuración guardada</li>
+                <li>✅ En cotizador, al seleccionar lista:
+                    <ul>
+                        <li>Si subtotal < $10.000 → Solo L1 disponible</li>
+                        <li>Si subtotal >= $10.000 → L1 y L2 disponibles</li>
+                        <li>Si subtotal >= $20.000 → L1, L2 y L3 disponibles</li>
+                    </ul>
+                </li>
+                <li>✅ Listas bloqueadas aparecen deshabilitadas con tooltip explicativo</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 7: FLUJOS DE USUARIO -->
+        <section id="flujos">
+            <h2>7. Flujos de Usuario</h2>
+
+            <h3>7.1 Flujo principal: Gestión de vehículos</h3>
+            <pre><code>Administrador accede a Configuración
+        ↓
+Selecciona pestaña "Vehículos"
+        ↓
+Ve tabla con vehículos existentes
+        ↓
+Acciones disponibles:
+├─ [+ Agregar vehículo] → Modal crear → Guardar → Vehículo agregado
+├─ [Editar] → Modal editar → Guardar → Vehículo actualizado
+└─ [Eliminar] → Confirmación → Validación:
+    ├─ Si tiene pedidos asignados → ❌ Bloqueado + mensaje error
+    └─ Si NO tiene pedidos → ✅ Vehículo eliminado</code></pre>
+
+            <h3>7.2 Flujo: Modificar listas de precio</h3>
+            <pre><code>Administrador accede a Configuración
+        ↓
+Selecciona pestaña "Listas de Precio"
+        ↓
+Ve formulario con configuración actual:
+├─ Descuento L2: 6.25%
+├─ Descuento L3: 10%
+├─ Umbral L2: (vacío)
+└─ Umbral L3: (vacío)
+        ↓
+Modifica valores según necesidad
+        ↓
+Click [Guardar cambios]
+        ↓
+Sistema valida:
+├─ L3 > L2 ✓
+├─ Umbral L3 > Umbral L2 ✓
+└─ Valores entre 0-100% ✓
+        ↓
+Configuración guardada
+        ↓
+Notificación: ✅ "Listas de precio actualizadas"
+        ↓
+Cambios aplicados inmediatamente en cotizador</code></pre>
+
+            <h3>7.3 Flujo: Cambiar comportamiento stock</h3>
+            <pre><code>Administrador accede a Configuración
+        ↓
+Selecciona pestaña "Comportamiento Stock"
+        ↓
+Ve toggle con opción actual seleccionada:
+● Advertir pero permitir
+○ Bloquear venta
+        ↓
+Cambia selección a "Bloquear venta"
+        ↓
+Click [Guardar cambios]
+        ↓
+Sistema aplica cambio inmediatamente
+        ↓
+Notificación: ✅ "Comportamiento de stock actualizado"
+        ↓
+Impacto en cotizador:
+└─ Al confirmar pedido sin stock suficiente:
+    ├─ Botón "Confirmar" deshabilitado
+    ├─ Mensaje: ❌ "Stock insuficiente en: [producto]"
+    └─ Excepción: Productos BAMBU siguen permitiendo stock negativo</code></pre>
+
+            <h3>7.4 Flujo: Agregar nueva ciudad</h3>
+            <pre><code>Administrador accede a Configuración
+        ↓
+Selecciona pestaña "Ciudades"
+        ↓
+Ve lista de ciudades existentes:
+- Neuquén
+- Plottier
+- Centenario
+        ↓
+Click [+ Agregar ciudad]
+        ↓
+Modal muestra formulario:
+└─ Nombre: [input texto]
+        ↓
+Completa: "Cipolletti"
+        ↓
+Click [Guardar]
+        ↓
+Sistema valida:
+└─ Nombre único ✓
+        ↓
+Ciudad agregada a la lista
+        ↓
+Notificación: ✅ "Ciudad agregada correctamente"
+        ↓
+Impacto en módulo Clientes:
+├─ Aparece en dropdown de ciudades
+└─ Aparece en filtro de tabla clientes</code></pre>
+        </section>
+
+        <!-- SECCIÓN 8: NOTAS TÉCNICAS -->
+        <section id="notas-tecnicas">
+            <h2>8. Notas Técnicas para Desarrollo</h2>
+
+            <h3>8.1 Estructura de datos (Mock data)</h3>
+            <pre><code class="language-javascript">// Configuración de listas de precio
+const CONFIG_LISTAS_PRECIO = {
+    l2_descuento_porciento: 6.25, // % descuento sobre L1
+    l3_descuento_porciento: 10.00, // % descuento sobre L1
+    l2_umbral_minimo: null, // null = sin umbral (siempre disponible)
+    l3_umbral_minimo: null, // o monto en pesos (ej: 20000)
+};
+
+// Configuración de stock
+const CONFIG_STOCK = {
+    comportamiento: "ADVERTIR", // "ADVERTIR" | "BLOQUEAR"
+};
+
+// Vehículo
+const VEHICULO_EJEMPLO = {
+    id: 1,
+    nombre: "Reparto 1",
+    capacidad_kg: 800,
+    created_at: "2024-01-10",
+    updated_at: "2024-12-30"
+};
+
+// Ciudad
+const CIUDAD_EJEMPLO = {
+    id: 1,
+    nombre: "Neuquén",
+    created_at: "2024-01-10",
+    updated_at: "2024-12-30"
+};
+</code></pre>
+
+            <h3>8.2 Consideraciones de implementación</h3>
+            <ul>
+                <li>⚠️ <strong>Configuración global:</strong> Usar tabla <code>configuracion</code> con clave-valor para almacenar parámetros</li>
+                <li>⚠️ <strong>Cache:</strong> Cachear configuración en memoria para evitar queries repetidos</li>
+                <li>⚠️ <strong>Invalidar cache:</strong> Al guardar cambios, invalidar cache de configuración</li>
+                <li>⚠️ <strong>Validaciones:</strong> Validar restricciones en backend (no solo frontend)</li>
+                <li>⚠️ <strong>Auditoría:</strong> Registrar todos los cambios de configuración (quién, cuándo, qué)</li>
+                <li>💡 <strong>Historial:</strong> Guardar historial de cambios de configuración para trazabilidad</li>
+                <li>💡 <strong>Rollback:</strong> Permitir revertir configuración a versión anterior (funcionalidad futura)</li>
+            </ul>
+
+            <h3>8.3 Queries SQL útiles</h3>
+            <pre><code class="language-sql">-- Obtener configuración actual
+SELECT clave, valor
+FROM configuracion
+WHERE clave IN ('l2_descuento', 'l3_descuento', 'stock_comportamiento');
+
+-- Obtener vehículos con cantidad de pedidos asignados
+SELECT v.*, COUNT(p.id) as pedidos_asignados
+FROM vehiculos v
+LEFT JOIN pedidos p ON v.id = p.vehiculo_id
+GROUP BY v.id
+ORDER BY v.nombre ASC;
+
+-- Obtener ciudades con cantidad de clientes
+SELECT c.*, COUNT(cl.id) as clientes_asociados
+FROM ciudades c
+LEFT JOIN clientes cl ON c.nombre = cl.ciudad
+GROUP BY c.id
+ORDER BY c.nombre ASC;
+
+-- Verificar si se puede eliminar vehículo
+SELECT COUNT(*) as pedidos_asignados
+FROM pedidos
+WHERE vehiculo_id = ?;</code></pre>
+
+            <h3>8.4 Estructura de base de datos sugerida</h3>
+            <pre><code class="language-sql">-- Tabla de configuración global (clave-valor)
+CREATE TABLE configuracion (
+    clave VARCHAR(100) PRIMARY KEY,
+    valor TEXT NOT NULL,
+    descripcion TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar configuración por defecto
+INSERT INTO configuracion (clave, valor, descripcion) VALUES
+('l2_descuento_porciento', '6.25', 'Porcentaje descuento lista 2'),
+('l3_descuento_porciento', '10.00', 'Porcentaje descuento lista 3'),
+('l2_umbral_minimo', NULL, 'Umbral mínimo acceso L2 (null = sin umbral)'),
+('l3_umbral_minimo', NULL, 'Umbral mínimo acceso L3 (null = sin umbral)'),
+('stock_comportamiento', 'ADVERTIR', 'ADVERTIR o BLOQUEAR');
+
+-- Tabla de vehículos
+CREATE TABLE vehiculos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) UNIQUE NOT NULL,
+    capacidad_kg INT NOT NULL CHECK (capacidad_kg > 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de ciudades
+CREATE TABLE ciudades (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de historial de cambios de configuración (auditoría)
+CREATE TABLE configuracion_historial (
+    id SERIAL PRIMARY KEY,
+    clave VARCHAR(100) NOT NULL,
+    valor_anterior TEXT,
+    valor_nuevo TEXT,
+    usuario_id INT REFERENCES usuarios(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+
+            <h3>8.5 Cálculo de precios por lista</h3>
+            <pre><code class="language-javascript">// Función para calcular precio según lista
+function calcularPrecioConLista(precioL1, lista, config) {
+    // Si es producto en promoción, usar precio promocional (fijo)
+    if (producto.en_promocion) {
+        return producto.precio_promocional;
+    }
+
+    // Calcular precio según lista
+    switch(lista) {
+        case 'L1':
+            return precioL1;
+        case 'L2':
+            const descuentoL2 = config.l2_descuento_porciento / 100;
+            return precioL1 - (precioL1 * descuentoL2);
+        case 'L3':
+            const descuentoL3 = config.l3_descuento_porciento / 100;
+            return precioL1 - (precioL1 * descuentoL3);
+        default:
+            return precioL1;
+    }
+}
+
+// Función para validar acceso a lista según umbral
+function puedeAccederLista(subtotal, lista, config) {
+    if (lista === 'L1') return true; // L1 siempre disponible
+
+    if (lista === 'L2') {
+        if (!config.l2_umbral_minimo) return true; // Sin umbral = siempre disponible
+        return subtotal >= config.l2_umbral_minimo;
+    }
+
+    if (lista === 'L3') {
+        if (!config.l3_umbral_minimo) return true;
+        return subtotal >= config.l3_umbral_minimo;
+    }
+
+    return false;
+}
+</code></pre>
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer>
+            <p>Bambu CRM V2 - PRD Técnico | Última actualización: 31 Diciembre 2024</p>
+            <p><a href="index.html">← Volver al PRD General</a></p>
+        </footer>
+    </main>
+
+    <!-- SCRIPT PARA TOC AUTO -->
+    <script>
+        // Auto-generar tabla de contenidos desde los h2
+        const toc = document.getElementById('toc');
+        const h2s = document.querySelectorAll('main h2');
+        h2s.forEach(h2 => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + h2.parentElement.id;
+            a.textContent = h2.textContent;
+            a.className = 'nav-link';
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>

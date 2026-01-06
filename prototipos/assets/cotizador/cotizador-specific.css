@@ -1,0 +1,1043 @@
+/* ============================================
+   COTIZADOR - Estilos Específicos
+   ============================================
+   Sistema: tokens.css + components.css + cotizador-specific.css
+   Migrado: 05 Enero 2026
+   ============================================ */
+
+/* ============================================================================
+   HEADER - OVERRIDES ESPECÍFICOS COTIZADOR
+   ============================================================================ */
+
+/* Header del cotizador tiene layout diferente (no space-between) */
+.header-toolbar {
+    height: 72px;
+    justify-content: flex-start;
+    gap: var(--spacing-2xl);
+    padding: 0 var(--spacing-2xl);
+}
+
+/* ============================================================================
+   MODE SWITCH (Reparto/Fábrica)
+   ============================================================================ */
+
+.mode-switch-container {
+    flex-shrink: 0;
+}
+
+.mode-switch {
+    background: var(--bg-app);
+    padding: var(--spacing-xs);
+    border-radius: 20px;
+    display: inline-flex;
+    position: relative;
+}
+
+.mode-switch input {
+    display: none;
+}
+
+.switch-label {
+    padding: 6px var(--spacing-lg);
+    border-radius: 16px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    cursor: pointer;
+    z-index: 2;
+    transition: color var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.mode-switch input:checked + label {
+    color: var(--text-primary);
+}
+
+#mode-fabrica:checked + label {
+    color: var(--color-accent);
+    background: var(--bg-white);
+    box-shadow: var(--shadow-md);
+}
+
+#mode-reparto:checked + label {
+    color: var(--color-danger);
+    background: var(--bg-white);
+    box-shadow: var(--shadow-md);
+}
+
+.switch-selection {
+    background: var(--bg-app);
+    padding: var(--spacing-xs);
+    border-radius: 20px;
+    display: inline-flex;
+}
+
+/* ============================================================================
+   BÚSQUEDA DE PRODUCTOS (Protagonista)
+   ============================================================================ */
+
+.product-search-bar {
+    flex: 1;
+    position: relative;
+    max-width: 600px;
+}
+
+.product-search-bar input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) 40px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    font-size: 15px;
+    outline: none;
+    background: var(--bg-white);
+    transition: all var(--transition-base);
+}
+
+.product-search-bar input:focus {
+    border-color: var(--color-accent);
+    box-shadow: var(--input-focus-ring);
+}
+
+.product-search-bar i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   BÚSQUEDA DE CLIENTE (Secundario)
+   ============================================================================ */
+
+.client-search-container {
+    margin-left: auto;
+    position: relative;
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.client-search-container input {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg) var(--spacing-md) 40px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    font-size: 15px;
+    outline: none;
+    background: var(--bg-white);
+    transition: all var(--transition-base);
+}
+
+.client-search-container input:focus {
+    border-color: var(--color-accent);
+    box-shadow: var(--input-focus-ring);
+}
+
+.client-search-container i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   CONTENT GRID (2 columnas)
+   ============================================================================ */
+
+.content-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    overflow: hidden;
+}
+
+.left-panel {
+    padding: var(--spacing-2xl);
+    overflow-y: auto;
+    background: var(--bg-white);
+}
+
+.right-panel {
+    background: var(--bg-sidebar);
+    padding: var(--spacing-lg) var(--spacing-md);
+    border-left: var(--border-width) solid var(--border-color);
+    overflow-y: auto;
+}
+
+/* ============================================================================
+   TABLA DE PEDIDO
+   ============================================================================ */
+
+.order-container {
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    background: var(--bg-sidebar);
+    padding: 10px var(--spacing-lg);
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-semibold);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.data-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: var(--border-width) solid var(--border-color);
+    font-size: var(--font-size-base);
+}
+
+/* ============================================================================
+   CONTROL DE CANTIDAD (+/-)
+   ============================================================================ */
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    width: 90px;
+    margin: 0 auto;
+}
+
+.qty-control button {
+    border: none;
+    background: var(--bg-white);
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.qty-control button:hover {
+    background: var(--bg-app);
+    color: var(--text-primary);
+}
+
+.qty-control input {
+    width: 34px;
+    border: none;
+    text-align: center;
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    border-left: var(--border-width) solid var(--border-color);
+    border-right: var(--border-width) solid var(--border-color);
+}
+
+/* ============================================================================
+   PANEL DERECHO - FINANCIALS (Compactado para 1080p)
+   ============================================================================ */
+
+.sticky-container {
+    position: sticky;
+    top: var(--spacing-md);
+}
+
+.financials-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: var(--font-size-sm);
+}
+
+.field-row label {
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+}
+
+.align-right {
+    text-align: right;
+    font-weight: var(--font-weight-semibold);
+}
+
+.date-input-inline {
+    border: var(--border-width) solid var(--color-success);
+    border-radius: var(--border-radius-sm);
+    padding: 3px 6px;
+    color: var(--color-success-dark);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+}
+
+/* ============================================================================
+   NIVELES DE DESCUENTO
+   ============================================================================ */
+
+.discount-levels-section {
+    margin-bottom: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.level-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+}
+
+.level-row small {
+    font-size: var(--font-size-xs);
+}
+
+.btn-xs-outline {
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 2px 6px;
+    font-size: 10px;
+    cursor: pointer;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.btn-xs-outline:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.btn-xs-outline.active {
+    background: var(--color-accent);
+    color: var(--text-white);
+    border-color: var(--color-accent);
+}
+
+/* ============================================================================
+   INPUTS MONETARIOS
+   ============================================================================ */
+
+.money-input {
+    width: 80px;
+    padding: 4px 6px;
+    text-align: right;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+}
+
+/* ============================================================================
+   SECCIÓN DE NOTAS
+   ============================================================================ */
+
+.notes-section {
+    margin: var(--spacing-sm) 0;
+}
+
+.btn-toggle-notes {
+    background: none;
+    border: none;
+    color: var(--color-accent);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    padding: 0;
+}
+
+.notes-area {
+    width: 100%;
+    height: 60px;
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-sm);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    resize: none;
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+}
+
+/* ============================================================================
+   SECCIÓN DE PAGO
+   ============================================================================ */
+
+.payment-section {
+    margin-top: var(--spacing-sm);
+}
+
+/* ============================================================================
+   TOTAL FINAL
+   ============================================================================ */
+
+.total-final-v3 {
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: var(--border-width-thick) dashed var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-final-v3 .label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.total-final-v3 .amount {
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* ============================================================================
+   BOTONES DE ACCIÓN
+   ============================================================================ */
+
+.actions-stack {
+    margin-top: var(--spacing-md);
+}
+
+.btn-black-block {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    background: var(--text-primary);
+    color: var(--text-white);
+    border: none;
+    padding: 10px;
+    border-radius: var(--border-radius-base);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    margin-bottom: var(--spacing-sm);
+    transition: background var(--transition-fast);
+}
+
+.btn-black-block:hover {
+    background: var(--color-primary-dark);
+}
+
+.btn-confirm-v3 {
+    width: 100%;
+    border: none;
+    border-radius: var(--border-radius-base);
+    padding: var(--spacing-md);
+    background: var(--color-success);
+    color: var(--text-white);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(54, 179, 126, 0.3);
+    transition: transform var(--transition-fast);
+}
+
+.btn-confirm-v3:hover {
+    background: var(--color-success);
+}
+
+.btn-confirm-v3 .main-text {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+}
+
+.btn-confirm-v3 .sub-text {
+    font-size: 10px;
+    opacity: 0.9;
+    margin-top: 1px;
+}
+
+/* ============================================================================
+   SHORTCUTS HINT
+   ============================================================================ */
+
+.shortcuts-hint {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* ============================================================================
+   MODALES
+   ============================================================================ */
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(9, 30, 66, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+    z-index: var(--z-modal);
+}
+
+.modal-card.small {
+    width: 320px;
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.modal-card.medium {
+    width: 500px;
+    background: var(--bg-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.modal-head {
+    padding: var(--spacing-lg);
+    border-bottom: var(--border-width) solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-head h3 {
+    margin: 0;
+    font-size: var(--font-size-md);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: var(--spacing-xl);
+}
+
+.full-width-input {
+    width: 100%;
+    padding: 10px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-family: inherit;
+}
+
+.modal-foot {
+    padding: var(--spacing-lg);
+    background: var(--bg-sidebar);
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flex-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* ============================================================================
+   TABS MODAL RESUMEN
+   ============================================================================ */
+
+.tabs-simple {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: var(--border-width) solid var(--border-color);
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: var(--border-width-thick) solid transparent;
+}
+
+.tab.active {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    border-bottom-color: var(--text-primary);
+}
+
+/* ============================================================================
+   WHATSAPP PREVIEW BOX
+   ============================================================================ */
+
+.whatsapp-preview-box {
+    background: var(--color-success-bg);
+    border: var(--border-width) solid var(--color-success-border);
+    border-radius: var(--border-radius-base);
+    overflow: hidden;
+}
+
+.preview-header {
+    background: var(--color-success-light);
+    padding: var(--spacing-sm) var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-success-dark);
+    font-weight: var(--font-weight-semibold);
+}
+
+.preview-content {
+    padding: var(--spacing-lg);
+    font-size: 13px;
+    color: var(--color-success-dark);
+    font-family: monospace;
+    line-height: var(--line-height-base);
+}
+
+.btn-copy-sm {
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--color-success-border);
+    color: var(--color-success-dark);
+    font-size: var(--font-size-xs);
+    padding: 2px var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+}
+
+/* ============================================================================
+   FLOATING RESULTS (Búsqueda)
+   ============================================================================ */
+
+.floating-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    margin-top: 6px;
+    z-index: var(--z-dropdown);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* ============================================================================
+   PRODUCT ROW (Resultados de búsqueda)
+   ============================================================================ */
+
+.prod-row.compact {
+    display: grid;
+    grid-template-columns: 1fr 30px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    gap: 0;
+    align-items: center;
+    border-bottom: var(--border-width) solid var(--border-color);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.prod-row.compact:hover {
+    background: var(--bg-app);
+}
+
+.prod-info-line {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.p-name {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.p-meta {
+    color: var(--text-secondary);
+}
+
+.prod-add {
+    color: var(--color-accent);
+    cursor: pointer;
+    text-align: right;
+    font-size: var(--font-size-base);
+}
+
+/* ============================================================================
+   CLIENT DROPDOWN
+   ============================================================================ */
+
+.client-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background: var(--bg-white);
+    border: var(--border-width) solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius-base);
+    margin-top: var(--spacing-sm);
+    z-index: var(--z-dropdown);
+    padding: var(--spacing-sm);
+}
+
+.dropdown-search input {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.client-row {
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    border-radius: var(--border-radius-sm);
+}
+
+.client-row:hover {
+    background: var(--bg-app);
+}
+
+/* ============================================================================
+   UTILIDADES ESPECÍFICAS
+   ============================================================================ */
+
+.subtitle {
+    font-size: var(--font-size-base);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ============================================================================
+   CLASES COMPACTAS PARA REEMPLAZAR INLINE STYLES
+   ============================================================================ */
+
+/* Fila de fecha de entrega */
+.delivery-date-row {
+    background: var(--color-success-light);
+    padding: 6px var(--spacing-sm);
+    border-radius: var(--border-radius-base);
+    margin-bottom: var(--spacing-sm);
+    border: var(--border-width) solid var(--color-success-border);
+}
+
+.delivery-date-row label {
+    color: var(--color-success-dark) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    font-size: var(--font-size-xs) !important;
+}
+
+/* Divider compacto */
+.divider-compact {
+    border: 0;
+    border-top: var(--border-width) solid var(--border-color);
+    margin: var(--spacing-sm) 0;
+}
+
+/* Sección de pago compacta */
+.payment-section-compact {
+    background: var(--bg-app);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-base);
+    margin-top: var(--spacing-sm);
+    border: var(--border-width) solid var(--border-color);
+}
+
+.payment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.payment-header label {
+    font-size: 10px !important;
+    font-weight: var(--font-weight-bold) !important;
+    text-transform: uppercase;
+    color: var(--text-secondary) !important;
+    letter-spacing: 0.5px;
+}
+
+.payment-header .optional-tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.payment-options {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: 6px;
+}
+
+.payment-option-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+}
+
+.payment-option-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+}
+
+.icon-efectivo { color: var(--color-success); }
+.icon-digital { color: var(--color-accent); }
+
+.payment-input-group {
+    margin-bottom: 6px;
+}
+
+.payment-input-group label {
+    font-size: 10px !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.payment-input-group.efectivo label { color: var(--color-success) !important; }
+.payment-input-group.digital label { color: var(--color-accent) !important; }
+
+.payment-input-full {
+    width: 100%;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    padding: 6px;
+    font-size: var(--font-size-sm);
+}
+
+.payment-input-full.efectivo { border-color: var(--color-success); }
+.payment-input-full.digital { border-color: var(--color-accent); }
+
+.payment-validation {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.payment-validation strong {
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Descuento cliente (oculto por defecto) */
+.client-discount-row {
+    color: var(--color-warning);
+    font-weight: var(--font-weight-bold);
+}
+
+.client-discount-row label {
+    color: inherit !important;
+}
+
+/* Margin-left auto para botones aplicar */
+.ml-auto {
+    margin-left: auto;
+}
+
+/* ============================================================================
+   DARK MODE OVERRIDES - COTIZADOR
+   ============================================================================ */
+
+/* Panel derecho (sidebar subtotal) */
+[data-theme="dark"] .right-panel {
+    background: var(--bg-sidebar) !important;
+}
+
+/* Botones negros - cambiar a azul en dark */
+[data-theme="dark"] .btn-black-block {
+    background: var(--color-primary) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .btn-black-block:hover {
+    background: var(--color-primary-hover) !important;
+}
+
+/* Inputs monetarios */
+[data-theme="dark"] .money-input {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Payment section */
+[data-theme="dark"] .payment-section-compact {
+    background: var(--bg-hover) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .payment-input-full {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Shortcuts hint */
+[data-theme="dark"] .shortcuts-hint {
+    background: var(--bg-hover) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Qty control */
+[data-theme="dark"] .qty-control {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .qty-control button {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .qty-control button:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .qty-control input {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Search inputs */
+[data-theme="dark"] .product-search-bar input,
+[data-theme="dark"] .client-search-container input {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Mode switch */
+[data-theme="dark"] .mode-switch {
+    background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] #mode-fabrica:checked + label,
+[data-theme="dark"] #mode-reparto:checked + label {
+    background: var(--bg-sidebar) !important;
+}
+
+/* Date input inline */
+[data-theme="dark"] .date-input-inline {
+    background: transparent !important;
+}
+
+/* Btn xs outline (aplicar) */
+[data-theme="dark"] .btn-xs-outline {
+    background: var(--bg-hover) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn-xs-outline.active {
+    background: var(--color-accent) !important;
+    color: white !important;
+    border-color: var(--color-accent) !important;
+}
+
+/* Floating results (dropdown búsqueda) */
+[data-theme="dark"] .floating-results {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .prod-row.compact:hover {
+    background: var(--bg-hover) !important;
+}
+
+/* Client dropdown */
+[data-theme="dark"] .client-dropdown {
+    background: var(--bg-white) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .dropdown-search input {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .client-row:hover {
+    background: var(--bg-hover) !important;
+}
+
+/* Modal footer */
+[data-theme="dark"] .modal-foot {
+    background: var(--bg-sidebar) !important;
+}
+
+/* Modal card */
+[data-theme="dark"] .modal-card {
+    background: var(--bg-white) !important;
+}
+
+/* Full width input en modales */
+[data-theme="dark"] .full-width-input {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Notes area */
+[data-theme="dark"] .notes-area {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+/* Modal backdrop - negro transparente, no azul */
+[data-theme="dark"] .modal-backdrop {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* WhatsApp preview box - más neutro en dark mode */
+[data-theme="dark"] .whatsapp-preview-box {
+    background: var(--bg-sidebar) !important;
+    border-color: var(--color-success) !important;
+}
+
+[data-theme="dark"] .preview-header {
+    background: rgba(37, 211, 102, 0.15) !important;
+    color: var(--color-success) !important;
+}
+
+[data-theme="dark"] .preview-content {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn-copy-sm {
+    background: var(--bg-hover) !important;
+    border-color: var(--color-success) !important;
+    color: var(--color-success) !important;
+}

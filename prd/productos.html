@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Productos | Bambu CRM V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo">
+            <span>◆</span> Bambu CRM v2
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">Otros Módulos</div>
+            <a href="cotizador-especificacion.html" class="nav-link">Cotizador</a>
+            <a href="ventas.html" class="nav-link">Ventas</a>
+            <a href="cuenta-corriente.html" class="nav-link">Cuenta Corriente</a>
+            <a href="clientes.html" class="nav-link">Clientes</a>
+            <a href="productos.html" class="nav-link active">Productos</a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-header">En esta página</div>
+            <ul id="toc" style="list-style: none; padding: 0; margin: 0;">
+                <!-- Auto-generado desde los h2 -->
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase;">
+                Química Bambu S.R.L.
+            </div>
+            <h1>PRD: Productos <br><span style="font-weight: 300; font-size: 1.5rem; color: var(--text-secondary);">Gestión del catálogo de productos</span></h1>
+
+            <table>
+                <tr>
+                    <td style="width: 150px;"><strong>Versión</strong></td>
+                    <td>2.0</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha</strong></td>
+                    <td>31 Diciembre 2024</td>
+                </tr>
+                <tr>
+                    <td><strong>Estado</strong></td>
+                    <td>En especificación</td>
+                </tr>
+            </table>
+        </header>
+
+        <!-- SECCIÓN 1: CONTEXTO Y OBJETIVO -->
+        <section id="contexto">
+            <h2>1. Contexto y Objetivo</h2>
+
+            <h3>1.1 Propósito del módulo</h3>
+            <p>El módulo <strong>Productos</strong> es el catálogo centralizado de todos los artículos comercializados por Química Bambu. Gestiona desde productos químicos individuales hasta packs promocionales, incluyendo su información comercial, inventario y configuración de precios.</p>
+
+            <h3>1.2 Problema que resuelve</h3>
+            <ul>
+                <li>Gestión unificada del catálogo de productos</li>
+                <li>Control de stock y alertas de inventario</li>
+                <li>Configuración de precios por lista (L1, L2, L3) y promociones</li>
+                <li>Orden de productos para buscadores (drag & drop)</li>
+                <li>Activación/desactivación de productos sin eliminarlos</li>
+                <li>Generación de reportes de inventario</li>
+            </ul>
+
+            <h3>1.3 Usuarios principales</h3>
+            <ul>
+                <li><strong>Administrador:</strong> CRUD completo, configuración de precios, stock, promociones</li>
+                <li><strong>Vendedor:</strong> Solo lectura (ve productos en cotizador según disponibilidad)</li>
+            </ul>
+
+            <h3>1.4 Simplificación v1 → v2</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Aspecto</th>
+                        <th>v1</th>
+                        <th>v2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Campo SKU</td>
+                        <td>✅ Existía</td>
+                        <td>❌ Eliminado (identificación por nombre únicamente)</td>
+                    </tr>
+                    <tr>
+                        <td>Orden de productos</td>
+                        <td>Manual (campo numérico)</td>
+                        <td>Drag & drop visual</td>
+                    </tr>
+                    <tr>
+                        <td>Tipos de producto</td>
+                        <td>2 tipos: Producto / Combo</td>
+                        <td>1 tipo único: Todos son "productos" (combos = productos en promoción con precio fijo)</td>
+                    </tr>
+                    <tr>
+                        <td>Promociones</td>
+                        <td>Switch + precio promocional</td>
+                        <td>Switch + precio promocional (sin cambios)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECCIÓN 2: FUNCIONALIDAD PRINCIPAL -->
+        <section id="funcionalidad">
+            <h2>2. Funcionalidad Principal</h2>
+
+            <h3>2.1 Descripción general</h3>
+            <p>El módulo Productos centraliza la gestión del catálogo comercial. Cada producto almacena información completa:</p>
+            <ul>
+                <li>Datos básicos: Nombre, proveedor, peso</li>
+                <li>Precios: Lista 1 (base), L2 y L3 se calculan automáticamente</li>
+                <li>Stock: Actual, mínimo, alertas</li>
+                <li>Configuración: Disponibilidad, promociones, orden</li>
+            </ul>
+
+            <p>El sistema permite gestionar productos estándar y promocionales (incluyendo combos/packs) usando una única estructura simplificada.</p>
+
+            <h3>2.2 Características clave</h3>
+            <ul>
+                <li>✅ CRUD completo de productos (crear, leer, editar, eliminar)</li>
+                <li>✅ Control de disponibilidad (activar/desactivar sin eliminar)</li>
+                <li>✅ Orden visual drag & drop (define aparición en buscadores)</li>
+                <li>✅ Productos en promoción con precio fijo</li>
+                <li>✅ Combos/packs como productos promocionales</li>
+                <li>✅ Stock automático + movimientos manuales</li>
+                <li>✅ Alertas de stock mínimo</li>
+                <li>✅ Exportación de inventario por proveedor</li>
+                <li>✅ Persistencia de filtros entre sesiones</li>
+                <li>✅ Barra de acciones rápidas por producto</li>
+            </ul>
+
+            <h3>2.3 Flujo de trabajo típico</h3>
+            <pre><code>Usuario accede a Productos
+        ↓
+Visualiza tabla con todos los productos
+        ↓
+Puede filtrar por: Proveedor | Disponibilidad | En promoción
+        ↓
+Acciones disponibles:
+├─ [+ Crear producto]
+├─ Reordenar drag & drop
+├─ Editar producto existente
+├─ Ajustar stock
+├─ Activar/desactivar
+├─ Eliminar (si no tiene pedidos asociados)
+└─ Exportar inventario Excel</code></pre>
+        </section>
+
+        <!-- SECCIÓN 3: INTERFAZ DE USUARIO -->
+        <section id="interfaz">
+            <h2>3. Interfaz de Usuario</h2>
+
+            <h3>3.1 Layout general</h3>
+            <p><strong>Vista principal:</strong> Tabla de productos con filtros superiores y botón [+ Crear producto]</p>
+
+            <p><strong>Estructura:</strong></p>
+            <pre><code>┌─────────────────────────────────────────────────────────────┐
+│  PRODUCTOS                                     [+ Crear]     │
+├─────────────────────────────────────────────────────────────┤
+│  Filtros:  [Proveedor ▼]  [Disponibilidad ▼]  [Búsqueda]   │
+│            [☐ En promoción]  [Limpiar filtros]               │
+├─────────────────────────────────────────────────────────────┤
+│  #  │ Nombre         │ Proveedor │ Precio L1 │ Stock │ ...  │
+│  1  │ Detergente X   │ Prov A    │ $4.500    │ 120   │ ⋮    │
+│  2  │ Lavandina Y    │ Prov B    │ $3.200    │ 85    │ ⋮    │
+│  3  │ Pack Combo Z   │ -         │ $15.000 🏷│ 20    │ ⋮    │
+└─────────────────────────────────────────────────────────────┘
+        🏷 = En promoción</code></pre>
+
+            <h3>3.2 Filtros y búsqueda</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filtro</th>
+                        <th>Tipo</th>
+                        <th>Opciones</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Proveedor</strong></td>
+                        <td>Dropdown múltiple</td>
+                        <td>Lista de proveedores existentes</td>
+                        <td>Filtra productos de uno o varios proveedores</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Disponibilidad</strong></td>
+                        <td>Dropdown</td>
+                        <td>Todos / Disponibles / No disponibles</td>
+                        <td>Filtra por estado de disponibilidad</td>
+                    </tr>
+                    <tr>
+                        <td><strong>En promoción</strong></td>
+                        <td>Checkbox</td>
+                        <td>✓ Solo promocionales</td>
+                        <td>Muestra solo productos con precio promocional activo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Búsqueda</strong></td>
+                        <td>Input text</td>
+                        <td>Busca en nombre de producto</td>
+                        <td>Filtrado en tiempo real por nombre</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⭐ Persistencia de filtros (NUEVO):</strong> Al salir del módulo y volver, los filtros permanecen activos. Útil para trabajar con subconjuntos (ej: solo productos de un proveedor). Botón "Limpiar filtros" resetea todo.</p>
+            </div>
+
+            <h3>3.3 Tabla principal</h3>
+            <p><strong>Columnas visibles:</strong></p>
+            <ul>
+                <li><strong>#</strong>: Número de orden (editable drag & drop)</li>
+                <li><strong>Nombre</strong>: Nombre del producto + badge 🏷 si en promoción</li>
+                <li><strong>Proveedor</strong>: Nombre del proveedor</li>
+                <li><strong>Precio L1</strong>: Precio base lista 1 (o promocional si activo)</li>
+                <li><strong>Stock</strong>: Cantidad actual (⚠️ si bajo stock mínimo)</li>
+                <li><strong>Peso (kg)</strong>: Peso unitario del producto</li>
+                <li><strong>Estado</strong>: Badge verde "Disponible" / gris "No disponible"</li>
+                <li><strong>Acciones</strong>: Botones Editar | Ajustar Stock | Eliminar</li>
+            </ul>
+
+            <h3>3.4 Drag & Drop para reordenar</h3>
+            <p><strong>Funcionalidad:</strong></p>
+            <ul>
+                <li>Icono ⋮⋮ a la izquierda del número de orden permite arrastrar productos</li>
+                <li>Al soltar, el producto se reposiciona en la lista</li>
+                <li>Los números de orden se recalculan automáticamente</li>
+                <li>Define orden de aparición en buscador del cotizador (productos prioritarios arriba)</li>
+                <li>Productos nuevos se agregan automáticamente al final</li>
+            </ul>
+
+            <p><strong>Flujo visual:</strong></p>
+            <pre><code>Antes de arrastrar:
+  1. Detergente A
+  2. Lavandina B    ← usuario agarra este
+  3. Cloro C
+
+Durante arrastre:
+  1. Detergente A
+  [espacio vacío]
+  3. Cloro C
+
+Después de soltar arriba de "1":
+  1. Lavandina B    ← ahora es #1
+  2. Detergente A   ← bajó a #2
+  3. Cloro C</code></pre>
+
+            <h3>3.5 Modal: Crear/Editar Producto</h3>
+            <p><strong>Campos del formulario:</strong></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Obligatorio</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombre</strong></td>
+                        <td>Text</td>
+                        <td>✅ Sí</td>
+                        <td>Nombre del producto (único)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Proveedor</strong></td>
+                        <td>Dropdown</td>
+                        <td>❌ No</td>
+                        <td>Selección de proveedor existente (combos pueden no tener)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precio base (L1)</strong></td>
+                        <td>Number</td>
+                        <td>✅ Sí</td>
+                        <td>Precio lista 1 (base). L2 y L3 se calculan automáticamente</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stock actual</strong></td>
+                        <td>Number</td>
+                        <td>✅ Sí</td>
+                        <td>Cantidad en inventario</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stock mínimo</strong></td>
+                        <td>Number</td>
+                        <td>✅ Sí</td>
+                        <td>Umbral para alerta de stock bajo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Peso (kg)</strong></td>
+                        <td>Number</td>
+                        <td>✅ Sí</td>
+                        <td>Peso unitario del producto</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Disponible</strong></td>
+                        <td>Switch</td>
+                        <td>-</td>
+                        <td>ON = aparece en cotizador | OFF = no se puede vender</td>
+                    </tr>
+                    <tr>
+                        <td><strong>En promoción</strong></td>
+                        <td>Switch</td>
+                        <td>-</td>
+                        <td>Activa campo de precio promocional</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precio promocional</strong></td>
+                        <td>Number</td>
+                        <td>Condicional</td>
+                        <td>Solo si "En promoción" = ON. Precio fijo que ignora listas</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0.5rem 0;"><strong>Campo SKU eliminado</strong> ⭐ NUEVO (Dic 2024): El campo SKU ha sido eliminado completamente. Los productos se identifican únicamente por su nombre.</p>
+            </div>
+
+            <h3>3.6 Modal: Ajustar Stock</h3>
+            <p><strong>Acceso:</strong> Botón "Ajustar Stock" en barra de acciones de cada producto</p>
+
+            <p><strong>Campos:</strong></p>
+            <ul>
+                <li><strong>Producto:</strong> Nombre (solo lectura)</li>
+                <li><strong>Stock actual:</strong> Cantidad (solo lectura)</li>
+                <li><strong>Tipo de movimiento:</strong>
+                    <ul>
+                        <li>○ Ingreso (+): Producción, compra</li>
+                        <li>○ Ajuste (-): Corrección de inventario, merma, rotura</li>
+                    </ul>
+                </li>
+                <li><strong>Cantidad:</strong> Monto a sumar o restar</li>
+                <li><strong>Motivo:</strong> Descripción del movimiento (obligatorio)</li>
+                <li><strong>Fecha:</strong> Fecha del movimiento (default: hoy)</li>
+            </ul>
+
+            <p><strong>Vista previa:</strong> "Stock después del movimiento: XXX unidades"</p>
+
+            <p><strong>Efecto:</strong></p>
+            <ul>
+                <li>Actualiza stock del producto</li>
+                <li>Registra movimiento en historial</li>
+                <li>Muestra notificación: ✅ "Stock actualizado correctamente"</li>
+            </ul>
+
+            <h3>3.7 Barra de acciones rápidas</h3>
+            <p><strong>Ubicación:</strong> Columna "Acciones" a la derecha de cada fila</p>
+
+            <p><strong>Botones disponibles:</strong></p>
+            <ul>
+                <li><strong>[Editar]</strong>: Abre modal Editar Producto</li>
+                <li><strong>[Ajustar Stock]</strong>: Abre modal Ajustar Stock</li>
+                <li><strong>[Eliminar]</strong>: Confirmación → Elimina producto (si no tiene pedidos asociados)</li>
+            </ul>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Restricción de eliminación:</strong> No se puede eliminar un producto que tenga pedidos asociados (activos o históricos). En su lugar, usar "No disponible" para desactivarlo.</p>
+            </div>
+
+            <h3>3.8 Exportar inventario</h3>
+            <p><strong>Ubicación:</strong> Botón [Exportar Excel] en header superior</p>
+
+            <p><strong>Modal de exportación:</strong></p>
+            <ul>
+                <li><strong>Filtro por proveedor:</strong> Selector múltiple (permite elegir uno o varios)</li>
+                <li><strong>Vista previa:</strong> "X productos seleccionados"</li>
+                <li><strong>Botón:</strong> [Descargar Excel]</li>
+            </ul>
+
+            <p><strong>Archivo generado:</strong></p>
+            <ul>
+                <li>Nombre: <code>inventario_bambu_YYYY-MM-DD.xlsx</code></li>
+                <li>Columnas: Nombre | Proveedor | Stock Actual | Stock Mínimo | Precio L1</li>
+                <li>Ordenado por proveedor y nombre</li>
+            </ul>
+
+            <p><strong>Uso:</strong> Reporte rápido de inventario para control interno o envío a proveedores</p>
+        </section>
+
+        <!-- SECCIÓN 4: REGLAS DE NEGOCIO -->
+        <section id="reglas">
+            <h2>4. Reglas de Negocio Específicas</h2>
+
+            <h3>4.1 Validaciones</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Validación</th>
+                        <th>Mensaje de error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombre</strong></td>
+                        <td>Único (no puede haber 2 productos con mismo nombre)</td>
+                        <td>"Ya existe un producto con este nombre"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precio base L1</strong></td>
+                        <td>Mayor a 0</td>
+                        <td>"El precio debe ser mayor a 0"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precio promocional</strong></td>
+                        <td>Menor a precio L1</td>
+                        <td>"El precio promocional debe ser menor al precio L1"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stock actual</strong></td>
+                        <td>Puede ser negativo (devoluciones)</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stock mínimo</strong></td>
+                        <td>Mayor o igual a 0</td>
+                        <td>"El stock mínimo no puede ser negativo"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Peso (kg)</strong></td>
+                        <td>Mayor a 0</td>
+                        <td>"El peso debe ser mayor a 0"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.2 Producto no disponible</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Switch en modal de edición</li>
+                <li>Si <code>Disponible = OFF</code>:
+                    <ul>
+                        <li>❌ NO aparece en buscador del cotizador</li>
+                        <li>✅ Permanece en el sistema para consulta</li>
+                        <li>✅ Los pedidos existentes que lo contengan NO se afectan</li>
+                        <li>✅ Es reversible (se puede volver a activar)</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p><strong>Uso típico:</strong> Productos descontinuados, temporalmente sin stock, o reemplazados por nuevas versiones</p>
+
+            <h3>4.3 Producto en promoción</h3>
+            <p><strong>Comportamiento:</strong></p>
+            <ul>
+                <li>Switch "En promoción" en modal de edición</li>
+                <li>Al activar, habilita campo "Precio promocional"</li>
+                <li>El precio promocional es <strong>fijo</strong>, independiente de la lista seleccionada</li>
+                <li>Productos promocionales NO entran en cálculo de umbral de descuento automático</li>
+            </ul>
+
+            <p><strong>Ejemplo:</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Precio normal</th>
+                        <th>Precio en promoción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lista 1 (L1)</td>
+                        <td>$4.500</td>
+                        <td rowspan="3" style="vertical-align: middle; text-align: center; font-weight: bold; background: #ffe082;">$4.100<br>(precio fijo)</td>
+                    </tr>
+                    <tr>
+                        <td>Lista 2 (L2)</td>
+                        <td>$4.300</td>
+                    </tr>
+                    <tr>
+                        <td>Lista 3 (L3)</td>
+                        <td>$4.100</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p><strong>Regla:</strong> Si está en promoción a $4.100, <strong>siempre</strong> se cobra $4.100 sin importar la lista seleccionada</p>
+
+            <h3>4.4 Combos y packs</h3>
+            <p><strong>Concepto simplificado:</strong> NO existe una categoría separada de "Combo". Los combos se crean como <strong>productos normales</strong> activando el campo "En promoción" con un precio fijo.</p>
+
+            <p><strong>Ejemplo de combo:</strong></p>
+            <ul>
+                <li><strong>Nombre:</strong> "Pack Limpieza Completo"</li>
+                <li><strong>En promoción:</strong> ✓ Activado</li>
+                <li><strong>Precio promocional:</strong> $15.000 (precio fijo)</li>
+                <li><strong>Proveedor:</strong> (opcional, puede no tener)</li>
+                <li><strong>Stock:</strong> Se controla manualmente si se desea</li>
+            </ul>
+
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>Simplificación v2:</strong> Esta aproximación elimina la complejidad de tener dos tipos de productos diferentes. Todo es un "producto" con la opción de precio promocional para combos. El precio promocional actúa de forma independiente a las listas de descuento, permitiendo ofrecer combos a precio fijo.</p>
+            </div>
+
+            <h3>4.5 Orden de productos</h3>
+            <p><strong>Funcionalidad drag & drop:</strong></p>
+            <ul>
+                <li>Los productos nuevos se agregan automáticamente al final de la lista</li>
+                <li>Se puede reordenar arrastrando y soltando productos</li>
+                <li>El número de orden se ajusta automáticamente al reordenar</li>
+                <li>Define el orden de aparición en el buscador del cotizador (productos prioritarios aparecen primero)</li>
+                <li>Interfaz visual intuitiva sin necesidad de ingresar números manualmente</li>
+            </ul>
+
+            <p><strong>Impacto en el cotizador:</strong></p>
+            <ul>
+                <li>Al buscar productos en el cotizador, aparecen ordenados según este campo</li>
+                <li>Productos frecuentes pueden colocarse arriba para acceso rápido</li>
+                <li>Productos de temporada pueden priorizarse temporalmente</li>
+            </ul>
+
+            <h3>4.6 Stock</h3>
+            <p><strong>Movimientos automáticos:</strong></p>
+            <ul>
+                <li>Se confirma un pedido → se descuenta stock</li>
+                <li>Se modifica un pedido → se ajusta stock (suma o resta según el cambio)</li>
+                <li>Se elimina un pedido → se reintegra stock</li>
+            </ul>
+
+            <p><strong>Movimientos manuales:</strong></p>
+            <ul>
+                <li>Ingreso de stock (+): Producción, compra</li>
+                <li>Ajuste de stock (-): Corrección de inventario, merma, rotura</li>
+                <li>Cada movimiento registra: cantidad, motivo, fecha, usuario</li>
+            </ul>
+
+            <p><strong>Alertas de stock bajo:</strong></p>
+            <ul>
+                <li>Si <code>stock_actual < stock_minimo</code> → Badge ⚠️ en tabla</li>
+                <li>Dashboard puede mostrar panel "Productos con stock bajo"</li>
+            </ul>
+
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>⚠️ Stock negativo permitido:</strong> El sistema permite stock negativo para manejar casos de devoluciones o ajustes de inventario.</p>
+            </div>
+
+            <h3>4.7 Historial de movimientos de stock</h3>
+            <p><strong>Acceso:</strong> Desde detalle de producto → Pestaña "Historial de stock"</p>
+
+            <p><strong>Información registrada:</strong></p>
+            <ul>
+                <li>Fecha del movimiento</li>
+                <li>Tipo: Ingreso (+) / Egreso (-) / Ajuste</li>
+                <li>Cantidad afectada</li>
+                <li>Motivo (si es manual) o Pedido #XXX (si es automático)</li>
+                <li>Stock resultante después del movimiento</li>
+                <li>Usuario que realizó el movimiento (si manual)</li>
+            </ul>
+
+            <p><strong>Ordenamiento:</strong> Cronológico descendente (más recientes primero)</p>
+        </section>
+
+        <!-- SECCIÓN 5: INTEGRACIÓN -->
+        <section id="integracion">
+            <h2>5. Integración con Otros Módulos</h2>
+
+            <h3>5.1 Cotizador</h3>
+            <p><strong>Relación:</strong> El cotizador consume el catálogo de productos para armar pedidos</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Solo aparecen productos con <code>Disponible = ON</code></li>
+                <li>El orden en el buscador del cotizador respeta el campo "Orden" de productos</li>
+                <li>Los precios se calculan según la lista seleccionada (L1/L2/L3), excepto promocionales que usan precio fijo</li>
+                <li>Al confirmar pedido, el stock se descuenta automáticamente</li>
+            </ul>
+
+            <h3>5.2 Stock</h3>
+            <p><strong>Relación:</strong> El módulo Stock registra todos los movimientos de inventario</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Movimientos automáticos desde pedidos (confirmar, modificar, eliminar)</li>
+                <li>Movimientos manuales desde modal "Ajustar Stock" en Productos</li>
+                <li>Alertas de stock mínimo se muestran en ambos módulos</li>
+                <li>Historial completo de movimientos por producto</li>
+            </ul>
+
+            <h3>5.3 Configuración</h3>
+            <p><strong>Relación:</strong> Configuración general define parámetros que afectan a productos</p>
+
+            <p><strong>Dependencias:</strong></p>
+            <ul>
+                <li><strong>Listas de precio:</strong> Configuración define % de descuento L2 y L3 sobre L1</li>
+                <li><strong>Proveedores:</strong> Dropdown de proveedores se alimenta desde Configuración</li>
+                <li><strong>Comportamiento stock:</strong> Configuración define si stock puede ser negativo</li>
+            </ul>
+
+            <h3>5.4 Ventas</h3>
+            <p><strong>Relación:</strong> Ventas muestra pedidos que contienen productos</p>
+
+            <p><strong>Sincronización:</strong></p>
+            <ul>
+                <li>Al editar un pedido en Ventas, se recalcula stock automáticamente</li>
+                <li>Productos eliminados o no disponibles siguen visibles en pedidos históricos</li>
+                <li>Estadísticas de ventas por producto se generan desde este módulo</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 6: CASOS DE USO -->
+        <section id="casos-uso">
+            <h2>6. Casos de Uso</h2>
+
+            <h3>Caso 1: Crear producto nuevo</h3>
+            <p><strong>Contexto:</strong> Administrador necesita agregar un producto nuevo al catálogo</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Productos</li>
+                <li>Click en [+ Crear producto]</li>
+                <li>Completa formulario:
+                    <ul>
+                        <li>Nombre: "Desengrasante Industrial 5L"</li>
+                        <li>Proveedor: "Proveedor A"</li>
+                        <li>Precio L1: $8.500</li>
+                        <li>Stock actual: 50</li>
+                        <li>Stock mínimo: 10</li>
+                        <li>Peso: 5.2 kg</li>
+                        <li>Disponible: ON</li>
+                    </ul>
+                </li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Producto creado correctamente</li>
+                <li>✅ Aparece al final de la tabla (último orden)</li>
+                <li>✅ Ya disponible en buscador del cotizador</li>
+            </ul>
+
+            <h3>Caso 2: Crear combo promocional</h3>
+            <p><strong>Contexto:</strong> Administrador quiere crear pack promocional con precio fijo</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Productos</li>
+                <li>Click en [+ Crear producto]</li>
+                <li>Completa formulario:
+                    <ul>
+                        <li>Nombre: "Pack Limpieza Hogar Completo"</li>
+                        <li>Proveedor: (vacío - es combo)</li>
+                        <li>Precio L1: $18.000</li>
+                        <li>Stock actual: 20</li>
+                        <li>Stock mínimo: 5</li>
+                        <li>Peso: 8.0 kg</li>
+                        <li>Disponible: ON</li>
+                        <li>En promoción: ON</li>
+                        <li>Precio promocional: $15.000</li>
+                    </ul>
+                </li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Combo creado como producto promocional</li>
+                <li>✅ Se vende siempre a $15.000 sin importar lista</li>
+                <li>✅ Badge 🏷 en tabla indica promoción</li>
+                <li>✅ NO entra en cálculo de umbral de descuento automático</li>
+            </ul>
+
+            <h3>Caso 3: Reordenar productos con drag & drop</h3>
+            <p><strong>Contexto:</strong> Administrador quiere priorizar productos frecuentes en buscador</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Productos</li>
+                <li>Identifica producto frecuente (ej: "Detergente X" en posición #15)</li>
+                <li>Arrastra icono ⋮⋮ del producto</li>
+                <li>Suelta en posición #1</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ "Detergente X" ahora es #1</li>
+                <li>✅ Productos anteriores bajan una posición</li>
+                <li>✅ Números de orden se recalculan automáticamente</li>
+                <li>✅ En cotizador, "Detergente X" aparece primero en búsquedas</li>
+            </ul>
+
+            <h3>Caso 4: Ajustar stock por producción</h3>
+            <p><strong>Contexto:</strong> Llegó producción nueva de un producto</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario busca producto "Lavandina 2L"</li>
+                <li>Click en [Ajustar Stock]</li>
+                <li>Selecciona: Ingreso (+)</li>
+                <li>Cantidad: 100</li>
+                <li>Motivo: "Producción lote #245"</li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Stock aumentado en 100 unidades</li>
+                <li>✅ Movimiento registrado en historial</li>
+                <li>✅ Notificación: "Stock actualizado correctamente"</li>
+            </ul>
+
+            <h3>Caso 5: Desactivar producto descontinuado</h3>
+            <p><strong>Contexto:</strong> Producto descontinuado que ya no se vende</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario busca producto "Producto Viejo"</li>
+                <li>Click en [Editar]</li>
+                <li>Cambia switch "Disponible" a OFF</li>
+                <li>Click [Guardar]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Producto marcado como "No disponible"</li>
+                <li>❌ Ya NO aparece en buscador del cotizador</li>
+                <li>✅ Pedidos históricos que lo contienen NO se afectan</li>
+                <li>✅ Permanece en sistema para consultas</li>
+                <li>✅ Reversible (se puede volver a activar)</li>
+            </ul>
+
+            <h3>Caso 6: Exportar inventario por proveedor</h3>
+            <p><strong>Contexto:</strong> Administrador necesita reporte de stock de un proveedor específico</p>
+            <p><strong>Acción:</strong></p>
+            <ol>
+                <li>Usuario abre módulo Productos</li>
+                <li>Click en [Exportar Excel]</li>
+                <li>Selecciona proveedor: "Proveedor A"</li>
+                <li>Vista previa: "15 productos seleccionados"</li>
+                <li>Click [Descargar Excel]</li>
+            </ol>
+            <p><strong>Resultado:</strong></p>
+            <ul>
+                <li>✅ Descarga archivo <code>inventario_bambu_2024-12-31.xlsx</code></li>
+                <li>✅ Contiene solo productos de "Proveedor A"</li>
+                <li>✅ Columnas: Nombre | Proveedor | Stock Actual | Stock Mínimo | Precio L1</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 7: FLUJOS DE USUARIO -->
+        <section id="flujos">
+            <h2>7. Flujos de Usuario</h2>
+
+            <h3>7.1 Flujo principal: Gestión de producto</h3>
+            <pre><code>Usuario accede a módulo Productos
+        ↓
+Vista tabla completa de productos
+        ↓
+Aplica filtros (opcional)
+├─ Por proveedor
+├─ Por disponibilidad
+├─ Solo promocionales
+└─ Búsqueda por nombre
+        ↓
+Selecciona acción:
+├─ [+ Crear producto] → Modal crear → Guardar → Producto agregado al final
+├─ [Editar] → Modal editar → Guardar → Producto actualizado
+├─ [Ajustar Stock] → Modal ajustar → Guardar → Stock actualizado
+├─ Drag & drop → Reordenar → Orden actualizado automáticamente
+├─ [Eliminar] → Confirmación → Producto eliminado (si no tiene pedidos)
+└─ [Exportar Excel] → Seleccionar proveedor → Descargar archivo</code></pre>
+
+            <h3>7.2 Flujo alternativo: Crear combo promocional</h3>
+            <pre><code>Usuario accede a módulo Productos
+        ↓
+Click [+ Crear producto]
+        ↓
+Completa campos básicos:
+- Nombre del combo
+- Precio base L1
+- Stock inicial
+        ↓
+Activa switch "En promoción"
+        ↓
+Campo "Precio promocional" se habilita
+        ↓
+Ingresa precio fijo del combo
+        ↓
+Completa resto de campos
+        ↓
+Click [Guardar]
+        ↓
+Sistema valida:
+- Precio promocional < Precio L1 ✓
+- Nombre único ✓
+        ↓
+Combo creado como producto promocional
+        ↓
+Badge 🏷 visible en tabla
+        ↓
+Disponible en cotizador con precio fijo</code></pre>
+
+            <h3>7.3 Flujo: Desactivar producto sin eliminar</h3>
+            <pre><code>Usuario identifica producto descontinuado
+        ↓
+Click [Editar]
+        ↓
+Cambia switch "Disponible" a OFF
+        ↓
+Click [Guardar]
+        ↓
+Sistema actualiza:
+- Badge gris "No disponible" en tabla
+- Producto oculto en buscador cotizador
+- Pedidos históricos NO afectados
+        ↓
+Producto permanece en sistema para consulta
+        ↓
+(Reversible: puede volver a activarse)</code></pre>
+
+            <h3>7.4 Flujo: Reordenar productos drag & drop</h3>
+            <pre><code>Usuario abre módulo Productos
+        ↓
+Identifica producto a priorizar
+        ↓
+Hover sobre icono ⋮⋮ (cursor cambia a "mano")
+        ↓
+Click y mantener presionado
+        ↓
+Arrastra producto hacia arriba/abajo
+        ↓
+Suelta en nueva posición
+        ↓
+Sistema recalcula orden automáticamente:
+- Producto movido toma nueva posición
+- Productos intermedios se ajustan
+- Números de orden se actualizan
+        ↓
+Orden guardado automáticamente
+        ↓
+Impacta en buscador del cotizador inmediatamente</code></pre>
+        </section>
+
+        <!-- SECCIÓN 8: NOTAS TÉCNICAS -->
+        <section id="notas-tecnicas">
+            <h2>8. Notas Técnicas para Desarrollo</h2>
+
+            <h3>8.1 Estructura de datos (Mock data)</h3>
+            <pre><code class="language-javascript">// Ejemplo de estructura para prototipos
+const PRODUCTO_EJEMPLO = {
+    id: 1,
+    nombre: "Detergente Concentrado 5L",
+    proveedor_id: 2, // Relación con tabla proveedores
+    proveedor_nombre: "Proveedor A", // Para facilitar mockeo
+    precio_l1: 8500, // Precio base lista 1
+    precio_l2: 7968.75, // Calculado: L1 * 0.9375 (6.25% desc)
+    precio_l3: 7650, // Calculado: L1 * 0.90 (10% desc)
+    stock_actual: 120,
+    stock_minimo: 20,
+    peso_kg: 5.2,
+    orden: 1, // Orden de aparición (editable drag & drop)
+    disponible: true, // true = aparece en cotizador
+    en_promocion: false,
+    precio_promocional: null, // Solo si en_promocion = true
+    created_at: "2024-01-15",
+    updated_at: "2024-12-30"
+};
+
+// Ejemplo de combo/pack (producto promocional)
+const COMBO_EJEMPLO = {
+    id: 15,
+    nombre: "Pack Limpieza Hogar Completo",
+    proveedor_id: null, // Combos pueden no tener proveedor
+    proveedor_nombre: "-",
+    precio_l1: 18000, // Precio "normal" (referencia)
+    precio_l2: 18000, // Ignorado si en_promocion = true
+    precio_l3: 18000, // Ignorado si en_promocion = true
+    stock_actual: 20,
+    stock_minimo: 5,
+    peso_kg: 8.0,
+    orden: 15,
+    disponible: true,
+    en_promocion: true, // ← Activa precio fijo
+    precio_promocional: 15000, // ← Precio fijo que se usa
+    created_at: "2024-06-20",
+    updated_at: "2024-12-28"
+};
+
+// Ejemplo de movimiento de stock
+const MOVIMIENTO_STOCK = {
+    id: 245,
+    producto_id: 1,
+    tipo: "INGRESO", // INGRESO | EGRESO | AJUSTE
+    cantidad: 100,
+    motivo: "Producción lote #245",
+    pedido_id: null, // null si es manual, ID si es automático
+    stock_resultante: 220,
+    usuario_id: 1,
+    created_at: "2024-12-30 14:30:00"
+};
+</code></pre>
+
+            <h3>8.2 Consideraciones de implementación</h3>
+            <ul>
+                <li>⚠️ <strong>Drag & drop:</strong> Usar librerías como SortableJS (vanilla) o similar para implementar reordenamiento visual</li>
+                <li>⚠️ <strong>Persistencia de filtros:</strong> Usar <code>localStorage</code> para guardar estado de filtros entre sesiones</li>
+                <li>⚠️ <strong>Validación única de nombre:</strong> Implementar verificación en tiempo real (al escribir) para evitar duplicados</li>
+                <li>⚠️ <strong>Stock negativo:</strong> Permitido a nivel de base de datos (sin restricción CHECK > 0)</li>
+                <li>⚠️ <strong>Alertas de stock bajo:</strong> Query: <code>WHERE stock_actual < stock_minimo</code></li>
+                <li>💡 <strong>Optimización:</strong> Cachear lista de proveedores para dropdown (no cambiar frecuentemente)</li>
+                <li>💡 <strong>Auditoría:</strong> Registrar usuario y timestamp en cada modificación de producto o stock</li>
+                <li>💡 <strong>Exportación Excel:</strong> Usar librerías como SheetJS (xlsx) para generar archivos</li>
+            </ul>
+
+            <h3>8.3 Queries SQL útiles</h3>
+            <pre><code class="language-sql">-- Obtener productos con stock bajo
+SELECT * FROM productos
+WHERE stock_actual < stock_minimo
+AND disponible = true
+ORDER BY stock_actual ASC;
+
+-- Obtener productos de un proveedor específico
+SELECT * FROM productos
+WHERE proveedor_id = ?
+ORDER BY orden ASC;
+
+-- Obtener productos disponibles ordenados para cotizador
+SELECT * FROM productos
+WHERE disponible = true
+ORDER BY orden ASC;
+
+-- Calcular total de movimientos de stock por producto
+SELECT
+    p.nombre,
+    COUNT(m.id) as total_movimientos,
+    SUM(CASE WHEN m.tipo = 'INGRESO' THEN m.cantidad ELSE 0 END) as total_ingresos,
+    SUM(CASE WHEN m.tipo = 'EGRESO' THEN m.cantidad ELSE 0 END) as total_egresos
+FROM productos p
+LEFT JOIN movimientos_stock m ON p.id = m.producto_id
+GROUP BY p.id
+ORDER BY p.nombre;</code></pre>
+
+            <h3>8.4 Estructura de base de datos sugerida</h3>
+            <pre><code class="language-sql">CREATE TABLE productos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) UNIQUE NOT NULL,
+    proveedor_id INT REFERENCES proveedores(id) ON DELETE SET NULL,
+    precio_l1 DECIMAL(10,2) NOT NULL,
+    stock_actual INT NOT NULL DEFAULT 0, -- Puede ser negativo
+    stock_minimo INT NOT NULL DEFAULT 0,
+    peso_kg DECIMAL(8,2) NOT NULL,
+    orden INT NOT NULL DEFAULT 9999,
+    disponible BOOLEAN NOT NULL DEFAULT true,
+    en_promocion BOOLEAN NOT NULL DEFAULT false,
+    precio_promocional DECIMAL(10,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE movimientos_stock (
+    id SERIAL PRIMARY KEY,
+    producto_id INT NOT NULL REFERENCES productos(id) ON DELETE CASCADE,
+    tipo VARCHAR(20) NOT NULL, -- INGRESO | EGRESO | AJUSTE
+    cantidad INT NOT NULL,
+    motivo TEXT,
+    pedido_id INT REFERENCES pedidos(id) ON DELETE SET NULL,
+    stock_resultante INT NOT NULL,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE SET NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+        </section>
+
+        <!-- PIE DE PÁGINA -->
+        <footer>
+            <p>Bambu CRM V2 - PRD Técnico | Última actualización: 31 Diciembre 2024</p>
+            <p><a href="index.html">← Volver al PRD General</a></p>
+        </footer>
+    </main>
+
+    <!-- SCRIPT PARA TOC AUTO -->
+    <script>
+        // Auto-generar tabla de contenidos desde los h2
+        const toc = document.getElementById('toc');
+        const h2s = document.querySelectorAll('main h2');
+        h2s.forEach(h2 => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#' + h2.parentElement.id;
+            a.textContent = h2.textContent;
+            a.className = 'nav-link';
+            li.appendChild(a);
+            toc.appendChild(li);
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-toggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>
