@@ -4,7 +4,7 @@
 
 ---
 
-## 📊 ESTADOS DEL SISTEMA (V2)
+## ESTADOS DEL SISTEMA (V2)
 
 El sistema maneja **3 estados** (simplificado de 6 en V1):
 
@@ -15,13 +15,14 @@ El sistema maneja **3 estados** (simplificado de 6 en V1):
 | **Entregado** | Venta finalizada (fábrica) o reparto completado | Descontado | Cargado |
 
 ### Estados NO utilizados en V2
-❌ Confirmado
-❌ Listo para despacho
-❌ Para despacho
+- Confirmado
+- Listo para despacho
+- Para despacho
+- Cancelado (se elimina el pedido, no hay estado intermedio)
 
 ---
 
-## 🔄 TRANSICIONES DE ESTADOS
+## TRANSICIONES DE ESTADOS
 
 ```
                     ┌─────────────┐
@@ -39,300 +40,415 @@ El sistema maneja **3 estados** (simplificado de 6 en V1):
               │                         │
               └────────┬────────────────┘
                        ▼
-                ┌─────────────┐
-                │  CANCELADO  │ (Reintegra stock + saldo)
-                └─────────────┘
+              ┌─────────────────┐
+              │  ELIMINACIÓN    │ (Reintegra stock + anula CC)
+              └─────────────────┘
 ```
 
 ### Transiciones permitidas
 - **Borrador → En tránsito**: Confirmar pedido modo REPARTO
 - **Borrador → Entregado**: Confirmar pedido modo FÁBRICA
 - **En tránsito ↔ Entregado**: Cambio manual desde VENTAS (reversible)
-- **Cualquier estado → Cancelado**: Anulación con reintegro
+- **Cualquier estado → Eliminado**: Con reintegro de stock y nota de crédito en CC
 
 ---
 
-## 🚚 FLUJO COMPLETO: MODO REPARTO
+## FLUJO COMPLETO: MODO REPARTO
 
 ```
 1. COTIZADOR
-   │ Usuario selecciona modo REPARTO
-   │ Agrega productos, cliente, descuentos
+   │ Usuario selecciona modo REPARTO (switch)
+   │ Agrega productos (buscador predictivo)
+   │ Selecciona cliente (muestra saldo en dropdown)
+   │ Aplica descuentos (manual > cliente > lista)
    │ Confirma pedido
-   │ ├→ Abre calendario (solo L-V)
-   │ └→ Selecciona fecha entrega
+   │ ├→ Valida fecha solo L-V
+   │ └→ Si finde → sugiere próximo laborable
    │
    ▼
 2. SISTEMA (automático)
    │ Estado: BORRADOR → EN TRÁNSITO
-   │ Stock: Descontado
-   │ Cuenta Corriente: Cargo generado
+   │ Stock: Descontado inmediatamente
+   │ Cuenta Corriente: Cargo generado (si hay cliente)
    │ Fecha: Asignada al día seleccionado
    │
    ▼
 3. MÓDULO VENTAS
-   │ Pedido aparece con filtro "En tránsito"
-   │ Estado: SIN vehículo asignado
+   │ Pedido aparece en lista (filtro "En tránsito")
+   │ Visible en calendario semanal
    │ Usuario puede editar si necesario
    │
    ▼
-4. MÓDULO REPARTOS → CALENDARIO
-   │ Entrar al día seleccionado
-   │ Ver capacidad (pedidos + kilos)
-   │ Vista: Agrupar por vehículo
+4. MÓDULO REPARTOS DÍA
+   │ Click en día desde calendario (ventas o dashboard)
+   │ Vista por vehículo: 4 columnas (Sin asignar + R1 + R2 + R3)
+   │ Vista por ciudad: agrupado por localidad
+   │ Capacidad: kg usados / kg totales por vehículo
    │
    ▼
 5. ASIGNACIÓN VEHÍCULO
-   │ Seleccionar pedido
-   │ Asignar a vehículo (R1, R2, R3)
-   │ Ordenar visitas dentro del vehículo
-   │ Exportar hoja de reparto (Word)
+   │ Opción 1: Modal con preview de capacidad
+   │ Opción 2: Drag & drop entre columnas
+   │ Opción 3: Auto-asignar (agrupa por ciudad)
+   │ Reordenar visitas dentro del vehículo (drag & drop)
+   │ Exportar hoja de reparto (ventana imprimible)
    │
    ▼
 6. REPARTIDOR
-   │ Sale a repartir con hoja
+   │ Sale a repartir con hoja impresa
    │ Entrega pedidos (puede haber cambios)
    │ Vuelve TARDE (fin del día)
    │
    ▼
 7. CONTROL DÍA VENCIDO (al día siguiente)
-   │ Usuario abre VENTAS
-   │ Filtra pedidos de AYER
-   │ Revisa cada pedido:
-   │ ├→ Ajusta cantidades (si entregó menos/más)
-   │ ├→ Corrige descuentos olvidados
-   │ ├→ Suma/resta productos de último momento
-   │ └→ MARCA COMO ENTREGADO
+   │ Usuario abre VENTAS → Vista Calendario
+   │ Día de ayer muestra badge "CONTROLAR"
+   │ Click "Controlar" o "Ver pedidos"
+   │ Por cada pedido:
+   │ ├→ Ajustar cantidades (si entregó menos/más)
+   │ ├→ Corregir descuentos olvidados
+   │ ├→ Agregar/quitar productos de último momento
+   │ └→ MARCAR COMO ENTREGADO
    │
    ▼
 8. REGISTRAR MÉTODO DE PAGO (OBLIGATORIO)
-   │ Sistema solicita método de pago
+   │ Modal solicita método de pago
    │ Opciones: Efectivo | Digital | Mixto
-   │ Registra montos
-   │ Genera pago en Cuenta Corriente
+   │ ✅ PAGO PARCIAL permitido (genera saldo pendiente)
+   │ Guarda en historial de pagos del pedido
+   │ Genera movimiento de pago en Cuenta Corriente
    │
    ▼
 9. RESULTADO FINAL
    │ Estado: EN TRÁNSITO → ENTREGADO
-   │ Datos reales de lo vendido
-   │ Método de pago registrado
-   │ Auditoría completa de cambios
-   │ Sistema genera AJUSTE en CC si hubo cambios
+   │ Datos reales registrados (cantidades, montos)
+   │ Método de pago guardado
+   │ Historial de cambios con auditoría completa
+   │ Ajuste automático en CC si hubo diferencia de total
 ```
 
 ---
 
-## 🏭 FLUJO COMPLETO: MODO FÁBRICA
+## FLUJO COMPLETO: MODO FÁBRICA
 
 ```
 1. COTIZADOR
-   │ Usuario selecciona modo FÁBRICA
+   │ Usuario selecciona modo FÁBRICA (switch)
    │ Agrega productos
-   │ (Opcional) Selecciona cliente o "Sin cliente"
-   │ (Opcional) Aplica descuentos
+   │ Cliente: Selecciona cliente O deja "SIN REGISTRO"
+   │ Aplica descuentos
+   │ ⚠️ MÉTODO DE PAGO REQUERIDO (tag rojo visible)
+   │ Selecciona método: Efectivo | Digital | Mixto
+   │ ✅ Pago parcial permitido
    │ Confirma pedido
    │
    ▼
 2. SISTEMA (automático)
    │ Estado: BORRADOR → ENTREGADO (directo)
    │ Stock: Descontado
-   │ Cuenta Corriente: Cargo generado (si hay cliente)
-   │ Fecha: HOY
+   │ Cuenta Corriente:
+   │ ├→ Con cliente: Cargo + Pago generados
+   │ └→ Sin cliente (SIN REGISTRO): NO genera movimiento CC
+   │ Fecha: HOY (automática)
    │
    ▼
 3. MÓDULO VENTAS
-   │ Pedido aparece con filtro "Entregado"
-   │ Usuario puede:
-   │ ├→ Editar cantidades/precios si hubo cambios
-   │ ├→ Registrar método de pago
-   │ └→ Sistema genera AJUSTE en CC si necesario
+   │ Pedido aparece con estado "Entregado"
+   │ Tipo: FÁBRICA (badge naranja)
+   │ Usuario puede editar si necesario
+   │ Sistema genera ajuste CC si cambia el total
    │
    ▼
 4. RESULTADO FINAL
    │ Venta de fábrica registrada
    │ Cliente retiró en planta
-   │ Método de pago registrado
+   │ Pago registrado (total o parcial)
+   │ Si cliente tiene saldo: visible en su CC
 ```
+
+### Ventas sin cliente (SIN REGISTRO)
+- Solo permitido en modo FÁBRICA
+- NO genera movimiento en Cuenta Corriente
+- SÍ descuenta stock normalmente
+- Útil para ventas ocasionales a desconocidos
 
 ---
 
-## 📅 CONTROL A DÍA VENCIDO
+## CONTROL A DÍA VENCIDO
 
 **Regla fundamental**: Los repartos se controlan al DÍA SIGUIENTE porque los repartidores vuelven tarde.
 
 ### Ejemplo práctico
 ```
-HOY = 26/12/2024 (Jueves)
+HOY = 08/01/2026 (Miércoles)
 
 Vista desde HOY:
-├─ 23/12 (Lunes): Hace 3 días → CONTROLADO ✅
-├─ 24/12 (Martes): Hace 2 días → CONTROLADO ✅
-├─ 25/12 (Miércoles): AYER → A CONTROLAR 📋 (controlando HOY)
-├─ 26/12 (Jueves): HOY → SALIENDO 🚚 (control mañana)
-└─ 27/12 (Viernes): MAÑANA → PREPARANDO 📦 (asignar vehículos)
+├─ 06/01 (Lunes):    Hace 2 días → CONTROLADO ✅
+├─ 07/01 (Martes):   AYER → A CONTROLAR 📋 (controlando HOY)
+├─ 08/01 (Miércoles): HOY → SALIENDO 🚚 (control mañana)
+├─ 09/01 (Jueves):   MAÑANA → PREPARANDO 📦 (asignar vehículos)
+└─ 10/01 (Viernes):  Pasado → PLANIFICADO 📅
 ```
 
-### Estados según contexto temporal
-| Día | Relación | Estados pedidos | Acciones disponibles |
-|-----|----------|-----------------|---------------------|
-| Hace 2+ días | Controlado | Todos entregados | Solo lectura |
-| Ayer | A controlar | En tránsito → marcar entregado | Controlar, ajustar, registrar pago |
-| Hoy | Activo | En tránsito, asignado | Saliendo a repartir |
-| Mañana | Futuro | Pendiente, asignado | Asignar vehículos, preparar |
+### Estados de días en calendario
+| Badge | Color | Descripción | Acciones |
+|-------|-------|-------------|----------|
+| **CONTROLADO** | Verde | Día pasado ya revisado | Solo consulta |
+| **CONTROLAR** | Naranja | Ayer, pendiente de revisar | Marcar entregados, ajustar, pagar |
+| **HOY** | Azul | Día actual | Repartos en curso |
+| **PLANIFICADO** | Gris | Días futuros | Asignar vehículos |
+
+### Datos de pago según estado del día
+- **Días sin controlar**: Muestran "XXX" en pagos (no calculados aún)
+- **Días controlados**: Muestran totales reales (efectivo + digital)
 
 ---
 
-## 🔀 INTERACCIÓN ENTRE MÓDULOS
+## INTERACCIÓN ENTRE MÓDULOS
 
 ### COTIZADOR
-**Responsabilidad**: Crear pedidos
-- Asignar fecha (modo reparto)
-- Generar cargo en CC
-- Descontar stock
-- Transición: `Borrador → En tránsito/Entregado`
+**Responsabilidad**: Crear pedidos nuevos
+- Buscar y agregar productos (teclado: ↑↓ Enter)
+- Seleccionar cliente (muestra saldo)
+- Aplicar descuentos (jerarquía: manual > cliente > lista)
+- Generar resumen WhatsApp / Remito PDF
+- Guardar borrador o confirmar pedido
+- **Transición**: `Borrador → En tránsito` o `→ Entregado`
 
 ### VENTAS
 **Responsabilidad**: Gestionar TODOS los pedidos
-- Ver todos (en tránsito + entregados)
-- Editar (incluso entregados con auditoría)
+- 3 vistas: Calendario | Lista | Borradores
+- Filtros: Estado, Tipo, Vehículo, Pago, Período
+- Editar pedidos (incluso entregados, con auditoría)
 - Cambiar estados: `En tránsito ↔ Entregado`
-- Registrar métodos de pago
-- Generar ajustes en CC
-- Exportar reportes
+- Cambiar tipo: `REPARTO ↔ FÁBRICA`
+- Registrar pagos (parciales o totales)
+- Eliminar con reintegro de stock
+- Exportar hoja reparto / Excel
+- Ver historial de cambios (timeline)
 
-### REPARTOS
-**Responsabilidad**: Organización logística
-- Visualizar calendario
-- Asignar vehículos
-- Ordenar visitas
-- Exportar hojas de reparto
-- **NO cambia estados** (solo lectura)
+### REPARTOS DÍA
+**Responsabilidad**: Organización logística diaria
+- Acceso: Click en día desde Dashboard o Ventas
+- Vista por vehículo (4 columnas)
+- Vista por ciudad
+- Asignar vehículos (modal, drag & drop, auto)
+- Reordenar visitas (drag & drop con campo orden_visita)
+- Exportar hoja de reparto imprimible
+- **NO cambia estados** (solo organiza)
+
+### CLIENTES
+**Responsabilidad**: Gestión de clientes y cuenta corriente
+- Tab 1: Información general
+- Tab 2: Cuenta Corriente (movimientos, pagos, saldo)
+- Tab 3: Historial de pedidos
+- Registrar pagos genéricos
+- Exportar estado de cuenta
+- Sincronización bidireccional con Ventas
 
 ---
 
-## 💰 MÉTODOS DE PAGO
+## MÉTODOS DE PAGO
 
 ### Dónde se registran
-1. **COTIZADOR modo FÁBRICA**: (Opcional) Al momento de la venta
-2. **MÓDULO VENTAS**: (Obligatorio) Al marcar como "Entregado"
-3. **MÓDULO CUENTA CORRIENTE**: Pagos genéricos manuales
+1. **COTIZADOR modo FÁBRICA**: Obligatorio al confirmar
+2. **VENTAS al marcar Entregado**: Obligatorio en modal
+3. **CUENTA CORRIENTE**: Pagos genéricos manuales
 
 ### Tipos de pago
-- **Efectivo**: Monto en efectivo
-- **Digital**: MercadoPago, transferencia, débito/crédito
-- **Mixto**: Combinación de efectivo + digital
+| Tipo | Descripción |
+|------|-------------|
+| **Efectivo** | Dinero en mano |
+| **Digital** | MercadoPago, transferencia, débito/crédito |
+| **Mixto** | Combinación (ej: $10.000 efectivo + $5.000 digital) |
 
-### Regla obligatoria
-❗ **NO se puede marcar un pedido como "Entregado" sin registrar método de pago**
+### Pagos parciales
+```
+Pedido total: $80.000
+Pago registrado: $50.000 (efectivo)
+Saldo pendiente: $30.000 (queda en CC del cliente)
+
+El pedido puede marcarse como ENTREGADO aunque no esté pago completo.
+```
+
+### Múltiples pagos
+Un pedido puede tener varios pagos:
+```
+Pedido #998 - Total: $80.000
+├─ Pago 1: $50.000 efectivo (al entregar)
+├─ Pago 2: $20.000 digital (días después)
+└─ Saldo: $10.000 pendiente
+```
 
 ---
 
-## 🔧 EDICIÓN POST-ENTREGA
+## EDICIÓN POST-ENTREGA
 
 ### Caso de uso típico
 ```
-Pedido planificado: 10 unidades Producto A
+Pedido planificado: 10 unidades Producto A @ $10.000
+Total original: $100.000
+
 Entregado real: 9 unidades (cliente no quiso una)
 
 Usuario en VENTAS:
-1. Busca pedido entregado
+1. Abre modal detalle del pedido
 2. Click "Editar"
 3. Cambia cantidad: 10 → 9
 4. Guarda
 
 Sistema (automático):
 ├─ Reintegra 1 unidad al stock
-├─ Recalcula total: $10.000 → $9.000
-├─ Genera AJUSTE en CC: -$1.000
+├─ Recalcula total: $100.000 → $90.000
+├─ Genera AJUSTE en CC: -$10.000 (abono)
+├─ Registra en historial de cambios:
+│   ├─ Usuario: admin@bambu.com
+│   ├─ Fecha: 08/01/2026 10:30
+│   ├─ Campo: cantidad Producto A
+│   ├─ Anterior: 10
+│   └─ Nuevo: 9
 └─ Cargo original NO se modifica (trazabilidad)
 ```
 
 ### Qué se puede editar post-entrega
 - ✅ Cantidades de productos
+- ✅ Agregar/quitar productos
 - ✅ Descuentos
-- ✅ Sumar/restar productos
-- ✅ Método de pago
+- ✅ Método de pago (agregar pagos adicionales)
 - ✅ Cambiar tipo: REPARTO ↔ FÁBRICA
 
-### Auditoría
-- Todos los cambios se registran
-- Usuario + fecha/hora de modificación
-- Historial completo de ajustes en CC
+### Impacto en stock
+| Acción | Efecto en stock |
+|--------|-----------------|
+| Aumentar cantidad | Descuenta más (valida disponibilidad) |
+| Reducir cantidad | Reintegra diferencia |
+| Agregar producto | Descuenta (valida disponibilidad) |
+| Quitar producto | Reintegra completo |
+
+### Sistema de auditoría
+Cada cambio se registra con:
+- Usuario que modificó
+- Fecha y hora
+- Campo modificado
+- Valor anterior → valor nuevo
+- IP (para backend)
+
+Timeline visible en modal de detalle del pedido.
 
 ---
 
-## ⚠️ REGLAS IMPORTANTES
+## REGLAS DE STOCK
 
-### Stock
-- Borrador: NO descuenta stock
-- En tránsito: Stock descontado
-- Entregado: Stock descontado
-- Cancelado: Stock REINTEGRADO
+### Por estado
+| Estado | Efecto en stock |
+|--------|-----------------|
+| Borrador | NO descuenta |
+| En tránsito | Descontado |
+| Entregado | Descontado |
+| Eliminado | REINTEGRADO |
 
-### Cuenta Corriente
-- Borrador: NO genera cargo
-- En tránsito: Cargo generado
-- Entregado: Cargo generado + pago registrado
-- Cancelado: Cargo ANULADO + pago reintegrado
+### Productos BAMBU (producción propia)
+- proveedor_id = 1 → "BAMBU"
+- Se pueden vender aunque stock sea 0 o negativo
+- No aplica restricción de stock (producción bajo demanda)
 
-### Tipos de pedido
-- **REPARTO**: Requiere vehículo asignado, fecha de entrega
-- **FÁBRICA**: Cliente retira, estado "Entregado" directo
-
-### Productos con cantidad negativa
-✅ **Permitido**: Los productos pueden tener cantidad negativa (devoluciones)
-
-### Listas de precios
-- **L1**: Precio base (más caro)
-- **L2**: 6.25% descuento
-- **L3**: 10% descuento
-- **Promocional**: Precio fijo independiente de lista
-
-### Descuentos
-**Jerarquía** (no acumulativos):
-1. Descuento personalizado manual
-2. Descuento fijo del cliente
-3. Descuento por lista (L2/L3)
+### Advertencias de stock
+- Stock < mínimo → Badge naranja "Stock bajo (X disponibles)"
+- Stock negativo → Badge rojo "NEGATIVO" con animación
 
 ---
 
-## 🎯 ESTADOS DE DÍAS EN CALENDARIO
+## CUENTA CORRIENTE
 
-| Badge | Descripción | Qué hacer |
-|-------|-------------|-----------|
-| **CONTROLADO** ✅ | Día pasado ya revisado | Solo consulta |
-| **A CONTROLAR** 📋 | Día de ayer, repartidores volvieron | Marcar entregados, ajustar, registrar pagos |
-| **HOY** 📍 | Día actual | Repartos saliendo, control mañana |
-| **PLANIFICADO** 📦 | Días futuros | Asignar vehículos, preparar repartos |
+### Tipos de movimientos
+| Tipo | Descripción | Efecto saldo |
+|------|-------------|--------------|
+| **CARGO** | Pedido confirmado | Aumenta deuda |
+| **PAGO** | Pago registrado | Reduce deuda |
+| **AJUSTE** | Edición post-entrega | +/- según diferencia |
+| **NOTA_CREDITO** | Pedido eliminado | Reduce deuda |
+
+### Saldos
+- **Negativo** (rojo): Cliente debe dinero
+- **Cero** (gris): Al día
+- **Positivo** (verde): Saldo a favor del cliente
+
+### Sincronización
+Los movimientos se sincronizan entre:
+- Ventas (al confirmar, editar, eliminar)
+- Cuenta Corriente (pagos manuales)
+- Cotizador (al confirmar con pago)
 
 ---
 
-## 📝 NOTAS TÉCNICAS
+## LISTAS DE PRECIOS
 
-### Pedidos sin cliente
-- Se permite crear pedidos sin cliente (ventas fábrica ocasionales)
-- Aparecen como "Cliente sin nombre"
-- NO generan cargo en cuenta corriente
-- Sí descontarán stock
+| Lista | Descuento | Umbral sugerido |
+|-------|-----------|-----------------|
+| **L1** | 0% (base) | Sin umbral |
+| **L2** | 6.25% | Compras >$250k |
+| **L3** | 10% | Compras >$1M |
+
+### Jerarquía de descuentos (NO acumulativos)
+1. **Descuento manual** (input %) - máxima prioridad
+2. **Descuento fijo del cliente** (configurado en perfil)
+3. **Lista de precios** (L1/L2/L3)
+
+### Base de cálculo
+Los descuentos se aplican sobre subtotal **MENOS productos en promoción**:
+```
+Subtotal: $100.000
+├─ Producto regular: $80.000
+└─ Producto en promoción: $20.000 (precio fijo, sin descuento adicional)
+
+Base para descuento: $80.000
+Descuento 10%: $8.000
+Total: $100.000 - $8.000 = $92.000
+```
+
+---
+
+## ATAJOS DE TECLADO
+
+### Cotizador
+| Atajo | Acción |
+|-------|--------|
+| `↑` `↓` | Navegar resultados búsqueda |
+| `Enter` | Seleccionar producto/cliente |
+| `Esc` | Cerrar modal/dropdown |
+
+### Global
+| Atajo | Acción |
+|-------|--------|
+| `Ctrl+K` / `Cmd+K` | Abrir buscador global (Dashboard) |
+
+---
+
+## NOTAS TÉCNICAS
 
 ### Borradores
-- Pueden guardarse en cualquier momento
-- Se recuperan desde VENTAS → Pestaña "Borradores"
-- Click "Editar" reabre cotizador con datos cargados
-- Útil para cotizaciones complejas o interrupciones
+- Se guardan en localStorage (prototipo) / DB (producción)
+- Recuperables desde Ventas → Pestaña "Borradores"
+- Click "Editar" → abre Cotizador con datos precargados
+- NO afectan stock ni CC hasta confirmar
 
 ### Cambio tipo pedido (REPARTO ↔ FÁBRICA)
 **REPARTO → FÁBRICA**:
 - Estado: En tránsito → Entregado
-- Vehículo: Se elimina
-- Fecha: Se asigna HOY
+- Vehículo: Se desasigna automáticamente
+- Fecha: Se mantiene
 
 **FÁBRICA → REPARTO**:
 - Estado: Entregado → En tránsito
-- Abre calendario para fecha
-- Vehículo: Sin asignar (asignar desde REPARTOS)
+- Requiere fecha de entrega
+- Vehículo: Sin asignar (asignar desde Repartos)
+
+### Productos en remito
+El orden de productos en remito/WhatsApp respeta el campo `orden` del producto:
+- Orden menor = primero en lista
+- Lógica: productos que van primero se cargan primero en camioneta
 
 ---
 
-**Última actualización**: 31 Diciembre 2025
-**Versión**: 1.0
+**Última actualización**: 07 Enero 2026
+**Versión**: 2.0
