@@ -1,5 +1,42 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [07 Enero 2026] - ✅ State-Manager COMPLETADO (7/7 fases)
+
+### Sistema de Estado Centralizado
+**Nuevo archivo**: `prototipos/shared/state-manager.js`
+
+Fuente única de verdad para todos los módulos del prototipo.
+
+**Características**:
+- ~80 pedidos generados consistentemente (lun-vie, 15-20/día)
+- Datos normalizados: clientes, productos, pedidos, pedido_items, vehículos
+- Persistencia localStorage (sobrevive refresh)
+- Fecha sistema centralizada: Miércoles 08 Enero 2026
+- Cálculos derivados: peso, total, carga vehículos
+
+**Módulos migrados**:
+| Módulo | Líneas eliminadas | Mejoras |
+|--------|-------------------|---------|
+| Dashboard | ~50 | Alertas dinámicas, stats reales |
+| Clientes | ~100 | Soporte `?id=` en URL |
+| Ventas | ~430 | Calendario enero 2026, items reales |
+| Repartos | ~250 | Navegación entre días funcional |
+
+**Total**: ~830 líneas de datos mock hardcodeados eliminadas
+
+**API disponible**:
+```javascript
+BambuState.init()
+BambuState.get('pedidos')
+BambuState.getPedidos({ fecha, estado, tipo })
+BambuState.calcularPesoPedido(id)
+BambuState.calcularCargaVehiculo(vehiculoId, fecha)
+```
+
+**Documentación**: `docs/PLAN-STATE-MANAGER.md`
+
+---
+
 ## [06 Enero 2026] - ✅ FASE 2 COMPLETADA: Auditoría PRD al 100%
 
 ### Fase 2: Auditoría PRD - COMPLETADA
