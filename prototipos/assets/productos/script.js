@@ -45,6 +45,9 @@ const STOCK_BAJO_LIMITE = 20;
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Cargar orden guardado desde localStorage (PRD 4.5)
+    cargarOrdenGuardado();
+
     // Cargar filtros desde localStorage (persistencia)
     cargarFiltrosGuardados();
 
@@ -111,6 +114,124 @@ function initEventListeners() {
             }
         });
     });
+}
+
+// ============================================================================
+// DRAG & DROP - REORDENAR PRODUCTOS
+// PRD: prd/productos.html - Sección 3.4, 4.5
+// ============================================================================
+
+/**
+ * Inicializa SortableJS para permitir reordenar productos arrastrando.
+ *
+ * LÓGICA DE NEGOCIO (PRD 3.4, 4.5):
+ * - El orden de productos define cómo aparecen en el cotizador
+ * - Solo se puede reordenar cuando NO hay filtros activos
+ * - Al soltar, se recalcula el campo 'orden' de todos los productos
+ * - El nuevo orden se persiste en localStorage (mock) y se refleja en UI
+ */
+let sortableInstance = null;
+
+function inicializarDragDrop() {
+    const tbody = document.getElementById('tbody-productos');
+
+    // Destruir instancia anterior si existe
+    if (sortableInstance) {
+        sortableInstance.destroy();
+        sortableInstance = null;
+    }
+
+    // Solo habilitar drag & drop si NO hay filtros activos
+    const hayFiltrosActivos = filtrosActuales.busqueda ||
+                              filtrosActuales.proveedor ||
+                              filtrosActuales.disponibilidad ||
+                              filtrosActuales.promocion ||
+                              filtrosActuales.stockBajo;
+
+    if (hayFiltrosActivos) {
+        // Deshabilitar handles visualmente
+        tbody.querySelectorAll('.drag-handle').forEach(handle => {
+            handle.style.opacity = '0.3';
+            handle.style.cursor = 'not-allowed';
+            handle.title = 'Limpiar filtros para reordenar';
+        });
+        return;
+    }
+
+    // Habilitar handles
+    tbody.querySelectorAll('.drag-handle').forEach(handle => {
+        handle.style.opacity = '1';
+        handle.style.cursor = 'grab';
+        handle.title = 'Arrastrar para reordenar';
+    });
+
+    // Inicializar SortableJS
+    sortableInstance = new Sortable(tbody, {
+        handle: '.drag-handle',
+        animation: 150,
+        ghostClass: 'drag-ghost',
+        chosenClass: 'drag-chosen',
+        dragClass: 'drag-active',
+
+        onEnd: function(evt) {
+            // PRD 4.5: Recalcular orden de todos los productos
+            actualizarOrdenProductos();
+        }
+    });
+}
+
+/**
+ * Recalcula el campo 'orden' de todos los productos según posición en DOM.
+ *
+ * LÓGICA:
+ * - Recorre las filas del tbody en orden actual
+ * - Asigna orden secuencial (1, 2, 3...)
+ * - Actualiza productosLocal y re-renderiza
+ */
+function actualizarOrdenProductos() {
+    const tbody = document.getElementById('tbody-productos');
+    const filas = tbody.querySelectorAll('tr[data-id]');
+
+    filas.forEach((fila, index) => {
+        const productoId = parseInt(fila.dataset.id);
+        const producto = productosLocal.find(p => p.id === productoId);
+        if (producto) {
+            producto.orden = index + 1;
+        }
+    });
+
+    // Persistir en localStorage (mock de persistencia)
+    guardarOrdenProductos();
+
+    // Re-renderizar para actualizar números de orden
+    renderizarTabla();
+
+    showToast('Orden actualizado', 'success');
+}
+
+/**
+ * Guarda el orden actual de productos en localStorage.
+ * En producción real, esto sería una llamada API.
+ */
+function guardarOrdenProductos() {
+    const ordenMap = productosLocal.map(p => ({ id: p.id, orden: p.orden }));
+    localStorage.setItem('productos_orden', JSON.stringify(ordenMap));
+}
+
+/**
+ * Restaura el orden de productos desde localStorage al iniciar.
+ */
+function cargarOrdenGuardado() {
+    const ordenGuardado = localStorage.getItem('productos_orden');
+    if (ordenGuardado) {
+        const ordenMap = JSON.parse(ordenGuardado);
+        ordenMap.forEach(item => {
+            const producto = productosLocal.find(p => p.id === item.id);
+            if (producto) {
+                producto.orden = item.orden;
+            }
+        });
+    }
 }
 
 // ============================================================================
@@ -186,6 +307,9 @@ function renderizarTabla() {
             </tr>
         `;
     }).join('');
+
+    // Inicializar drag & drop después de renderizar (PRD 3.4)
+    inicializarDragDrop();
 }
 
 function aplicarFiltros() {
@@ -451,10 +575,25 @@ function guardarProducto() {
 
     // PRD 4.5: Validar precio según modo promoción
     if (enPromocion) {
-        // Producto en promoción: solo validar precio_promocional
+        // Producto en promoción: validar precio_promocional > 0
         if (!precioPromo || precioPromo <= 0) {
             document.getElementById('error-precio-promo').classList.remove('hidden');
             showToast('El precio promocional debe ser mayor a 0', 'error');
+            return;
+        }
+
+        // PRD 4.1: Validar que precio promocional < precio L1
+        // En edición: comparar con precio_l1 del producto existente
+        // En creación: comparar con precio_base ingresado
+        const precioBaseReferencia = id
+            ? productosLocal.find(p => p.id == id)?.precio_l1 || precioL1
+            : precioL1;
+
+        if (precioBaseReferencia > 0 && precioPromo >= precioBaseReferencia) {
+            document.getElementById('error-precio-promo').textContent =
+                `El precio promocional debe ser menor a $${precioBaseReferencia.toLocaleString('es-AR')}`;
+            document.getElementById('error-precio-promo').classList.remove('hidden');
+            showToast('El precio promocional debe ser menor al precio base', 'error');
             return;
         }
     } else {
@@ -705,12 +844,47 @@ function cerrarModalEliminar() {
     document.getElementById('modal-confirmar-eliminar').classList.add('hidden');
 }
 
+// ============================================================================
+// REGLA DE NEGOCIO: Restricción de Eliminación
+// PRD: prd/productos.html - Sección 3.7
+// ============================================================================
+
+/**
+ * Verifica si un producto tiene pedidos asociados.
+ *
+ * LÓGICA DE NEGOCIO (PRD 3.7):
+ * - No se puede eliminar un producto que tiene pedidos históricos
+ * - Esto preserva la integridad de datos para estadísticas y auditoría
+ *
+ * @param {number} productoId - ID del producto a verificar
+ * @returns {number} - Cantidad de pedidos asociados (0 si no tiene)
+ */
+function contarPedidosProducto(productoId) {
+    // PEDIDOS_PRODUCTOS contiene el detalle de productos por pedido
+    if (typeof PEDIDOS_PRODUCTOS === 'undefined') return 0;
+    return PEDIDOS_PRODUCTOS.filter(pp => pp.producto_id == productoId).length;
+}
+
 function confirmarEliminar() {
     const productoId = document.getElementById('eliminar-producto-id').value;
+    const producto = productosLocal.find(p => p.id == productoId);
 
-    // En producción, verificar si tiene pedidos asociados
-    // Por ahora, simular eliminación
+    if (!producto) {
+        cerrarModalEliminar();
+        return;
+    }
 
+    // PRD 3.7: Verificar si tiene pedidos asociados antes de eliminar
+    const cantidadPedidos = contarPedidosProducto(productoId);
+
+    if (cantidadPedidos > 0) {
+        // No permitir eliminación - mostrar mensaje de error
+        showToast(`No se puede eliminar "${producto.nombre}" porque tiene ${cantidadPedidos} pedido(s) asociado(s)`, 'error');
+        cerrarModalEliminar();
+        return;
+    }
+
+    // Sin pedidos asociados: proceder con eliminación
     const index = productosLocal.findIndex(p => p.id == productoId);
     if (index !== -1) {
         const nombreEliminado = productosLocal[index].nombre;

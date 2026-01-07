@@ -441,6 +441,21 @@
     cursor: grabbing;
 }
 
+/* SortableJS - Estados de arrastre */
+.drag-ghost {
+    opacity: 0.4;
+    background: var(--color-primary-bg) !important;
+}
+
+.drag-chosen {
+    background: var(--bg-hover) !important;
+    box-shadow: var(--shadow-md);
+}
+
+.drag-active {
+    cursor: grabbing !important;
+}
+
 /* ============================================================================
    MODALES - ESTILOS ESPECÍFICOS
    ============================================================================ */
