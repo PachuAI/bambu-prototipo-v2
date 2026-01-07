@@ -963,13 +963,28 @@
 
 /* Mode switch */
 [data-theme="dark"] .mode-switch {
-    background: var(--bg-hover) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] #mode-fabrica:checked + label,
 [data-theme="dark"] #mode-reparto:checked + label {
-    background: var(--bg-sidebar) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: none;
 }
+
+[data-theme="dark"] .switch-label {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] #mode-fabrica:checked + label {
+    color: var(--color-accent) !important;
+}
+
+[data-theme="dark"] #mode-reparto:checked + label {
+    color: var(--color-danger) !important;
+}
+
 
 /* Date input inline */
 [data-theme="dark"] .date-input-inline {
