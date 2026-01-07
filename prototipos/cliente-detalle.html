@@ -92,9 +92,9 @@
                     <button class="btn-icon-sm" onclick="location.href='clientes.html'">
                         <i class="fas fa-arrow-left"></i>
                     </button>
-                    <h1 class="customer-title">9 DE JULIO 902</h1>
-                    <span class="badge-status active">ACTIVO</span>
-                    <span class="badge-discount"><i class="fas fa-tag"></i> 10%</span>
+                    <h1 class="customer-title" id="cliente-direccion">Cargando...</h1>
+                    <span class="badge-status active" id="cliente-estado">-</span>
+                    <span class="badge-discount" id="cliente-lista"><i class="fas fa-tag"></i> -</span>
                 </div>
                 <div class="header-center">
                     <div class="tab-link active" data-tab="cc">Cuenta Corriente</div>
@@ -349,25 +349,8 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-bold">#1435</td>
-                                    <td>22/12/2025</td>
-                                    <td><span class="badge-status entregado">Entregado</span></td>
-                                    <td>15 productos</td>
-                                    <td class="text-bold">$50.000</td>
-                                    <td class="text-right"><button class="btn-icon-sm btn-view"><i
-                                                class="fas fa-eye"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td class="text-bold">#1420</td>
-                                    <td>19/12/2025</td>
-                                    <td><span class="badge-status entregado">Entregado</span></td>
-                                    <td>8 productos</td>
-                                    <td class="text-bold">$120.000</td>
-                                    <td class="text-right"><button class="btn-icon-sm btn-view"><i
-                                                class="fas fa-eye"></i></button></td>
-                                </tr>
+                            <tbody id="pedidos-historial-tbody">
+                                <!-- Cargado dinámicamente desde cliente-detalle.js -->
                             </tbody>
                         </table>
                     </div>
@@ -569,7 +552,9 @@
     </div>
 
     <script src="shared/utils.js"></script>
+    <script src="shared/state-manager.js"></script>
     <script src="assets/clientes/script.js"></script>
+    <script src="assets/clientes/cliente-detalle.js"></script>
 </body>
 
 </html>

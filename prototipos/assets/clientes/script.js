@@ -1,9 +1,18 @@
 /* Bambu CRM - Clientes V2 Script */
+/* Migrado a BambuState (Fase 5) */
+
+// Variable global para compatibilidad con funciones existentes
+let CLIENTES = [];
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Clientes V2 Loaded');
+    // Inicializar BambuState
+    BambuState.init();
 
-    // 1. Cargar clientes desde mock-data.js
+    // Cargar clientes desde BambuState
+    CLIENTES = BambuState.get('clientes');
+    console.log('Clientes V2 Loaded (usando BambuState)');
+
+    // 1. Renderizar tabla de clientes
     renderizarClientes();
 
     // 2. Tabs Logic (Detail View)
