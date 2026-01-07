@@ -1,18 +1,50 @@
-/* mock data */
-const MOCK_PRODUCTS = [
-    { id: 1, name: "Granel detergente", price: 915, stock: 999500, weight: 1.2 },
-    { id: 2, name: "Detergente tipo magistral x1 lt", price: 1600, stock: 9100, weight: 1.0 },
-    { id: 3, name: "Detergente tipo magistral x5 lts", price: 5800, stock: 8740, weight: 5.0 },
-    { id: 4, name: "Esponja Dorada", price: 150, stock: 500, weight: 0.1 },
-    { id: 5, name: "Lavandina x5 lts", price: 2500, stock: 120, weight: 5.0 }
-];
+/**
+ * BAMBU CRM V2 - COTIZADOR
+ * Usa BambuState como fuente de datos
+ * PRD: prd/cotizador-especificacion.html
+ */
 
-const MOCK_CLIENTS = [
-    { id: 151, name: "ARAUCARIAS 371", phone: "2994 22-3530", address: "Araucarias 371", discount: 0 },
-    { id: 189, name: "AV. DEL TRABAJADOR", phone: "2995 15-0070", address: "Av. Del Trabajador 500", discount: 15 },
-    { id: 417, name: "CARCARAÑÁ 222", phone: "2995 16-2569", address: "Carcarañá 222", discount: 0 },
-    { id: 999, name: "Carlos ⭐", phone: "299 123-4567", address: "Calle Falsa 123", discount: 10 } // Requested Star Client
-];
+// ============================================================================
+// HELPERS: Adaptar datos de BambuState al formato del cotizador
+// ============================================================================
+
+/**
+ * Obtiene productos disponibles desde BambuState
+ * @returns {Array} Productos adaptados al formato del cotizador
+ */
+function getProductosDisponibles() {
+    const productos = BambuState.getProductos({ disponible: true });
+    return productos.map(p => ({
+        id: p.id,
+        name: p.nombre,
+        price: p.precio_l1,  // Precio base L1
+        price_l1: p.precio_l1,
+        price_l2: p.precio_l2,
+        price_l3: p.precio_l3,
+        stock: p.stock_actual,
+        weight: p.peso_kg,
+        en_promocion: p.en_promocion,
+        precio_promocional: p.precio_promocional
+    }));
+}
+
+/**
+ * Obtiene clientes activos desde BambuState
+ * @returns {Array} Clientes adaptados al formato del cotizador
+ */
+function getClientesActivos() {
+    const clientes = BambuState.getClientes({ estado: 'activo' });
+    return clientes.map(c => ({
+        id: c.id,
+        name: c.direccion,  // Dirección como identificador principal
+        phone: c.telefono,
+        address: c.direccion,
+        saldo: c.saldo,
+        lista_precio: c.lista_precio,
+        // Descuento según lista de precio del cliente
+        discount: c.lista_precio === 'L2' ? 6.25 : (c.lista_precio === 'L3' ? 10 : 0)
+    }));
+}
 
 /* STATE */
 let state = {
@@ -87,9 +119,16 @@ const els = {
 
 /* INIT */
 function init() {
+    // Inicializar BambuState
+    BambuState.init();
+
     setupListeners();
     renderCart();
     updateModeUI();
+
+    console.log('[Cotizador] Inicializado con BambuState');
+    console.log('[Cotizador] Productos disponibles:', getProductosDisponibles().length);
+    console.log('[Cotizador] Clientes activos:', getClientesActivos().length);
 }
 
 function setupListeners() {
@@ -149,18 +188,13 @@ function setupListeners() {
     els.closeConfirm.addEventListener('click', closeSafety);
     els.btnCancelConfirm.addEventListener('click', closeSafety);
 
-    els.btnDoConfirm.addEventListener('click', () => {
-        // Actual Commit Logic
-        if (state.mode === 'REPARTO') {
-            const date = els.inputDateInline.value;
-            const client = state.selectedClient ? state.selectedClient.name : "Cliente sin nombre";
-            alert(`Pedido confirmado para REPARTO.\nFecha: ${date}\nCliente: ${client}\n(Resetting...)`);
-        } else {
-            alert("Pedido confirmado para FÁBRICA.\nSe entrega ahora.\n(Resetting...)");
-        }
-        // Reset
-        window.location.reload();
-    });
+    els.btnDoConfirm.addEventListener('click', confirmarPedido);
+
+    // Borrador Button
+    const btnBorrador = document.getElementById('btn-borrador');
+    if (btnBorrador) {
+        btnBorrador.addEventListener('click', guardarBorrador);
+    }
 
     // Summary Modal
     els.btnResumen.addEventListener('click', openSummaryModal);
@@ -221,23 +255,31 @@ function searchProducts(query) {
         return;
     }
 
-    const matches = MOCK_PRODUCTS.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
+    const productos = getProductosDisponibles();
+    const matches = productos.filter(p => p.name.toLowerCase().includes(query.toLowerCase()));
 
-    els.resultsProduct.innerHTML = matches.map(p => `
-        <div class="prod-row compact" onclick="addToCart(${p.id})">
-            <div class="prod-info-line">
-                <span class="p-name">${p.name}</span>
-                <span class="p-meta">Stock: ${p.stock} | $${p.price}</span>
+    els.resultsProduct.innerHTML = matches.map(p => {
+        // Badge de promoción si aplica
+        const promoBadge = p.en_promocion ? '<span class="promo-badge">PROMO</span>' : '';
+        const precioMostrar = p.en_promocion && p.precio_promocional ? p.precio_promocional : p.price;
+
+        return `
+            <div class="prod-row compact" onclick="addToCart(${p.id})">
+                <div class="prod-info-line">
+                    <span class="p-name">${p.name} ${promoBadge}</span>
+                    <span class="p-meta">Stock: ${p.stock} | $${precioMostrar.toLocaleString()}</span>
+                </div>
+                <div class="prod-add"><i class="fas fa-plus-circle"></i></div>
             </div>
-            <div class="prod-add"><i class="fas fa-plus-circle"></i></div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     els.resultsProduct.classList.remove('hidden');
 }
 
 function addToCart(productId) {
-    const product = MOCK_PRODUCTS.find(p => p.id === productId);
+    const productos = getProductosDisponibles();
+    const product = productos.find(p => p.id === productId);
     if (!product) return;
 
     // Check if exists logic (Aggregation V3)
@@ -307,8 +349,6 @@ function removeFromCart(index) {
 
 /* LOGIC: CLIENTS */
 function searchClients(query) {
-    console.log('searchClients called with:', query); // DEBUG
-
     if (query.length < 2) {
         els.resultsCliente.classList.add('hidden');
         // If input is empty, reset to "Cliente sin nombre"
@@ -319,25 +359,31 @@ function searchClients(query) {
         return;
     }
 
-    const matches = MOCK_CLIENTS.filter(c => c.name.toLowerCase().includes(query.toLowerCase()));
-    console.log('Matches found:', matches); // DEBUG
+    const clientes = getClientesActivos();
+    const matches = clientes.filter(c => c.name.toLowerCase().includes(query.toLowerCase()));
 
-    els.resultsCliente.innerHTML = matches.map(c => `
-        <div class="prod-row compact" onclick="selectClient(${c.id})">
-            <div class="prod-info-line">
-                <span class="p-name">${c.name}</span>
-                <span class="p-meta">${c.address}</span>
+    els.resultsCliente.innerHTML = matches.map(c => {
+        // Mostrar saldo con color según estado
+        const saldoColor = c.saldo < 0 ? 'color: #ef4444;' : (c.saldo > 0 ? 'color: #10b981;' : '');
+        const saldoTexto = c.saldo !== 0 ? `<span style="${saldoColor}">$${c.saldo.toLocaleString()}</span>` : '';
+
+        return `
+            <div class="prod-row compact" onclick="selectClient(${c.id})">
+                <div class="prod-info-line">
+                    <span class="p-name">${c.name}</span>
+                    <span class="p-meta">${c.phone} ${saldoTexto}</span>
+                </div>
+                <div class="prod-add"><i class="fas fa-check-circle"></i></div>
             </div>
-            <div class="prod-add"><i class="fas fa-check-circle"></i></div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     els.resultsCliente.classList.remove('hidden');
-    console.log('Results should be visible now'); // DEBUG
 }
 
 function selectClient(id) {
-    const client = MOCK_CLIENTS.find(c => c.id === id);
+    const clientes = getClientesActivos();
+    const client = clientes.find(c => c.id === id);
     state.selectedClient = client;
 
     // Update input value with client name
@@ -351,27 +397,53 @@ function selectClient(id) {
 }
 
 /* LOGIC: FINANCIALS WITH HYBRID AUTO/MANUAL LEVELS */
+/**
+ * REGLA DE NEGOCIO CRÍTICA (PRD Sección 6.3):
+ * Los descuentos (manual, cliente, lista) se aplican sobre la BASE DESCUENTO,
+ * que EXCLUYE productos en promoción.
+ *
+ * Fórmula:
+ *   subtotal = suma de todos los productos
+ *   baseDescuento = suma de productos donde en_promocion=false
+ *   descuentoMonto = baseDescuento * (descuento% / 100)
+ *   total = subtotal - descuentoMonto + ajuste
+ */
 function updateTotals() {
-    // 1. Subtotal
-    const subtotal = state.cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+    // 1. Subtotal (todos los productos)
+    const subtotal = state.cart.reduce((acc, item) => {
+        // Usar precio promocional si está en promoción
+        const precio = (item.en_promocion && item.precio_promocional)
+            ? item.precio_promocional
+            : item.price;
+        return acc + (precio * item.qty);
+    }, 0);
+
+    // 2. Base de descuento (EXCLUYE productos en promoción)
+    const baseDescuento = state.cart.reduce((acc, item) => {
+        if (item.en_promocion) return acc; // Excluir promociones
+        return acc + (item.price * item.qty);
+    }, 0);
+
+    // 3. Peso total
     const totalWeight = state.cart.reduce((acc, item) => acc + (item.weight * item.qty), 0);
 
     els.txtSubtotal.textContent = `$${subtotal.toLocaleString()}`;
     els.txtPeso.textContent = `${totalWeight.toFixed(2)}kg`;
 
-    // 2. Check auto-levels ONLY if not manually applied
+    // 4. Check auto-levels ONLY if not manually applied (usa baseDescuento para threshold)
     if (!state.levelAppliedManually) {
-        checkAutoLevels(subtotal);
+        checkAutoLevels(baseDescuento);
     }
 
-    // 3. Discounts (Hierarchy: Manual > Client > Level)
+    // 5. Discounts (Hierarchy: Manual > Client > Level)
+    // IMPORTANTE: Aplica sobre baseDescuento, NO sobre subtotal
     let discountAmount = 0;
     const rowClientDisc = document.getElementById('row-client-discount');
     const txtClientDisc = document.getElementById('txt-client-discount');
 
     if (state.discountManual > 0) {
         // Priority 1: Manual discount
-        discountAmount = subtotal * (state.discountManual / 100);
+        discountAmount = baseDescuento * (state.discountManual / 100);
         rowClientDisc.classList.add('hidden');
         // Reset levels visual
         els.chkL2.checked = false;
@@ -380,7 +452,7 @@ function updateTotals() {
         els.btnApplyL3.classList.remove('active');
     } else if (state.selectedClient && state.selectedClient.discount > 0) {
         // Priority 2: Client fixed discount
-        discountAmount = subtotal * (state.selectedClient.discount / 100);
+        discountAmount = baseDescuento * (state.selectedClient.discount / 100);
         rowClientDisc.classList.remove('hidden');
         txtClientDisc.textContent = `-$${discountAmount.toLocaleString()} (${state.selectedClient.discount}%)`;
         // Reset levels visual
@@ -392,16 +464,22 @@ function updateTotals() {
         // Priority 3: Price level discount (auto or manual)
         rowClientDisc.classList.add('hidden');
         if (state.discountLevel > 0) {
-            discountAmount = subtotal * (state.discountLevel / 100);
+            discountAmount = baseDescuento * (state.discountLevel / 100);
         }
     }
 
-    // 4. Final Calculation
+    // 6. Final Calculation
     const total = subtotal - discountAmount + state.adjustment;
     els.txtTotal.textContent = `$${total.toLocaleString()}`;
 
-    // 5. Auto-fill payment amount if checked
+    // 7. Auto-fill payment amount if checked
     autoFillPaymentAmount(total);
+
+    // Debug: mostrar base de descuento si hay promociones
+    const productosPromo = state.cart.filter(i => i.en_promocion);
+    if (productosPromo.length > 0) {
+        console.log(`[Cotizador] Base descuento: $${baseDescuento.toLocaleString()} (excluye ${productosPromo.length} promo)`);
+    }
 }
 
 /* AUTO-CHECK THRESHOLDS (Only if not manually applied) */
@@ -583,6 +661,182 @@ function openSummaryModal() {
         <div>• x${item.qty} - ${item.name} - $${(item.price * item.qty).toLocaleString()}</div>
     `).join('');
     document.getElementById('preview-items-list').innerHTML = itemsHtml || "<div>(Sin productos)</div>";
+}
+
+// ============================================================================
+// GUARDAR BORRADOR - Persistencia en BambuState
+// PRD: Sección 8.2 - Botones de acción
+// ============================================================================
+
+/**
+ * Guarda el pedido actual como borrador
+ * PRD: Guardar en localStorage, generar ID, mantener en lista borradores
+ */
+function guardarBorrador() {
+    // Validar que hay productos
+    if (state.cart.length === 0) {
+        alert('Agregá al menos un producto para guardar el borrador');
+        return;
+    }
+
+    // Crear borrador en BambuState
+    const borrador = BambuState.crearBorrador({
+        cliente_id: state.selectedClient?.id || null,
+        tipo: state.mode.toLowerCase(),
+        fecha: els.inputDateInline.value || BambuState.FECHA_SISTEMA,
+        direccion: state.selectedClient?.address || 'Cliente sin nombre',
+        ciudad: 'Neuquén',
+        notas: state.notes || null
+    });
+
+    // Agregar items al borrador
+    state.cart.forEach(item => {
+        const precio = (item.en_promocion && item.precio_promocional)
+            ? item.precio_promocional
+            : item.price;
+
+        BambuState.agregarItemPedido(borrador.id, {
+            producto_id: item.id,
+            cantidad: item.qty,
+            precio_unitario: precio
+        });
+    });
+
+    // Guardar en localStorage
+    BambuState.save();
+
+    // Mostrar notificación
+    console.log(`📝 Borrador ${borrador.numero} guardado`);
+
+    // Notificación visual
+    const notif = document.createElement('div');
+    notif.style.cssText = 'position:fixed;top:20px;right:20px;background:#3b82f6;color:white;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:500;';
+    notif.textContent = `📝 Borrador ${borrador.numero} guardado`;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+
+    // Opcional: limpiar formulario después de guardar borrador
+    // resetearFormulario();
+}
+
+// ============================================================================
+// CONFIRMAR PEDIDO - Persistencia en BambuState
+// PRD: Sección 8.2 - Botones de acción
+// ============================================================================
+
+/**
+ * Confirma el pedido actual y lo persiste en BambuState
+ * PRD: Al confirmar → Guardar → Limpiar → Focus en buscador (SIN reload)
+ */
+function confirmarPedido() {
+    // Validar que hay productos
+    if (state.cart.length === 0) {
+        alert('Agregá al menos un producto para confirmar el pedido');
+        return;
+    }
+
+    // Calcular total
+    const total = parseFloat(els.txtTotal.textContent.replace(/[$,]/g, '')) || 0;
+
+    // Determinar estado inicial según modo
+    const esReparto = state.mode === 'REPARTO';
+    const fecha = esReparto ? els.inputDateInline.value : BambuState.FECHA_SISTEMA;
+    const estadoInicial = esReparto ? 'en transito' : 'entregado';
+
+    // Crear pedido en BambuState
+    const nuevoPedido = BambuState.crearPedido({
+        cliente_id: state.selectedClient?.id || null,
+        tipo: esReparto ? 'reparto' : 'fabrica',
+        estado: estadoInicial,
+        fecha: fecha,
+        direccion: state.selectedClient?.address || 'Cliente sin nombre',
+        ciudad: 'Neuquén',  // Default, en producción vendría del cliente
+        notas: state.notes || null,
+        vehiculo_id: null  // Se asigna después en repartos-dia
+    });
+
+    // Agregar items al pedido
+    state.cart.forEach(item => {
+        const precio = (item.en_promocion && item.precio_promocional)
+            ? item.precio_promocional
+            : item.price;
+
+        BambuState.agregarItemPedido(nuevoPedido.id, {
+            producto_id: item.id,
+            cantidad: item.qty,
+            precio_unitario: precio
+        });
+    });
+
+    // Guardar en localStorage
+    BambuState.save();
+
+    // Cerrar modal de confirmación
+    els.modalConfirm.classList.add('hidden');
+
+    // Mostrar notificación
+    const clienteNombre = state.selectedClient?.name || 'Sin cliente';
+    const tipoTexto = esReparto ? `REPARTO (${fecha})` : 'FÁBRICA';
+    console.log(`✅ Pedido ${nuevoPedido.numero} confirmado - ${tipoTexto}`);
+
+    // Mostrar notificación visual si existe la función
+    if (typeof mostrarNotificacion === 'function') {
+        mostrarNotificacion(`✅ Pedido ${nuevoPedido.numero} confirmado`);
+    } else {
+        // Fallback: notificación simple
+        const notif = document.createElement('div');
+        notif.style.cssText = 'position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:500;';
+        notif.textContent = `✅ Pedido ${nuevoPedido.numero} confirmado`;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
+    }
+
+    // Resetear formulario (SIN reload)
+    resetearFormulario();
+
+    // Focus en buscador de productos
+    els.inputProduct.focus();
+}
+
+/**
+ * Limpia todos los campos del cotizador para nuevo pedido
+ * PRD: Sección 1.2 - "Flujo continuo: al confirmar, vuelve automáticamente a nueva cotización"
+ */
+function resetearFormulario() {
+    // Limpiar carrito
+    state.cart = [];
+    state.selectedClient = null;
+    state.discountManual = 0;
+    state.discountLevel = 0;
+    state.levelAppliedManually = false;
+    state.adjustment = 0;
+    state.notes = "";
+
+    // Limpiar inputs
+    els.inputProduct.value = '';
+    els.inputClientSearch.value = '';
+    els.inputDiscManual.value = '';
+    els.inputAdjustment.value = '';
+    els.inputNotes.value = '';
+    els.inputNotes.classList.add('hidden');
+
+    // Reset fecha a hoy
+    const today = new Date().toISOString().split('T')[0];
+    els.inputDateInline.value = today;
+
+    // Reset payment inputs
+    els.chkEfectivo.checked = false;
+    els.chkDigital.checked = false;
+    els.inputMontoRecibido.value = '';
+    els.inputMontoEfectivo.value = '';
+    els.inputMontoDigital.value = '';
+    els.paymentInfo.classList.add('hidden');
+
+    // Re-renderizar UI
+    renderCart();
+    updateTotals();
+
+    console.log('[Cotizador] Formulario reseteado para nuevo pedido');
 }
 
 // Start

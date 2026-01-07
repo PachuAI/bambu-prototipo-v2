@@ -731,6 +731,84 @@ const BambuState = {
         }
 
         return errores;
+    },
+
+    // ========================================================================
+    // MÉTODOS DE CREACIÓN - Para uso desde Cotizador y otros módulos
+    // ========================================================================
+
+    /**
+     * Crea un nuevo pedido
+     * @param {Object} datos - { cliente_id, tipo, estado, fecha, direccion, ciudad, notas, vehiculo_id }
+     * @returns {Object} El pedido creado con id y numero asignados
+     */
+    crearPedido(datos) {
+        if (!this._state.pedidos) this._state.pedidos = [];
+
+        // Generar nuevo ID (max + 1)
+        const maxId = this._state.pedidos.reduce((max, p) => Math.max(max, p.id), 0);
+        const nuevoId = maxId + 1;
+
+        // Generar número de pedido
+        const numero = `#${String(nuevoId).padStart(3, '0')}`;
+
+        const nuevoPedido = {
+            id: nuevoId,
+            numero,
+            cliente_id: datos.cliente_id || null,
+            tipo: datos.tipo || 'reparto',
+            estado: datos.estado || 'pendiente',
+            fecha: datos.fecha || this.FECHA_SISTEMA,
+            direccion: datos.direccion || '',
+            ciudad: datos.ciudad || 'Neuquén',
+            notas: datos.notas || null,
+            vehiculo_id: datos.vehiculo_id || null,
+            metodo_pago: datos.metodo_pago || null,
+            monto_efectivo: datos.monto_efectivo || null,
+            monto_digital: datos.monto_digital || null
+        };
+
+        this._state.pedidos.push(nuevoPedido);
+        console.log(`[BambuState] Pedido ${numero} creado`);
+
+        return nuevoPedido;
+    },
+
+    /**
+     * Agrega un item a un pedido
+     * @param {number} pedidoId
+     * @param {Object} datos - { producto_id, cantidad, precio_unitario }
+     * @returns {Object} El item creado
+     */
+    agregarItemPedido(pedidoId, datos) {
+        if (!this._state.pedido_items) this._state.pedido_items = [];
+
+        // Generar nuevo ID
+        const maxId = this._state.pedido_items.reduce((max, i) => Math.max(max, i.id), 0);
+        const nuevoId = maxId + 1;
+
+        const nuevoItem = {
+            id: nuevoId,
+            pedido_id: pedidoId,
+            producto_id: datos.producto_id,
+            cantidad: datos.cantidad || 1,
+            precio_unitario: datos.precio_unitario || 0
+        };
+
+        this._state.pedido_items.push(nuevoItem);
+        return nuevoItem;
+    },
+
+    /**
+     * Crea un pedido borrador
+     * @param {Object} datos - Mismos datos que crearPedido pero estado='borrador'
+     * @returns {Object} El borrador creado
+     */
+    crearBorrador(datos) {
+        return this.crearPedido({
+            ...datos,
+            estado: 'borrador'
+        });
     }
 };
 
