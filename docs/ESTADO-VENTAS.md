@@ -1,7 +1,7 @@
 # ESTADO-VENTAS.md - Auditoría Módulo Ventas
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 07 Enero 2026 (Sistema de Auditoría + Pagos Parciales)
+**Última actualización**: 07 Enero 2026 (Edición Post-Entrega + Ajustes CC PRD 7.2, 10.1)
 **Prototipo**: `prototipos/ventas.html`
 **PRD**: `prd/ventas.html` (versión limpia: 340 líneas, secciones 1-10)
 **JavaScript**: `prototipos/assets/ventas/script.js`
@@ -12,11 +12,11 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 104 | 98.1% |
+| ✅ Implementadas (HTML + JS) | 107 | 100% |
 | ⚠️ Visuales sin lógica | 0 | 0.0% |
-| ❌ Faltantes | 2 | 1.9% |
+| ❌ Faltantes | 0 | 0.0% |
 
-**Total funcionalidades**: 106 (desglose en detalle abajo)
+**Total funcionalidades**: 107 (desglose en detalle abajo)
 
 **Nota**: El PRD limpio (Enero 2026) simplificó la documentación a 10 secciones funcionales.
 
@@ -204,6 +204,45 @@
    - Pedido #998 con pago parcial de prueba ($50k de $80k)
    - Cálculo automático de saldo pendiente
 
+### Reasignación de Vehículos (vive en repartos-dia.html)
+101. ~~**Reasignación de Vehículos (PRD 8.3)**~~ ✅ IMPLEMENTADO
+   - **Ubicación**: `prototipos/repartos-dia.html` (acceso desde calendario ventas → "Ver detalle")
+   - Vista por vehículo con pedidos asignados
+   - Vista por ciudad
+   - Modal asignar vehículo
+   - Botón "Cambiar" para reasignar a otro vehículo
+   - Botón "Desasignar" para quitar asignación
+   - Drag & drop para asignar arrastrando
+   - Sistema "Auto-asignar" con sugerencias por ciudad
+   - Exportar hoja de reparto
+   - Navegación entre días de la semana
+   - **Conexión**: `ventas.html` → botón "Ver detalle" → `repartos-dia.html?fecha={fecha}`
+
+### Control de Stock en Edición (Sprint 07/01/2026)
+102. ~~**Control de Stock en Edición (PRD 7.2)**~~ ✅ IMPLEMENTADO 07/01/2026
+   - **state-manager.js**: Nuevos métodos `getStock()`, `verificarStock()`, `actualizarStock()`, `ajustarStockPorEdicion()`
+   - **ventas/script.js**: Variables `productosOriginales[]`, `estadoPedidoEditando`
+   - Al editar pedido ENTREGADO, compara items originales vs nuevos
+   - Calcula delta por producto (original - nuevo)
+   - Si delta < 0 (agregó): valida stock disponible antes de guardar
+   - Si delta > 0 (quitó): reintegra stock automáticamente
+   - Mensaje de advertencia si stock insuficiente (lista productos faltantes)
+   - Validación en tiempo real al agregar productos (`agregarProductoAlPedido()`)
+   - Validación en tiempo real al aumentar cantidad (`actualizarCantidad()`)
+   - Historial de movimientos de stock (`_registrarMovimientoStock()`)
+   - Método `getMovimientosStock()` para consultar historial
+
+### Edición Post-Entrega con Auditoría (Sprint 07/01/2026)
+103. ~~**Edición Post-Entrega con Auditoría (PRD 7, 10.1)**~~ ✅ IMPLEMENTADO 07/01/2026
+   - **state-manager.js v1.2.0**: Nuevos métodos `registrarAjusteCC()`, `registrarCambioPedido()`
+   - **ventas/script.js**: Modificado `guardarEdicion()` para registrar auditoría
+   - Al editar pedido ENTREGADO con cambio de total:
+     - Genera movimiento de ajuste en Cuenta Corriente (cargo si aumentó, abono si disminuyó)
+     - Registra cambio en `historial_cambios[]` del pedido
+   - Historial incluye: usuario, fecha, campo, valor anterior/nuevo, razón, IP
+   - Sincronización automática con appState para visualización en modal detalle
+   - Notificación incluye "CC ajustada" cuando aplica
+
 ---
 
 ## VISUALES SIN LÓGICA (Prioridad Alta)
@@ -215,29 +254,35 @@
 
 ## FALTANTES (Ni HTML ni JS)
 
+**Actualmente: 0 items** - ¡Módulo 100% completo!
+
 ### ~~1. Integración con Cuenta Corriente~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 6.4 - Sincronización bidireccional
 - **Implementado**:
   - ✅ Generar cargo en CC al confirmar pedido (`confirmarEntregado()`)
   - ✅ Movimientos compartidos via `BambuState.movimientos_cc`
   - ✅ Pagos registrados desde CC aparecen sincronizados
-- **Pendiente para producción**: Ajuste CC al editar pedido
+- ✅ **Completado**: Ajuste CC al editar pedido (07/01/2026)
 
-### 1. Edición Post-Entrega con Auditoría
+### ~~1. Edición Post-Entrega con Auditoría~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 7 - Edición Post-Entrega
-- **Requiere**:
-  - Permitir editar pedidos en estado "Entregado"
-  - Generar ajuste en Cuenta Corriente
-  - Historial de cambios (usuario, fecha, campo, valor anterior/nuevo, IP)
-- **Complejidad**: Alta
+- **Implementado**:
+  - ✅ Editar pedidos en estado "Entregado" (ya permitido)
+  - ✅ Generar ajuste en Cuenta Corriente (`BambuState.registrarAjusteCC()`)
+  - ✅ Historial de cambios automático (`BambuState.registrarCambioPedido()`)
+  - ✅ Registro: usuario, fecha, campo, valor anterior/nuevo, IP, razón
+  - ✅ Sincronización historial con appState para visualización
+  - ✅ Notificación "CC ajustada" al guardar edición
+- **Archivos modificados**: state-manager.js, ventas/script.js
 
-### 2. Control de Stock en Edición
+### ~~2. Control de Stock en Edición~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 7.2 - Impacto automático
-- **Requiere**:
-  - Reintegrar/descontar stock automáticamente al editar
-  - Validar stock disponible
-  - Advertencias si insuficiente
-- **Complejidad**: Alta
+- **Implementado**:
+  - ✅ Reintegrar/descontar stock automáticamente al editar
+  - ✅ Validar stock disponible antes de agregar/aumentar
+  - ✅ Advertencias si stock insuficiente
+  - ✅ Historial de movimientos de stock
+- **Archivos modificados**: state-manager.js, ventas/script.js
 
 ### ~~3. Modo Fábrica: Registro de Pago en Cotizador~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 2.2 - Flujo de datos

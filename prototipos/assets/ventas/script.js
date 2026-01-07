@@ -2364,7 +2364,9 @@ function getProductosPedido(pedidoId) {
 
 let pedidoEditandoId = null;
 let productosEditando = [];
+let productosOriginales = []; // PRD 7.2: Guardar originales para comparar delta de stock
 let totalAnterior = 0;
+let estadoPedidoEditando = null; // PRD 7.2: Guardar estado para control de stock
 
 function abrirModalEditar(pedidoId) {
     console.log('🔍 Abriendo modal editar para pedido ID:', pedidoId);
@@ -2380,9 +2382,13 @@ function abrirModalEditar(pedidoId) {
 
     pedidoEditandoId = pedidoId;
     totalAnterior = pedido.total;
+    estadoPedidoEditando = pedido.estado; // PRD 7.2: Guardar estado
 
     // Cargar productos desde BambuState (crear copia para no mutar original)
     productosEditando = JSON.parse(JSON.stringify(getProductosPedido(pedidoId)));
+
+    // PRD 7.2: Guardar copia de originales para calcular delta de stock
+    productosOriginales = JSON.parse(JSON.stringify(productosEditando));
 
     // Actualizar UI
     document.getElementById('edit-pedido-num').textContent = pedido.numero;
@@ -2401,7 +2407,9 @@ function cerrarModalEditar() {
     document.getElementById('modal-editar-pedido').classList.add('hidden');
     pedidoEditandoId = null;
     productosEditando = [];
+    productosOriginales = []; // PRD 7.2: Limpiar originales
     totalAnterior = 0;
+    estadoPedidoEditando = null; // PRD 7.2: Limpiar estado
 }
 
 // ========================================
@@ -2499,6 +2507,8 @@ function filtrarProductosModal() {
 /**
  * Agrega un producto al pedido en edición
  *
+ * PRD 7.2: Si pedido ENTREGADO, validar stock disponible
+ *
  * @param {number} productoId - ID del producto a agregar
  */
 function agregarProductoAlPedido(productoId) {
@@ -2506,14 +2516,32 @@ function agregarProductoAlPedido(productoId) {
     if (!producto) return;
 
     // Verificar si ya está en el pedido
-    if (productosEditando.find(p => p.id === productoId)) {
+    const existente = productosEditando.find(p => p.producto_id === productoId);
+    if (existente) {
         mostrarNotificacion('⚠️ Este producto ya está en el pedido', 'warning');
         return;
+    }
+
+    // PRD 7.2: Si pedido entregado, validar stock disponible
+    if (estadoPedidoEditando === 'entregado') {
+        // Calcular cuánto ya se usó del original
+        const originalProd = productosOriginales.find(p => p.producto_id === productoId);
+        const cantidadOriginal = originalProd ? originalProd.cantidad : 0;
+
+        // Si es producto nuevo (no estaba en original), necesita stock
+        if (cantidadOriginal === 0) {
+            const verificacion = BambuState.verificarStock(productoId, 1);
+            if (!verificacion.disponible) {
+                mostrarNotificacion(`⚠️ Sin stock disponible para ${producto.nombre}`, 'warning');
+                return;
+            }
+        }
     }
 
     // Agregar con cantidad 1
     productosEditando.push({
         id: producto.id,
+        producto_id: producto.id, // Asegurar consistencia
         nombre: producto.nombre,
         precio: producto.precio_l1, // TODO: usar lista de precio del cliente
         cantidad: 1,
@@ -2581,8 +2609,14 @@ function renderizarProductosEdit() {
     }).join('');
 }
 
+/**
+ * Actualiza cantidad de producto en edición
+ *
+ * PRD 7.2: Si pedido ENTREGADO y se aumenta cantidad,
+ * validar stock disponible antes de permitir
+ */
 function actualizarCantidad(productoId, nuevaCantidad) {
-    const producto = productosEditando.find(p => p.id === productoId);
+    const producto = productosEditando.find(p => p.id === productoId || p.producto_id === productoId);
     if (!producto) return;
 
     const cantidad = parseInt(nuevaCantidad) || 0;
@@ -2595,6 +2629,25 @@ function actualizarCantidad(productoId, nuevaCantidad) {
             renderizarProductosEdit();
         }
         return;
+    }
+
+    // PRD 7.2: Si pedido entregado y se aumenta cantidad, validar stock
+    if (estadoPedidoEditando === 'entregado' && cantidad > producto.cantidad) {
+        const prodId = producto.producto_id || producto.id;
+
+        // Calcular cuánto stock adicional se necesita
+        const originalProd = productosOriginales.find(p => p.producto_id === prodId);
+        const cantidadOriginal = originalProd ? originalProd.cantidad : 0;
+        const incrementoNeto = cantidad - cantidadOriginal;
+
+        if (incrementoNeto > 0) {
+            const verificacion = BambuState.verificarStock(prodId, incrementoNeto);
+            if (!verificacion.disponible) {
+                mostrarNotificacion(`⚠️ Stock insuficiente. Disponible: ${verificacion.stockActual}`, 'warning');
+                renderizarProductosEdit(); // Restaurar valor anterior
+                return;
+            }
+        }
     }
 
     producto.cantidad = cantidad;
@@ -2651,6 +2704,26 @@ function recalcularTotalesEdit() {
     }
 }
 
+// ============================================================================
+// REGLA DE NEGOCIO: Control de Stock en Edición
+// PRD: prd/ventas.html - Sección 7.2
+// ============================================================================
+
+/**
+ * Guarda los cambios de edición de un pedido
+ *
+ * LÓGICA DE NEGOCIO (PRD 7.2):
+ * - Si pedido está ENTREGADO, ajustar stock automáticamente
+ * - Calcular delta por producto (original - nuevo)
+ * - Si se agregan productos → validar stock disponible, luego descontar
+ * - Si se quitan productos → reintegrar stock
+ * - Mostrar advertencia si stock insuficiente
+ * - Registrar movimientos en historial de stock
+ *
+ * VALIDACIONES:
+ * - No permite guardar pedido sin productos
+ * - Valida stock disponible antes de permitir agregar
+ */
 function guardarEdicion() {
     if (productosEditando.length === 0) {
         alert('⚠️ No se puede guardar un pedido sin productos');
@@ -2659,6 +2732,45 @@ function guardarEdicion() {
 
     const pedido = appState.pedidos.find(p => p.id === pedidoEditandoId);
     if (!pedido) return;
+
+    // ========================================================================
+    // PRD 7.2: Control de Stock para pedidos ENTREGADOS
+    // ========================================================================
+
+    if (estadoPedidoEditando === 'entregado') {
+        // Preparar items para comparación
+        const itemsOriginales = productosOriginales.map(p => ({
+            producto_id: p.producto_id,
+            cantidad: p.cantidad
+        }));
+
+        const itemsNuevos = productosEditando.map(p => ({
+            producto_id: p.producto_id,
+            cantidad: p.cantidad
+        }));
+
+        // Validar y ajustar stock
+        const resultado = BambuState.ajustarStockPorEdicion(itemsOriginales, itemsNuevos, pedidoEditandoId);
+
+        if (!resultado.exito) {
+            // Mostrar errores de stock insuficiente
+            const mensajesError = resultado.errores.map(e =>
+                `• ${e.nombre}: necesita ${e.requerido}, disponible ${e.disponible} (faltan ${e.faltante})`
+            ).join('\n');
+
+            alert(`⚠️ Stock insuficiente para guardar cambios:\n\n${mensajesError}\n\nAjuste las cantidades o elija otros productos.`);
+            return;
+        }
+
+        // Log de ajustes realizados
+        if (resultado.ajustes.length > 0) {
+            console.log('[Ventas] PRD 7.2 - Ajustes de stock aplicados:', resultado.ajustes);
+        }
+    }
+
+    // ========================================================================
+    // Actualizar pedido
+    // ========================================================================
 
     // Calcular nuevo total
     const subtotal = productosEditando.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
@@ -2669,20 +2781,75 @@ function guardarEdicion() {
     const pesoNuevo = productosEditando.reduce((sum, p) => sum + (p.peso * p.cantidad), 0);
     const itemsNuevos = productosEditando.length;
 
-    // Actualizar pedido
+    // Actualizar pedido en appState
     pedido.total = totalNuevo;
     pedido.peso = pesoNuevo;
     pedido.items = itemsNuevos;
 
-    // Nota: En producción se guardaría en BambuState y persistiría
-    // Por ahora solo actualizamos el estado local de la UI
-    console.log('[Ventas] Productos editados (no persistido):', productosEditando);
+    // Persistir items en BambuState
+    const pedidoBambu = BambuState.getById('pedidos', pedidoEditandoId);
+    if (pedidoBambu) {
+        // Eliminar items anteriores
+        const itemsAnteriores = BambuState.getItemsPedido(pedidoEditandoId);
+        itemsAnteriores.forEach(item => {
+            BambuState.delete('pedido_items', item.id);
+        });
+
+        // Agregar nuevos items
+        productosEditando.forEach(prod => {
+            BambuState.agregarItemPedido(pedidoEditandoId, {
+                producto_id: prod.producto_id,
+                cantidad: prod.cantidad,
+                precio_unitario: prod.precio
+            });
+        });
+
+        BambuState.save();
+        console.log('[Ventas] Items persistidos en BambuState');
+    }
+
+    // ========================================================================
+    // PRD 7.2 + 10.1: Edición Post-Entrega con Auditoría
+    // ========================================================================
+
+    if (estadoPedidoEditando === 'entregado' && diferencia !== 0) {
+        // PRD 7.2: Generar AJUSTE en Cuenta Corriente
+        const ajusteCC = BambuState.registrarAjusteCC({
+            cliente_id: pedido.cliente_id,
+            pedido_id: pedidoEditandoId,
+            monto_anterior: totalAnterior,
+            monto_nuevo: totalNuevo,
+            razon: 'Edición post-entrega'
+        });
+
+        if (ajusteCC) {
+            console.log('[Ventas] PRD 7.2 - Ajuste CC generado:', ajusteCC);
+        }
+
+        // PRD 10.1: Registrar en historial de cambios
+        BambuState.registrarCambioPedido(pedidoEditandoId, {
+            accion: 'EDICION',
+            campo_modificado: 'total',
+            valor_anterior: totalAnterior,
+            valor_nuevo: totalNuevo,
+            razon: `Ajuste post-entrega (${diferencia > 0 ? '+' : ''}$${diferencia.toLocaleString('es-AR')})`
+        });
+
+        // Sincronizar historial con appState para que se muestre en modal detalle
+        const pedidoActualizado = BambuState.getById('pedidos', pedidoEditandoId);
+        if (pedidoActualizado && pedidoActualizado.historial_cambios) {
+            pedido.historial_cambios = pedidoActualizado.historial_cambios;
+        }
+    }
 
     console.log('Pedido editado:', {
         id: pedidoEditandoId,
         totalAnterior,
         totalNuevo,
         diferencia,
+        estadoPedido: estadoPedidoEditando,
+        stockAjustado: estadoPedidoEditando === 'entregado',
+        ajusteCC: diferencia !== 0 && estadoPedidoEditando === 'entregado',
         productos: productosEditando
     });
 
@@ -2694,7 +2861,9 @@ function guardarEdicion() {
     const msgDiferencia = diferencia !== 0
         ? ` (${diferencia > 0 ? '+' : ''}${formatearMonto(Math.abs(diferencia))})`
         : '';
-    mostrarNotificacion(`✅ Pedido ${pedido.numero} actualizado${msgDiferencia}`);
+    const msgStock = estadoPedidoEditando === 'entregado' ? ' · Stock ajustado' : '';
+    const msgCC = (diferencia !== 0 && estadoPedidoEditando === 'entregado') ? ' · CC ajustada' : '';
+    mostrarNotificacion(`✅ Pedido ${pedido.numero} actualizado${msgDiferencia}${msgStock}${msgCC}`);
 }
 
 // Click outside modal to close

@@ -17,7 +17,7 @@ const BambuState = {
     // CONFIGURACIÓN
     // ========================================================================
 
-    VERSION: '1.1.0',  // Actualizado: Pagos parciales + Auditoría (PRD 6.2, 10.1)
+    VERSION: '1.2.0',  // Actualizado: Edición Post-Entrega + Ajustes CC (PRD 7.2, 10.1)
     FECHA_SISTEMA: '2026-01-08',  // Miércoles 8 enero 2026 (HOY simulado)
     STORAGE_KEY: 'bambu_crm_state',
 
@@ -961,6 +961,106 @@ const BambuState = {
         return movimiento;
     },
 
+    /**
+     * Registra un AJUSTE en cuenta corriente (por edición post-entrega)
+     * PRD: prd/ventas.html - Sección 7.2
+     *
+     * LÓGICA DE NEGOCIO:
+     * - Si diferencia > 0: el pedido aumentó → cargo adicional al cliente
+     * - Si diferencia < 0: el pedido disminuyó → abono a favor del cliente
+     * - El cargo original NUNCA se modifica (trazabilidad)
+     *
+     * @param {Object} datos - { cliente_id, pedido_id, monto_anterior, monto_nuevo, razon? }
+     * @returns {Object|null} El movimiento creado o null si no hay diferencia
+     */
+    registrarAjusteCC(datos) {
+        this._checkInit();
+        if (!this._state.movimientos_cc) this._state.movimientos_cc = [];
+
+        const diferencia = datos.monto_nuevo - datos.monto_anterior;
+
+        // Si no hay diferencia, no crear ajuste
+        if (diferencia === 0) {
+            console.log('[BambuState] Sin diferencia de monto, no se crea ajuste CC');
+            return null;
+        }
+
+        const maxId = this._state.movimientos_cc.reduce((max, m) => Math.max(max, m.id), 0);
+        const pedido = this.getById('pedidos', datos.pedido_id);
+
+        // Determinar tipo: diferencia positiva = cargo adicional, negativa = abono
+        const tipoAjuste = diferencia > 0 ? 'cargo' : 'pago';
+        const descripcionBase = diferencia > 0
+            ? `Ajuste Pedido ${pedido?.numero || ''} (+)`
+            : `Ajuste Pedido ${pedido?.numero || ''} (-)`;
+
+        const movimiento = {
+            id: maxId + 1,
+            cliente_id: datos.cliente_id,
+            pedido_id: datos.pedido_id,
+            tipo: tipoAjuste,
+            subtipo: 'ajuste_edicion', // Para identificar ajustes vs cargos/pagos normales
+            descripcion: datos.descripcion || descripcionBase,
+            monto: Math.abs(diferencia),
+            monto_anterior: datos.monto_anterior,
+            monto_nuevo: datos.monto_nuevo,
+            metodo_pago: null,
+            fecha: this.FECHA_SISTEMA,
+            usuario: datos.usuario || 'Usuario',
+            nota: datos.razon || 'Edición post-entrega'
+        };
+
+        this._state.movimientos_cc.push(movimiento);
+        this.save();
+
+        console.log(`[BambuState] Ajuste CC registrado: ${tipoAjuste} $${Math.abs(diferencia)} para cliente ${datos.cliente_id} (Pedido ${datos.pedido_id})`);
+        return movimiento;
+    },
+
+    /**
+     * Registra un cambio en el historial de un pedido (auditoría)
+     * PRD: prd/ventas.html - Sección 10.1
+     *
+     * @param {number} pedidoId
+     * @param {Object} datos - { accion, campo_modificado?, valor_anterior?, valor_nuevo?, razon? }
+     * @returns {Object} El registro de cambio creado
+     */
+    registrarCambioPedido(pedidoId, datos) {
+        this._checkInit();
+
+        const pedido = this._state.pedidos.find(p => p.id === pedidoId);
+        if (!pedido) {
+            console.error(`[BambuState] Pedido ${pedidoId} no encontrado`);
+            return null;
+        }
+
+        // Inicializar historial si no existe
+        if (!pedido.historial_cambios) {
+            pedido.historial_cambios = [];
+        }
+
+        const maxId = pedido.historial_cambios.reduce((max, c) => Math.max(max, c.id || 0), 0);
+
+        const cambio = {
+            id: maxId + 1,
+            fecha: new Date().toISOString(),
+            usuario_id: datos.usuario_id || 1,
+            usuario_nombre: datos.usuario_nombre || 'admin@bambu.com',
+            accion: datos.accion, // 'CREACION', 'EDICION', 'ESTADO'
+            campo_modificado: datos.campo_modificado || null,
+            valor_anterior: datos.valor_anterior !== undefined ? datos.valor_anterior : null,
+            valor_nuevo: datos.valor_nuevo !== undefined ? datos.valor_nuevo : null,
+            razon: datos.razon || null,
+            ip: datos.ip || '192.168.1.100'
+        };
+
+        pedido.historial_cambios.push(cambio);
+        this.save();
+
+        console.log(`[BambuState] Cambio registrado en pedido ${pedidoId}: ${datos.accion}`);
+        return cambio;
+    },
+
     // ========================================================================
     // MÉTODOS DE CREACIÓN - Para uso desde Cotizador y otros módulos
     // ========================================================================
@@ -1093,6 +1193,214 @@ const BambuState = {
 
         console.log(`[BambuState] ${entidad}[${id}] eliminado`);
         return true;
+    },
+
+    // ========================================================================
+    // MÉTODOS DE STOCK
+    // PRD: prd/ventas.html - Sección 7.2 (Impacto automático)
+    // ========================================================================
+
+    /**
+     * Obtiene el stock actual de un producto
+     * @param {number} productoId
+     * @returns {number} Stock actual o 0 si no existe
+     */
+    getStock(productoId) {
+        const producto = this.getById('productos', productoId);
+        return producto?.stock_actual || 0;
+    },
+
+    /**
+     * Verifica si hay stock suficiente para una cantidad
+     * @param {number} productoId
+     * @param {number} cantidad - Cantidad requerida
+     * @returns {Object} { disponible: boolean, stockActual: number, faltante: number }
+     */
+    verificarStock(productoId, cantidad) {
+        const stockActual = this.getStock(productoId);
+        const disponible = stockActual >= cantidad;
+        return {
+            disponible,
+            stockActual,
+            faltante: disponible ? 0 : cantidad - stockActual
+        };
+    },
+
+    /**
+     * Actualiza el stock de un producto
+     * @param {number} productoId
+     * @param {number} delta - Cantidad a sumar (positivo) o restar (negativo)
+     * @param {string} motivo - 'edicion_pedido', 'entrega', 'devolucion', etc.
+     * @param {number} pedidoId - ID del pedido relacionado (opcional)
+     * @returns {Object} { exito: boolean, stockNuevo: number, error?: string }
+     *
+     * LÓGICA DE NEGOCIO:
+     * - delta > 0 → Reintegrar stock (producto devuelto/quitado de pedido)
+     * - delta < 0 → Descontar stock (producto agregado a pedido)
+     * - No permite stock negativo
+     */
+    actualizarStock(productoId, delta, motivo = 'ajuste', pedidoId = null) {
+        this._checkInit();
+
+        const producto = this.getById('productos', productoId);
+        if (!producto) {
+            return { exito: false, stockNuevo: 0, error: 'Producto no encontrado' };
+        }
+
+        const stockActual = producto.stock_actual || 0;
+        const stockNuevo = stockActual + delta;
+
+        // Validar que no quede negativo
+        if (stockNuevo < 0) {
+            return {
+                exito: false,
+                stockNuevo: stockActual,
+                error: `Stock insuficiente. Actual: ${stockActual}, Requerido: ${Math.abs(delta)}`
+            };
+        }
+
+        // Actualizar producto
+        producto.stock_actual = stockNuevo;
+
+        // Registrar movimiento en historial
+        this._registrarMovimientoStock({
+            producto_id: productoId,
+            producto_nombre: producto.nombre,
+            stock_anterior: stockActual,
+            stock_nuevo: stockNuevo,
+            delta,
+            motivo,
+            pedido_id: pedidoId,
+            fecha: new Date().toISOString()
+        });
+
+        this.save();
+
+        console.log(`[BambuState] Stock ${producto.nombre}: ${stockActual} → ${stockNuevo} (${delta > 0 ? '+' : ''}${delta}) [${motivo}]`);
+
+        return { exito: true, stockNuevo };
+    },
+
+    /**
+     * Ajusta stock por diferencias entre items originales y nuevos
+     * @param {Array} itemsOriginales - [{ producto_id, cantidad }, ...]
+     * @param {Array} itemsNuevos - [{ producto_id, cantidad }, ...]
+     * @param {number} pedidoId - ID del pedido
+     * @returns {Object} { exito: boolean, ajustes: [], errores: [] }
+     *
+     * LÓGICA DE NEGOCIO:
+     * - Calcula delta por producto: nuevo - original
+     * - Si delta > 0 (agregó): valida stock y descuenta
+     * - Si delta < 0 (quitó): reintegra stock
+     * - Retorna errores si hay stock insuficiente
+     */
+    ajustarStockPorEdicion(itemsOriginales, itemsNuevos, pedidoId) {
+        const ajustes = [];
+        const errores = [];
+
+        // Crear mapa de cantidades originales
+        const mapOriginal = new Map();
+        itemsOriginales.forEach(item => {
+            mapOriginal.set(item.producto_id, (mapOriginal.get(item.producto_id) || 0) + item.cantidad);
+        });
+
+        // Crear mapa de cantidades nuevas
+        const mapNuevo = new Map();
+        itemsNuevos.forEach(item => {
+            mapNuevo.set(item.producto_id, (mapNuevo.get(item.producto_id) || 0) + item.cantidad);
+        });
+
+        // Obtener todos los producto_id involucrados
+        const todosProductos = new Set([...mapOriginal.keys(), ...mapNuevo.keys()]);
+
+        // Calcular deltas y validar
+        for (const productoId of todosProductos) {
+            const cantidadOriginal = mapOriginal.get(productoId) || 0;
+            const cantidadNueva = mapNuevo.get(productoId) || 0;
+            const delta = cantidadOriginal - cantidadNueva; // Positivo = reintegrar, Negativo = descontar
+
+            if (delta === 0) continue;
+
+            const producto = this.getById('productos', productoId);
+            const nombreProducto = producto?.nombre || `Producto #${productoId}`;
+
+            // Si delta negativo (agregar más), validar stock disponible
+            if (delta < 0) {
+                const verificacion = this.verificarStock(productoId, Math.abs(delta));
+                if (!verificacion.disponible) {
+                    errores.push({
+                        producto_id: productoId,
+                        nombre: nombreProducto,
+                        requerido: Math.abs(delta),
+                        disponible: verificacion.stockActual,
+                        faltante: verificacion.faltante
+                    });
+                    continue;
+                }
+            }
+
+            ajustes.push({
+                producto_id: productoId,
+                nombre: nombreProducto,
+                cantidadOriginal,
+                cantidadNueva,
+                delta
+            });
+        }
+
+        // Si hay errores, no aplicar ningún ajuste
+        if (errores.length > 0) {
+            return { exito: false, ajustes: [], errores };
+        }
+
+        // Aplicar ajustes
+        for (const ajuste of ajustes) {
+            this.actualizarStock(ajuste.producto_id, ajuste.delta, 'edicion_pedido', pedidoId);
+        }
+
+        return { exito: true, ajustes, errores: [] };
+    },
+
+    /**
+     * Registra movimiento en historial de stock
+     * @private
+     */
+    _registrarMovimientoStock(movimiento) {
+        if (!this._state.movimientos_stock) {
+            this._state.movimientos_stock = [];
+        }
+
+        const maxId = this._state.movimientos_stock.reduce((max, m) => Math.max(max, m.id || 0), 0);
+        movimiento.id = maxId + 1;
+
+        this._state.movimientos_stock.push(movimiento);
+    },
+
+    /**
+     * Obtiene historial de movimientos de stock
+     * @param {Object} filtros - { producto_id, pedido_id, limite }
+     * @returns {Array} Movimientos ordenados por fecha desc
+     */
+    getMovimientosStock(filtros = {}) {
+        this._checkInit();
+        let movimientos = this._state.movimientos_stock || [];
+
+        if (filtros.producto_id) {
+            movimientos = movimientos.filter(m => m.producto_id === filtros.producto_id);
+        }
+
+        if (filtros.pedido_id) {
+            movimientos = movimientos.filter(m => m.pedido_id === filtros.pedido_id);
+        }
+
+        // Ordenar por fecha desc
+        movimientos = movimientos.sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+        if (filtros.limite) {
+            movimientos = movimientos.slice(0, filtros.limite);
+        }
+
+        return movimientos;
     }
 };
 
