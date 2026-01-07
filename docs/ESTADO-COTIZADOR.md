@@ -15,11 +15,11 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ---
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 06 Enero 2026 (hallazgo crítico: descuento sin promociones)
+**Última actualización**: 06 Enero 2026 (alineado con PRD limpio Enero 2026)
 **Archivos verificados**:
 - `prototipos/cotizador.html`
 - `prototipos/assets/cotizador/script.js`
-- `prd/cotizador-especificacion.html`
+- `prd/cotizador-especificacion.html` (versión limpia: 420 líneas, secciones 1-12)
 
 ---
 
@@ -85,20 +85,20 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ### Alta prioridad
 
 1. **Guardar Borrador - Lógica real**
-   - PRD: Sección 11.3.2
+   - PRD: Sección 8.2 - Botones de acción
    - HTML: Botón existe (línea 280)
    - JS falta: Guardar en localStorage, generar ID, mantener en lista borradores
    - Complejidad: Media
 
 2. **Confirmar Pedido - Lógica real**
-   - PRD: Sección 11.3.3
+   - PRD: Sección 8.2 - Botones de acción
    - HTML: Modal existe
    - JS falta: Guardar pedido, descontar stock mock, agregar a lista PEDIDOS
    - Actual: Solo muestra alert y hace reload
    - Complejidad: Alta
 
 3. **Input cantidad editable**
-   - PRD: Sección 7.3.4 - "Input numérico central permite edición directa"
+   - PRD: Sección 5.2 - "Input central: permite edición directa"
    - HTML: Input existe pero es `readonly`
    - JS falta: Permitir edición directa del número
    - Complejidad: Baja
@@ -106,44 +106,44 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ### Media prioridad
 
 4. **Tab Email/Remito en modal resumen**
-   - PRD: Sección 11.3.1.1 - Modal con tabs WhatsApp y Remito PDF
+   - PRD: Sección 8.3 - Formatos de resumen (WhatsApp + Remito PDF)
    - HTML: Solo tab WhatsApp visible
    - JS falta: Tab Remito PDF con generación de documento
    - Complejidad: Alta
 
 5. **Botón Copiar en modal resumen**
-   - PRD: Sección 11.3.1.1
+   - PRD: Sección 8.3 - Formatos de resumen
    - HTML: Botón "Copiar" existe (línea 339)
    - JS falta: `navigator.clipboard.writeText()`
    - Complejidad: Baja
 
 6. **Descuento cliente visible en panel**
-   - PRD: Sección 9.3 - "Panel lateral muestra: Descuento cliente: 8%"
+   - PRD: Sección 6.1 - Jerarquía de descuentos
    - HTML: Row existe `#row-client-discount` (hidden)
    - JS: Se muestra pero solo si cliente tiene descuento Y no hay manual
    - Parcial: Funciona pero podría mejorar feedback visual
    - Complejidad: Baja
 
 7. **Validación fecha solo L-V**
-   - PRD: Sección 8.3.2 - "Solo lunes a viernes"
+   - PRD: Sección 10.1 - "Solo días laborables (Lunes a Viernes)"
    - HTML: Input date sin restricción
    - JS falta: Validar fin de semana, mostrar alerta
    - Complejidad: Baja
 
 8. **Quitar cliente seleccionado**
-   - PRD: Sección 6.3.5 - "Botón [×] al lado del nombre del cliente"
+   - PRD: Sección 4 - Selector de Cliente
    - HTML: No hay botón X
    - JS falta: Resetear a "Cliente sin nombre"
    - Complejidad: Baja
 
 ---
 
-## FALTANTES (Ni HTML ni JS) - 12 funcionalidades
+## FALTANTES (Ni HTML ni JS) - 11 funcionalidades
 
 ### Alta prioridad
 
 1. **⚠️ CRÍTICO: Descuento sobre base sin promociones**
-   - PRD: **Sección 9.1.1** (agregado Diciembre 2025)
+   - PRD: **Sección 6.3** - Base de cálculo
    - Debe hacer: Excluir productos `en_promocion=true` del cálculo de descuentos
    - Cálculo correcto:
      ```javascript
@@ -155,10 +155,10 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
      ```
    - HTML/JS: No implementado
    - Complejidad: Media
-   - **PRIORIDAD MÁXIMA**: Regla de negocio nueva en PRD
+   - **PRIORIDAD MÁXIMA**: Regla de negocio crítica
 
 2. **Atajos de teclado**
-   - PRD: Sección 16 completa
+   - PRD: Sección 8.4 - Atajos de teclado
    - Debe hacer:
      - `Shift+4` → Confirmar Pedido
      - `F4` → Generar Resumen
@@ -168,59 +168,52 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - HTML/JS: No existe
    - Complejidad: Media
 
-2. **Toast notifications**
-   - PRD: Sección 18.7
-   - Debe hacer: Mostrar mensajes "Pedido confirmado", "Borrador guardado", etc.
-   - HTML/JS: No existe sistema de toasts
-   - Complejidad: Media
-
 3. **Cierre con advertencia cambios sin guardar**
-   - PRD: Sección 3.3
-   - Debe hacer: Si hay productos y usuario intenta salir → Modal "¿Seguro? Se perderán cambios"
+   - PRD: Sección 10.4 - "¿Estás seguro? Se perderán los cambios no guardados"
+   - Debe hacer: Si hay productos y usuario intenta salir → Modal confirmación
    - HTML/JS: No existe
    - Complejidad: Media
 
 4. **Flujo continuo post-confirmación**
-   - PRD: Sección 3.2
+   - PRD: Sección 1.2 - "Flujo continuo: al confirmar, vuelve automáticamente a nueva cotización"
    - Debe hacer: Al confirmar → Limpiar campos → Focus en buscador → NO hacer reload
    - Actual: Hace `window.location.reload()`
    - Complejidad: Baja
 
 5. **Calendario modal solo L-V (modo REPARTO)**
-   - PRD: Sección 11.3.3 y 8.3.2
+   - PRD: Sección 2.2 y 10.1 - "Solo días laborables"
    - Debe hacer: Modal con calendario, solo días laborables seleccionables
    - Actual: Input date inline sin restricción
-   - Nota: El PRD menciona que en v2 siempre está visible, pero debe validar L-V
    - Complejidad: Media
 
 ### Media prioridad
 
 6. **Navegación teclado en buscadores**
-   - PRD: Sección 5.3.1 y 6.3.3
+   - PRD: Sección 3.3 - "Flechas ↑↓ + Enter → navegar y seleccionar"
    - Debe hacer: Flechas ↑↓ navegan, Enter selecciona, auto-scroll al item seleccionado
    - HTML/JS: No existe
    - Complejidad: Media
 
 7. **Saldo cliente en resultados búsqueda**
-   - PRD: Sección 6.3.2 - "Saldo cuenta corriente (si tiene deuda/a favor)"
+   - PRD: Sección 4.2 y 4.3 - "Muestra: dirección, teléfono, saldo cuenta corriente"
    - Debe hacer: Mostrar "-$15.000" en rojo o "+$5.000" en verde
    - HTML/JS: No existe en dropdown
    - Complejidad: Baja
 
 8. **Advertencia stock bajo**
-   - PRD: Sección 5.5.1
+   - PRD: Sección 10.2 - Modo FLEXIBLE muestra advertencia
    - Debe hacer: Badge naranja "Stock bajo (5 disponibles)" si cantidad > stock
    - HTML/JS: No existe
    - Complejidad: Baja
 
 9. **Productos BAMBU sin restricción stock**
-   - PRD: Sección 5.5.3
+   - PRD: Sección 10.3 - "Productos con proveedor=BAMBU siempre se pueden agregar"
    - Debe hacer: Identificar proveedor="BAMBU" y permitir agregar sin límite
    - Mock actual: No tiene campo proveedor
    - Complejidad: Baja
 
 10. **Remito PDF formal**
-    - PRD: Sección 11.3.1.1 "Opción 2: Remito PDF Formal"
+    - PRD: Sección 8.3 - "Remito PDF: Documento formal descargable"
     - Debe hacer: Generar PDF profesional con logo, tabla, totales
     - HTML/JS: No existe
     - Complejidad: Alta
@@ -228,7 +221,7 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ### Baja prioridad
 
 11. **Edición pedido desde VENTAS**
-    - PRD: Sección 12.3
+    - PRD: Sección 12.1 - "Borradores se pueden recuperar y editar"
     - Debe hacer: Cargar pedido existente en cotizador para editar
     - Nota: Requiere integración con módulo Ventas
     - Complejidad: Alta
@@ -239,52 +232,50 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| Implementadas | 35 | 73% |
+| Implementadas | 35 | 76% |
 | Visuales sin lógica | 8 | 17% |
-| Faltantes | 12 | 25% |
-| **TOTAL funcionalidades PRD** | **48** | **100%** |
+| Faltantes | 11 | 24% |
+| **TOTAL funcionalidades** | **46** | **100%** |
 
-**Nota**: Algunas funcionalidades se superponen entre categorías por ser parcialmente implementadas.
+**Nota**: El PRD limpio (Enero 2026) simplificó la documentación. Algunas funcionalidades se superponen entre categorías.
 
 ---
 
 ## Roadmap Implementación
 
 ### Sprint 1 - CRÍTICOS (Flujo básico funcional)
-1. ⚠️ **Descuento sobre base sin promociones** (REGLA NEGOCIO NUEVA)
+1. ⚠️ **Descuento sobre base sin promociones** (Sección 6.3)
 2. Flujo continuo post-confirmación (quitar reload)
-3. Toast notifications básicas
-4. Guardar Borrador con localStorage
-5. Confirmar Pedido con persistencia mock
+3. Guardar Borrador con localStorage
+4. Confirmar Pedido con persistencia mock
 
 ### Sprint 2 - UX IMPORTANTE
-6. Atajos de teclado (Shift+4, F4, Esc)
-7. Navegación teclado en buscadores
-8. Validación fecha solo L-V
-9. Botón copiar en modal resumen
-10. Input cantidad editable
+5. Atajos de teclado (Shift+4, F4, Esc)
+6. Navegación teclado en buscadores
+7. Validación fecha solo L-V
+8. Botón copiar en modal resumen
+9. Input cantidad editable
 
 ### Sprint 3 - COMPLETITUD
-11. Quitar cliente (botón X)
-12. Saldo cliente en resultados
-13. Advertencia stock bajo
-14. Cierre con advertencia cambios
-15. Productos BAMBU sin restricción stock
+10. Quitar cliente (botón X)
+11. Saldo cliente en resultados
+12. Advertencia stock bajo
+13. Cierre con advertencia cambios
+14. Productos BAMBU sin restricción stock
 
 ### Sprint 4 - AVANZADO
-16. Remito PDF formal
-17. Edición pedido desde VENTAS
-18. Calendario modal mejorado
-19. Tab Email/Remito en modal resumen
+15. Remito PDF formal
+16. Edición pedido desde VENTAS
+17. Calendario modal mejorado
+18. Tab Remito en modal resumen
 
 ---
 
-## VERIFICACIÓN EXHAUSTIVA
+## VERIFICACIÓN
 
-Este documento fue verificado línea por línea contra:
-- `prd/cotizador-especificacion.html` (secciones 1-19)
-- `prototipos/cotizador.html` (368 líneas)
-- `prototipos/assets/cotizador/script.js` (590 líneas)
+Este documento fue verificado contra:
+- `prd/cotizador-especificacion.html` (versión limpia Enero 2026, secciones 1-12)
+- `prototipos/cotizador.html`
+- `prototipos/assets/cotizador/script.js`
 
-**Todas las funcionalidades listadas están documentadas en el PRD.**
-**No se inventó ninguna funcionalidad.**
+**Todas las funcionalidades listadas están documentadas en el PRD actualizado.**

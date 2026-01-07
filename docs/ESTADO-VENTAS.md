@@ -1,8 +1,9 @@
 # ESTADO-VENTAS.md - Auditoría Módulo Ventas
 
 **Fecha**: 06 Enero 2026
+**Última actualización**: 06 Enero 2026 (alineado con PRD limpio Enero 2026)
 **Prototipo**: `prototipos/ventas.html`
-**PRD**: `prd/ventas.html`
+**PRD**: `prd/ventas.html` (versión limpia: 340 líneas, secciones 1-10)
 **JavaScript**: `prototipos/assets/ventas/script.js`
 
 ---
@@ -11,11 +12,13 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 38 | 61% |
-| ⚠️ Visuales sin lógica | 14 | 23% |
-| ❌ Faltantes | 10 | 16% |
+| ✅ Implementadas (HTML + JS) | 74 | 76% |
+| ⚠️ Visuales sin lógica | 14 | 14% |
+| ❌ Faltantes | 9 | 9% |
 
-**Total funcionalidades identificadas en PRD**: 62
+**Total funcionalidades**: 97 (desglose en detalle abajo)
+
+**Nota**: El PRD limpio (Enero 2026) simplificó la documentación a 10 secciones funcionales.
 
 ---
 
@@ -124,13 +127,13 @@
 ## VISUALES SIN LÓGICA (Prioridad Alta)
 
 ### 1. Sistema de Selección Bulk (Checkboxes)
-- **PRD**: Sección 3.8.3
+- **PRD**: Sección 3.1 - Lista Pedidos
 - **HTML**: ✅ Existe header checkbox + checkboxes por fila
 - **JS Falta**: Integración con modal de registro de pago en bulk
 - **Complejidad**: Media
 
 ### 2. Modal Registro de Pago Completo
-- **PRD**: Sección 3.8.7
+- **PRD**: Sección 6 - Sistema de Pagos
 - **HTML**: ✅ Modal "Marcar como Entregado" existe
 - **JS Falta**:
   - Input Efectivo/Digital/Mixto
@@ -140,7 +143,7 @@
 - **Complejidad**: Media
 
 ### 3. Exportar Excel con Selección de Columnas
-- **PRD**: Sección 3.8.10
+- **PRD**: Sección 9.1 - Exportar Excel
 - **HTML**: ✅ Botón existe
 - **JS Falta**:
   - Modal selección de columnas (15 opciones)
@@ -150,7 +153,7 @@
 - **Complejidad**: Alta
 
 ### 4. Edición Post-Entrega con Auditoría
-- **PRD**: Sección 3.8.5
+- **PRD**: Sección 7 - Edición Post-Entrega
 - **HTML**: ✅ Modal editar existe
 - **JS Falta**:
   - Permitir editar pedidos "entregado"
@@ -159,13 +162,13 @@
 - **Complejidad**: Alta
 
 ### 5. Cambiar Estado Manualmente (Entregado → En Tránsito)
-- **PRD**: Sección 3.8.8
+- **PRD**: Sección 5.3 - Cambiar estado
 - **HTML**: ✅ Botón "Volver a En Tránsito" existe
 - **JS Falta**: Función para cambiar estado inverso
 - **Complejidad**: Baja
 
 ### 6. Cambiar Tipo Pedido (REPARTO ↔ FÁBRICA)
-- **PRD**: Sección 3.8.5
+- **PRD**: Sección 5.4 - Cambiar tipo
 - **HTML**: ❌ No existe botón
 - **JS Falta**:
   - Botón [🔄 Cambiar tipo] en modal detalle
@@ -174,7 +177,7 @@
 - **Complejidad**: Alta
 
 ### 7. Control de Reparto desde Vista Lista
-- **PRD**: Sección 3.8.8.1
+- **PRD**: Sección 8 - Calendario Semana
 - **HTML**: ✅ Badge estado día existe
 - **JS Falta**:
   - Botón "Marcar día como controlado" clickeable
@@ -183,7 +186,7 @@
 - **Complejidad**: Media
 
 ### 8. Reasignación de Vehículos desde VENTAS
-- **PRD**: Sección 3.8.8.1
+- **PRD**: Sección 8.3 - Click en día
 - **HTML**: ❌ No existe panel/modal
 - **JS Falta**:
   - Modal "Repartos del día"
@@ -192,13 +195,13 @@
 - **Complejidad**: Alta
 
 ### 9. Paginación Borradores
-- **PRD**: Sección 3.8.3
+- **PRD**: Sección 3.3 - Tab Borradores
 - **HTML**: ✅ Contenedor existe vacío
 - **JS Falta**: Renderizar botones paginación
 - **Complejidad**: Baja
 
 ### 10. Eliminar Pedido con Reintegro Stock
-- **PRD**: Sección 3.8.4
+- **PRD**: Sección 5.5 - Eliminar
 - **HTML**: ✅ Botón existe
 - **JS Falta**:
   - Confirmación con advertencia
@@ -207,7 +210,7 @@
 - **Complejidad**: Media
 
 ### 11. Agregar Producto a Pedido en Edición
-- **PRD**: Sección 3.8.5
+- **PRD**: Sección 5.2 - Editar
 - **HTML**: ✅ Botón existe
 - **JS Falta**:
   - Modal selección de producto
@@ -216,7 +219,7 @@
 - **Complejidad**: Alta
 
 ### 12. Navegación Calendario (Semana Anterior/Siguiente)
-- **PRD**: Sección 7.6
+- **PRD**: Sección 8.2 - Funcionalidades calendario
 - **HTML**: ✅ Botones existen
 - **JS Falta**:
   - Función cambiar semana
@@ -225,7 +228,7 @@
 - **Complejidad**: Media
 
 ### 13. Exportar Hoja de Reparto
-- **PRD**: Sección 3.8.11
+- **PRD**: Sección 9.2 - Exportar hoja de reparto
 - **HTML**: ❌ No existe botón
 - **JS Falta**:
   - Modal selección: CON/SIN precios
@@ -243,7 +246,7 @@
 ## FALTANTES (Ni HTML ni JS)
 
 ### 1. Integración con Cuenta Corriente
-- **PRD**: Secciones 3.8.6, 3.8.7
+- **PRD**: Sección 6.4 - Sincronización bidireccional
 - **Requiere**:
   - Generar cargo en CC al confirmar pedido
   - Generar ajuste en CC al editar pedido
@@ -253,7 +256,7 @@
 - **Complejidad**: Alta
 
 ### 2. Sistema de Auditoría (Historial de Cambios)
-- **PRD**: Sección 3.8.4 (OBLIGATORIO)
+- **PRD**: Sección 10 - Auditoría y Trazabilidad (OBLIGATORIO)
 - **Requiere**:
   - Tabla `pedidos_historial`
   - Registrar: usuario, fecha, campo, valor anterior/nuevo, IP, razón
@@ -262,7 +265,7 @@
 - **Complejidad**: Alta
 
 ### 3. Pagos Parciales y Pagos Asociados vs Genéricos
-- **PRD**: Secciones 3.8.7.1, 3.8.7.2
+- **PRD**: Sección 6.2 y 6.3 - Pagos parciales y tipos
 - **Requiere**:
   - Campo `monto_pagado`
   - Permitir monto < total
@@ -271,7 +274,7 @@
 - **Complejidad**: Alta
 
 ### 4. Pedidos Sin Cliente (Ventas Casuales)
-- **PRD**: Sección 3.8.7.3
+- **PRD**: Sección 6.5 - Ventas sin cliente ("Sin registro")
 - **Requiere**:
   - Cliente especial "Sin registro"
   - Pago obligatorio en modo FÁBRICA
@@ -279,7 +282,7 @@
 - **Complejidad**: Media
 
 ### 5. Método de Pago Mixto con Validación
-- **PRD**: Sección 3.8.7
+- **PRD**: Sección 6.1 - Opciones de método de pago
 - **Requiere**:
   - Campos `monto_efectivo` y `monto_digital`
   - Validación JS: suma = total
@@ -287,7 +290,7 @@
 - **Complejidad**: Media
 
 ### 6. Control de Stock en Edición
-- **PRD**: Sección 3.8.5
+- **PRD**: Sección 7.2 - Impacto automático
 - **Requiere**:
   - Reintegrar/descontar stock automáticamente
   - Validar stock disponible
@@ -295,7 +298,7 @@
 - **Complejidad**: Alta
 
 ### 7. Reordenamiento de Pedidos en Vehículo
-- **PRD**: Sección 3.8.11
+- **PRD**: Sección 8.2 - Reordenamiento de pedidos (ruta de entrega)
 - **Requiere**:
   - Drag & drop para reordenar
   - Campo `orden_visita`
@@ -303,22 +306,15 @@
 - **Complejidad**: Alta
 
 ### 8. Modo Fábrica: Registro de Pago en Cotizador
-- **PRD**: Sección 4 - Flujo 6.1
+- **PRD**: Sección 2.2 - Flujo de datos
 - **Requiere**:
   - Modificar Cotizador con sección pago opcional
   - Checkboxes Efectivo/Digital/Ambos
   - Sincronización automática
 - **Complejidad**: Alta
 
-### 9. Estadísticas Avanzadas
-- **PRD**: Sección 3.8.9
-- **Requiere**:
-  - Breakdown por vehículo/ciudad
-  - Gráficos Chart.js
-- **Complejidad**: Media
-
-### 10. Vista Detalle Día Completa
-- **PRD**: Sección 3.8.11
+### 9. Vista Detalle Día Completa
+- **PRD**: Sección 8.3 y 8.4 - Click en día y Flujo de pedido REPARTO
 - **Requiere**:
   - Página `repartos-dia.html` completa
   - 3 vistas agrupación
@@ -333,7 +329,7 @@
 - **HTML**: 867 líneas
 - **JavaScript**: 1999 líneas
 - **CSS**: 2036 líneas
-- **PRD**: >2000 líneas
+- **PRD**: 340 líneas (versión limpia Enero 2026, secciones 1-10)
 
 ### Calidad del Código
 - ✅ Comentarios exhaustivos en JS
@@ -353,4 +349,4 @@
 
 ---
 
-**Próxima revisión**: Post implementación de gaps
+**Verificado contra PRD versión limpia (Enero 2026)**

@@ -46,18 +46,24 @@ Comparar cada prototipo HTML contra su PRD para identificar:
 
 | # | Módulo | PRD | Prototipo | Auditoría | Estado |
 |---|--------|-----|-----------|-----------|--------|
-| 1 | Dashboard | `prd/dashboard.html` | `dashboard.html` | - | ⏸️ En trabajo (otra instancia) |
-| 2 | Cotizador | `prd/cotizador-especificacion.html` | `cotizador.html` | ESTADO-COTIZADOR.md | ✅ Completado |
-| 3 | Ventas | `prd/ventas.html` | `ventas.html` + `repartos-dia.html` | ESTADO-VENTAS.md | ⬜ Pendiente |
-| 4 | Clientes | `prd/clientes.html` | `clientes.html` | ESTADO-CLIENTES.md | ⬜ Pendiente |
-| 5 | Cliente Detalle | `prd/cuenta-corriente.html` | `cliente-detalle.html` | ESTADO-CUENTA-CORRIENTE.md | ⬜ Pendiente |
-| 6 | Productos | `prd/productos.html` | `productos.html` | ESTADO-PRODUCTOS.md | ⬜ Pendiente |
-| 7 | Estadísticas | `prd/estadisticas.html` | `estadisticas.html` | ESTADO-ESTADISTICAS.md | ⬜ Pendiente |
-| 8 | Configuración | `prd/configuracion.html` | `configuracion.html` | ESTADO-CONFIGURACION.md | ⬜ Pendiente |
-| 9 | Backup | `prd/backup.html` | `backup.html` | ESTADO-BACKUP.md | ⬜ Pendiente |
+| 1 | Configuración | `prd/configuracion.html` | `configuracion.html` | `ESTADO-CONFIGURACION.md` | ✅ Completado |
+| 2 | Cotizador | `prd/cotizador-especificacion.html` | `cotizador.html` | `ESTADO-COTIZADOR.md` | ✅ Completado |
+| 3 | Productos | `prd/productos.html` | `productos.html` | `ESTADO-PRODUCTOS.md` | ✅ Completado |
+| 4 | Ventas | `prd/ventas.html` | `ventas.html` | `ESTADO-VENTAS.md` | ✅ Completado |
+| 5 | Dashboard | `prd/dashboard.html` | `dashboard.html` | `ESTADO-DASHBOARD.md` | ✅ Completado |
+| 6 | Clientes | `prd/clientes.html` | `clientes.html` | `ESTADO-CLIENTES.md` | ✅ Completado |
+| 7 | Cliente Detalle | `prd/cuenta-corriente.html` | `cliente-detalle.html` | `ESTADO-CLIENTES.md` | ✅ Completado |
+| 8 | Estadísticas | `prd/estadisticas.html` | `estadisticas.html` | - | ⬜ Pendiente |
+| 9 | Backup | `prd/backup.html` | `backup.html` | - | ⬜ Pendiente |
+| 10 | Repartos Día | (parte de ventas) | `repartos-dia.html` | `ESTADO-REPARTOS-DIA.md` | ✅ Completado |
+
+**Progreso**: 8/10 módulos auditados (80%)
 
 ### Método
 Usar skill `/analizar-estado-modulo` para generar documento de estado por módulo
+
+### Nota importante (06 Enero 2026)
+Los PRDs fueron limpiados masivamente (~11,000 → ~1,240 líneas). Los documentos ESTADO-*.md fueron actualizados para reflejar las nuevas referencias de sección.
 
 ---
 
