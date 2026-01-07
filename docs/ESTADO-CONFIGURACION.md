@@ -4,17 +4,17 @@
 
 Este documento refleja el **estado actual de implementación del prototipo Configuración** comparado contra su PRD oficial.
 
-**Fecha**: 06 Enero 2026
+**Fecha**: 07 Enero 2026
 **Archivos verificados**:
 - `prototipos/configuracion.html`
 - `prototipos/assets/configuracion/script.js`
 - `prd/configuracion.html`
 
-**Estado**: PRD actualizado para coincidir con el prototipo
+**Estado**: ✅ COMPLETO - Todas las funcionalidades implementadas
 
 ---
 
-## IMPLEMENTADAS (HTML + JS funcional) - 18 funcionalidades
+## IMPLEMENTADAS (HTML + JS funcional) - 20 funcionalidades
 
 ### Navegación
 | # | Funcionalidad |
@@ -47,12 +47,14 @@ Este documento refleja el **estado actual de implementación del prototipo Confi
 | 14 | Crear/Editar lista con modal |
 | 15 | Eliminar lista |
 | 16 | Validación descuento 0-100% |
+| 17 | Validación L3 descuento > L2 descuento |
+| 18 | Validación L3 umbral > L2 umbral |
 
 ### Comportamiento Stock
 | # | Funcionalidad |
 |---|---------------|
-| 17 | Toggle Bloquear venta / Advertir y permitir |
-| 18 | Auto-guardado al cambiar + Nota productos BAMBU |
+| 19 | Toggle Bloquear venta / Advertir y permitir |
+| 20 | Auto-guardado al cambiar + Nota productos BAMBU |
 
 ---
 
@@ -69,17 +71,15 @@ Las siguientes discrepancias fueron **resueltas actualizando el PRD** (el protot
 
 ---
 
-## PENDIENTES MENORES - 2 items
+## PENDIENTES MENORES - 0 items
 
-### 1. Validación L3 > L2 en listas
-- **PRD**: Sección 4.3 - "Descuento L3 debe ser mayor que L2"
-- **Estado**: No implementado en JS
-- **Complejidad**: Baja
+~~### 1. Validación L3 > L2 en listas~~
+- ✅ **IMPLEMENTADO** (07/01/2026)
+- Función `guardarLista()` línea 471-507
 
-### 2. Validación umbral L3 > umbral L2
-- **PRD**: Sección 4.3 - "Umbral L3 debe ser mayor que umbral L2"
-- **Estado**: No implementado en JS
-- **Complejidad**: Baja
+~~### 2. Validación umbral L3 > umbral L2~~
+- ✅ **IMPLEMENTADO** (07/01/2026)
+- Función `guardarLista()` línea 471-507
 
 ---
 
@@ -87,8 +87,8 @@ Las siguientes discrepancias fueron **resueltas actualizando el PRD** (el protot
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| Implementadas | 18 | 90% |
-| Pendientes menores | 2 | 10% |
+| Implementadas | 20 | 100% |
+| Pendientes menores | 0 | 0% |
 | **TOTAL** | **20** | **100%** |
 
 ---

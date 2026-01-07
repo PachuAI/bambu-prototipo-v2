@@ -468,6 +468,44 @@ function guardarLista() {
         return;
     }
 
+    // ========================================================================
+    // REGLA DE NEGOCIO: Jerarquía de Listas (L3 > L2)
+    // PRD: prd/configuracion.html - Sección 4.3
+    // ========================================================================
+    // L3 debe tener descuento y umbral MAYORES que L2
+    // Esto asegura coherencia: más compra = más descuento
+
+    const listaL2 = LISTAS_PRECIO.find(l => l.nombre === 'L2' && l.id != id);
+    const listaL3 = LISTAS_PRECIO.find(l => l.nombre === 'L3' && l.id != id);
+
+    // Validar si estamos guardando L3
+    if (nombre === 'L3' && listaL2) {
+        // L3 descuento debe ser > L2 descuento (PRD 4.3)
+        if (descuento <= listaL2.descuento) {
+            alert(`⚠️ El descuento de L3 (${descuento}%) debe ser mayor que L2 (${listaL2.descuento}%)`);
+            return;
+        }
+        // L3 umbral debe ser > L2 umbral (PRD 4.3)
+        if (umbral && listaL2.umbral && umbral <= listaL2.umbral) {
+            alert(`⚠️ El umbral de L3 ($${umbral.toLocaleString('es-AR')}) debe ser mayor que L2 ($${listaL2.umbral.toLocaleString('es-AR')})`);
+            return;
+        }
+    }
+
+    // Validar si estamos guardando L2
+    if (nombre === 'L2' && listaL3) {
+        // L2 descuento debe ser < L3 descuento (PRD 4.3)
+        if (descuento >= listaL3.descuento) {
+            alert(`⚠️ El descuento de L2 (${descuento}%) debe ser menor que L3 (${listaL3.descuento}%)`);
+            return;
+        }
+        // L2 umbral debe ser < L3 umbral (PRD 4.3)
+        if (umbral && listaL3.umbral && umbral >= listaL3.umbral) {
+            alert(`⚠️ El umbral de L2 ($${umbral.toLocaleString('es-AR')}) debe ser menor que L3 ($${listaL3.umbral.toLocaleString('es-AR')})`);
+            return;
+        }
+    }
+
     if (id) {
         // Actualizar existente
         const idx = LISTAS_PRECIO.findIndex(l => l.id == id);
