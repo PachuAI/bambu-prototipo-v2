@@ -1,227 +1,98 @@
 /* ========================================
    BAMBU CRM V2 - REPARTOS DÍA - JAVASCRIPT
-   Mock completo del flujo de asignación
+   Usa BambuState como fuente de datos
+   PRD: prd/ventas.html (sección Repartos)
    ======================================== */
 
 // ===========================
-// DATOS MOCK
+// DATOS DINÁMICOS DESDE BAMBUSTATE
 // ===========================
 
-const MOCK_DATA = {
-    fecha: "2025-12-24",
-    diaSemana: "Martes",
-    totalPedidos: 3,
-    totalKg: 248,
-    totalMonto: 145815,
-
-    vehiculos: [
-        {
-            id: "r1",
-            nombre: "Mercedes-Benz Sprinter",
-            patente: "AA521",
-            badge: "REPARTO 1",
-            capacidadKg: 2250,
-            pesoActual: 1580,
-            porcentaje: 70,
-            estadoCapacidad: "alta",
-            pedidos: [
-                {
-                    id: 601,
-                    numero: "#601",
-                    direccion: "CUENCA 16 MZA 7",
-                    ciudad: "Neuquén",
-                    telefono: "299-4111222",
-                    peso: 450,
-                    monto: 385000,
-                    fechaEntrega: "30/12/2025"
-                },
-                {
-                    id: 602,
-                    numero: "#602",
-                    direccion: "9 DE JULIO 902",
-                    ciudad: "Neuquén",
-                    telefono: "299-4222333",
-                    peso: 380,
-                    monto: 298000,
-                    fechaEntrega: "30/12/2025"
-                },
-                {
-                    id: 603,
-                    numero: "#603",
-                    direccion: "GENERAL PAZ 1461",
-                    ciudad: "Neuquén",
-                    telefono: "299-4333444",
-                    peso: 750,
-                    monto: 612000,
-                    fechaEntrega: "30/12/2025"
-                }
-            ]
-        },
-        {
-            id: "r2",
-            nombre: "Toyota Hiace",
-            patente: "DTR685",
-            badge: "REPARTO 2",
-            capacidadKg: 1660,
-            pesoActual: 980,
-            porcentaje: 59,
-            estadoCapacidad: "optima",
-            pedidos: [
-                {
-                    id: 604,
-                    numero: "#604",
-                    direccion: "LAS RETAMAS 1091",
-                    ciudad: "Cipolletti",
-                    telefono: "299-4444555",
-                    peso: 280,
-                    monto: 225000,
-                    fechaEntrega: "30/12/2025"
-                },
-                {
-                    id: 605,
-                    numero: "#605",
-                    direccion: "CATAMARCA 662",
-                    ciudad: "Cipolletti",
-                    telefono: "299-4555666",
-                    peso: 420,
-                    monto: 340000,
-                    fechaEntrega: "30/12/2025"
-                },
-                {
-                    id: 606,
-                    numero: "#606",
-                    direccion: "URUGUAY 482",
-                    ciudad: "Cipolletti",
-                    telefono: "299-4666777",
-                    peso: 280,
-                    monto: 218000,
-                    fechaEntrega: "30/12/2025"
-                }
-            ]
-        },
-        {
-            id: "r3",
-            nombre: "Mercedes-Benz Sprinter",
-            patente: "AA999",
-            badge: "REPARTO 3",
-            capacidadKg: 2500,
-            pesoActual: 2180,
-            porcentaje: 87,
-            estadoCapacidad: "casi-lleno",
-            pedidos: [
-                {
-                    id: 607,
-                    numero: "#607",
-                    direccion: "SARMIENTO 1820",
-                    ciudad: "General Roca",
-                    telefono: "299-4777888",
-                    peso: 620,
-                    monto: 495000,
-                    fechaEntrega: "30/12/2025"
-                },
-                {
-                    id: 608,
-                    numero: "#608",
-                    direccion: "ROCA 445",
-                    ciudad: "General Roca",
-                    telefono: "299-4888999",
-                    peso: 890,
-                    monto: 720000,
-                    fechaEntrega: "30/12/2025"
-                },
-                {
-                    id: 609,
-                    numero: "#609",
-                    direccion: "BELGRANO 892",
-                    ciudad: "General Roca",
-                    telefono: "299-4999000",
-                    peso: 670,
-                    monto: 542000,
-                    fechaEntrega: "30/12/2025"
-                }
-            ]
-        }
-    ],
-
-    pedidosSinAsignar: [
-        {
-            id: 501,
-            numero: "#501",
-            direccion: "AV ROCA 123",
-            ciudad: "General Roca",
-            telefono: "299-4123456",
-            peso: 8,
-            monto: 8315,
-            fechaEntrega: "30/12/2025"
-        },
-        {
-            id: 502,
-            numero: "#502",
-            direccion: "PELLEGRINI 615",
-            ciudad: "Neuquén",
-            telefono: "299-4567890",
-            peso: 120,
-            monto: 95000,
-            fechaEntrega: "30/12/2025"
-        },
-        {
-            id: 503,
-            numero: "#503",
-            direccion: "AV ARGENTINA 789",
-            ciudad: "Cipolletti",
-            telefono: "299-4234567",
-            peso: 120,
-            monto: 42500,
-            fechaEntrega: "30/12/2025"
-        },
-        {
-            id: 504,
-            numero: "#504",
-            direccion: "MITRE 4735",
-            ciudad: "Neuquén",
-            telefono: "299-4345678",
-            peso: 45,
-            monto: 38200,
-            fechaEntrega: "30/12/2025"
-        },
-        {
-            id: 505,
-            numero: "#505",
-            direccion: "SAN LUIS 372",
-            ciudad: "Plottier",
-            telefono: "299-4456789",
-            peso: 28,
-            monto: 22500,
-            fechaEntrega: "30/12/2025"
-        },
-        {
-            id: 506,
-            numero: "#506",
-            direccion: "ECUADOR 2133",
-            ciudad: "Centenario",
-            telefono: "299-4567891",
-            peso: 65,
-            monto: 51000,
-            fechaEntrega: "30/12/2025"
-        },
-        {
-            id: 507,
-            numero: "#507",
-            direccion: "ALMAFUERTE 1245",
-            ciudad: "Cipolletti",
-            telefono: "299-4678902",
-            peso: 92,
-            monto: 73400,
-            fechaEntrega: "30/12/2025"
-        }
-    ],
-
-    ciudades: [
-        { nombre: "Neuquén", pedidos: [], kg: 0 },
-        { nombre: "General Roca", pedidos: [], kg: 0 },
-        { nombre: "Cipolletti", pedidos: [], kg: 0 }
-    ]
+// Estado local (se carga desde BambuState en init)
+const appData = {
+    fecha: null,
+    vehiculos: [],
+    pedidosSinAsignar: []
 };
+
+/**
+ * Carga datos del día desde BambuState
+ * @param {string} fecha - Formato 'YYYY-MM-DD'
+ */
+function cargarDatosDia(fecha) {
+    appData.fecha = fecha;
+
+    // Obtener vehículos desde BambuState
+    const vehiculosBambu = BambuState.getVehiculos();
+
+    // Obtener pedidos del día (solo reparto, no fábrica)
+    const pedidosDia = BambuState.getPedidos({ fecha, tipo: 'reparto' });
+
+    // Construir estructura de vehículos con sus pedidos
+    appData.vehiculos = vehiculosBambu.map(v => {
+        // Pedidos asignados a este vehículo
+        const pedidosVehiculo = pedidosDia
+            .filter(p => p.vehiculo_id === v.id && p.estado !== 'pendiente')
+            .map(p => adaptarPedido(p));
+
+        // Calcular carga
+        const pesoActual = pedidosVehiculo.reduce((sum, p) => sum + p.peso, 0);
+        const porcentaje = Math.round((pesoActual / v.capacidadKg) * 100);
+
+        return {
+            id: `r${v.id}`,
+            vehiculoId: v.id,
+            nombre: v.modelo || 'Vehículo',
+            patente: v.patente || '',
+            badge: v.nombre.toUpperCase(),
+            capacidadKg: v.capacidadKg,
+            pesoActual,
+            porcentaje,
+            estadoCapacidad: getEstadoCapacidad(porcentaje),
+            pedidos: pedidosVehiculo
+        };
+    });
+
+    // Pedidos sin asignar (estado 'pendiente' sin vehículo)
+    appData.pedidosSinAsignar = pedidosDia
+        .filter(p => p.estado === 'pendiente' || !p.vehiculo_id)
+        .map(p => adaptarPedido(p));
+
+    console.log(`[Repartos] Cargados ${pedidosDia.length} pedidos para ${fecha}`);
+    console.log(`[Repartos] ${appData.pedidosSinAsignar.length} sin asignar`);
+}
+
+/**
+ * Adapta pedido de BambuState al formato de la UI
+ */
+function adaptarPedido(p) {
+    const cliente = BambuState.getById('clientes', p.cliente_id);
+    const peso = BambuState.calcularPesoPedido(p.id);
+    const monto = BambuState.calcularTotalPedido(p.id);
+
+    // Formatear fecha para display
+    const fechaParts = p.fecha ? p.fecha.split('-') : [];
+    const fechaDisplay = fechaParts.length === 3
+        ? `${fechaParts[2]}/${fechaParts[1]}/${fechaParts[0]}`
+        : '';
+
+    return {
+        id: p.id,
+        numero: p.numero,
+        direccion: p.direccion,
+        ciudad: p.ciudad,
+        telefono: cliente?.telefono || '',
+        peso: Math.round(peso * 10) / 10,
+        monto: Math.round(monto),
+        fechaEntrega: fechaDisplay
+    };
+}
+
+function getEstadoCapacidad(porcentaje) {
+    if (porcentaje >= 85) return 'casi-lleno';
+    if (porcentaje >= 70) return 'alta';
+    return 'optima';
+}
 
 // Variables globales
 let pedidoSeleccionadoId = null;
@@ -254,19 +125,20 @@ function formatearFechaCompleta(fechaISO) {
 // ===========================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Leer parámetro fecha de URL
-    const fechaParam = getUrlParameter('fecha');
+    // Inicializar BambuState
+    BambuState.init();
 
-    if (fechaParam) {
-        // Actualizar fecha en MOCK_DATA
-        MOCK_DATA.fecha = fechaParam;
+    // Leer parámetro fecha de URL o usar fecha sistema
+    const fechaParam = getUrlParameter('fecha') || BambuState.FECHA_SISTEMA;
 
-        // Actualizar título del header
-        const tituloFecha = formatearFechaCompleta(fechaParam);
-        document.getElementById('dia-fecha-titulo').textContent = tituloFecha;
+    // Cargar datos del día desde BambuState
+    cargarDatosDia(fechaParam);
 
-        console.log(`Cargando datos para fecha: ${fechaParam} (${tituloFecha})`);
-    }
+    // Actualizar título del header
+    const tituloFecha = formatearFechaCompleta(fechaParam);
+    document.getElementById('dia-fecha-titulo').textContent = tituloFecha;
+
+    console.log(`[Repartos] Inicializado para fecha: ${fechaParam}`);
 
     // Renderizar vista inicial
     renderizarVehiculos();
@@ -321,7 +193,7 @@ function renderizarVehiculos() {
     const container = document.getElementById('vehiculos-container');
     container.innerHTML = '';
 
-    MOCK_DATA.vehiculos.forEach(vehiculo => {
+    appData.vehiculos.forEach(vehiculo => {
         const vehiculoHTML = `
             <div class="vehicle-group" data-vehiculo-id="${vehiculo.id}">
                 <div class="vehicle-header-compact">
@@ -404,7 +276,7 @@ function renderizarPedidosSinAsignar() {
     const container = document.getElementById('sin-asignar-container');
     const tbody = document.getElementById('tabla-sin-asignar');
 
-    if (MOCK_DATA.pedidosSinAsignar.length === 0) {
+    if (appData.pedidosSinAsignar.length === 0) {
         container.style.display = 'none';
         return;
     }
@@ -412,13 +284,13 @@ function renderizarPedidosSinAsignar() {
     container.style.display = 'block';
 
     // Actualizar contadores
-    const totalPeso = MOCK_DATA.pedidosSinAsignar.reduce((sum, p) => sum + p.peso, 0);
-    document.getElementById('sin-asignar-count').textContent = MOCK_DATA.pedidosSinAsignar.length;
+    const totalPeso = appData.pedidosSinAsignar.reduce((sum, p) => sum + p.peso, 0);
+    document.getElementById('sin-asignar-count').textContent = appData.pedidosSinAsignar.length;
     document.getElementById('sin-asignar-peso').textContent = totalPeso;
-    document.getElementById('sin-asignar-count-label').textContent = MOCK_DATA.pedidosSinAsignar.length;
+    document.getElementById('sin-asignar-count-label').textContent = appData.pedidosSinAsignar.length;
 
     // Renderizar tabla
-    tbody.innerHTML = MOCK_DATA.pedidosSinAsignar.map(pedido => `
+    tbody.innerHTML = appData.pedidosSinAsignar.map(pedido => `
         <tr>
             <td><strong>${pedido.numero}</strong></td>
             <td>${pedido.direccion}</td>
@@ -446,7 +318,7 @@ function renderizarCiudades() {
     // Reorganizar pedidos por ciudad
     const pedidosPorCiudad = {};
 
-    MOCK_DATA.vehiculos.forEach(vehiculo => {
+    appData.vehiculos.forEach(vehiculo => {
         vehiculo.pedidos.forEach(pedido => {
             if (!pedidosPorCiudad[pedido.ciudad]) {
                 pedidosPorCiudad[pedido.ciudad] = [];
@@ -527,7 +399,7 @@ function abrirModalAsignarVehiculo(pedidoId) {
     vehiculoSeleccionadoId = null;
 
     // Buscar pedido
-    const pedido = MOCK_DATA.pedidosSinAsignar.find(p => p.id === pedidoId);
+    const pedido = appData.pedidosSinAsignar.find(p => p.id === pedidoId);
     if (!pedido) return;
 
     // Actualizar info del pedido en el modal
@@ -555,7 +427,7 @@ function renderizarOpcionesVehiculos(pedido) {
     const container = document.getElementById('modal-vehiculos-list');
     container.innerHTML = '';
 
-    MOCK_DATA.vehiculos.forEach(vehiculo => {
+    appData.vehiculos.forEach(vehiculo => {
         // Calcular preview capacidad
         const preview = calcularPreviewCapacidad(vehiculo.id, pedido.peso);
 
@@ -609,13 +481,13 @@ function confirmarAsignacion() {
     if (!pedidoSeleccionadoId || !vehiculoSeleccionadoId) return;
 
     // Buscar pedido y vehículo
-    const pedidoIndex = MOCK_DATA.pedidosSinAsignar.findIndex(p => p.id === pedidoSeleccionadoId);
-    const vehiculo = MOCK_DATA.vehiculos.find(v => v.id === vehiculoSeleccionadoId);
+    const pedidoIndex = appData.pedidosSinAsignar.findIndex(p => p.id === pedidoSeleccionadoId);
+    const vehiculo = appData.vehiculos.find(v => v.id === vehiculoSeleccionadoId);
 
     if (pedidoIndex === -1 || !vehiculo) return;
 
     // Mover pedido
-    const pedido = MOCK_DATA.pedidosSinAsignar.splice(pedidoIndex, 1)[0];
+    const pedido = appData.pedidosSinAsignar.splice(pedidoIndex, 1)[0];
     vehiculo.pedidos.push(pedido);
 
     // Recalcular capacidad del vehículo
@@ -637,14 +509,14 @@ function confirmarAsignacion() {
 
 function cambiarVehiculo(pedidoId, vehiculoActualId) {
     // Buscar pedido en vehículo actual
-    const vehiculoActual = MOCK_DATA.vehiculos.find(v => v.id === vehiculoActualId);
+    const vehiculoActual = appData.vehiculos.find(v => v.id === vehiculoActualId);
     const pedidoIndex = vehiculoActual.pedidos.findIndex(p => p.id === pedidoId);
 
     if (pedidoIndex === -1) return;
 
     // Mover pedido de vuelta a sin asignar temporalmente
     const pedido = vehiculoActual.pedidos.splice(pedidoIndex, 1)[0];
-    MOCK_DATA.pedidosSinAsignar.push(pedido);
+    appData.pedidosSinAsignar.push(pedido);
 
     // Recalcular capacidad del vehículo anterior
     recalcularCapacidadVehiculo(vehiculoActualId);
@@ -674,7 +546,7 @@ function desasignarVehiculo(pedidoId) {
 // ===========================
 
 function calcularPreviewCapacidad(vehiculoId, pesoPedido) {
-    const vehiculo = MOCK_DATA.vehiculos.find(v => v.id === vehiculoId);
+    const vehiculo = appData.vehiculos.find(v => v.id === vehiculoId);
     const pesoTotal = vehiculo.pesoActual + pesoPedido;
     const porcentaje = Math.round((pesoTotal / vehiculo.capacidadKg) * 100);
 
@@ -702,7 +574,7 @@ function calcularPreviewCapacidad(vehiculoId, pesoPedido) {
 // ===========================
 
 function recalcularCapacidadVehiculo(vehiculoId) {
-    const vehiculo = MOCK_DATA.vehiculos.find(v => v.id === vehiculoId);
+    const vehiculo = appData.vehiculos.find(v => v.id === vehiculoId);
 
     // Calcular peso total
     vehiculo.pesoActual = vehiculo.pedidos.reduce((sum, p) => sum + p.peso, 0);
@@ -724,11 +596,11 @@ function recalcularCapacidadVehiculo(vehiculoId) {
 
 function actualizarStats() {
     // Calcular totales
-    let totalPedidos = MOCK_DATA.pedidosSinAsignar.length;
-    let totalKg = MOCK_DATA.pedidosSinAsignar.reduce((sum, p) => sum + p.peso, 0);
-    let totalMonto = MOCK_DATA.pedidosSinAsignar.reduce((sum, p) => sum + p.monto, 0);
+    let totalPedidos = appData.pedidosSinAsignar.length;
+    let totalKg = appData.pedidosSinAsignar.reduce((sum, p) => sum + p.peso, 0);
+    let totalMonto = appData.pedidosSinAsignar.reduce((sum, p) => sum + p.monto, 0);
 
-    MOCK_DATA.vehiculos.forEach(vehiculo => {
+    appData.vehiculos.forEach(vehiculo => {
         totalPedidos += vehiculo.pedidos.length;
         totalKg += vehiculo.pesoActual;
         totalMonto += vehiculo.pedidos.reduce((sum, p) => sum + p.monto, 0);
