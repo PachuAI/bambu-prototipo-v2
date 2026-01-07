@@ -129,9 +129,143 @@ function init() {
     renderCart();
     updateModeUI();
 
+    // Verificar si viene un borrador para editar desde URL
+    cargarBorradorDesdeURL();
+
     console.log('[Cotizador] Inicializado con BambuState');
     console.log('[Cotizador] Productos disponibles:', getProductosDisponibles().length);
     console.log('[Cotizador] Clientes activos:', getClientesActivos().length);
+}
+
+// ============================================================================
+// EDICIÓN DE BORRADOR DESDE VENTAS
+// PRD: Sección 12.1 - "Borradores se pueden recuperar y editar"
+// ============================================================================
+
+/**
+ * Detecta parámetro ?editar=ID en URL y carga el borrador correspondiente
+ *
+ * FLUJO:
+ * 1. Usuario viene de Ventas → cotizador.html?editar=123
+ * 2. Buscar borrador en BambuState por ID
+ * 3. Cargar cliente, modo, productos y notas en el formulario
+ * 4. Guardar ID para actualizar en lugar de crear nuevo
+ */
+function cargarBorradorDesdeURL() {
+    const params = new URLSearchParams(window.location.search);
+    const borradorId = params.get('editar');
+
+    if (!borradorId) return;
+
+    console.log('📝 Cargando borrador para edición:', borradorId);
+
+    // Buscar el borrador en BambuState
+    const borrador = BambuState._state.pedidos.find(p => p.id === parseInt(borradorId));
+
+    if (!borrador) {
+        console.warn('⚠️ Borrador no encontrado:', borradorId);
+        alert('No se encontró el borrador solicitado');
+        // Limpiar URL
+        window.history.replaceState({}, '', 'cotizador.html');
+        return;
+    }
+
+    // Guardar ID del borrador para actualizar en lugar de crear nuevo
+    state.editandoBorradorId = borrador.id;
+
+    // Cargar modo (REPARTO/FÁBRICA)
+    state.mode = borrador.tipo.toUpperCase();
+    const radioMode = document.getElementById(`mode-${borrador.tipo}`);
+    if (radioMode) radioMode.checked = true;
+    updateModeUI();
+
+    // Cargar cliente si existe
+    if (borrador.cliente_id) {
+        const clientes = getClientesActivos();
+        const cliente = clientes.find(c => c.id === borrador.cliente_id);
+        if (cliente) {
+            state.selectedClient = cliente;
+            els.inputClientSearch.value = cliente.name;
+            updateClearClientButton();
+
+            // Aplicar descuento del cliente
+            if (cliente.discount > 0) {
+                state.discountLevel = cliente.discount;
+            }
+        }
+    }
+
+    // Cargar fecha si existe
+    if (borrador.fecha) {
+        els.inputDateInline.value = borrador.fecha;
+    }
+
+    // Cargar notas si existen
+    if (borrador.notas) {
+        state.notes = borrador.notas;
+        els.inputNotes.value = borrador.notas;
+        els.inputNotes.classList.remove('hidden');
+    }
+
+    // Cargar productos del borrador
+    const items = BambuState.getItemsPedido(borrador.id);
+    const productosDisponibles = getProductosDisponibles();
+
+    items.forEach(item => {
+        const producto = productosDisponibles.find(p => p.id === item.producto_id);
+        if (producto) {
+            // Agregar al carrito con la cantidad del borrador
+            state.cart.push({
+                ...producto,
+                qty: item.cantidad,
+                price: item.precio_unitario
+            });
+        }
+    });
+
+    // Renderizar carrito y actualizar totales
+    renderCart();
+    updateTotals();
+
+    // Mostrar notificación de modo edición
+    mostrarNotificacionEdicion(borrador.numero);
+
+    console.log('✅ Borrador cargado:', {
+        id: borrador.id,
+        numero: borrador.numero,
+        cliente: state.selectedClient?.name,
+        productos: state.cart.length
+    });
+}
+
+/**
+ * Muestra notificación visual de que se está editando un borrador
+ */
+function mostrarNotificacionEdicion(numeroBorrador) {
+    const notif = document.createElement('div');
+    notif.id = 'notif-edicion';
+    notif.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #3b82f6;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        z-index: 9999;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    `;
+    notif.innerHTML = `
+        <i class="fas fa-edit"></i>
+        Editando borrador ${numeroBorrador}
+        <button onclick="this.parentElement.remove()" style="background:none;border:none;color:white;cursor:pointer;margin-left:10px;">✕</button>
+    `;
+    document.body.appendChild(notif);
 }
 
 function setupListeners() {
@@ -203,6 +337,15 @@ function setupListeners() {
     els.btnResumen.addEventListener('click', openSummaryModal);
     els.btnCloseResumen.addEventListener('click', () => els.modalResumen.classList.add('hidden'));
     els.btnCloseResumen2.addEventListener('click', () => els.modalResumen.classList.add('hidden'));
+
+    // Tabs del Modal Resumen (WhatsApp / Remito PDF)
+    document.querySelectorAll('.tabs-simple .tab').forEach(tab => {
+        tab.addEventListener('click', (e) => switchResumenTab(e.target.dataset.tab));
+    });
+
+    // Botón Descargar PDF
+    const btnPdf = document.getElementById('btn-descargar-pdf');
+    if (btnPdf) btnPdf.addEventListener('click', generarRemitoPDF);
 
     // Payment Method Checkboxes
     els.chkEfectivo.addEventListener('change', updatePaymentUI);
@@ -663,6 +806,9 @@ function validatePaymentSplit() {
 function openSummaryModal() {
     els.modalResumen.classList.remove('hidden');
 
+    // Resetear a tab WhatsApp
+    switchResumenTab('whatsapp');
+
     // Populate data
     const date = new Date().toLocaleDateString();
     document.getElementById('preview-date').textContent = date;
@@ -670,11 +816,257 @@ function openSummaryModal() {
     document.getElementById('preview-subtotal').textContent = els.txtSubtotal.textContent;
     document.getElementById('preview-total-display').textContent = els.txtTotal.textContent;
 
-    // Items list
+    // Items list (WhatsApp)
     const itemsHtml = state.cart.map(item => `
         <div>• x${item.qty} - ${item.name} - $${(item.price * item.qty).toLocaleString()}</div>
     `).join('');
     document.getElementById('preview-items-list').innerHTML = itemsHtml || "<div>(Sin productos)</div>";
+
+    // Llenar Remito PDF
+    llenarRemitoPreview();
+}
+
+// ============================================================================
+// TABS DEL MODAL RESUMEN
+// PRD: Sección 8.3 - Formatos de resumen (WhatsApp + Remito PDF)
+// ============================================================================
+
+/**
+ * Cambia entre tabs WhatsApp y Remito PDF
+ * @param {string} tabId - 'whatsapp' o 'remito'
+ */
+function switchResumenTab(tabId) {
+    // Actualizar tabs activos
+    document.querySelectorAll('.tabs-simple .tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabId);
+    });
+
+    // Mostrar/ocultar contenido
+    const tabWhatsapp = document.getElementById('tab-whatsapp');
+    const tabRemito = document.getElementById('tab-remito');
+
+    if (tabId === 'whatsapp') {
+        tabWhatsapp.style.display = 'block';
+        tabWhatsapp.classList.add('active');
+        tabRemito.style.display = 'none';
+        tabRemito.classList.remove('active');
+    } else {
+        tabWhatsapp.style.display = 'none';
+        tabWhatsapp.classList.remove('active');
+        tabRemito.style.display = 'block';
+        tabRemito.classList.add('active');
+    }
+}
+
+/**
+ * Llena el preview del remito con los datos actuales del pedido
+ * LÓGICA: Genera número de remito, fecha, cliente, items y totales
+ */
+function llenarRemitoPreview() {
+    // Número de remito (simulado - en producción vendría del backend)
+    const numeroRemito = `0001-${String(Math.floor(Math.random() * 99999) + 1).padStart(5, '0')}`;
+    document.getElementById('remito-numero').textContent = numeroRemito;
+
+    // Fecha
+    const fecha = new Date().toLocaleDateString('es-AR');
+    document.getElementById('remito-fecha').textContent = fecha;
+
+    // Cliente
+    const clienteNombre = state.selectedClient ? state.selectedClient.name : 'Consumidor Final';
+    const clienteDireccion = state.selectedClient?.address || '';
+    document.getElementById('remito-cliente-nombre').textContent = clienteNombre;
+    document.getElementById('remito-cliente-direccion').textContent = clienteDireccion;
+
+    // Items de la tabla
+    const itemsHtml = state.cart.map(item => {
+        const precioUnit = item.price;
+        const subtotal = precioUnit * item.qty;
+        return `
+            <tr>
+                <td>${item.qty}</td>
+                <td>${item.name}</td>
+                <td>$${precioUnit.toLocaleString()}</td>
+                <td>$${subtotal.toLocaleString()}</td>
+            </tr>
+        `;
+    }).join('');
+    document.getElementById('remito-items').innerHTML = itemsHtml || '<tr><td colspan="4" style="text-align:center;">(Sin productos)</td></tr>';
+
+    // Totales
+    document.getElementById('remito-subtotal').textContent = els.txtSubtotal.textContent;
+    document.getElementById('remito-total').textContent = els.txtTotal.textContent;
+
+    // Descuento (si hay)
+    const descuentoRow = document.getElementById('remito-descuento-row');
+    if (state.discountPercent > 0 || state.discountManual > 0) {
+        descuentoRow.style.display = 'flex';
+        const descPct = state.discountManual > 0 ? state.discountManual : state.discountPercent;
+        document.getElementById('remito-descuento').textContent = `-${descPct}%`;
+    } else {
+        descuentoRow.style.display = 'none';
+    }
+}
+
+// ============================================================================
+// GENERACIÓN DE PDF CON jsPDF
+// PRD: Sección 8.3 - Remito PDF: Documento formal descargable
+// ============================================================================
+
+/**
+ * Genera y descarga un PDF del remito usando jsPDF
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Crea documento A4 con formato profesional
+ * - Incluye: Logo/nombre empresa, datos cliente, tabla productos, totales
+ * - Nombre archivo: Remito_{numero}_{fecha}.pdf
+ */
+function generarRemitoPDF() {
+    // Verificar que jsPDF esté disponible
+    if (typeof window.jspdf === 'undefined') {
+        alert('Error: Librería jsPDF no cargada');
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Configuración
+    const margen = 20;
+    let y = margen;
+
+    // Encabezado empresa
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232); // Azul
+    doc.text('QUÍMICA BAMBU S.R.L.', margen, y);
+    y += 6;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100);
+    doc.text('Neuquén, Argentina', margen, y);
+
+    // Título REMITO (derecha)
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0);
+    doc.text('REMITO', 190, margen, { align: 'right' });
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    const numRemito = document.getElementById('remito-numero').textContent;
+    const fechaRemito = document.getElementById('remito-fecha').textContent;
+    doc.text(`Nº: ${numRemito}`, 190, margen + 6, { align: 'right' });
+    doc.text(`Fecha: ${fechaRemito}`, 190, margen + 11, { align: 'right' });
+
+    // Línea separadora
+    y += 10;
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(margen, y, 190, y);
+    y += 10;
+
+    // Datos del cliente
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Cliente:', margen, y);
+    doc.setFont('helvetica', 'normal');
+    const clienteNombre = document.getElementById('remito-cliente-nombre').textContent;
+    doc.text(clienteNombre, margen + 20, y);
+    y += 6;
+    const clienteDireccion = document.getElementById('remito-cliente-direccion').textContent;
+    if (clienteDireccion) {
+        doc.setFontSize(10);
+        doc.text(clienteDireccion, margen, y);
+        y += 6;
+    }
+
+    y += 8;
+
+    // Tabla de productos - Encabezados
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margen, y - 4, 170, 8, 'F');
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Cant.', margen + 5, y);
+    doc.text('Descripción', margen + 25, y);
+    doc.text('P. Unit.', margen + 115, y);
+    doc.text('Subtotal', margen + 145, y);
+    y += 8;
+
+    // Items
+    doc.setFont('helvetica', 'normal');
+    state.cart.forEach(item => {
+        const precioUnit = item.price;
+        const subtotal = precioUnit * item.qty;
+
+        doc.text(String(item.qty), margen + 5, y);
+        doc.text(item.name.substring(0, 40), margen + 25, y); // Truncar si es muy largo
+        doc.text(`$${precioUnit.toLocaleString()}`, margen + 115, y);
+        doc.text(`$${subtotal.toLocaleString()}`, margen + 145, y);
+
+        // Línea sutil entre items
+        doc.setDrawColor(220);
+        doc.setLineWidth(0.1);
+        doc.line(margen, y + 3, 190, y + 3);
+
+        y += 8;
+    });
+
+    y += 5;
+
+    // Totales (alineados a la derecha)
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.3);
+    doc.line(margen + 100, y, 190, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    doc.text('Subtotal:', margen + 115, y);
+    doc.text(els.txtSubtotal.textContent, margen + 165, y);
+    y += 6;
+
+    // Descuento si aplica
+    if (state.discountPercent > 0 || state.discountManual > 0) {
+        const descPct = state.discountManual > 0 ? state.discountManual : state.discountPercent;
+        doc.text(`Descuento (${descPct}%):`, margen + 115, y);
+        // Calcular monto descuento
+        const subtotalNum = parseFloat(els.txtSubtotal.textContent.replace(/[^0-9.-]/g, '')) || 0;
+        const descMonto = subtotalNum * (descPct / 100);
+        doc.text(`-$${Math.round(descMonto).toLocaleString()}`, margen + 165, y);
+        y += 6;
+    }
+
+    // Total final (destacado)
+    doc.setFillColor(30, 30, 30);
+    doc.rect(margen + 100, y - 4, 90, 10, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('TOTAL:', margen + 115, y + 2);
+    doc.text(els.txtTotal.textContent, margen + 165, y + 2);
+
+    // Resetear color
+    doc.setTextColor(0);
+
+    // Footer
+    y = 270;
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(150);
+    doc.text('Documento generado desde Bambu CRM V2', 105, y, { align: 'center' });
+
+    // Descargar
+    const nombreArchivo = `Remito_${numRemito.replace('-', '_')}_${fechaRemito.replace(/\//g, '-')}.pdf`;
+    doc.save(nombreArchivo);
+
+    // Feedback visual
+    const btn = document.getElementById('btn-descargar-pdf');
+    const textoOriginal = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> Descargado!';
+    btn.disabled = true;
+    setTimeout(() => {
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+    }, 2000);
 }
 
 // ============================================================================
@@ -683,8 +1075,12 @@ function openSummaryModal() {
 // ============================================================================
 
 /**
- * Guarda el pedido actual como borrador
+ * Guarda el pedido actual como borrador (nuevo o actualización)
  * PRD: Guardar en localStorage, generar ID, mantener en lista borradores
+ *
+ * LÓGICA:
+ * - Si state.editandoBorradorId existe → actualizar borrador existente
+ * - Si no existe → crear nuevo borrador
  */
 function guardarBorrador() {
     // Validar que hay productos
@@ -693,44 +1089,88 @@ function guardarBorrador() {
         return;
     }
 
-    // Crear borrador en BambuState
-    const borrador = BambuState.crearBorrador({
-        cliente_id: state.selectedClient?.id || null,
-        tipo: state.mode.toLowerCase(),
-        fecha: els.inputDateInline.value || BambuState.FECHA_SISTEMA,
-        direccion: state.selectedClient?.address || 'Cliente sin nombre',
-        ciudad: 'Neuquén',
-        notas: state.notes || null
-    });
+    let borrador;
+    let mensaje;
 
-    // Agregar items al borrador
-    state.cart.forEach(item => {
-        const precio = (item.en_promocion && item.precio_promocional)
-            ? item.precio_promocional
-            : item.price;
+    if (state.editandoBorradorId) {
+        // MODO EDICIÓN: Actualizar borrador existente
+        borrador = BambuState._state.pedidos.find(p => p.id === state.editandoBorradorId);
 
-        BambuState.agregarItemPedido(borrador.id, {
-            producto_id: item.id,
-            cantidad: item.qty,
-            precio_unitario: precio
+        if (borrador) {
+            // Actualizar datos del borrador
+            borrador.cliente_id = state.selectedClient?.id || null;
+            borrador.tipo = state.mode.toLowerCase();
+            borrador.fecha = els.inputDateInline.value || null;
+            borrador.direccion = state.selectedClient?.address || 'Cliente sin nombre';
+            borrador.notas = state.notes || null;
+
+            // Eliminar items viejos
+            BambuState._state.pedido_items = BambuState._state.pedido_items.filter(
+                i => i.pedido_id !== borrador.id
+            );
+
+            // Agregar items nuevos
+            state.cart.forEach(item => {
+                const precio = (item.en_promocion && item.precio_promocional)
+                    ? item.precio_promocional
+                    : item.price;
+
+                BambuState.agregarItemPedido(borrador.id, {
+                    producto_id: item.id,
+                    cantidad: item.qty,
+                    precio_unitario: precio
+                });
+            });
+
+            mensaje = `✅ Borrador ${borrador.numero} actualizado`;
+            console.log(mensaje);
+        }
+    } else {
+        // MODO NUEVO: Crear borrador nuevo
+        borrador = BambuState.crearBorrador({
+            cliente_id: state.selectedClient?.id || null,
+            tipo: state.mode.toLowerCase(),
+            fecha: els.inputDateInline.value || BambuState.FECHA_SISTEMA,
+            direccion: state.selectedClient?.address || 'Cliente sin nombre',
+            ciudad: 'Neuquén',
+            notas: state.notes || null
         });
-    });
+
+        // Agregar items al borrador
+        state.cart.forEach(item => {
+            const precio = (item.en_promocion && item.precio_promocional)
+                ? item.precio_promocional
+                : item.price;
+
+            BambuState.agregarItemPedido(borrador.id, {
+                producto_id: item.id,
+                cantidad: item.qty,
+                precio_unitario: precio
+            });
+        });
+
+        mensaje = `📝 Borrador ${borrador.numero} guardado`;
+        console.log(mensaje);
+    }
 
     // Guardar en localStorage
     BambuState.save();
 
-    // Mostrar notificación
-    console.log(`📝 Borrador ${borrador.numero} guardado`);
-
     // Notificación visual
     const notif = document.createElement('div');
     notif.style.cssText = 'position:fixed;top:20px;right:20px;background:#3b82f6;color:white;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:500;';
-    notif.textContent = `📝 Borrador ${borrador.numero} guardado`;
+    notif.textContent = mensaje;
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
 
-    // Opcional: limpiar formulario después de guardar borrador
-    // resetearFormulario();
+    // Si estaba editando, limpiar URL y resetear modo edición
+    if (state.editandoBorradorId) {
+        window.history.replaceState({}, '', 'cotizador.html');
+        state.editandoBorradorId = null;
+        // Quitar notificación de edición si existe
+        const notifEdicion = document.getElementById('notif-edicion');
+        if (notifEdicion) notifEdicion.remove();
+    }
 }
 
 // ============================================================================
@@ -781,6 +1221,25 @@ function confirmarPedido() {
             precio_unitario: precio
         });
     });
+
+    // Si estaba editando un borrador, eliminarlo (ya se creó el pedido nuevo)
+    if (state.editandoBorradorId) {
+        // Eliminar items del borrador viejo
+        BambuState._state.pedido_items = BambuState._state.pedido_items.filter(
+            i => i.pedido_id !== state.editandoBorradorId
+        );
+        // Eliminar el borrador
+        BambuState._state.pedidos = BambuState._state.pedidos.filter(
+            p => p.id !== state.editandoBorradorId
+        );
+        console.log(`🗑️ Borrador ${state.editandoBorradorId} eliminado (convertido a pedido)`);
+
+        // Limpiar URL y estado
+        window.history.replaceState({}, '', 'cotizador.html');
+        state.editandoBorradorId = null;
+        const notifEdicion = document.getElementById('notif-edicion');
+        if (notifEdicion) notifEdicion.remove();
+    }
 
     // Guardar en localStorage
     BambuState.save();

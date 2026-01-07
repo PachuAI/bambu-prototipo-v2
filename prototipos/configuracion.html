@@ -184,6 +184,30 @@
                         </div>
                     </div>
 
+                    <!-- SECCIÓN: PROVEEDORES -->
+                    <div class="config-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-industry"></i> Proveedores</h3>
+                            <button class="btn-primary-sm" onclick="abrirModalProveedor()">
+                                <i class="fas fa-plus"></i> Agregar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <table class="config-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Productos Asociados</th>
+                                        <th class="th-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-proveedores">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- TAB: CIUDADES -->
@@ -304,6 +328,29 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModalLista()">Cancelar</button>
                 <button class="btn-primary" onclick="guardarLista()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PROVEEDOR -->
+    <div id="modal-proveedor" class="modal-overlay hidden">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3 id="modal-proveedor-titulo"><i class="fas fa-industry"></i> Nuevo Proveedor</h3>
+                <button class="btn-close-modal" onclick="cerrarModalProveedor()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="proveedor-id">
+                <div class="form-group">
+                    <label class="form-label">Nombre <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="proveedor-nombre" placeholder="Ej: Químicos del Sur">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalProveedor()">Cancelar</button>
+                <button class="btn-primary" onclick="guardarProveedor()">
                     <i class="fas fa-save"></i> Guardar
                 </button>
             </div>

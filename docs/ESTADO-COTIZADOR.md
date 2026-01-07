@@ -15,7 +15,7 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ---
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 07 Enero 2026 (Sprint 3 completado)
+**Última actualización**: 07 Enero 2026 (Sprint 4 completado)
 **Archivos verificados**:
 - `prototipos/cotizador.html`
 - `prototipos/assets/cotizador/script.js`
@@ -84,29 +84,19 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 ### Alta prioridad
 
-1. **Guardar Borrador - Lógica real**
-   - PRD: Sección 8.2 - Botones de acción
-   - HTML: Botón existe (línea 280)
-   - JS falta: Guardar en localStorage, generar ID, mantener en lista borradores
-   - Complejidad: Media
+1. ~~**Guardar Borrador - Lógica real**~~ ✅ IMPLEMENTADO Sprint 1
+   - BambuState.crearBorrador() + agregarItemPedido()
 
-2. **Confirmar Pedido - Lógica real**
-   - PRD: Sección 8.2 - Botones de acción
-   - HTML: Modal existe
-   - JS falta: Guardar pedido, descontar stock mock, agregar a lista PEDIDOS
-   - Actual: Solo muestra alert y hace reload
-   - Complejidad: Alta
+2. ~~**Confirmar Pedido - Lógica real**~~ ✅ IMPLEMENTADO Sprint 1
+   - BambuState.crearPedido() + agregarItemPedido() + descuento stock
 
 3. ~~**Input cantidad editable**~~ ✅ IMPLEMENTADO Sprint 2
    - Edición directa habilitada, Enter confirma
 
 ### Media prioridad
 
-4. **Tab Email/Remito en modal resumen**
-   - PRD: Sección 8.3 - Formatos de resumen (WhatsApp + Remito PDF)
-   - HTML: Solo tab WhatsApp visible
-   - JS falta: Tab Remito PDF con generación de documento
-   - Complejidad: Alta
+4. ~~**Tab Email/Remito en modal resumen**~~ ✅ IMPLEMENTADO Sprint 4
+   - Tab Remito PDF con preview y generación de documento jsPDF
 
 5. ~~**Botón Copiar en modal resumen**~~ ✅ IMPLEMENTADO Sprint 2
    - navigator.clipboard + feedback visual "✓ Copiado!"
@@ -121,11 +111,8 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 7. ~~**Validación fecha solo L-V**~~ ✅ IMPLEMENTADO Sprint 2
    - Detecta fines de semana, confirm() sugiere próximo día laborable
 
-8. **Quitar cliente seleccionado**
-   - PRD: Sección 4 - Selector de Cliente
-   - HTML: No hay botón X
-   - JS falta: Resetear a "Cliente sin nombre"
-   - Complejidad: Baja
+8. ~~**Quitar cliente seleccionado**~~ ✅ IMPLEMENTADO Sprint 3
+   - clearSelectedClient() + updateClearClientButton()
 
 ---
 
@@ -180,19 +167,16 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 9. ~~**Productos BAMBU sin restricción stock**~~ ✅ IMPLEMENTADO Sprint 3
    - proveedor_id=1 mapeado a BAMBU, validación en addProduct()
 
-10. **Remito PDF formal**
-    - PRD: Sección 8.3 - "Remito PDF: Documento formal descargable"
-    - Debe hacer: Generar PDF profesional con logo, tabla, totales
-    - HTML/JS: No existe
-    - Complejidad: Alta
+10. ~~**Remito PDF formal**~~ ✅ IMPLEMENTADO Sprint 4
+    - Tab Remito en modal + generación PDF con jsPDF
+    - Incluye: Logo empresa, datos cliente, tabla productos, totales, descuentos
 
 ### Baja prioridad
 
-11. **Edición pedido desde VENTAS**
-    - PRD: Sección 12.1 - "Borradores se pueden recuperar y editar"
-    - Debe hacer: Cargar pedido existente en cotizador para editar
-    - Nota: Requiere integración con módulo Ventas
-    - Complejidad: Alta
+11. ~~**Edición pedido desde VENTAS**~~ ✅ IMPLEMENTADO Sprint 4
+    - Botón Editar en Ventas → redirige a cotizador.html?editar={id}
+    - Cotizador detecta URL, carga cliente/productos/modo
+    - Guardar actualiza borrador, Confirmar lo convierte a pedido
 
 ---
 
@@ -200,12 +184,12 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| Implementadas | 44 | 91.67% |
-| Visuales sin lógica | 2 | 4.17% |
-| Faltantes | 2 | 4.17% |
+| Implementadas | 47 | 97.92% |
+| Visuales sin lógica | 1 | 2.08% |
+| Faltantes | 0 | 0% |
 | **TOTAL funcionalidades** | **48** | **100%** |
 
-**Nota**: Sprint 3 completado el 07-Ene-2026. Cotizador **OPERACIONAL Y LISTO PARA VALIDACIÓN** (92% de funcionalidades básicas implementadas).
+**Nota**: Sprint 4 completado (07-Ene-2026). Cotizador **98% COMPLETO** - Solo falta: Mejorar feedback visual de descuento cliente.
 
 ---
 
@@ -235,11 +219,11 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 13. ✅ **Cierre con advertencia cambios** - beforeunload event
 14. ✅ **Productos BAMBU sin restricción** - proveedor_id=1 mapeado
 
-### Sprint 4 - AVANZADO
-15. Remito PDF formal
-16. Edición pedido desde VENTAS
-17. Calendario modal mejorado
-18. Tab Remito en modal resumen
+### Sprint 4 - AVANZADO ✅ COMPLETADO (07-Ene-2026)
+15. ✅ **Remito PDF formal** - jsPDF con formato profesional
+16. ✅ **Tab Remito en modal resumen** - Tabs WhatsApp/Remito + preview
+17. ~~Calendario modal mejorado~~ - Validación L-V ya existe (Sprint 2), calendario visual descartado
+18. ✅ **Edición pedido desde VENTAS** - Integración completa Ventas↔Cotizador
 
 ---
 

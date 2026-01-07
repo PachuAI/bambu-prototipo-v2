@@ -219,6 +219,43 @@
     color: var(--color-warning);
 }
 
+/* Alerta stock negativo (más crítica que stock bajo) */
+.alert-stock-negativo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: var(--color-danger-bg);
+    border-bottom: 1px solid var(--color-danger);
+    color: var(--color-danger-dark);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.alert-stock-negativo i {
+    color: var(--color-danger);
+    font-size: 16px;
+}
+
+.alert-stock-negativo .btn-link-sm {
+    background: none;
+    border: none;
+    color: var(--color-danger-dark);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+    margin-left: auto;
+}
+
+.alert-stock-negativo .btn-link-sm:hover {
+    color: var(--color-danger);
+}
+
+.alert-stock-negativo.hidden {
+    display: none;
+}
+
 /* ============================================================================
    TABLA PRODUCTOS
    ============================================================================ */
@@ -424,6 +461,16 @@
 
 .btn-icon-sm.btn-delete:hover {
     background: var(--color-danger-light);
+}
+
+.btn-icon-sm.btn-history {
+    background: var(--color-neutral-light);
+    color: var(--color-neutral);
+}
+
+.btn-icon-sm.btn-history:hover {
+    background: var(--color-neutral);
+    color: var(--text-white);
 }
 
 /* Drag handle */
@@ -913,6 +960,69 @@
     background: var(--color-excel-dark);
 }
 
+/* Lista de checkboxes para exportar proveedores */
+.export-proveedores-list {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: 8px;
+    margin-bottom: 12px;
+}
+
+.export-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.export-checkbox:hover {
+    background: var(--bg-hover);
+}
+
+.export-checkbox input {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.export-checkbox:first-child {
+    border-bottom: 1px solid var(--border-color-light);
+    margin-bottom: 4px;
+    padding-bottom: 10px;
+    font-weight: 500;
+}
+
+/* Input con suffix (ej: peso con "kg") */
+.input-with-suffix {
+    display: flex;
+    align-items: stretch;
+}
+
+.input-with-suffix .form-input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+
+.input-suffix {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-left: none;
+    border-radius: 0 var(--border-radius-base) var(--border-radius-base) 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
 /* ============================================================================
    MODAL CONFIRMAR ELIMINAR
    ============================================================================ */
@@ -1043,6 +1153,354 @@
 
 .text-right {
     text-align: right;
+}
+
+/* ============================================================================
+   MODAL HISTORIAL STOCK
+   ============================================================================ */
+
+.historial-tabla-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+}
+
+.table-historial {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.table-historial thead th {
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    background: var(--table-header-bg);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table-historial tbody tr {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.table-historial tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table-historial tbody td {
+    padding: 8px 10px;
+    vertical-align: middle;
+}
+
+/* Badge tipo movimiento */
+.badge-tipo {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-tipo.ingreso {
+    background: var(--color-success-light);
+    color: var(--color-success-dark);
+}
+
+.badge-tipo.egreso {
+    background: var(--color-danger-light);
+    color: var(--color-danger-dark);
+}
+
+.badge-tipo.ajuste {
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+/* Cantidad con color según tipo */
+.cantidad-cell {
+    font-weight: 600;
+    font-family: 'SF Mono', monospace;
+}
+
+.cantidad-cell.ingreso {
+    color: var(--color-success);
+}
+
+.cantidad-cell.egreso {
+    color: var(--color-danger);
+}
+
+.cantidad-cell.ajuste {
+    color: var(--color-warning-dark);
+}
+
+.motivo-cell {
+    color: var(--text-secondary);
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stock-result-cell {
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Estado vacío */
+.historial-vacio {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+}
+
+.historial-vacio i {
+    font-size: 32px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.historial-vacio p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* ============================================================================
+   MODAL DETALLE PRODUCTO
+   ============================================================================ */
+
+/* Nombre clickeable */
+.producto-nombre.link-detalle {
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.producto-nombre.link-detalle:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+/* Tabs */
+.tabs-container {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-sidebar);
+}
+
+.tab-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background: var(--bg-white);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Grid info general */
+.detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.detalle-card {
+    background: var(--bg-sidebar);
+    padding: 12px;
+    border-radius: var(--border-radius-base);
+}
+
+.detalle-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.detalle-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Secciones */
+.detalle-section {
+    margin-top: 20px;
+}
+
+.detalle-section h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detalle-section h4 i {
+    color: var(--text-muted);
+}
+
+/* Grid precios */
+.precios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.precio-card {
+    padding: 16px;
+    border-radius: var(--border-radius-base);
+    text-align: center;
+}
+
+.precio-card.l1 {
+    background: var(--color-primary-bg);
+    border: 1px solid var(--color-primary-light);
+}
+
+.precio-card.l2 {
+    background: var(--color-info-bg);
+    border: 1px solid var(--color-info-light);
+}
+
+.precio-card.l3 {
+    background: var(--color-success-bg);
+    border: 1px solid var(--color-success-light);
+}
+
+.precio-lista {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.precio-valor {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'SF Mono', monospace;
+    color: var(--text-primary);
+}
+
+/* Grid stock */
+.stock-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stock-info-card {
+    background: var(--bg-sidebar);
+    padding: 16px;
+    border-radius: var(--border-radius-base);
+    text-align: center;
+}
+
+.stock-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.stock-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Grid estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: var(--bg-sidebar);
+    padding: 20px;
+    border-radius: var(--border-radius-base);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--color-primary-bg);
+    border-radius: var(--border-radius-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--color-primary);
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.stats-nota {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 /* ============================================================================

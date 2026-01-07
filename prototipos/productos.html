@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="assets/productos/productos-specific.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -137,6 +138,13 @@
                 </div>
             </header>
 
+            <!-- ALERTA STOCK NEGATIVO (PRD 4.1, 4.6) -->
+            <div id="alert-stock-negativo" class="alert-stock-negativo hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="alert-stock-negativo-texto">Hay productos con stock negativo</span>
+                <button class="btn-link-sm" onclick="filtrarStockNegativo()">Ver productos</button>
+            </div>
+
             <!-- LIST CONTAINER -->
             <div class="list-container">
                 <table class="table-v2" id="tabla-productos">
@@ -223,8 +231,12 @@
                 <!-- Row 4: Peso -->
                 <div class="form-row-2">
                     <div class="form-group">
-                        <label class="form-label">Peso (kg) <span class="required">*</span></label>
-                        <input type="number" class="form-input" id="prod-peso" placeholder="0.0" min="0.1" step="0.1">
+                        <label class="form-label">Peso <span class="required">*</span></label>
+                        <div class="input-with-suffix">
+                            <input type="number" class="form-input" id="prod-peso" placeholder="0.0" min="0.1" step="0.1">
+                            <span class="input-suffix">kg</span>
+                        </div>
+                        <span class="form-hint">Peso por unidad del producto</span>
                     </div>
                     <div class="form-group">
                         <!-- Espaciador -->
@@ -347,13 +359,12 @@
 
             <!-- Body -->
             <div class="modal-body">
-                <!-- Filtro por proveedor -->
+                <!-- Filtro por proveedores (selección múltiple) -->
                 <div class="form-group">
-                    <label class="form-label">Filtrar por proveedor</label>
-                    <select class="form-input" id="export-proveedor" onchange="actualizarVistaExport()">
-                        <option value="">Todos los proveedores</option>
-                        <!-- Opciones dinámicas desde JS -->
-                    </select>
+                    <label class="form-label">Filtrar por proveedores</label>
+                    <div class="export-proveedores-list" id="export-proveedores-list">
+                        <!-- Checkboxes generados dinámicamente desde JS -->
+                    </div>
                 </div>
 
                 <!-- Vista previa -->
@@ -404,6 +415,216 @@
                 <button class="btn-danger" onclick="confirmarEliminar()">
                     <i class="fas fa-trash"></i> Eliminar
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL: VISTA DETALLE PRODUCTO
+         PRD: prd/productos.html - Sección 4.7
+         ================================================================ -->
+    <div id="modal-detalle-producto" class="modal-overlay hidden">
+        <div class="modal-content modal-lg">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3><i class="fas fa-box"></i> <span id="detalle-titulo">Detalle Producto</span></h3>
+                <div class="modal-header-right">
+                    <span class="badge-status disponible" id="detalle-badge-estado">Disponible</span>
+                    <button class="btn-close-modal" onclick="cerrarModalDetalle()">&times;</button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="info" onclick="cambiarTabDetalle('info')">
+                    <i class="fas fa-info-circle"></i> Información
+                </button>
+                <button class="tab-btn" data-tab="historial" onclick="cambiarTabDetalle('historial')">
+                    <i class="fas fa-history"></i> Historial Stock
+                </button>
+                <button class="tab-btn" data-tab="estadisticas" onclick="cambiarTabDetalle('estadisticas')">
+                    <i class="fas fa-chart-bar"></i> Estadísticas
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Tab: Información General -->
+                <div class="tab-content active" id="tab-info">
+                    <div class="detalle-grid">
+                        <div class="detalle-card">
+                            <div class="detalle-label">Proveedor</div>
+                            <div class="detalle-value" id="detalle-proveedor">-</div>
+                        </div>
+                        <div class="detalle-card">
+                            <div class="detalle-label">Peso</div>
+                            <div class="detalle-value" id="detalle-peso">- kg</div>
+                        </div>
+                        <div class="detalle-card">
+                            <div class="detalle-label">Orden</div>
+                            <div class="detalle-value" id="detalle-orden">#-</div>
+                        </div>
+                        <div class="detalle-card">
+                            <div class="detalle-label">Estado Promoción</div>
+                            <div class="detalle-value" id="detalle-promocion">-</div>
+                        </div>
+                    </div>
+
+                    <!-- Precios -->
+                    <div class="detalle-section">
+                        <h4><i class="fas fa-tags"></i> Precios</h4>
+                        <div class="precios-grid">
+                            <div class="precio-card l1">
+                                <span class="precio-lista">Lista 1</span>
+                                <span class="precio-valor" id="detalle-precio-l1">$0</span>
+                            </div>
+                            <div class="precio-card l2">
+                                <span class="precio-lista">Lista 2 (-6.25%)</span>
+                                <span class="precio-valor" id="detalle-precio-l2">$0</span>
+                            </div>
+                            <div class="precio-card l3">
+                                <span class="precio-lista">Lista 3 (-10%)</span>
+                                <span class="precio-valor" id="detalle-precio-l3">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stock -->
+                    <div class="detalle-section">
+                        <h4><i class="fas fa-boxes"></i> Stock</h4>
+                        <div class="stock-info-grid">
+                            <div class="stock-info-card">
+                                <span class="stock-label">Stock Actual</span>
+                                <span class="stock-value" id="detalle-stock-actual">0</span>
+                            </div>
+                            <div class="stock-info-card">
+                                <span class="stock-label">Alerta Stock Bajo</span>
+                                <span class="stock-value" id="detalle-stock-minimo">0</span>
+                            </div>
+                            <div class="stock-info-card estado">
+                                <span class="stock-label">Estado</span>
+                                <span class="stock-value" id="detalle-stock-estado">Normal</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Historial Stock -->
+                <div class="tab-content" id="tab-historial">
+                    <div class="historial-tabla-container" style="max-height: 350px;">
+                        <table class="table-historial">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Cantidad</th>
+                                    <th>Motivo</th>
+                                    <th>Stock Result.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-detalle-historial">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="detalle-historial-vacio" class="historial-vacio hidden">
+                        <i class="fas fa-inbox"></i>
+                        <p>Sin movimientos registrados</p>
+                    </div>
+                </div>
+
+                <!-- Tab: Estadísticas -->
+                <div class="tab-content" id="tab-estadisticas">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="detalle-total-pedidos">0</span>
+                                <span class="stat-label">Pedidos totales</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-cubes"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="detalle-unidades-vendidas">0</span>
+                                <span class="stat-label">Unidades vendidas</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="detalle-ingresos">$0</span>
+                                <span class="stat-label">Ingresos generados</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="stats-nota"><i class="fas fa-info-circle"></i> Estadísticas basadas en datos mock del período actual</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalDetalle()">Cerrar</button>
+                <button class="btn-primary" onclick="editarProductoDesdeDetalle()">
+                    <i class="fas fa-pen"></i> Editar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL: HISTORIAL DE MOVIMIENTOS DE STOCK
+         PRD: prd/productos.html - Sección 4.7
+         ================================================================ -->
+    <div id="modal-historial-stock" class="modal-overlay hidden">
+        <div class="modal-content modal-md">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3><i class="fas fa-history"></i> Historial de Stock</h3>
+                <button class="btn-close-modal" onclick="cerrarModalHistorial()">&times;</button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Info producto -->
+                <div class="info-producto-stock">
+                    <div class="info-row">
+                        <span class="info-label">Producto:</span>
+                        <span class="info-value" id="historial-producto-nombre">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Stock actual:</span>
+                        <span class="info-value" id="historial-stock-actual">-</span>
+                    </div>
+                </div>
+
+                <!-- Tabla movimientos -->
+                <div class="historial-tabla-container">
+                    <table class="table-historial">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                                <th>Motivo</th>
+                                <th>Stock Result.</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-historial">
+                            <!-- Filas generadas dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Estado vacío -->
+                <div id="historial-vacio" class="historial-vacio hidden">
+                    <i class="fas fa-inbox"></i>
+                    <p>Sin movimientos registrados</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalHistorial()">Cerrar</button>
             </div>
         </div>
     </div>

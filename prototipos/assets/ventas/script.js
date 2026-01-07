@@ -674,9 +674,18 @@ function renderizarPaginacionBorradores() {
 // BORRADORES - ACCIONES
 // ========================================
 
+/**
+ * Redirige al Cotizador para editar un borrador existente
+ * PRD: Sección 12.1 - "Borradores se pueden recuperar y editar"
+ *
+ * FLUJO:
+ * 1. Usuario hace click en "Editar" en la tabla de borradores
+ * 2. Se redirige a cotizador.html?editar={borradorId}
+ * 3. Cotizador detecta el parámetro y carga los datos del borrador
+ */
 function editarBorrador(borradorId) {
-    console.log('Editar borrador:', borradorId);
-    alert(`Se abrirá el Cotizador con el borrador ${borradorId}\n\n(Funcionalidad pendiente de integración)`);
+    console.log('📝 Redirigiendo a Cotizador para editar borrador:', borradorId);
+    window.location.href = `cotizador.html?editar=${borradorId}`;
 }
 
 function confirmarBorrador(borradorId) {

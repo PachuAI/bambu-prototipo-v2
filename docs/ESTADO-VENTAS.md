@@ -1,7 +1,7 @@
 # ESTADO-VENTAS.md - Auditoría Módulo Ventas
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 06 Enero 2026 (alineado con PRD limpio Enero 2026)
+**Última actualización**: 07 Enero 2026 (integración edición borradores con Cotizador)
 **Prototipo**: `prototipos/ventas.html`
 **PRD**: `prd/ventas.html` (versión limpia: 340 líneas, secciones 1-10)
 **JavaScript**: `prototipos/assets/ventas/script.js`
@@ -12,11 +12,11 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 74 | 76% |
+| ✅ Implementadas (HTML + JS) | 75 | 77% |
 | ⚠️ Visuales sin lógica | 14 | 14% |
 | ❌ Faltantes | 9 | 9% |
 
-**Total funcionalidades**: 97 (desglose en detalle abajo)
+**Total funcionalidades**: 98 (desglose en detalle abajo)
 
 **Nota**: El PRD limpio (Enero 2026) simplificó la documentación a 10 secciones funcionales.
 
@@ -71,6 +71,7 @@
 36. Tabla de borradores
 37. Renderizado dinámico desde `BORRADORES_MOCK`
 38. Acciones: Editar, Confirmar, Eliminar
+39. **Editar borrador** - Redirige a cotizador.html?editar={id} (Sprint 4 Cotizador)
 
 ### Stats Panel Compacto
 39. Panel estadísticas inline horizontal

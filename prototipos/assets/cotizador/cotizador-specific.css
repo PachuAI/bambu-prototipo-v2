@@ -584,25 +584,41 @@
 
 .tabs-simple {
     display: flex;
-    gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-lg);
-    border-bottom: var(--border-width) solid var(--border-color);
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+    background: var(--bg-sidebar);
+    border-radius: var(--border-radius-base);
+    padding: 4px;
 }
 
 .tab {
-    background: none;
+    flex: 1;
+    background: transparent;
     border: none;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    font-size: var(--font-size-base);
+    padding: 10px var(--spacing-lg);
+    font-size: var(--font-size-sm);
     color: var(--text-secondary);
     cursor: pointer;
-    border-bottom: var(--border-width-thick) solid transparent;
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.tab:hover:not(.active) {
+    color: var(--text-primary);
 }
 
 .tab.active {
+    background: var(--bg-white);
     color: var(--text-primary);
     font-weight: var(--font-weight-semibold);
-    border-bottom-color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Contenedor de tabs con altura fija */
+.tab-content {
+    min-height: 280px;
+    margin-top: var(--spacing-md);
 }
 
 /* ============================================================================
@@ -1075,6 +1091,15 @@
     color: var(--color-success) !important;
 }
 
+/* Tabs dark mode */
+[data-theme="dark"] .tabs-simple {
+    background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .tab.active {
+    background: var(--bg-sidebar) !important;
+}
+
 /* ============================================================================
    SPRINT 2: NAVEGACIÓN TECLADO
    ============================================================================ */
@@ -1254,4 +1279,116 @@
 
 [data-theme="dark"] .stock-info-bambu {
     background: rgba(0, 82, 204, 0.15);
+}
+
+/* ============================================================================
+   SPRINT 4: REMITO PDF PREVIEW
+   ============================================================================ */
+
+.remito-preview-box {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    padding: var(--spacing-lg);
+    font-size: 12px;
+}
+
+.remito-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--text-primary);
+}
+
+.remito-logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.remito-info {
+    text-align: right;
+    line-height: 1.5;
+}
+
+.remito-info strong {
+    font-size: 16px;
+    color: var(--color-accent);
+}
+
+.remito-cliente {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--bg-app);
+    border-radius: var(--border-radius-sm);
+}
+
+.remito-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--spacing-md);
+}
+
+.remito-table th {
+    background: var(--bg-sidebar);
+    padding: 8px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.remito-table th:nth-child(1) { width: 50px; text-align: center; }
+.remito-table th:nth-child(3),
+.remito-table th:nth-child(4) { text-align: right; }
+
+.remito-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 12px;
+}
+
+.remito-table td:nth-child(1) { text-align: center; }
+.remito-table td:nth-child(3),
+.remito-table td:nth-child(4) { text-align: right; }
+
+.remito-totales {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.remito-total-row {
+    display: flex;
+    justify-content: space-between;
+    width: 180px;
+    padding: 4px 8px;
+}
+
+.remito-total-row.total-final {
+    background: var(--text-primary);
+    color: white;
+    border-radius: var(--border-radius-sm);
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Dark mode para remito */
+[data-theme="dark"] .remito-preview-box {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .remito-cliente {
+    background: var(--bg-hover);
+}
+
+[data-theme="dark"] .remito-table th {
+    background: var(--bg-hover);
+}
+
+[data-theme="dark"] .remito-total-row.total-final {
+    background: var(--color-accent);
 }

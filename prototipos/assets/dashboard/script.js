@@ -212,16 +212,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========================================================================
     // 3. STOCK CRÍTICO
-    // Lista compacta de productos con stock bajo
+    // PRD: prd/productos.html - Sección 4.6
+    // Lista compacta de productos con stock bajo o negativo
     // ========================================================================
+
+    /**
+     * REGLA DE NEGOCIO (PRD 4.6):
+     * - Stock bajo: stock_actual < stock_minimo (o < 20 si no hay stock_minimo)
+     * - Stock negativo: stock_actual < 0 (máxima prioridad)
+     * - Solo productos disponibles (activos)
+     */
+    const STOCK_BAJO_LIMITE_DEFAULT = 20;
 
     function initStockCritico() {
         const container = document.getElementById('stock-critico-list');
 
-        // Filtrar productos con stock bajo (< stock_minimo)
+        // Filtrar productos con stock crítico
         const productosCriticos = PRODUCTOS
-            .filter(p => p.disponible && p.stock_actual < p.stock_minimo)
-            .sort((a, b) => a.stock_actual - b.stock_actual);
+            .filter(p => {
+                if (!p.disponible) return false;
+
+                // Determinar umbral de alerta (PRD 4.6)
+                const umbral = p.stock_minimo > 0 ? p.stock_minimo : STOCK_BAJO_LIMITE_DEFAULT;
+
+                // Stock negativo o bajo umbral
+                return p.stock_actual < umbral;
+            })
+            .sort((a, b) => a.stock_actual - b.stock_actual); // Negativos primero
 
         if (productosCriticos.length === 0) {
             container.innerHTML = `
@@ -234,18 +251,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         container.innerHTML = productosCriticos.slice(0, 5).map(p => {
-            const esAgotado = p.stock_actual === 0;
-            const badgeClass = esAgotado ? 'agotado' : 'bajo';
-            const badgeText = esAgotado ? 'AGOTADO' : 'BAJO';
+            const umbral = p.stock_minimo > 0 ? p.stock_minimo : STOCK_BAJO_LIMITE_DEFAULT;
+
+            // Determinar estado: NEGATIVO > AGOTADO > BAJO
+            let badgeClass, badgeText;
+            if (p.stock_actual < 0) {
+                badgeClass = 'negativo';
+                badgeText = 'NEGATIVO';
+            } else if (p.stock_actual === 0) {
+                badgeClass = 'agotado';
+                badgeText = 'AGOTADO';
+            } else {
+                badgeClass = 'bajo';
+                badgeText = 'BAJO';
+            }
 
             return `
                 <div class="stock-row">
                     <span class="stock-row-name">${p.nombre}</span>
-                    <span class="stock-row-qty">${p.stock_actual} / ${p.stock_minimo}</span>
+                    <span class="stock-row-qty">${p.stock_actual} / ${umbral}</span>
                     <span class="stock-row-badge ${badgeClass}">${badgeText}</span>
                 </div>
             `;
         }).join('');
+
+        // Mostrar total si hay más de 5
+        if (productosCriticos.length > 5) {
+            container.innerHTML += `
+                <div class="stock-row-more">
+                    +${productosCriticos.length - 5} productos más con stock crítico
+                </div>
+            `;
+        }
     }
 
     // ========================================================================

@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarProveedoresEnSelectores();
     renderizarTabla();
 
+    // Verificar alerta de stock negativo (PRD 4.1, 4.6)
+    verificarStockNegativo();
+
     // Event listeners
     initEventListeners();
 
@@ -114,6 +117,59 @@ function initEventListeners() {
             }
         });
     });
+}
+
+// ============================================================================
+// PANEL STOCK NEGATIVO
+// PRD: prd/productos.html - Sección 4.1, 4.6
+// ============================================================================
+
+/**
+ * Verifica si hay productos con stock negativo y muestra/oculta el panel de alerta.
+ *
+ * LÓGICA DE NEGOCIO (PRD 4.1, 4.6):
+ * - Stock negativo indica un problema de inventario que requiere atención inmediata
+ * - El panel se muestra prominentemente para alertar al usuario
+ * - Permite filtrar rápidamente para ver solo productos afectados
+ */
+function verificarStockNegativo() {
+    const productosNegativos = productosLocal.filter(p => p.stock_actual < 0);
+    const panel = document.getElementById('alert-stock-negativo');
+    const texto = document.getElementById('alert-stock-negativo-texto');
+
+    if (productosNegativos.length > 0) {
+        texto.textContent = productosNegativos.length === 1
+            ? 'Hay 1 producto con stock negativo'
+            : `Hay ${productosNegativos.length} productos con stock negativo`;
+        panel.classList.remove('hidden');
+    } else {
+        panel.classList.add('hidden');
+    }
+}
+
+/**
+ * Filtra la tabla para mostrar solo productos con stock negativo.
+ */
+function filtrarStockNegativo() {
+    // Limpiar filtros actuales
+    filtrosActuales = {
+        busqueda: '',
+        proveedor: '',
+        disponibilidad: '',
+        promocion: false,
+        stockBajo: true  // Activar filtro stock bajo que incluye negativos
+    };
+
+    // Actualizar UI de filtros
+    document.getElementById('search-productos').value = '';
+    document.getElementById('filter-proveedor').value = '';
+    document.getElementById('filter-disponibilidad').value = '';
+    document.getElementById('filter-promocion').checked = false;
+    document.getElementById('filter-stock-bajo').checked = true;
+
+    guardarFiltros();
+    renderizarTabla();
+    showToast('Mostrando productos con stock bajo/negativo', 'info');
 }
 
 // ============================================================================
@@ -269,7 +325,7 @@ function renderizarTabla() {
                 </td>
                 <td class="col-nombre">
                     <div class="producto-nombre-cell">
-                        <span class="producto-nombre">${producto.nombre}</span>
+                        <span class="producto-nombre link-detalle" onclick="abrirModalDetalle(${producto.id})">${producto.nombre}</span>
                         ${producto.en_promocion ? '<span class="badge-promo">PROMO</span>' : ''}
                     </div>
                 </td>
@@ -298,6 +354,9 @@ function renderizarTabla() {
                         </button>
                         <button class="btn-icon-sm btn-stock" title="Ajustar Stock" onclick="abrirModalAjustarStock(${producto.id})">
                             <i class="fas fa-boxes"></i>
+                        </button>
+                        <button class="btn-icon-sm btn-history" title="Historial Stock" onclick="abrirModalHistorial(${producto.id})">
+                            <i class="fas fa-history"></i>
                         </button>
                         <button class="btn-icon-sm btn-delete" title="Eliminar" onclick="confirmarEliminarProducto(${producto.id})">
                             <i class="fas fa-trash"></i>
@@ -785,11 +844,276 @@ function confirmarAjusteStock() {
 }
 
 // ============================================================================
+// MODAL HISTORIAL DE STOCK
+// PRD: prd/productos.html - Sección 4.7
+// ============================================================================
+
+/**
+ * Abre el modal de historial de movimientos de stock para un producto.
+ *
+ * LÓGICA DE NEGOCIO (PRD 4.7):
+ * - Muestra todos los movimientos de stock del producto
+ * - Ordenados por fecha descendente (más recientes primero)
+ * - Tipos: INGRESO (verde), EGRESO (rojo), AJUSTE (naranja)
+ * - Incluye motivo y stock resultante de cada movimiento
+ *
+ * @param {number} productoId - ID del producto
+ */
+function abrirModalHistorial(productoId) {
+    const producto = productosLocal.find(p => p.id === productoId);
+    if (!producto) return;
+
+    // Llenar info del producto
+    document.getElementById('historial-producto-nombre').textContent = producto.nombre;
+    document.getElementById('historial-stock-actual').textContent = producto.stock_actual + ' unidades';
+
+    // Obtener movimientos del producto
+    const movimientos = obtenerMovimientosProducto(productoId);
+
+    const tbody = document.getElementById('tbody-historial');
+    const estadoVacio = document.getElementById('historial-vacio');
+
+    if (movimientos.length === 0) {
+        tbody.innerHTML = '';
+        estadoVacio.classList.remove('hidden');
+    } else {
+        estadoVacio.classList.add('hidden');
+        tbody.innerHTML = movimientos.map(mov => {
+            const tipoClass = mov.tipo.toLowerCase();
+            const signo = mov.tipo === 'INGRESO' ? '+' : (mov.tipo === 'EGRESO' ? '-' : '');
+            const cantidadDisplay = mov.tipo === 'AJUSTE'
+                ? (mov.cantidad > 0 ? '+' + mov.cantidad : mov.cantidad)
+                : signo + Math.abs(mov.cantidad);
+
+            return `
+                <tr>
+                    <td>${formatFechaHistorial(mov.created_at)}</td>
+                    <td><span class="badge-tipo ${tipoClass}">${mov.tipo}</span></td>
+                    <td class="cantidad-cell ${tipoClass}">${cantidadDisplay}</td>
+                    <td class="motivo-cell">${mov.motivo}</td>
+                    <td class="stock-result-cell">${mov.stock_resultante}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    document.getElementById('modal-historial-stock').classList.remove('hidden');
+}
+
+/**
+ * Obtiene los movimientos de stock de un producto.
+ *
+ * @param {number} productoId - ID del producto
+ * @returns {Array} - Movimientos ordenados por fecha descendente
+ */
+function obtenerMovimientosProducto(productoId) {
+    if (typeof MOVIMIENTOS_STOCK === 'undefined') return [];
+
+    return MOVIMIENTOS_STOCK
+        .filter(m => m.producto_id == productoId)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+/**
+ * Formatea fecha para mostrar en historial.
+ * Formato: "28/12/2025 14:30"
+ */
+function formatFechaHistorial(fechaStr) {
+    const fecha = new Date(fechaStr);
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const anio = fecha.getFullYear();
+    const hora = fecha.getHours().toString().padStart(2, '0');
+    const min = fecha.getMinutes().toString().padStart(2, '0');
+    return `${dia}/${mes}/${anio} ${hora}:${min}`;
+}
+
+function cerrarModalHistorial() {
+    document.getElementById('modal-historial-stock').classList.add('hidden');
+}
+
+// ============================================================================
+// MODAL DETALLE PRODUCTO
+// PRD: prd/productos.html - Sección 4.7
+// ============================================================================
+
+let detalleProductoIdActual = null;
+
+/**
+ * Abre el modal de detalle completo de un producto.
+ *
+ * LÓGICA DE NEGOCIO (PRD 4.7):
+ * - Tab Info: datos generales, precios por lista, estado stock
+ * - Tab Historial: movimientos de stock del producto
+ * - Tab Estadísticas: pedidos, unidades vendidas, ingresos
+ *
+ * @param {number} productoId - ID del producto
+ */
+function abrirModalDetalle(productoId) {
+    const producto = productosLocal.find(p => p.id === productoId);
+    if (!producto) return;
+
+    detalleProductoIdActual = productoId;
+
+    // Header
+    document.getElementById('detalle-titulo').textContent = producto.nombre;
+    const badgeEstado = document.getElementById('detalle-badge-estado');
+    badgeEstado.textContent = producto.disponible ? 'Disponible' : 'No disponible';
+    badgeEstado.className = `badge-status ${producto.disponible ? 'disponible' : 'no-disponible'}`;
+
+    // Tab Info - Datos generales
+    document.getElementById('detalle-proveedor').textContent = producto.proveedor_nombre || '-';
+    document.getElementById('detalle-peso').textContent = producto.peso_kg.toFixed(1) + ' kg';
+    document.getElementById('detalle-orden').textContent = '#' + producto.orden;
+    document.getElementById('detalle-promocion').innerHTML = producto.en_promocion
+        ? '<span class="badge-promo">EN PROMOCIÓN</span> $' + producto.precio_promocional.toLocaleString('es-AR')
+        : 'Sin promoción';
+
+    // Precios
+    document.getElementById('detalle-precio-l1').textContent = formatCurrency(producto.precio_l1);
+    document.getElementById('detalle-precio-l2').textContent = formatCurrency(producto.precio_l2);
+    document.getElementById('detalle-precio-l3').textContent = formatCurrency(producto.precio_l3);
+
+    // Stock
+    document.getElementById('detalle-stock-actual').textContent = producto.stock_actual;
+    document.getElementById('detalle-stock-minimo').textContent = producto.stock_minimo || STOCK_BAJO_LIMITE;
+
+    const alertaStock = producto.stock_minimo > 0 ? producto.stock_minimo : STOCK_BAJO_LIMITE;
+    const stockEstado = document.getElementById('detalle-stock-estado');
+    if (producto.stock_actual < 0) {
+        stockEstado.textContent = 'Negativo';
+        stockEstado.style.color = 'var(--color-danger)';
+    } else if (producto.stock_actual < alertaStock) {
+        stockEstado.textContent = 'Bajo';
+        stockEstado.style.color = 'var(--color-warning)';
+    } else {
+        stockEstado.textContent = 'Normal';
+        stockEstado.style.color = 'var(--color-success)';
+    }
+
+    // Tab Historial
+    cargarHistorialDetalle(productoId);
+
+    // Tab Estadísticas
+    cargarEstadisticasDetalle(productoId);
+
+    // Reset a primera tab
+    cambiarTabDetalle('info');
+
+    document.getElementById('modal-detalle-producto').classList.remove('hidden');
+}
+
+function cerrarModalDetalle() {
+    document.getElementById('modal-detalle-producto').classList.add('hidden');
+    detalleProductoIdActual = null;
+}
+
+function cambiarTabDetalle(tabId) {
+    // Desactivar todos los botones y contenidos
+    document.querySelectorAll('#modal-detalle-producto .tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelectorAll('#modal-detalle-producto .tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // Activar el seleccionado
+    document.querySelector(`#modal-detalle-producto .tab-btn[data-tab="${tabId}"]`).classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+}
+
+function cargarHistorialDetalle(productoId) {
+    const movimientos = obtenerMovimientosProducto(productoId);
+    const tbody = document.getElementById('tbody-detalle-historial');
+    const estadoVacio = document.getElementById('detalle-historial-vacio');
+
+    if (movimientos.length === 0) {
+        tbody.innerHTML = '';
+        estadoVacio.classList.remove('hidden');
+    } else {
+        estadoVacio.classList.add('hidden');
+        tbody.innerHTML = movimientos.map(mov => {
+            const tipoClass = mov.tipo.toLowerCase();
+            const signo = mov.tipo === 'INGRESO' ? '+' : (mov.tipo === 'EGRESO' ? '-' : '');
+            const cantidadDisplay = mov.tipo === 'AJUSTE'
+                ? (mov.cantidad > 0 ? '+' + mov.cantidad : mov.cantidad)
+                : signo + Math.abs(mov.cantidad);
+
+            return `
+                <tr>
+                    <td>${formatFechaHistorial(mov.created_at)}</td>
+                    <td><span class="badge-tipo ${tipoClass}">${mov.tipo}</span></td>
+                    <td class="cantidad-cell ${tipoClass}">${cantidadDisplay}</td>
+                    <td class="motivo-cell">${mov.motivo}</td>
+                    <td class="stock-result-cell">${mov.stock_resultante}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+}
+
+function cargarEstadisticasDetalle(productoId) {
+    // Obtener estadísticas desde PEDIDOS_PRODUCTOS
+    if (typeof PEDIDOS_PRODUCTOS === 'undefined') {
+        document.getElementById('detalle-total-pedidos').textContent = '0';
+        document.getElementById('detalle-unidades-vendidas').textContent = '0';
+        document.getElementById('detalle-ingresos').textContent = '$0';
+        return;
+    }
+
+    const itemsProducto = PEDIDOS_PRODUCTOS.filter(pp => pp.producto_id == productoId);
+
+    // Contar pedidos únicos
+    const pedidosUnicos = new Set(itemsProducto.map(pp => pp.pedido_id));
+    const totalPedidos = pedidosUnicos.size;
+
+    // Sumar unidades vendidas
+    const unidadesVendidas = itemsProducto.reduce((sum, pp) => sum + pp.cantidad, 0);
+
+    // Sumar ingresos
+    const ingresos = itemsProducto.reduce((sum, pp) => sum + (pp.cantidad * pp.precio_unitario), 0);
+
+    document.getElementById('detalle-total-pedidos').textContent = totalPedidos;
+    document.getElementById('detalle-unidades-vendidas').textContent = unidadesVendidas;
+    document.getElementById('detalle-ingresos').textContent = formatCurrency(ingresos);
+}
+
+function editarProductoDesdeDetalle() {
+    if (detalleProductoIdActual) {
+        cerrarModalDetalle();
+        editarProducto(detalleProductoIdActual);
+    }
+}
+
+// ============================================================================
 // MODAL EXPORTAR
 // ============================================================================
 
+// ============================================================================
+// MODAL EXPORTAR - Selección múltiple de proveedores
+// PRD: prd/productos.html - Sección 3.8
+// ============================================================================
+
 function abrirModalExportar() {
-    document.getElementById('export-proveedor').value = '';
+    // Generar checkboxes de proveedores
+    const container = document.getElementById('export-proveedores-list');
+    container.innerHTML = `
+        <label class="export-checkbox">
+            <input type="checkbox" value="todos" checked onchange="toggleTodosProveedores(this)">
+            <span>Todos los proveedores</span>
+        </label>
+        ${PROVEEDORES.map(p => `
+            <label class="export-checkbox">
+                <input type="checkbox" value="${p.id}" checked onchange="actualizarVistaExport()">
+                <span>${p.nombre}</span>
+            </label>
+        `).join('')}
+        <label class="export-checkbox">
+            <input type="checkbox" value="sin-proveedor" checked onchange="actualizarVistaExport()">
+            <span>Sin proveedor (combos)</span>
+        </label>
+    `;
+
     actualizarVistaExport();
     document.getElementById('modal-exportar').classList.remove('hidden');
 }
@@ -798,33 +1122,117 @@ function cerrarModalExportar() {
     document.getElementById('modal-exportar').classList.add('hidden');
 }
 
+/**
+ * Toggle para seleccionar/deseleccionar todos los proveedores
+ */
+function toggleTodosProveedores(checkbox) {
+    const checkboxes = document.querySelectorAll('#export-proveedores-list input[type="checkbox"]:not([value="todos"])');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    actualizarVistaExport();
+}
+
+/**
+ * Actualiza la vista previa de exportación según proveedores seleccionados
+ */
 function actualizarVistaExport() {
-    const proveedorId = document.getElementById('export-proveedor').value;
+    const checkboxes = document.querySelectorAll('#export-proveedores-list input[type="checkbox"]:not([value="todos"])');
+    const seleccionados = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+
     let productos = productosLocal;
 
-    if (proveedorId) {
-        productos = productos.filter(p => p.proveedor_id == proveedorId);
+    // Si no está "todos" marcado, filtrar por proveedores seleccionados
+    if (seleccionados.length < checkboxes.length) {
+        productos = productosLocal.filter(p => {
+            if (p.proveedor_id === null || !p.proveedor_id) {
+                return seleccionados.includes('sin-proveedor');
+            }
+            return seleccionados.includes(String(p.proveedor_id));
+        });
     }
 
     document.getElementById('export-count').textContent = `${productos.length} productos seleccionados`;
+
+    // Actualizar checkbox "todos" si todos están marcados
+    const todosCheckbox = document.querySelector('#export-proveedores-list input[value="todos"]');
+    if (todosCheckbox) {
+        todosCheckbox.checked = seleccionados.length === checkboxes.length;
+    }
 }
 
+// ============================================================================
+// REGLA DE NEGOCIO: Exportar Inventario a Excel
+// PRD: prd/productos.html - Sección 3.8
+// ============================================================================
+
+/**
+ * Genera y descarga un archivo Excel con el inventario de productos.
+ *
+ * LÓGICA DE NEGOCIO (PRD 3.8):
+ * - Exporta productos según filtro de proveedor seleccionado
+ * - Columnas: Nombre, Proveedor, Stock Actual, Stock Mínimo, Precio L1
+ * - Formato: .xlsx con SheetJS
+ * - Nombre archivo: inventario_bambu_YYYY-MM-DD.xlsx
+ */
 function descargarExcel() {
-    const proveedorId = document.getElementById('export-proveedor').value;
+    const checkboxes = document.querySelectorAll('#export-proveedores-list input[type="checkbox"]:not([value="todos"])');
+    const seleccionados = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+
     let productos = productosLocal;
 
-    if (proveedorId) {
-        productos = productos.filter(p => p.proveedor_id == proveedorId);
+    // Filtrar por proveedores seleccionados
+    if (seleccionados.length < checkboxes.length) {
+        productos = productosLocal.filter(p => {
+            if (p.proveedor_id === null || !p.proveedor_id) {
+                return seleccionados.includes('sin-proveedor');
+            }
+            return seleccionados.includes(String(p.proveedor_id));
+        });
     }
 
-    // Simular descarga
+    // Verificar que hay productos para exportar
+    if (productos.length === 0) {
+        showToast('No hay productos para exportar', 'warning');
+        return;
+    }
+
+    // Preparar datos para Excel (PRD 3.8: columnas específicas)
+    const datosExcel = productos.map(p => ({
+        'Nombre': p.nombre,
+        'Proveedor': p.proveedor_nombre || '-',
+        'Stock Actual': p.stock_actual,
+        'Stock Mínimo': p.stock_minimo || 0,
+        'Precio L1': p.precio_l1,
+        'Disponible': p.disponible ? 'Sí' : 'No',
+        'En Promoción': p.en_promocion ? 'Sí' : 'No'
+    }));
+
+    // Crear workbook y worksheet con SheetJS
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(datosExcel);
+
+    // Ajustar ancho de columnas
+    ws['!cols'] = [
+        { wch: 35 },  // Nombre
+        { wch: 20 },  // Proveedor
+        { wch: 12 },  // Stock Actual
+        { wch: 12 },  // Stock Mínimo
+        { wch: 12 },  // Precio L1
+        { wch: 10 },  // Disponible
+        { wch: 12 }   // En Promoción
+    ];
+
+    // Agregar worksheet al workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Inventario');
+
+    // Generar nombre de archivo con fecha
     const fecha = new Date().toISOString().split('T')[0];
-    showToast(`Descargando inventario_bambu_${fecha}.xlsx (${productos.length} productos)`, 'success');
+    const nombreArchivo = `inventario_bambu_${fecha}.xlsx`;
 
+    // Descargar archivo
+    XLSX.writeFile(wb, nombreArchivo);
+
+    showToast(`${productos.length} productos exportados a ${nombreArchivo}`, 'success');
     cerrarModalExportar();
-
-    // En producción real, aquí se generaría el Excel con SheetJS
-    console.log('Exportando productos:', productos);
 }
 
 // ============================================================================

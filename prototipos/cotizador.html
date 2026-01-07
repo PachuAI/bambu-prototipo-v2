@@ -330,12 +330,13 @@
                 <button class="close-modal" id="close-resumen">&times;</button>
             </div>
             <div class="modal-body">
-                <p class="subtitle" style="font-size:13px; color:#666; margin-bottom:8px;">Selecciona el formato para compartir:</p>
-                <div class="tabs-simple" style="margin-bottom:12px;">
-                    <button class="tab active"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                    <button class="tab"><i class="far fa-envelope"></i> Email</button>
+                <div class="tabs-simple">
+                    <button class="tab active" data-tab="whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                    <button class="tab" data-tab="remito"><i class="fas fa-file-pdf"></i> Remito PDF</button>
                 </div>
 
+                <!-- TAB: WhatsApp -->
+                <div class="tab-content active" id="tab-whatsapp">
                 <div class="whatsapp-preview-box">
                     <div class="preview-header">
                         <span><i class="fas fa-check-circle"></i> Formato para WhatsApp Business</span>
@@ -356,6 +357,58 @@
                         • TOTAL: <span id="preview-total-display">$0</span>
                     </div>
                 </div>
+                </div>
+
+                <!-- TAB: Remito PDF -->
+                <div class="tab-content" id="tab-remito" style="display:none;">
+                    <div class="remito-preview-box">
+                        <div class="remito-header">
+                            <div class="remito-logo">
+                                <strong style="font-size:18px; color:#1a73e8;">QUÍMICA BAMBU S.R.L.</strong>
+                                <span style="font-size:11px; color:#666;">Neuquén, Argentina</span>
+                            </div>
+                            <div class="remito-info">
+                                <strong>REMITO</strong><br>
+                                <span>Nº: <span id="remito-numero">0001-00000</span></span><br>
+                                <span>Fecha: <span id="remito-fecha">--/--/----</span></span>
+                            </div>
+                        </div>
+                        <div class="remito-cliente">
+                            <strong>Cliente:</strong> <span id="remito-cliente-nombre">Consumidor Final</span><br>
+                            <span id="remito-cliente-direccion"></span>
+                        </div>
+                        <table class="remito-table">
+                            <thead>
+                                <tr>
+                                    <th>Cant.</th>
+                                    <th>Descripción</th>
+                                    <th>P. Unit.</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="remito-items">
+                                <!-- Items dinámicos -->
+                            </tbody>
+                        </table>
+                        <div class="remito-totales">
+                            <div class="remito-total-row">
+                                <span>Subtotal:</span>
+                                <span id="remito-subtotal">$0</span>
+                            </div>
+                            <div class="remito-total-row" id="remito-descuento-row" style="display:none;">
+                                <span>Descuento:</span>
+                                <span id="remito-descuento">-$0</span>
+                            </div>
+                            <div class="remito-total-row total-final">
+                                <span>TOTAL:</span>
+                                <span id="remito-total">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" id="btn-descargar-pdf" style="width:100%; margin-top:12px;">
+                        <i class="fas fa-download"></i> Descargar PDF
+                    </button>
+                </div>
             </div>
             <div class="modal-foot flex-between">
                 <span style="font-size:12px; color:#888;">⚡ Atajo: F4</span>
@@ -363,6 +416,9 @@
             </div>
         </div>
     </div>
+
+    <!-- jsPDF para generación de remitos PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <script src="shared/state-manager.js"></script>
     <script src="shared/utils.js"></script>

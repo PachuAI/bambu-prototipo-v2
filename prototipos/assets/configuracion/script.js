@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderizarVehiculos();
     renderizarListas();
     renderizarCiudades();
+    renderizarProveedores();
     cargarConfigStock();
 
 });
@@ -571,6 +572,155 @@ function cargarConfigStock() {
 }
 
 // ============================================================================
+// PROVEEDORES - CRUD
+// PRD: prd/productos.html - Sección 5.3
+// ============================================================================
+
+/**
+ * Renderiza la tabla de proveedores desde PROVEEDORES (mock-data.js)
+ *
+ * LÓGICA:
+ * - Muestra nombre y cantidad de productos asociados
+ * - Cuenta productos de PRODUCTOS que tienen ese proveedor_id
+ * - Botones editar/eliminar por fila
+ */
+function renderizarProveedores() {
+    const tbody = document.getElementById('tabla-proveedores');
+    if (!tbody || typeof PROVEEDORES === 'undefined') return;
+
+    tbody.innerHTML = PROVEEDORES.map(p => {
+        // Contar productos asociados
+        const productosAsociados = typeof PRODUCTOS !== 'undefined'
+            ? PRODUCTOS.filter(prod => prod.proveedor_id === p.id).length
+            : 0;
+
+        return `
+            <tr>
+                <td><strong>${p.nombre}</strong></td>
+                <td>${productosAsociados} producto${productosAsociados !== 1 ? 's' : ''}</td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-icon-sm btn-edit" title="Editar" onclick="editarProveedor(${p.id})">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn-icon-sm btn-delete" title="Eliminar" onclick="eliminarProveedor(${p.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+/**
+ * Abre modal para crear nuevo proveedor
+ */
+function abrirModalProveedor() {
+    document.getElementById('modal-proveedor-titulo').innerHTML = '<i class="fas fa-industry"></i> Nuevo Proveedor';
+    document.getElementById('proveedor-id').value = '';
+    document.getElementById('proveedor-nombre').value = '';
+    document.getElementById('modal-proveedor').classList.remove('hidden');
+    document.getElementById('proveedor-nombre').focus();
+}
+
+/**
+ * Abre modal para editar proveedor existente
+ */
+function editarProveedor(id) {
+    const proveedor = PROVEEDORES.find(p => p.id === id);
+    if (!proveedor) return;
+
+    document.getElementById('modal-proveedor-titulo').innerHTML = '<i class="fas fa-industry"></i> Editar Proveedor';
+    document.getElementById('proveedor-id').value = id;
+    document.getElementById('proveedor-nombre').value = proveedor.nombre;
+    document.getElementById('modal-proveedor').classList.remove('hidden');
+    document.getElementById('proveedor-nombre').focus();
+}
+
+/**
+ * Cierra modal de proveedor
+ */
+function cerrarModalProveedor() {
+    document.getElementById('modal-proveedor').classList.add('hidden');
+}
+
+/**
+ * Guarda proveedor (crear o actualizar)
+ *
+ * VALIDACIONES:
+ * - Nombre: obligatorio, único
+ */
+function guardarProveedor() {
+    const id = document.getElementById('proveedor-id').value;
+    const nombre = document.getElementById('proveedor-nombre').value.trim();
+
+    // Validar nombre obligatorio
+    if (!nombre) {
+        alert('⚠️ El nombre es obligatorio');
+        return;
+    }
+
+    // Validar nombre único
+    const nombreExiste = PROVEEDORES.some(p => p.nombre.toLowerCase() === nombre.toLowerCase() && p.id != id);
+    if (nombreExiste) {
+        alert('⚠️ Ya existe un proveedor con este nombre');
+        return;
+    }
+
+    if (id) {
+        // Actualizar existente
+        const idx = PROVEEDORES.findIndex(p => p.id == id);
+        if (idx !== -1) {
+            PROVEEDORES[idx].nombre = nombre;
+            console.log('✅ Proveedor actualizado:', PROVEEDORES[idx]);
+        }
+    } else {
+        // Crear nuevo
+        const nuevoId = Math.max(...PROVEEDORES.map(p => p.id)) + 1;
+        PROVEEDORES.push({
+            id: nuevoId,
+            nombre: nombre
+        });
+        console.log('✅ Proveedor creado:', nombre);
+    }
+
+    cerrarModalProveedor();
+    renderizarProveedores();
+    alert('✅ Proveedor guardado correctamente');
+}
+
+/**
+ * Elimina un proveedor
+ *
+ * VALIDACIÓN (PRD 5.3):
+ * - No puede tener productos asociados
+ */
+function eliminarProveedor(id) {
+    const proveedor = PROVEEDORES.find(p => p.id === id);
+    if (!proveedor) return;
+
+    // Contar productos asociados
+    const productosAsociados = typeof PRODUCTOS !== 'undefined'
+        ? PRODUCTOS.filter(prod => prod.proveedor_id === id).length
+        : 0;
+
+    // Validar sin productos asociados
+    if (productosAsociados > 0) {
+        alert(`⚠️ No se puede eliminar "${proveedor.nombre}" porque tiene ${productosAsociados} producto(s) asociado(s).\n\nReasigne los productos a otro proveedor antes de eliminar.`);
+        return;
+    }
+
+    if (confirm(`¿Eliminar proveedor "${proveedor.nombre}"?`)) {
+        const idx = PROVEEDORES.findIndex(p => p.id === id);
+        PROVEEDORES.splice(idx, 1);
+        renderizarProveedores();
+        console.log('🗑️ Proveedor eliminado:', proveedor.nombre);
+        alert('✅ Proveedor eliminado');
+    }
+}
+
+// ============================================================================
 // EVENT LISTENERS - Cerrar modales
 // ============================================================================
 
@@ -580,6 +730,7 @@ document.addEventListener('keydown', function(e) {
         cerrarModalVehiculo();
         cerrarModalCiudad();
         cerrarModalLista();
+        cerrarModalProveedor();
     }
 });
 
@@ -589,6 +740,7 @@ document.addEventListener('click', function(e) {
         cerrarModalVehiculo();
         cerrarModalCiudad();
         cerrarModalLista();
+        cerrarModalProveedor();
     }
 });
 
