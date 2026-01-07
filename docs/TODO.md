@@ -1,7 +1,7 @@
 # TODO - Bambu CRM V2 Prototipo
 
 **Última actualización**: 06 Enero 2026
-**Fase actual**: Auditoría PRD
+**Fase actual**: State Manager (Fase 3.1)
 
 ---
 
@@ -10,8 +10,41 @@
 | Fase | Descripción | Estado |
 |------|-------------|--------|
 | 1. Prototipado UI | Construir HTML/CSS de todos los módulos | ✅ Completada |
-| 2. Auditoría PRD | Comparar prototipos vs PRDs, identificar gaps | **EN CURSO** |
-| 3. Mock Logic | Implementar lógica JS simulada para validar UX | Pendiente |
+| 2. Auditoría PRD | Comparar prototipos vs PRDs, identificar gaps | ✅ Completada |
+| 3. Mock Logic | Implementar lógica JS simulada para validar UX | **EN CURSO** |
+
+---
+
+## Fase 3: Mock Logic - State Manager
+
+**Plan detallado**: `docs/PLAN-STATE-MANAGER.md`
+
+### Objetivo
+Sistema de datos mock consistente con persistencia localStorage.
+- Fecha central: Miércoles 8 enero 2026
+- ~80 pedidos con datos calculados (no random)
+- Navegación funcional entre módulos
+
+### Progreso Actual
+
+| Sub-fase | Descripción | Estado |
+|----------|-------------|--------|
+| 0 | Crear state-manager.js base | ⬜ Pendiente |
+| 1 | Estructuras normalizadas | ⬜ Pendiente |
+| 2 | Generador datos consistentes | ⬜ Pendiente |
+| 3 | Persistencia localStorage | ⬜ Pendiente |
+| 4 | Migrar Dashboard | ⬜ Pendiente |
+| 5 | Migrar Clientes + ?id= | ⬜ Pendiente |
+| 6 | Migrar Ventas | ⬜ Pendiente |
+| 7 | Migrar Repartos-día | ⬜ Pendiente |
+
+### Cómo Retomar
+
+Si retomás después de `/clear`:
+1. Leer `docs/PLAN-STATE-MANAGER.md` para el plan completo
+2. Ver esta tabla para saber en qué fase estamos
+3. `git log -1` para ver último commit
+4. Continuar con la siguiente fase pendiente
 
 ---
 
