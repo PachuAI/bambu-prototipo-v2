@@ -640,10 +640,41 @@ function exportarHojaReparto() {
 // ===========================
 
 function cambiarDia(direccion) {
-    // Mock: Solo mostrar alert por ahora
-    const direccionTexto = direccion === 1 ? "siguiente" : "anterior";
-    console.log(`Navegando al día ${direccionTexto}`);
-    // En producción: cambiar fecha, recargar datos del backend
+    // Obtener semana actual desde BambuState
+    const semana = BambuState.getSemanaActual();
+    const fechaActual = appData.fecha;
+
+    // Encontrar índice actual en la semana
+    const indexActual = semana.indexOf(fechaActual);
+
+    // Calcular nuevo índice
+    let nuevoIndex = indexActual + direccion;
+
+    // Limitar a la semana (lun-vie)
+    if (nuevoIndex < 0) {
+        console.log('[Repartos] Ya estás en el primer día de la semana');
+        return;
+    }
+    if (nuevoIndex >= semana.length) {
+        console.log('[Repartos] Ya estás en el último día de la semana');
+        return;
+    }
+
+    const nuevaFecha = semana[nuevoIndex];
+
+    // Recargar datos del nuevo día
+    cargarDatosDia(nuevaFecha);
+
+    // Actualizar título
+    document.getElementById('dia-fecha-titulo').textContent = formatearFechaCompleta(nuevaFecha);
+
+    // Re-renderizar vistas
+    renderizarVehiculos();
+    renderizarCiudades();
+    renderizarPedidosSinAsignar();
+    actualizarStats();
+
+    console.log(`[Repartos] Navegando a ${nuevaFecha}`);
 }
 
 // ===========================
