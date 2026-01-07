@@ -34,14 +34,23 @@
 
 ---
 
-## Fase 3.2: Mock Logic - Interactividad (PRÓXIMOS PASOS)
+## Fase 3.2: Mock Logic - Interactividad (EN CURSO)
 
 Implementar lógica JS para flujos críticos de UX.
+
+### Cotizador - Sprint 1 ✅ COMPLETADO (07-Ene-2026)
+- ✅ Migración a BambuState (productos/clientes)
+- ✅ Descuento sobre base sin promociones (regla PRD 6.3)
+- ✅ Flujo continuo post-confirmación (sin reload)
+- ✅ Guardar Borrador → BambuState.crearBorrador()
+- ✅ Confirmar Pedido → BambuState.crearPedido()
+
+**Próximo**: Cotizador Sprint 2 (atajos teclado, navegación ↑↓, validación fecha L-V)
 
 ### Prioridad Alta (core business)
 | Tarea | Módulo | Descripción |
 |-------|--------|-------------|
-| [ ] Cotizador funcional | `cotizador.html` | Calcular totales, descuentos L1/L2/L3, confirmar pedido |
+| [~] Cotizador funcional | `cotizador.html` | Sprint 1 ✅ / Sprint 2-3 pendientes |
 | [ ] CRUD Clientes | `clientes.html` | Crear/editar/eliminar con persistencia |
 | [ ] Cuenta Corriente | `cliente-detalle.html` | Cargos/pagos actualizan saldo |
 | [ ] Cambio estado pedido | `ventas.html` | Marcar entregado, registrar pago |

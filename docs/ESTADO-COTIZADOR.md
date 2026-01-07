@@ -243,11 +243,15 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 ## Roadmap Implementación
 
-### Sprint 1 - CRÍTICOS (Flujo básico funcional)
-1. ⚠️ **Descuento sobre base sin promociones** (Sección 6.3)
-2. Flujo continuo post-confirmación (quitar reload)
-3. Guardar Borrador con localStorage
-4. Confirmar Pedido con persistencia mock
+### Sprint 1 - CRÍTICOS (Flujo básico funcional) ✅ COMPLETADO (07-Ene-2026)
+1. ✅ **Descuento sobre base sin promociones** (Sección 6.3) - baseDescuento excluye promociones
+2. ✅ Flujo continuo post-confirmación (quitar reload) - resetearFormulario()
+3. ✅ Guardar Borrador con localStorage - BambuState.crearBorrador()
+4. ✅ Confirmar Pedido con persistencia - BambuState.crearPedido() + agregarItemPedido()
+
+**Además completado:**
+- ✅ Migración a BambuState (productos/clientes dinámicos)
+- ✅ Saldo cliente en resultados búsqueda (rojo/verde)
 
 ### Sprint 2 - UX IMPORTANTE
 5. Atajos de teclado (Shift+4, F4, Esc)
