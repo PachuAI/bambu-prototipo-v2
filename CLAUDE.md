@@ -3,7 +3,7 @@
 ## Entorno
 
 - **OS**: Windows (usar PowerShell, NO bash)
-- **Fecha actual**: 06 Enero 2026
+- **Fecha actual**: 07 Enero 2026
 - **Proyecto**: Prototipos HTML para validar UX antes de desarrollo
 - **Stack prototipo**: HTML5 + CSS3 + JavaScript vanilla (NO frameworks)
 - **Idioma**: Español siempre
@@ -192,6 +192,20 @@ function miFuncion() {
 - `/construir-prototipo` - Proceso 7 fases para crear nuevo HTML con reglas de compactación y dark mode
 - `/analizar-estado-modulo` - Auditar prototipo vs PRD, genera documento ESTADO-{MODULO}.md
 - `/migrar-css-tokens` - Migrar CSS antiguo al sistema tokens.css + components.css
+
+---
+
+## Subagentes de Documentación y Git
+
+Agentes especializados para tareas repetitivas. Usar según criterio:
+
+| Agente | Cuándo USAR | Cuándo hacer DIRECTO |
+|--------|-------------|----------------------|
+| `doc-estado` | 3+ cambios, recálculo de %, sprint completo | 1-2 items simples, archivo ya leído |
+| `doc-changelog` | Al completar módulo o sprint | Nunca (el agente conoce el formato) |
+| `git-committer` | Cuando usuario pida commit | No usar proactivamente |
+
+**Regla general**: Si la tarea es repetitiva y el agente existe para eso, delegarla. Si es trivial (1-2 líneas) y ya tengo contexto, hacer directo.
 
 ---
 

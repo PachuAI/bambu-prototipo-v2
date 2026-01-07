@@ -68,10 +68,7 @@
 }
 
 .switch-selection {
-    background: var(--bg-app);
-    padding: var(--spacing-xs);
-    border-radius: 20px;
-    display: inline-flex;
+    display: none; /* No se usa, ocultado */
 }
 
 /* ============================================================================
@@ -963,14 +960,8 @@
 
 /* Mode switch */
 [data-theme="dark"] .mode-switch {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-[data-theme="dark"] #mode-fabrica:checked + label,
-[data-theme="dark"] #mode-reparto:checked + label {
-    background: rgba(255, 255, 255, 0.12) !important;
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: none !important;
 }
 
 [data-theme="dark"] .switch-label {
@@ -979,10 +970,14 @@
 
 [data-theme="dark"] #mode-fabrica:checked + label {
     color: var(--color-accent) !important;
+    background: rgba(0, 82, 204, 0.15) !important;
+    box-shadow: none !important;
 }
 
 [data-theme="dark"] #mode-reparto:checked + label {
     color: var(--color-danger) !important;
+    background: rgba(255, 86, 48, 0.15) !important;
+    box-shadow: none !important;
 }
 
 
