@@ -334,5 +334,5 @@ Sistema (automático):
 
 ---
 
-**Última actualización**: 31 Diciembre 2024
+**Última actualización**: 31 Diciembre 2025
 **Versión**: 1.0
