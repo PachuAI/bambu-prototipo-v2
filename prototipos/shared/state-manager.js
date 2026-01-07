@@ -17,7 +17,7 @@ const BambuState = {
     // CONFIGURACIÓN
     // ========================================================================
 
-    VERSION: '1.0.0',
+    VERSION: '1.1.0',  // Actualizado: Pagos parciales + Auditoría (PRD 6.2, 10.1)
     FECHA_SISTEMA: '2026-01-08',  // Miércoles 8 enero 2026 (HOY simulado)
     STORAGE_KEY: 'bambu_crm_state',
 
@@ -679,6 +679,78 @@ const BambuState = {
                 });
             }
         }
+
+        // ====================================================================
+        // PEDIDO ESPECIAL #998 - Para testing pagos parciales (PRD 6.2, 6.3)
+        // ====================================================================
+
+        const pedido998 = {
+            id: 998,
+            numero: '#00998',
+            fecha: '2026-01-06',
+            cliente_id: 5, // ECUADOR 2133 - Cliente con saldo alto
+            direccion: 'ECUADOR 2133',
+            ciudad: 'Plottier',
+            tipo: 'reparto',
+            estado: 'entregado',
+            vehiculo_id: 2,
+            vehiculo: 'Reparto 2',
+            metodoPago: 'efectivo',
+            montoEfectivo: 50000,
+            montoDigital: 0,
+            monto_pagado: 50000, // Pagó $50.000 de $80.100 total
+            fechaEntrega: '2026-01-06T14:30:00',
+            nota: 'Pedido de testing - pago parcial pendiente',
+            pagos: [
+                { id: 1, fecha: '2026-01-06T14:30:00', monto: 30000, metodo: 'efectivo', tipo: 'asociado', registrado_por: 'admin@bambu.com' },
+                { id: 2, fecha: '2026-01-06T17:00:00', monto: 20000, metodo: 'efectivo', tipo: 'asociado', registrado_por: 'vendedor@bambu.com' }
+            ]
+        };
+        pedidos.push(pedido998);
+
+        // Items para pedido 998 (total = $80.100)
+        pedido_items.push(
+            { id: itemId++, pedido_id: 998, producto_id: 1, cantidad: 3, precio_unitario: 15000 }, // $45.000
+            { id: itemId++, pedido_id: 998, producto_id: 4, cantidad: 3, precio_unitario: 8500 },  // $25.500
+            { id: itemId++, pedido_id: 998, producto_id: 8, cantidad: 6, precio_unitario: 1600 }   // $9.600
+        );
+
+        // ====================================================================
+        // PEDIDO ESPECIAL #999 - Para testing auditoría (PRD 10.1)
+        // ====================================================================
+
+        const pedido999 = {
+            id: 999,
+            numero: '#00999',
+            fecha: '2026-01-07',
+            cliente_id: 1,
+            direccion: 'ARAUCARIAS 371',
+            ciudad: 'Neuquén',
+            tipo: 'reparto',
+            estado: 'entregado',
+            vehiculo_id: 1,
+            vehiculo: 'Reparto 1',
+            metodoPago: 'mixto',
+            montoEfectivo: 30000,
+            montoDigital: 19500,
+            fechaEntrega: '2026-01-07T16:45:00',
+            nota: 'Pedido de testing - auditoría completa',
+            historial_cambios: [
+                { id: 1, fecha: '2026-01-07T11:00:00', usuario_id: 1, usuario_nombre: 'admin@bambu.com', accion: 'CREACION', campo_modificado: null, valor_anterior: null, valor_nuevo: null, razon: 'Pedido creado desde cotizador', ip: '192.168.1.100' },
+                { id: 2, fecha: '2026-01-07T12:30:00', usuario_id: 1, usuario_nombre: 'admin@bambu.com', accion: 'EDICION', campo_modificado: 'descuento_porcentaje', valor_anterior: 0, valor_nuevo: 10, razon: 'Cliente solicitó descuento acordado', ip: '192.168.1.100' },
+                { id: 3, fecha: '2026-01-07T15:00:00', usuario_id: 2, usuario_nombre: 'vendedor@bambu.com', accion: 'ESTADO', campo_modificado: 'estado', valor_anterior: 'en transito', valor_nuevo: 'entregado', razon: 'Entrega confirmada', ip: '192.168.1.105' },
+                { id: 4, fecha: '2026-01-07T17:00:00', usuario_id: 1, usuario_nombre: 'admin@bambu.com', accion: 'EDICION', campo_modificado: 'total', valor_anterior: 52000, valor_nuevo: 49500, razon: 'Ajuste post-entrega - 1 producto devuelto', ip: '192.168.1.100' }
+            ]
+        };
+        pedidos.push(pedido999);
+
+        // Items para pedido 999
+        pedido_items.push(
+            { id: itemId++, pedido_id: 999, producto_id: 1, cantidad: 2, precio_unitario: 15000 },
+            { id: itemId++, pedido_id: 999, producto_id: 3, cantidad: 3, precio_unitario: 2200 },
+            { id: itemId++, pedido_id: 999, producto_id: 5, cantidad: 5, precio_unitario: 1800 },
+            { id: itemId++, pedido_id: 999, producto_id: 7, cantidad: 2, precio_unitario: 3200 }
+        );
 
         console.log(`[BambuState] Generados: ${pedidos.length} pedidos, ${pedido_items.length} items`);
 

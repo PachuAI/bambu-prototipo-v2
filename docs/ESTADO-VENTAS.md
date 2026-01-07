@@ -1,7 +1,7 @@
 # ESTADO-VENTAS.md - Auditoría Módulo Ventas
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 07 Enero 2026 (Exportar Hoja de Reparto)
+**Última actualización**: 07 Enero 2026 (Sistema de Auditoría + Pagos Parciales)
 **Prototipo**: `prototipos/ventas.html`
 **PRD**: `prd/ventas.html` (versión limpia: 340 líneas, secciones 1-10)
 **JavaScript**: `prototipos/assets/ventas/script.js`
@@ -12,9 +12,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 98 | 92.5% |
-| ⚠️ Visuales sin lógica | 3 | 2.8% |
-| ❌ Faltantes | 5 | 4.7% |
+| ✅ Implementadas (HTML + JS) | 102 | 96.2% |
+| ⚠️ Visuales sin lógica | 0 | 0.0% |
+| ❌ Faltantes | 4 | 3.8% |
 
 **Total funcionalidades**: 106 (desglose en detalle abajo)
 
@@ -176,81 +176,40 @@
    - Mock de exportación con resumen formateado
    - Validación: requiere día seleccionado en calendario
 
+### Exportar Excel con Selección de Columnas (Sprint 07/01/2026)
+98. ~~**Exportar Excel**~~ ✅ IMPLEMENTADO 07/01/2026
+   - Modal selección de columnas (2 obligatorias + 13 opcionales)
+   - Columnas obligatorias: # Pedido, Fecha entrega (deshabilitadas)
+   - Columnas opcionales: Cliente, Dirección, Teléfono, Tipo, Vehículo, Repartidor, Productos, Subtotal, Descuentos, Ajustes, Total, Método pago, Estado
+   - Botón "Seleccionar todas" toggle
+   - localStorage para recordar preferencias del usuario
+   - Generación Excel mock con preview de datos exportados
+   - Funciones: abrirModalExportarExcel(), exportarExcel(), cargarPreferenciasColumnas(), guardarPreferenciasColumnas()
+
+### Sistema de Auditoría (Sprint 07/01/2026)
+99. ~~**Sistema de Auditoría (PRD 10.1)**~~ ✅ IMPLEMENTADO 07/01/2026
+   - Timeline de historial de cambios en modal detalle
+   - Función renderizarHistorialCambios() en script.js
+   - Pedido #999 con 4 cambios de prueba para demostración
+   - Estilos CSS para timeline (horizontal/vertical según layout)
+   - Registro de: usuario, fecha, campo, valor anterior/nuevo
+
+### Pagos Parciales (Sprint 07/01/2026)
+100. ~~**Pagos Parciales (PRD 6.2, 6.3)**~~ ✅ IMPLEMENTADO 07/01/2026
+   - Lista de pagos registrados en modal detalle
+   - Botón "Registrar Pago" si hay saldo pendiente
+   - Modal para registrar pagos adicionales
+   - Función validarSumaMixto() permite montos < total
+   - Función confirmarEntregado() guarda monto_pagado y array pagos[]
+   - Pedido #998 con pago parcial de prueba ($50k de $80k)
+   - Cálculo automático de saldo pendiente
+
 ---
 
 ## VISUALES SIN LÓGICA (Prioridad Alta)
 
-### ~~1. Sistema de Selección Bulk (Checkboxes)~~ ✅ IMPLEMENTADO (07/01/2026)
-- Mejorado con botón "Eliminar" en bulk
+**Actualmente: 0 items** (Todos los visuales pendientes han sido completados)
 
-### ~~2. Modal Registro de Pago Completo~~ ✅ IMPLEMENTADO 07/01/2026
-- Selector método de pago (Efectivo/Digital/Mixto)
-- Campos `montoEfectivo` y `montoDigital` para pago mixto
-- Validación: suma debe igualar total del pedido
-- Guardado en `pedido.metodoPago`, `pedido.montoEfectivo`, `pedido.montoDigital`
-- Sincronización con BambuState
-- Icono dual 💵💳 en tabla con tooltip desglose
-
-### 3. Exportar Excel con Selección de Columnas
-- **PRD**: Sección 9.1 - Exportar Excel
-- **HTML**: ✅ Botón existe
-- **JS Falta**:
-  - Modal selección de columnas (15 opciones)
-  - Checkboxes con obligatorias (# Pedido, Fecha)
-  - localStorage para recordar selección
-  - Generación Excel
-- **Complejidad**: Alta
-
-### 4. Edición Post-Entrega con Auditoría
-- **PRD**: Sección 7 - Edición Post-Entrega
-- **HTML**: ✅ Modal editar existe
-- **JS Falta**:
-  - Permitir editar pedidos "entregado"
-  - Generar ajuste en cuenta corriente
-  - **Historial de cambios** (usuario, fecha, campo, valor anterior/nuevo, IP)
-- **Complejidad**: Alta
-
-### ~~5. Cambiar Estado Manualmente (Entregado → En Tránsito)~~ ✅ IMPLEMENTADO (07/01/2026)
-
-### ~~6. Cambiar Tipo Pedido (REPARTO ↔ FÁBRICA)~~ ✅ IMPLEMENTADO (07/01/2026)
-- Badge de tipo en modal detalle (FÁBRICA/REPARTO)
-- Botón "Cambiar Tipo" en footer del modal
-- Validación: solo pedidos en tránsito
-- Si REPARTO→FÁBRICA: desasigna vehículo
-- Actualización en BambuState + re-render automático
-
-### ~~7. Control de Reparto desde Vista Lista~~ ✅ IMPLEMENTADO (07/01/2026)
-
-### 3. Reasignación de Vehículos desde VENTAS
-- **PRD**: Sección 8.3 - Click en día
-- **HTML**: ❌ No existe panel/modal
-- **JS Falta**:
-  - Modal "Repartos del día"
-  - Vista por vehículo
-  - Botón [Mover a...▼] y [Desasignar]
-- **Complejidad**: Alta
-
-### ~~4. Paginación Borradores~~ ✅ YA IMPLEMENTADO (funciona si >12 borradores)
-
-### ~~5. Eliminar Pedido con Reintegro Stock~~ ✅ IMPLEMENTADO (07/01/2026)
-
-### ~~11. Agregar Producto a Pedido en Edición~~ ✅ IMPLEMENTADO 07/01/2026
-   - Modal "Agregar Producto" con buscador
-   - Lista productos disponibles (excluye sin stock y ya agregados)
-   - Click en producto lo agrega con cantidad 1
-   - Funciones: abrirModalAgregarProducto(), renderizarProductosDisponibles(), filtrarProductosModal(), agregarProductoAlPedido()
-   - Re-render automático de tabla y totales
-
-### ~~5. Navegación Calendario (Semana Anterior/Siguiente)~~ ✅ IMPLEMENTADO (07/01/2026)
-
-### ~~5. Exportar Hoja de Reparto~~ ✅ IMPLEMENTADO 07/01/2026
-- Botón "Hoja de Reparto" en navegación del calendario
-- Modal selección formato: Con precios / Sin precios
-- Función `exportarHojaReparto()` que agrupa pedidos por vehículo
-- Mock de exportación (alert con resumen formateado)
-- Validación: requiere día seleccionado en calendario
-
-### ~~6. Buscar Pedido (Campo búsqueda)~~ ✅ IMPLEMENTADO (07/01/2026)
 
 ---
 
@@ -264,70 +223,39 @@
   - ✅ Pagos registrados desde CC aparecen sincronizados
 - **Pendiente para producción**: Ajuste CC al editar pedido
 
-### 2. Sistema de Auditoría (Historial de Cambios)
-- **PRD**: Sección 10 - Auditoría y Trazabilidad (OBLIGATORIO)
+### 1. Edición Post-Entrega con Auditoría
+- **PRD**: Sección 7 - Edición Post-Entrega
 - **Requiere**:
-  - Tabla `pedidos_historial`
-  - Registrar: usuario, fecha, campo, valor anterior/nuevo, IP, razón
-  - Vista cronológica en modal
-  - Exportar auditoría a Excel
+  - Permitir editar pedidos en estado "Entregado"
+  - Generar ajuste en Cuenta Corriente
+  - Historial de cambios (usuario, fecha, campo, valor anterior/nuevo, IP)
 - **Complejidad**: Alta
 
-### 3. Pagos Parciales y Pagos Asociados vs Genéricos
-- **PRD**: Sección 6.2 y 6.3 - Pagos parciales y tipos
-- **Requiere**:
-  - Campo `monto_pagado`
-  - Permitir monto < total
-  - Distinguir pago asociado vs genérico
-  - Múltiples pagos parciales
-- **Complejidad**: Alta
-
-### ~~4. Pedidos Sin Cliente (Ventas Casuales)~~ ✅ IMPLEMENTADO 07/01/2026
-- Cliente especial "SIN REGISTRO" (id: 0) en state-manager.js
-- Solo modo FÁBRICA permitido
-- Pago obligatorio (validación en confirmarEntregado)
-- NO genera cargo en Cuenta Corriente
-- Mensaje diferenciado en notificación
-
-### ~~5. Método de Pago Mixto con Validación~~ ✅ IMPLEMENTADO 07/01/2026
-- Selector método de pago en modal "Marcar como Entregado"
-- Campos `montoEfectivo` y `montoDigital` para pago mixto
-- Validación JS: suma debe igualar total del pedido
-- Icono dual 💵💳 con tooltip mostrando desglose de montos
-- Guardado en `pedido.metodoPago`, `pedido.montoEfectivo`, `pedido.montoDigital`
-- Sincronización con BambuState
-
-### 6. Control de Stock en Edición
+### 2. Control de Stock en Edición
 - **PRD**: Sección 7.2 - Impacto automático
 - **Requiere**:
-  - Reintegrar/descontar stock automáticamente
+  - Reintegrar/descontar stock automáticamente al editar
   - Validar stock disponible
   - Advertencias si insuficiente
 - **Complejidad**: Alta
 
-### 7. Reordenamiento de Pedidos en Vehículo
-- **PRD**: Sección 8.2 - Reordenamiento de pedidos (ruta de entrega)
-- **Requiere**:
-  - Drag & drop para reordenar
-  - Campo `orden_visita`
-  - Exportar con orden correcto
-- **Complejidad**: Alta
-
-### 8. Modo Fábrica: Registro de Pago en Cotizador
+### 3. Modo Fábrica: Registro de Pago en Cotizador
 - **PRD**: Sección 2.2 - Flujo de datos
 - **Requiere**:
   - Modificar Cotizador con sección pago opcional
   - Checkboxes Efectivo/Digital/Ambos
   - Sincronización automática
 - **Complejidad**: Alta
+- **Nota**: Corresponde al módulo Cotizador, no Ventas
 
-### 9. Vista Detalle Día Completa
-- **PRD**: Sección 8.3 y 8.4 - Click en día y Flujo de pedido REPARTO
+### 4. Reordenamiento de Pedidos en Vehículo (REPARTOS-DÍA)
+- **PRD**: Sección 8.2 - Reordenamiento de pedidos (ruta de entrega)
 - **Requiere**:
-  - Página `repartos-dia.html` completa
-  - 3 vistas agrupación
-  - Drag & drop
+  - Drag & drop para reordenar
+  - Campo `orden_visita`
+  - Exportar con orden correcto
 - **Complejidad**: Alta
+- **Nota**: Ubicación correcta: `prototipos/repartos-dia.html`, no Ventas
 
 ---
 

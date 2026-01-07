@@ -130,7 +130,7 @@
                         <i class="fas fa-redo"></i>
                     </button>
 
-                    <button class="btn-excel"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                    <button class="btn-excel" onclick="abrirModalExportarExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
                 </div>
             </header>
 
@@ -516,6 +516,105 @@
         </div>
     </div>
 
+    <!-- MODAL: Exportar Excel -->
+    <div class="modal-overlay hidden" id="modal-exportar-excel">
+        <div class="modal-content modal-exportar-excel">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-excel"></i> Exportar a Excel</h3>
+                <button class="btn-close-modal" onclick="cerrarModalExportarExcel()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-descripcion">Selecciona las columnas a incluir en el archivo:</p>
+
+                <!-- Columnas Obligatorias -->
+                <div class="columnas-section">
+                    <h4 class="columnas-titulo"><i class="fas fa-lock"></i> Columnas obligatorias</h4>
+                    <div class="columnas-grid">
+                        <label class="columna-check disabled">
+                            <input type="checkbox" checked disabled>
+                            <span># Pedido</span>
+                        </label>
+                        <label class="columna-check disabled">
+                            <input type="checkbox" checked disabled>
+                            <span>Fecha entrega</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Columnas Opcionales -->
+                <div class="columnas-section">
+                    <h4 class="columnas-titulo">
+                        <i class="fas fa-list-check"></i> Columnas opcionales
+                        <button class="btn-link-sm" onclick="toggleTodasColumnas()">Seleccionar todas</button>
+                    </h4>
+                    <div class="columnas-grid" id="columnas-opcionales">
+                        <label class="columna-check">
+                            <input type="checkbox" value="cliente" checked>
+                            <span>Cliente</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="direccion" checked>
+                            <span>Dirección</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="telefono">
+                            <span>Teléfono</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="tipo" checked>
+                            <span>Tipo</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="vehiculo">
+                            <span>Vehículo</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="repartidor">
+                            <span>Repartidor</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="productos">
+                            <span>Productos</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="subtotal">
+                            <span>Subtotal</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="descuentos">
+                            <span>Descuentos</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="ajustes">
+                            <span>Ajustes</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="total" checked>
+                            <span>Total</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="metodo_pago" checked>
+                            <span>Método pago</span>
+                        </label>
+                        <label class="columna-check">
+                            <input type="checkbox" value="estado" checked>
+                            <span>Estado</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="exportar-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Se exportarán <strong id="count-pedidos-export">0</strong> pedidos según los filtros aplicados</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalExportarExcel()">Cancelar</button>
+                <button class="btn-primary btn-excel" onclick="exportarExcel()"><i class="fas fa-download"></i> Exportar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Agregar Producto -->
     <div class="modal-overlay hidden" id="modal-agregar-producto">
         <div class="modal-content modal-agregar-producto">
@@ -652,6 +751,11 @@
                         <div class="section-title"><i class="fas fa-sticky-note"></i> Notas</div>
                         <div class="nota-content" id="detalle-nota-texto"></div>
                     </div>
+                    <!-- Historial de Cambios (PRD 10.1) -->
+                    <div class="detalle-section" id="detalle-historial-section" style="display: none;">
+                        <div class="section-title"><i class="fas fa-history"></i> Historial de Cambios</div>
+                        <div class="historial-timeline" id="detalle-historial-timeline"></div>
+                    </div>
                 </div>
                 <div class="detalle-sidebar">
                     <div class="detalle-sidebar-section">
@@ -672,6 +776,11 @@
                             <div class="total-row"><span class="label">Monto pagado:</span><span class="value" id="detalle-pagado">$0</span></div>
                             <div class="total-row"><span class="label">Pendiente:</span><span class="value pendiente-valor" id="detalle-pendiente">$0</span></div>
                         </div>
+                        <!-- Lista de pagos registrados (PRD 6.2, 6.3) -->
+                        <div class="pagos-lista" id="detalle-pagos-lista"></div>
+                        <button class="btn-registrar-pago" id="btn-registrar-pago" onclick="abrirModalRegistrarPago()" style="display: none;">
+                            <i class="fas fa-plus-circle"></i> Registrar Pago
+                        </button>
                     </div>
                     <div class="detalle-sidebar-section" id="detalle-entrega-section" style="display: none;">
                         <div class="sidebar-section-title">Informacion de Entrega</div>
@@ -686,6 +795,54 @@
                 <button class="btn-secondary" onclick="cerrarModalDetalle()">Cerrar</button>
                 <button class="btn-outline" onclick="cambiarTipoPedido()"><i class="fas fa-exchange-alt"></i> Cambiar Tipo</button>
                 <button class="btn-primary" onclick="abrirEditarDesdeDetalle()"><i class="fas fa-edit"></i> Editar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Registrar Pago Adicional (PRD 6.2, 6.3) -->
+    <div class="modal-overlay hidden" id="modal-registrar-pago">
+        <div class="modal-content modal-registrar-pago">
+            <div class="modal-header">
+                <h3><i class="fas fa-dollar-sign"></i> Registrar Pago</h3>
+                <button class="btn-close-modal" onclick="cerrarModalRegistrarPago()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="pago-pedido-info">
+                    <div class="info-row"><span class="label">Pedido:</span><span class="value" id="pago-pedido-num">#00999</span></div>
+                    <div class="info-row"><span class="label">Total pedido:</span><span class="value" id="pago-total-pedido">$0</span></div>
+                    <div class="info-row"><span class="label">Ya pagado:</span><span class="value" id="pago-ya-pagado">$0</span></div>
+                    <div class="info-row destacado"><span class="label">Saldo pendiente:</span><span class="value" id="pago-saldo-pendiente">$0</span></div>
+                </div>
+                <div class="divider-modal"></div>
+                <div class="pago-form">
+                    <div class="form-group">
+                        <label>Monto a pagar</label>
+                        <input type="number" id="pago-monto" placeholder="0" min="0" oninput="validarMontoPago()">
+                        <div class="pago-quick-actions">
+                            <button type="button" class="btn-quick" onclick="setMontoPagoTotal()">Pagar total pendiente</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Metodo de pago</label>
+                        <div class="metodo-pago-opciones-sm">
+                            <label class="metodo-opcion-sm">
+                                <input type="radio" name="pagoParcialMetodo" value="efectivo" checked>
+                                <span><i class="fas fa-money-bill-wave"></i> Efectivo</span>
+                            </label>
+                            <label class="metodo-opcion-sm">
+                                <input type="radio" name="pagoParcialMetodo" value="digital">
+                                <span><i class="fas fa-credit-card"></i> Digital</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="pago-validacion" id="pago-validacion"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalRegistrarPago()">Cancelar</button>
+                <button class="btn-primary" id="btn-confirmar-pago" onclick="confirmarPagoAdicional()" disabled>
+                    <i class="fas fa-check"></i> Registrar Pago
+                </button>
             </div>
         </div>
     </div>

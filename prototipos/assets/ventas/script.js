@@ -537,11 +537,11 @@ function confirmarEntregado() {
         return;
     }
 
-    // Validar método de pago mixto
+    // Validar método de pago mixto - PRD 6.2 permite pagos parciales
     if (metodoPagoData && metodoPagoData.metodo === 'mixto') {
         const sumaValida = validarSumaMixto();
         if (!sumaValida) {
-            mostrarNotificacion('⚠️ La suma de efectivo + digital debe igualar el total del pedido', 'warning');
+            mostrarNotificacion('⚠️ El monto no puede superar el total del pedido', 'warning');
             return;
         }
     }
@@ -550,12 +550,47 @@ function confirmarEntregado() {
     pedido.estado = 'entregado';
     pedido.fechaEntrega = new Date().toISOString();
 
-    // Guardar método de pago si se seleccionó
+    // Calcular monto pagado (PRD 6.2 - Pagos parciales)
+    let montoPagado = 0;
     if (metodoPagoData) {
         pedido.metodoPago = metodoPagoData.metodo;
         if (metodoPagoData.metodo === 'mixto') {
             pedido.montoEfectivo = metodoPagoData.montoEfectivo;
             pedido.montoDigital = metodoPagoData.montoDigital;
+            montoPagado = metodoPagoData.montoEfectivo + metodoPagoData.montoDigital;
+        } else if (metodoPagoData.metodo === 'efectivo') {
+            pedido.montoEfectivo = total;
+            montoPagado = total;
+        } else if (metodoPagoData.metodo === 'digital') {
+            pedido.montoDigital = total;
+            montoPagado = total;
+        }
+    }
+
+    // Guardar monto_pagado y crear registro de pago inicial
+    pedido.monto_pagado = montoPagado;
+    if (montoPagado > 0) {
+        pedido.pagos = pedido.pagos || [];
+        // Crear registro de pago inicial
+        const pagoInicial = {
+            id: 1,
+            fecha: pedido.fechaEntrega,
+            monto: montoPagado,
+            metodo: metodoPagoData.metodo,
+            tipo: 'asociado',
+            registrado_por: 'admin@bambu.com'
+        };
+        // Si es mixto, crear dos registros separados
+        if (metodoPagoData.metodo === 'mixto') {
+            pedido.pagos = [];
+            if (metodoPagoData.montoEfectivo > 0) {
+                pedido.pagos.push({ id: 1, fecha: pedido.fechaEntrega, monto: metodoPagoData.montoEfectivo, metodo: 'efectivo', tipo: 'asociado', registrado_por: 'admin@bambu.com' });
+            }
+            if (metodoPagoData.montoDigital > 0) {
+                pedido.pagos.push({ id: pedido.pagos.length + 1, fecha: pedido.fechaEntrega, monto: metodoPagoData.montoDigital, metodo: 'digital', tipo: 'asociado', registrado_por: 'admin@bambu.com' });
+            }
+        } else {
+            pedido.pagos = [pagoInicial];
         }
     }
 
@@ -565,7 +600,9 @@ function confirmarEntregado() {
         fechaEntrega: pedido.fechaEntrega,
         metodoPago: pedido.metodoPago || null,
         montoEfectivo: pedido.montoEfectivo || 0,
-        montoDigital: pedido.montoDigital || 0
+        montoDigital: pedido.montoDigital || 0,
+        monto_pagado: pedido.monto_pagado || 0,
+        pagos: pedido.pagos || []
     });
 
     // SINCRONIZACIÓN: Generar cargo en Cuenta Corriente
@@ -583,13 +620,21 @@ function confirmarEntregado() {
         console.log(`ℹ️ Venta "Sin registro" - No se genera cargo en CC`);
     }
 
-    // Mensaje según método de pago
+    // Mensaje según método de pago (PRD 6.2 - Pagos parciales)
     let mensajePago = '';
+    let mensajeParcial = '';
+    const saldoPendiente = total - montoPagado;
+
     if (metodoPagoData) {
         if (metodoPagoData.metodo === 'mixto') {
-            mensajePago = ` Pago mixto: $${metodoPagoData.montoEfectivo.toLocaleString()} efectivo + $${metodoPagoData.montoDigital.toLocaleString()} digital.`;
+            mensajePago = ` Pago: $${metodoPagoData.montoEfectivo.toLocaleString()} efectivo + $${metodoPagoData.montoDigital.toLocaleString()} digital.`;
         } else {
             mensajePago = ` Método: ${metodoPagoData.metodo}.`;
+        }
+
+        // Mensaje de pago parcial si aplica
+        if (saldoPendiente > 0) {
+            mensajeParcial = ` Saldo pendiente: $${saldoPendiente.toLocaleString()} en CC.`;
         }
     }
 
@@ -602,8 +647,10 @@ function confirmarEntregado() {
     // Mostrar notificación (diferente si es Sin registro)
     if (esSinRegistro) {
         mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO (Sin registro).${mensajePago} Sin cargo en CC.`);
+    } else if (saldoPendiente > 0) {
+        mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO.${mensajePago}${mensajeParcial}`, 'warning');
     } else {
-        mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO.${mensajePago} Cargo de $${total.toLocaleString()} en CC.`);
+        mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO.${mensajePago} Pago completo.`);
     }
 }
 
@@ -650,11 +697,14 @@ function toggleCamposMixto() {
 }
 
 /**
- * Valida que la suma de efectivo + digital iguale el total del pedido
+ * Valida suma de efectivo + digital para pago mixto
+ * PRD 6.2 - PAGOS PARCIALES PERMITIDOS
  *
  * VALIDACIONES:
- * - Suma debe ser exactamente igual al total
- * - Feedback visual: verde si válido, rojo si inválido
+ * - Suma puede ser <= total (pago parcial permitido)
+ * - Suma > total: inválido (sobrepago)
+ * - Suma > 0: válido (mínimo requerido)
+ * - Feedback visual: verde si válido, naranja si parcial, rojo si sobrepago
  */
 function validarSumaMixto() {
     const montoEfectivo = parseFloat(document.getElementById('monto-efectivo').value) || 0;
@@ -667,19 +717,29 @@ function validarSumaMixto() {
     const validacionDiv = document.getElementById('mixto-validacion');
     const sumaActualSpan = validacionDiv.querySelector('.suma-actual');
 
-    sumaActualSpan.textContent = 'Suma: $' + suma.toLocaleString();
-
     // Remover clases previas
-    validacionDiv.classList.remove('valido', 'invalido');
+    validacionDiv.classList.remove('valido', 'invalido', 'parcial');
 
-    // Agregar clase según validación
-    if (suma === totalEsperado && suma > 0) {
-        validacionDiv.classList.add('valido');
-    } else if (suma > 0) {
+    if (suma > totalEsperado) {
+        // Sobrepago - no permitido
+        sumaActualSpan.textContent = `Suma: $${suma.toLocaleString()} (excede el total)`;
         validacionDiv.classList.add('invalido');
+        return false;
+    } else if (suma === totalEsperado && suma > 0) {
+        // Pago completo
+        sumaActualSpan.textContent = `Suma: $${suma.toLocaleString()} ✓ Pago completo`;
+        validacionDiv.classList.add('valido');
+        return true;
+    } else if (suma > 0 && suma < totalEsperado) {
+        // Pago parcial - PRD 6.2 permite esto
+        const pendiente = totalEsperado - suma;
+        sumaActualSpan.textContent = `Suma: $${suma.toLocaleString()} (parcial - quedará $${pendiente.toLocaleString()} en CC)`;
+        validacionDiv.classList.add('parcial');
+        return true; // Válido según PRD 6.2
     }
 
-    return suma === totalEsperado;
+    sumaActualSpan.textContent = 'Suma: $0';
+    return false;
 }
 
 /**
@@ -1355,6 +1415,228 @@ function exportarHojaReparto(formato) {
 
     // En producción usar: window.open() o descargar blob
     alert(`📄 EXPORTACIÓN SIMULADA\n\n${resumen}\n\n(En producción se descargará como Excel/Word)`);
+}
+
+// ========================================
+// EXPORTAR EXCEL CON SELECCIÓN DE COLUMNAS
+// PRD: prd/ventas.html - Sección 9.1
+// ========================================
+
+/**
+ * LÓGICA DE NEGOCIO:
+ * - Columnas obligatorias: # Pedido, Fecha entrega (siempre incluidas)
+ * - Columnas opcionales: 13 campos seleccionables por el usuario
+ * - Sistema recuerda última selección del usuario (localStorage)
+ * - Exporta pedidos según filtros aplicados actualmente
+ */
+
+const COLUMNAS_EXCEL = {
+    obligatorias: ['numero', 'fecha'],
+    opcionales: ['cliente', 'direccion', 'telefono', 'tipo', 'vehiculo', 'repartidor',
+                 'productos', 'subtotal', 'descuentos', 'ajustes', 'total', 'metodo_pago', 'estado']
+};
+
+const STORAGE_KEY_COLUMNAS = 'bambu_excel_columnas';
+
+/**
+ * Abre modal para exportar Excel con selección de columnas
+ * Carga preferencias guardadas del usuario
+ */
+function abrirModalExportarExcel() {
+    // Cargar preferencias guardadas
+    cargarPreferenciasColumnas();
+
+    // Actualizar contador de pedidos
+    const count = appState.pedidosFiltrados.length;
+    document.getElementById('count-pedidos-export').textContent = count;
+
+    // Mostrar modal
+    document.getElementById('modal-exportar-excel').classList.remove('hidden');
+}
+
+/**
+ * Cierra modal de exportar Excel
+ */
+function cerrarModalExportarExcel() {
+    document.getElementById('modal-exportar-excel').classList.add('hidden');
+}
+
+/**
+ * Carga preferencias de columnas desde localStorage
+ * Si no hay preferencias, usa las marcadas por defecto en el HTML
+ */
+function cargarPreferenciasColumnas() {
+    const guardadas = localStorage.getItem(STORAGE_KEY_COLUMNAS);
+
+    if (guardadas) {
+        try {
+            const columnas = JSON.parse(guardadas);
+            const checkboxes = document.querySelectorAll('#columnas-opcionales input[type="checkbox"]');
+
+            checkboxes.forEach(cb => {
+                cb.checked = columnas.includes(cb.value);
+            });
+        } catch (e) {
+            console.warn('Error cargando preferencias de columnas:', e);
+        }
+    }
+}
+
+/**
+ * Guarda preferencias de columnas en localStorage
+ */
+function guardarPreferenciasColumnas() {
+    const checkboxes = document.querySelectorAll('#columnas-opcionales input[type="checkbox"]:checked');
+    const columnas = Array.from(checkboxes).map(cb => cb.value);
+    localStorage.setItem(STORAGE_KEY_COLUMNAS, JSON.stringify(columnas));
+}
+
+/**
+ * Toggle seleccionar/deseleccionar todas las columnas opcionales
+ */
+function toggleTodasColumnas() {
+    const checkboxes = document.querySelectorAll('#columnas-opcionales input[type="checkbox"]');
+    const todasMarcadas = Array.from(checkboxes).every(cb => cb.checked);
+
+    checkboxes.forEach(cb => {
+        cb.checked = !todasMarcadas;
+    });
+
+    // Actualizar texto del botón
+    const btn = document.querySelector('.columnas-titulo .btn-link-sm');
+    btn.textContent = todasMarcadas ? 'Seleccionar todas' : 'Deseleccionar todas';
+}
+
+/**
+ * Exporta pedidos filtrados a Excel (mock)
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Incluye siempre columnas obligatorias (# Pedido, Fecha)
+ * - Incluye columnas opcionales seleccionadas por el usuario
+ * - Guarda preferencias para próxima exportación
+ * - Genera descarga de archivo (en producción: SheetJS/xlsx)
+ */
+function exportarExcel() {
+    // Obtener columnas seleccionadas
+    const columnasOpcionales = Array.from(
+        document.querySelectorAll('#columnas-opcionales input[type="checkbox"]:checked')
+    ).map(cb => cb.value);
+
+    // Guardar preferencias
+    guardarPreferenciasColumnas();
+
+    // Obtener pedidos a exportar
+    const pedidos = appState.pedidosFiltrados;
+
+    if (pedidos.length === 0) {
+        mostrarNotificacion('⚠️ No hay pedidos para exportar con los filtros actuales', 'warning');
+        return;
+    }
+
+    // Construir headers
+    const headers = ['# Pedido', 'Fecha Entrega'];
+    const mapeoColumnas = {
+        cliente: 'Cliente',
+        direccion: 'Dirección',
+        telefono: 'Teléfono',
+        tipo: 'Tipo',
+        vehiculo: 'Vehículo',
+        repartidor: 'Repartidor',
+        productos: 'Productos',
+        subtotal: 'Subtotal',
+        descuentos: 'Descuentos',
+        ajustes: 'Ajustes',
+        total: 'Total',
+        metodo_pago: 'Método Pago',
+        estado: 'Estado'
+    };
+
+    columnasOpcionales.forEach(col => {
+        if (mapeoColumnas[col]) {
+            headers.push(mapeoColumnas[col]);
+        }
+    });
+
+    // Construir filas de datos
+    const filas = pedidos.map(p => {
+        const fila = [p.numero, formatearFechaEntrega(p.fecha)];
+
+        columnasOpcionales.forEach(col => {
+            switch(col) {
+                case 'cliente':
+                    fila.push(p.cliente || '-');
+                    break;
+                case 'direccion':
+                    fila.push(p.direccion || '-');
+                    break;
+                case 'telefono':
+                    const cliente = BambuState.getById('clientes', p.cliente_id);
+                    fila.push(cliente?.telefono || '-');
+                    break;
+                case 'tipo':
+                    fila.push(p.tipo.toUpperCase());
+                    break;
+                case 'vehiculo':
+                    fila.push(p.vehiculo || 'Sin asignar');
+                    break;
+                case 'repartidor':
+                    fila.push(p.repartidor || '-');
+                    break;
+                case 'productos':
+                    const items = BambuState.getItemsPedido(p.id);
+                    const prods = items.map(i => {
+                        const prod = BambuState.getById('productos', i.producto_id);
+                        return `${prod?.nombre || 'Producto'} x${i.cantidad}`;
+                    }).join(', ');
+                    fila.push(prods || '-');
+                    break;
+                case 'subtotal':
+                    fila.push(formatearMonto(p.subtotal || p.total));
+                    break;
+                case 'descuentos':
+                    fila.push(formatearMonto(p.descuento || 0));
+                    break;
+                case 'ajustes':
+                    fila.push(formatearMonto(p.ajuste || 0));
+                    break;
+                case 'total':
+                    fila.push(formatearMonto(p.total));
+                    break;
+                case 'metodo_pago':
+                    const metodos = { efectivo: 'Efectivo', digital: 'Digital', mixto: 'Mixto' };
+                    fila.push(metodos[p.metodoPago] || 'Sin registrar');
+                    break;
+                case 'estado':
+                    fila.push(p.estado === 'entregado' ? 'Entregado' : 'En tránsito');
+                    break;
+            }
+        });
+
+        return fila;
+    });
+
+    // Generar vista previa para mock
+    const preview = [
+        `📊 EXPORTACIÓN EXCEL - ${pedidos.length} pedidos`,
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+        ``,
+        `Columnas: ${headers.join(' | ')}`,
+        ``,
+        `Primeros 3 registros:`,
+        ...filas.slice(0, 3).map((f, i) => `${i+1}. ${f.join(' | ')}`),
+        filas.length > 3 ? `... y ${filas.length - 3} registros más` : '',
+        ``,
+        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+        `(En producción: descarga archivo .xlsx)`
+    ].join('\n');
+
+    console.log('📊 Exportando Excel:', { headers, filas });
+
+    cerrarModalExportarExcel();
+    mostrarNotificacion(`✅ Excel generado: ${pedidos.length} pedidos, ${headers.length} columnas`);
+
+    // Mock: mostrar preview
+    alert(preview);
 }
 
 /**
@@ -2522,11 +2804,31 @@ function abrirModalDetalle(pedidoId) {
         `;
     }
 
-    // Estado de pago
-    const montoPagado = (pedido.montoEfectivo || 0) + (pedido.montoDigital || 0);
-    const pendiente = pedido.total - montoPagado;
+    // Estado de pago (PRD 6.2, 6.3 - Pagos parciales)
+    const montoPagado = pedido.monto_pagado || (pedido.montoEfectivo || 0) + (pedido.montoDigital || 0);
+    const totalPedido = BambuState.calcularTotalPedido ? BambuState.calcularTotalPedido(pedido.id) : pedido.total;
+    const pendiente = totalPedido - montoPagado;
     document.getElementById('detalle-pagado').textContent = formatearMonto(montoPagado);
-    document.getElementById('detalle-pendiente').textContent = formatearMonto(pendiente);
+    document.getElementById('detalle-pendiente').textContent = formatearMonto(Math.max(0, pendiente));
+
+    // Colorear pendiente según estado
+    const pendienteEl = document.getElementById('detalle-pendiente');
+    if (pendiente > 0) {
+        pendienteEl.style.color = 'var(--color-danger)';
+    } else {
+        pendienteEl.style.color = 'var(--color-success)';
+    }
+
+    // Lista de pagos registrados (PRD 6.2, 6.3)
+    renderizarListaPagos(pedido);
+
+    // Botón registrar pago si hay saldo pendiente y pedido está entregado
+    const btnRegistrarPago = document.getElementById('btn-registrar-pago');
+    if (pendiente > 0 && pedido.estado === 'entregado') {
+        btnRegistrarPago.style.display = 'flex';
+    } else {
+        btnRegistrarPago.style.display = 'none';
+    }
 
     // Notas (si existe)
     if (pedido.nota) {
@@ -2544,6 +2846,9 @@ function abrirModalDetalle(pedidoId) {
     } else {
         document.getElementById('detalle-entrega-section').style.display = 'none';
     }
+
+    // PRD 10.1 - Historial de cambios (auditoría)
+    renderizarHistorialCambios(pedidoId);
 
     // Mostrar modal
     document.getElementById('modal-ver-detalle').classList.remove('hidden');
@@ -2672,9 +2977,357 @@ function renderizarProductosDetalle(pedidoId) {
     document.getElementById('detalle-peso-total').textContent = pesoTotal + 'kg';
 }
 
+// ============================================================================
+// HISTORIAL DE CAMBIOS - Sistema de Auditoría
+// PRD: prd/ventas.html - Sección 10.1
+// ============================================================================
+
+/**
+ * Renderiza el timeline de historial de cambios del pedido
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Muestra cambios en orden cronológico (más reciente primero)
+ * - Tipos de acción: CREACION, EDICION, ESTADO
+ * - Cada cambio muestra: fecha, usuario, campo modificado, valor anterior → nuevo, razón
+ *
+ * VALIDACIONES:
+ * - Si no hay historial, oculta la sección
+ * - Formatea valores según el tipo de campo (montos, porcentajes, estados)
+ */
+function renderizarHistorialCambios(pedidoId) {
+    const pedido = appState.pedidos.find(p => p.id === pedidoId);
+    const section = document.getElementById('detalle-historial-section');
+    const timeline = document.getElementById('detalle-historial-timeline');
+
+    if (!pedido || !pedido.historial_cambios || pedido.historial_cambios.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = 'block';
+
+    // Ordenar por fecha descendente (más reciente primero)
+    const cambiosOrdenados = [...pedido.historial_cambios].sort((a, b) =>
+        new Date(b.fecha) - new Date(a.fecha)
+    );
+
+    timeline.innerHTML = cambiosOrdenados.map(cambio => {
+        const fechaObj = new Date(cambio.fecha);
+        const fechaFormateada = fechaObj.toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        const horaFormateada = fechaObj.toLocaleTimeString('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Icono según tipo de acción
+        const iconos = {
+            'CREACION': 'fa-plus-circle',
+            'EDICION': 'fa-edit',
+            'ESTADO': 'fa-exchange-alt'
+        };
+        const icono = iconos[cambio.accion] || 'fa-circle';
+
+        // Formatear valores según el campo
+        const formatearValor = (campo, valor) => {
+            if (valor === null || valor === undefined) return '-';
+            if (campo === 'total' || campo === 'subtotal' || campo === 'descuento_monto') {
+                return formatearMonto(valor);
+            }
+            if (campo === 'descuento_porcentaje') {
+                return valor + '%';
+            }
+            if (campo === 'estado') {
+                const estados = {
+                    'borrador': 'Borrador',
+                    'pendiente': 'Pendiente',
+                    'asignado': 'Asignado',
+                    'en transito': 'En Tránsito',
+                    'entregado': 'Entregado'
+                };
+                return estados[valor] || valor;
+            }
+            return valor;
+        };
+
+        // HTML del cambio de valor (si aplica)
+        let cambioHtml = '';
+        if (cambio.campo_modificado && cambio.accion !== 'CREACION') {
+            const campoLabel = {
+                'total': 'Total',
+                'subtotal': 'Subtotal',
+                'descuento_porcentaje': 'Descuento %',
+                'descuento_monto': 'Descuento $',
+                'vehiculo': 'Vehículo',
+                'estado': 'Estado',
+                'fecha': 'Fecha entrega'
+            }[cambio.campo_modificado] || cambio.campo_modificado;
+
+            cambioHtml = `
+                <div class="historial-cambio">
+                    <span class="campo">${campoLabel}:</span>
+                    <span class="valor-anterior">${formatearValor(cambio.campo_modificado, cambio.valor_anterior)}</span>
+                    <span class="flecha"><i class="fas fa-arrow-right"></i></span>
+                    <span class="valor-nuevo">${formatearValor(cambio.campo_modificado, cambio.valor_nuevo)}</span>
+                </div>
+            `;
+        }
+
+        // HTML de la razón (si existe)
+        const razonHtml = cambio.razon ? `<div class="historial-razon">"${cambio.razon}"</div>` : '';
+
+        return `
+            <div class="historial-item accion-${cambio.accion}">
+                <div class="historial-header">
+                    <span class="historial-accion accion-${cambio.accion}">
+                        <i class="fas ${icono}"></i> ${cambio.accion}
+                    </span>
+                    <span class="historial-fecha">${fechaFormateada} ${horaFormateada}</span>
+                </div>
+                ${cambioHtml}
+                ${razonHtml}
+                <div class="historial-meta">
+                    <span><i class="fas fa-user"></i> ${cambio.usuario_nombre}</span>
+                    <span><i class="fas fa-globe"></i> ${cambio.ip || '-'}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 function cerrarModalDetalle() {
     document.getElementById('modal-ver-detalle').classList.add('hidden');
     pedidoViendoId = null;
+}
+
+// ============================================================================
+// PAGOS PARCIALES - Sistema de Pagos (PRD 6.2, 6.3)
+// ============================================================================
+
+/**
+ * Renderiza la lista de pagos registrados en el modal de detalle
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Muestra todos los pagos asociados al pedido
+ * - Cada pago tiene: fecha, monto, método, quién lo registró
+ * - Si no hay pagos, muestra mensaje
+ */
+function renderizarListaPagos(pedido) {
+    const container = document.getElementById('detalle-pagos-lista');
+
+    if (!pedido.pagos || pedido.pagos.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    const iconoMetodo = (metodo) => {
+        if (metodo === 'efectivo') return '<i class="fas fa-money-bill-wave"></i> Efectivo';
+        if (metodo === 'digital') return '<i class="fas fa-credit-card"></i> Digital';
+        return '<i class="fas fa-wallet"></i> ' + metodo;
+    };
+
+    const formatFecha = (fechaStr) => {
+        const fecha = new Date(fechaStr);
+        return fecha.toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }) + ' ' + fecha.toLocaleTimeString('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    container.innerHTML = `
+        <div class="pagos-lista-titulo">Pagos registrados (${pedido.pagos.length})</div>
+        ${pedido.pagos.map(pago => `
+            <div class="pago-item-registro">
+                <div class="pago-info">
+                    <span class="pago-fecha">${formatFecha(pago.fecha)}</span>
+                    <span class="pago-metodo">${iconoMetodo(pago.metodo)}</span>
+                </div>
+                <span class="pago-monto">+${formatearMonto(pago.monto)}</span>
+            </div>
+        `).join('')}
+    `;
+}
+
+/**
+ * Abre el modal para registrar un pago adicional
+ * PRD 6.2 - Pagos parciales: permite múltiples pagos
+ */
+function abrirModalRegistrarPago() {
+    if (!pedidoViendoId) return;
+
+    const pedido = appState.pedidos.find(p => p.id === pedidoViendoId);
+    if (!pedido) return;
+
+    const totalPedido = BambuState.calcularTotalPedido ? BambuState.calcularTotalPedido(pedido.id) : pedido.total;
+    const montoPagado = pedido.monto_pagado || 0;
+    const saldoPendiente = totalPedido - montoPagado;
+
+    document.getElementById('pago-pedido-num').textContent = pedido.numero;
+    document.getElementById('pago-total-pedido').textContent = formatearMonto(totalPedido);
+    document.getElementById('pago-ya-pagado').textContent = formatearMonto(montoPagado);
+    document.getElementById('pago-saldo-pendiente').textContent = formatearMonto(saldoPendiente);
+
+    // Reset form
+    document.getElementById('pago-monto').value = '';
+    document.getElementById('pago-validacion').className = 'pago-validacion';
+    document.getElementById('pago-validacion').textContent = '';
+    document.getElementById('btn-confirmar-pago').disabled = true;
+
+    // Reset método de pago
+    document.querySelector('input[name="pagoParcialMetodo"][value="efectivo"]').checked = true;
+
+    document.getElementById('modal-registrar-pago').classList.remove('hidden');
+}
+
+function cerrarModalRegistrarPago() {
+    document.getElementById('modal-registrar-pago').classList.add('hidden');
+}
+
+/**
+ * Pone el total pendiente en el campo de monto
+ */
+function setMontoPagoTotal() {
+    if (!pedidoViendoId) return;
+
+    const pedido = appState.pedidos.find(p => p.id === pedidoViendoId);
+    if (!pedido) return;
+
+    const totalPedido = BambuState.calcularTotalPedido ? BambuState.calcularTotalPedido(pedido.id) : pedido.total;
+    const montoPagado = pedido.monto_pagado || 0;
+    const saldoPendiente = totalPedido - montoPagado;
+
+    document.getElementById('pago-monto').value = saldoPendiente;
+    validarMontoPago();
+}
+
+/**
+ * Valida el monto ingresado para el pago
+ */
+function validarMontoPago() {
+    const montoInput = document.getElementById('pago-monto');
+    const validacion = document.getElementById('pago-validacion');
+    const btnConfirmar = document.getElementById('btn-confirmar-pago');
+    const monto = parseFloat(montoInput.value) || 0;
+
+    if (!pedidoViendoId) return;
+
+    const pedido = appState.pedidos.find(p => p.id === pedidoViendoId);
+    if (!pedido) return;
+
+    const totalPedido = BambuState.calcularTotalPedido ? BambuState.calcularTotalPedido(pedido.id) : pedido.total;
+    const montoPagado = pedido.monto_pagado || 0;
+    const saldoPendiente = totalPedido - montoPagado;
+
+    if (monto <= 0) {
+        validacion.className = 'pago-validacion error';
+        validacion.textContent = 'Ingrese un monto mayor a $0';
+        btnConfirmar.disabled = true;
+        return;
+    }
+
+    if (monto > saldoPendiente) {
+        validacion.className = 'pago-validacion error';
+        validacion.textContent = `El monto supera el saldo pendiente (${formatearMonto(saldoPendiente)})`;
+        btnConfirmar.disabled = true;
+        return;
+    }
+
+    // Monto válido
+    validacion.className = 'pago-validacion success';
+    if (monto === saldoPendiente) {
+        validacion.textContent = 'Pago completo - Saldará la deuda';
+    } else {
+        const nuevoSaldo = saldoPendiente - monto;
+        validacion.textContent = `Pago parcial - Quedará pendiente ${formatearMonto(nuevoSaldo)}`;
+    }
+    btnConfirmar.disabled = false;
+}
+
+/**
+ * Confirma y registra el pago adicional
+ * PRD 6.3 - Pagos asociados actualizan campo monto_pagado
+ */
+function confirmarPagoAdicional() {
+    if (!pedidoViendoId) return;
+
+    const pedido = appState.pedidos.find(p => p.id === pedidoViendoId);
+    if (!pedido) return;
+
+    const monto = parseFloat(document.getElementById('pago-monto').value) || 0;
+    const metodo = document.querySelector('input[name="pagoParcialMetodo"]:checked').value;
+
+    if (monto <= 0) return;
+
+    // Crear registro de pago
+    const nuevoPago = {
+        id: (pedido.pagos?.length || 0) + 1,
+        fecha: new Date().toISOString(),
+        monto: monto,
+        metodo: metodo,
+        tipo: 'asociado',
+        registrado_por: 'admin@bambu.com'
+    };
+
+    // Inicializar pagos si no existe
+    if (!pedido.pagos) {
+        pedido.pagos = [];
+    }
+    pedido.pagos.push(nuevoPago);
+
+    // Actualizar monto_pagado
+    pedido.monto_pagado = (pedido.monto_pagado || 0) + monto;
+
+    // Actualizar montoEfectivo/montoDigital según método
+    if (metodo === 'efectivo') {
+        pedido.montoEfectivo = (pedido.montoEfectivo || 0) + monto;
+    } else {
+        pedido.montoDigital = (pedido.montoDigital || 0) + monto;
+    }
+
+    // Actualizar metodoPago del pedido
+    if (pedido.montoEfectivo > 0 && pedido.montoDigital > 0) {
+        pedido.metodoPago = 'mixto';
+    } else if (pedido.montoEfectivo > 0) {
+        pedido.metodoPago = 'efectivo';
+    } else {
+        pedido.metodoPago = 'digital';
+    }
+
+    // Guardar en BambuState si existe
+    if (typeof BambuState !== 'undefined' && BambuState.update) {
+        BambuState.update('pedidos', pedido.id, pedido);
+    }
+
+    // Registrar movimiento en cuenta corriente (si no es cliente sin registro)
+    if (pedido.cliente_id !== 0 && typeof BambuState !== 'undefined' && BambuState.agregarMovimientoCC) {
+        BambuState.agregarMovimientoCC({
+            cliente_id: pedido.cliente_id,
+            pedido_id: pedido.id,
+            tipo: 'PAGO',
+            monto: monto,
+            metodo: metodo,
+            descripcion: `Pago asociado a pedido ${pedido.numero}`
+        });
+    }
+
+    // Cerrar modal de pago
+    cerrarModalRegistrarPago();
+
+    // Actualizar modal de detalle
+    abrirModalDetalle(pedidoViendoId);
+
+    // Mostrar notificación
+    mostrarNotificacion(`Pago de ${formatearMonto(monto)} registrado correctamente`, 'success');
+
+    // Re-renderizar tabla si está visible
+    render();
 }
 
 function abrirEditarDesdeDetalle() {

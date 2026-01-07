@@ -1142,6 +1142,10 @@
     color: var(--color-error);
 }
 
+.mixto-validacion.parcial .suma-actual {
+    color: var(--color-warning);
+}
+
 .suma-esperada {
     color: var(--text-secondary);
 }
@@ -1345,6 +1349,96 @@
 
 .exportar-info i {
     color: var(--color-info);
+}
+
+/* ============================================================================
+   MODAL EXPORTAR EXCEL - Selección de columnas
+   ============================================================================ */
+.modal-exportar-excel {
+    max-width: 520px;
+}
+
+.columnas-section {
+    margin-bottom: 16px;
+}
+
+.columnas-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.columnas-titulo i {
+    font-size: 12px;
+}
+
+.columnas-titulo .btn-link-sm {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--color-accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.columnas-titulo .btn-link-sm:hover {
+    text-decoration: underline;
+}
+
+.columnas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.columna-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    font-size: 13px;
+    transition: all var(--transition-base);
+}
+
+.columna-check:hover:not(.disabled) {
+    border-color: var(--color-accent);
+    background: var(--bg-hover);
+}
+
+.columna-check.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: var(--bg-selected);
+}
+
+.columna-check input[type="checkbox"] {
+    accent-color: var(--color-accent);
+    width: 16px;
+    height: 16px;
+}
+
+.columna-check span {
+    color: var(--text-primary);
+}
+
+.columna-check.disabled span {
+    color: var(--text-secondary);
+}
+
+/* Responsive: 2 columnas en móvil */
+@media (max-width: 480px) {
+    .columnas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .editar-hint {
@@ -2089,6 +2183,400 @@
 }
 
 /* ========================================
+   HISTORIAL DE CAMBIOS - Timeline (PRD 10.1)
+   ======================================== */
+
+.historial-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.historial-timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.historial-item {
+    position: relative;
+    padding: 10px 0 10px 16px;
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.historial-item:last-child {
+    border-bottom: none;
+}
+
+.historial-item::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 14px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bg-white);
+    border: 2px solid var(--color-accent);
+}
+
+.historial-item.accion-CREACION::before {
+    border-color: var(--color-success);
+    background: var(--color-success-light);
+}
+
+.historial-item.accion-EDICION::before {
+    border-color: var(--color-warning);
+    background: var(--color-warning-light);
+}
+
+.historial-item.accion-ESTADO::before {
+    border-color: var(--color-info);
+    background: var(--color-info-light);
+}
+
+.historial-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.historial-accion {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: var(--font-weight-semibold);
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.historial-accion.accion-CREACION {
+    background: var(--color-success-light);
+    color: var(--color-success-dark);
+}
+
+.historial-accion.accion-EDICION {
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+}
+
+.historial-accion.accion-ESTADO {
+    background: var(--color-info-light);
+    color: var(--color-info-dark);
+}
+
+.historial-fecha {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.historial-detalle {
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.historial-cambio {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 4px 8px;
+    background: var(--bg-sidebar);
+    border-radius: 4px;
+    margin: 6px 0;
+}
+
+.historial-cambio .valor-anterior {
+    text-decoration: line-through;
+    color: var(--color-danger);
+}
+
+.historial-cambio .valor-nuevo {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-success);
+}
+
+.historial-cambio .flecha {
+    color: var(--text-muted);
+}
+
+.historial-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.historial-meta i {
+    font-size: 10px;
+}
+
+.historial-razon {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding-left: 12px;
+    border-left: 2px solid var(--border-color);
+    margin-top: 6px;
+}
+
+/* ========================================
+   PAGOS PARCIALES - Lista y Modal (PRD 6.2, 6.3)
+   ======================================== */
+
+/* Lista de pagos en modal detalle */
+.pagos-lista {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pagos-lista-titulo {
+    font-size: 11px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+}
+
+.pago-item-registro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--bg-white);
+    border-radius: var(--border-radius-base);
+    font-size: 12px;
+    border-left: 3px solid var(--color-success);
+}
+
+.pago-item-registro .pago-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pago-item-registro .pago-fecha {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.pago-item-registro .pago-metodo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-secondary);
+}
+
+.pago-item-registro .pago-metodo i {
+    font-size: 11px;
+}
+
+.pago-item-registro .pago-monto {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-success);
+    font-size: 13px;
+}
+
+/* Botón registrar pago */
+.btn-registrar-pago {
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--bg-white);
+    border: 2px dashed var(--color-success);
+    border-radius: var(--border-radius-base);
+    color: var(--color-success);
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all var(--transition-base);
+}
+
+.btn-registrar-pago:hover {
+    background: var(--color-success-light);
+    border-style: solid;
+}
+
+/* Modal registrar pago */
+.modal-registrar-pago {
+    max-width: 420px;
+}
+
+.pago-pedido-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pago-pedido-info .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pago-pedido-info .info-row.destacado {
+    padding: 10px 12px;
+    background: var(--color-warning-light);
+    border-radius: var(--border-radius-base);
+    margin-top: 4px;
+}
+
+.pago-pedido-info .info-row.destacado .value {
+    color: var(--color-warning-dark);
+    font-size: 16px;
+}
+
+.pago-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pago-form .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.pago-form .form-group input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 18px;
+    font-weight: var(--font-weight-bold);
+    text-align: center;
+    color: var(--text-primary);
+    transition: border-color var(--transition-base);
+}
+
+.pago-form .form-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.pago-quick-actions {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.btn-quick {
+    padding: 6px 12px;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 12px;
+    color: var(--color-accent);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.btn-quick:hover {
+    background: var(--bg-selected);
+    border-color: var(--color-accent);
+}
+
+.metodo-pago-opciones-sm {
+    display: flex;
+    gap: 8px;
+}
+
+.metodo-opcion-sm {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.metodo-opcion-sm:hover {
+    border-color: var(--text-secondary);
+}
+
+.metodo-opcion-sm input[type="radio"] {
+    display: none;
+}
+
+.metodo-opcion-sm:has(input:checked) {
+    border-color: var(--color-accent);
+    background: var(--bg-selected);
+}
+
+.metodo-opcion-sm:has(input:checked) span {
+    color: var(--color-accent);
+}
+
+.metodo-opcion-sm span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.pago-validacion {
+    padding: 10px 12px;
+    border-radius: var(--border-radius-base);
+    font-size: 13px;
+    text-align: center;
+    display: none;
+}
+
+.pago-validacion.error {
+    display: block;
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.pago-validacion.success {
+    display: block;
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+/* Badge pago parcial en tabla */
+.badge-pago-parcial {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    background: var(--color-warning-light);
+    color: var(--color-warning-dark);
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+}
+
+/* ========================================
    DARK MODE
    ======================================== */
 
@@ -2165,4 +2653,25 @@
 
 [data-theme="dark"] .barra-bulk-actions {
     background: var(--color-accent);
+}
+
+[data-theme="dark"] .historial-cambio {
+    background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .historial-timeline::before {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .pago-item-registro {
+    background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .pago-form input[type="number"] {
+    background: var(--bg-sidebar) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn-registrar-pago {
+    background: var(--bg-sidebar) !important;
 }

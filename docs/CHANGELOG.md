@@ -1,5 +1,22 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [07 Enero 2026] - Ventas: Auditoría + Pagos Parciales
+
+### Qué se hizo
+- Sistema auditoría con timeline cambios en modal pedido
+- Soporte pagos parciales (monto < total entregado)
+- Lista pagos registrados con fecha, método, monto
+- Modal "Registrar Pago" en tab Cuenta Corriente
+- Pedidos test #998 (pago parcial) y #999 (auditoría)
+
+### Archivos clave
+- `prototipos/ventas.html` - modal auditoría + pagos
+- `prototipos/assets/ventas/script.js` - lógica pagos parciales
+- `prototipos/assets/ventas/ventas-specific.css` - estilos nuevos
+- `prototipos/shared/state-manager.js` - versión 1.1.0
+
+---
+
 ## [07 Enero 2026] - Cotizador Sprint 3 - Completitud
 
 ### Qué se hizo
