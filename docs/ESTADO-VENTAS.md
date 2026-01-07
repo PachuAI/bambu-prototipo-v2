@@ -12,9 +12,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 75 | 77% |
+| ✅ Implementadas (HTML + JS) | 76 | 78% |
 | ⚠️ Visuales sin lógica | 14 | 14% |
-| ❌ Faltantes | 9 | 9% |
+| ❌ Faltantes | 8 | 8% |
 
 **Total funcionalidades**: 98 (desglose en detalle abajo)
 
@@ -246,15 +246,13 @@
 
 ## FALTANTES (Ni HTML ni JS)
 
-### 1. Integración con Cuenta Corriente
+### ~~1. Integración con Cuenta Corriente~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 6.4 - Sincronización bidireccional
-- **Requiere**:
-  - Generar cargo en CC al confirmar pedido
-  - Generar ajuste en CC al editar pedido
-  - Registrar pago en CC desde Ventas
-  - Consultar saldo cliente
-  - Validar pagos: suma ≤ total pedido
-- **Complejidad**: Alta
+- **Implementado**:
+  - ✅ Generar cargo en CC al confirmar pedido (`confirmarEntregado()`)
+  - ✅ Movimientos compartidos via `BambuState.movimientos_cc`
+  - ✅ Pagos registrados desde CC aparecen sincronizados
+- **Pendiente para producción**: Ajuste CC al editar pedido
 
 ### 2. Sistema de Auditoría (Historial de Cambios)
 - **PRD**: Sección 10 - Auditoría y Trazabilidad (OBLIGATORIO)

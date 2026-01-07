@@ -59,8 +59,8 @@ function cargarCliente(clienteId) {
     // Cargar info del cliente (tab Información)
     cargarInfoCliente(cliente);
 
-    // Actualizar saldo en cuenta corriente
-    actualizarSaldoCC(cliente.saldo);
+    // Cargar movimientos cuenta corriente (sincronizado con BambuState)
+    renderizarMovimientosCC(clienteId);
 }
 
 /**
@@ -282,6 +282,136 @@ function nuevaCotizacionCliente() {
     // Redirigir al cotizador con cliente precargado
     window.location.href = `cotizador.html?cliente_id=${clienteId}`;
     console.log(`✅ Redirigiendo a cotizador con cliente ${cliente.direccion}`);
+}
+
+// ========================================
+// RENDERIZADO CUENTA CORRIENTE
+// PRD: prd/cuenta-corriente.html - Sincronización con Ventas
+// ========================================
+
+/**
+ * Renderiza los movimientos de cuenta corriente desde BambuState
+ *
+ * SINCRONIZACIÓN CC ↔ VENTAS:
+ * - Los movimientos se cargan desde BambuState.movimientos_cc
+ * - Incluye cargos generados automáticamente desde Ventas
+ * - Incluye pagos registrados desde este módulo
+ *
+ * @param {number} clienteId - ID del cliente
+ */
+function renderizarMovimientosCC(clienteId) {
+    const tbody = document.getElementById('movimientos-cc-tbody');
+    if (!tbody) return;
+
+    const movimientos = BambuState.getMovimientosCC(clienteId);
+
+    if (movimientos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    <i class="fas fa-file-invoice-dollar" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                    No hay movimientos en cuenta corriente
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    // Calcular saldos acumulados (de más antiguo a más reciente, luego invertir)
+    const movsOrdenados = [...movimientos].reverse();
+    let saldoAcumulado = 0;
+    const movsConSaldo = movsOrdenados.map(m => {
+        if (m.tipo === 'cargo') saldoAcumulado -= m.monto;
+        if (m.tipo === 'pago') saldoAcumulado += m.monto;
+        return { ...m, saldoAcumulado };
+    }).reverse();
+
+    tbody.innerHTML = movsConSaldo.map(m => {
+        const fechaDisplay = formatearFecha(m.fecha);
+        const esCargo = m.tipo === 'cargo';
+        const esPago = m.tipo === 'pago';
+
+        // Método de pago badge
+        let metodoBadge = '-';
+        if (m.metodo_pago) {
+            if (m.metodo_pago === 'efectivo') {
+                metodoBadge = '<span class="method-badge"><i class="fas fa-money-bill"></i> Efectivo</span>';
+            } else if (m.metodo_pago === 'digital') {
+                metodoBadge = '<span class="method-badge"><i class="fas fa-university"></i> Transferencia</span>';
+            } else if (m.metodo_pago === 'mixto') {
+                metodoBadge = '<span class="method-badge partial"><i class="fas fa-coins"></i> Mixto</span>';
+            }
+        }
+
+        // Formato montos
+        const cargoDisplay = esCargo ? `$${m.monto.toLocaleString('es-AR')}` : '-';
+        const pagoDisplay = esPago ? `$${m.monto.toLocaleString('es-AR')}` : '-';
+        const saldoDisplay = `${m.saldoAcumulado < 0 ? '-' : ''}$${Math.abs(m.saldoAcumulado).toLocaleString('es-AR')}`;
+        const saldoClass = m.saldoAcumulado < 0 ? 'amount-negative' : 'amount-positive';
+
+        // Botón ver pedido (solo para cargos con pedido_id)
+        const btnVerPedido = m.pedido_id
+            ? `<button class="btn-link-small" onclick="event.stopPropagation(); window.location.href='ventas.html'">
+                 <i class="fas fa-external-link-alt"></i> Ver
+               </button>`
+            : '';
+
+        return `
+            <tr class="movimiento-row clickeable" data-movimiento-id="${m.id}" data-tipo="${m.tipo}"
+                onclick="toggleDetalleMovimiento(${m.id})">
+                <td>${fechaDisplay}</td>
+                <td class="${esCargo ? 'text-bold' : ''}">
+                    <i class="fas fa-chevron-right expand-icon"></i>
+                    ${m.descripcion}
+                </td>
+                <td>${metodoBadge}</td>
+                <td class="text-center ${esCargo ? 'amount-negative' : 'text-subtle'}">${cargoDisplay}</td>
+                <td class="text-center ${esPago ? 'amount-positive' : 'text-subtle'}">${pagoDisplay}</td>
+                <td class="text-center ${saldoClass}">${saldoDisplay}</td>
+                <td>${btnVerPedido}</td>
+            </tr>
+            <tr class="detalle-expandido hidden" id="detalle-${m.id}">
+                <td colspan="7">
+                    <div class="detalle-content">
+                        <div class="detalle-info-grid">
+                            <div class="detalle-info-item">
+                                <span class="detalle-label">Registrado por:</span>
+                                <span class="detalle-value">${m.usuario || 'Sistema'}</span>
+                            </div>
+                            <div class="detalle-info-item">
+                                <span class="detalle-label">Fecha:</span>
+                                <span class="detalle-value">${fechaDisplay}</span>
+                            </div>
+                            ${m.nota ? `
+                            <div class="detalle-info-item">
+                                <span class="detalle-label">Nota:</span>
+                                <span class="detalle-value">${m.nota}</span>
+                            </div>` : ''}
+                            ${m.metodo_pago === 'mixto' ? `
+                            <div class="detalle-info-item">
+                                <span class="detalle-label">Efectivo:</span>
+                                <span class="detalle-value">$${(m.monto_efectivo || 0).toLocaleString('es-AR')}</span>
+                            </div>
+                            <div class="detalle-info-item">
+                                <span class="detalle-label">Digital:</span>
+                                <span class="detalle-value">$${(m.monto_digital || 0).toLocaleString('es-AR')}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    // Actualizar saldo en sidebar
+    const saldoActual = BambuState.calcularSaldoCC(clienteId);
+    const saldoEl = document.querySelector('.sidebar-balance-amount');
+    if (saldoEl) {
+        saldoEl.textContent = `${saldoActual < 0 ? '-' : ''}$${Math.abs(saldoActual).toLocaleString('es-AR')}`;
+        saldoEl.className = `sidebar-balance-amount ${saldoActual < 0 ? 'negative' : 'positive'}`;
+    }
+
+    console.log(`✅ Renderizados ${movimientos.length} movimientos CC`);
 }
 
 // ========================================

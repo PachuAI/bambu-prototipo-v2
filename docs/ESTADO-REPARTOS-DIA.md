@@ -10,9 +10,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 32 | 94% |
+| ✅ Implementadas (HTML + JS) | 34 | 100% |
 | ⚠️ Visuales sin lógica | 0 | 0% |
-| ❌ Faltantes | 2 | 6% |
+| ❌ Faltantes | 0 | 0% |
 
 **Total funcionalidades**: 34
 
@@ -107,17 +107,18 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 
 ---
 
-## FALTANTES (2 funcionalidades)
+## FALTANTES (0 funcionalidades)
 
-### 1. Drag & Drop para asignar
-- Arrastrar pedido de "Sin Asignar" a vehículo
-- **Complejidad**: Alta
-- **Prioridad**: Baja (modal funciona bien)
+### ~~1. Drag & Drop para asignar~~ ✅ IMPLEMENTADO
+- **Estado**: Funcional (líneas 861-997 de script.js)
+- **Features**: Filas arrastrables, zonas de drop con feedback visual, auto-asignación
+- **Fecha implementación**: 07 Enero 2026
 
-### 2. Optimización automática de rutas
-- Sugerir asignación óptima por ciudad/peso
-- **Complejidad**: Alta
-- **Prioridad**: Baja (feature avanzado)
+### ~~2. Optimización automática de rutas~~ ✅ IMPLEMENTADO
+- **Estado**: Funcional (líneas 1000-1179 de script.js)
+- **Features**: Agrupa por ciudad, sugiere mejor vehículo, aplica individual o todas
+- **Botón**: "Auto-asignar" en sección Sin Asignar
+- **Fecha implementación**: 07 Enero 2026
 
 ---
 
@@ -168,9 +169,9 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 4. ~~Exportar hoja de reparto (PDF)~~ ✅
 5. ~~Crear PRD específico del módulo~~ ✅ → `prd/repartos-dia.html`
 
-### Sprint 3 - Mejoras
-6. Drag & drop (opcional)
-7. Optimización rutas (opcional)
+### Sprint 3 - Mejoras ✅ COMPLETADO (07 Enero 2026)
+6. ~~Drag & drop (opcional)~~ ✅
+7. ~~Optimización rutas (opcional)~~ ✅
 
 ---
 
@@ -184,6 +185,6 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 
 ---
 
-**Estado general: EXCELENTE (94% implementado)**
-**Sprint 1 y 2 completados - Queda Sprint 3 (mejoras opcionales)**
+**Estado general: COMPLETO (100% implementado)**
+**Todos los Sprints completados (1, 2 y 3)**
 **PRD creado: `prd/repartos-dia.html`**

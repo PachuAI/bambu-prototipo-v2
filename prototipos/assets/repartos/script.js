@@ -266,6 +266,9 @@ function renderizarVehiculos() {
 
         container.innerHTML += vehiculoHTML;
     });
+
+    // Inicializar zonas de drop para drag & drop
+    initDragDropZones();
 }
 
 // ===========================
@@ -289,9 +292,13 @@ function renderizarPedidosSinAsignar() {
     document.getElementById('sin-asignar-peso').textContent = totalPeso;
     document.getElementById('sin-asignar-count-label').textContent = appData.pedidosSinAsignar.length;
 
-    // Renderizar tabla
+    // Renderizar tabla con filas arrastrables
     tbody.innerHTML = appData.pedidosSinAsignar.map(pedido => `
-        <tr>
+        <tr class="pedido-draggable"
+            draggable="true"
+            data-pedido-id="${pedido.id}"
+            ondragstart="handleDragStart(event, ${pedido.id})"
+            ondragend="handleDragEnd(event)">
             <td><strong>${pedido.numero}</strong></td>
             <td>${pedido.direccion}</td>
             <td>${pedido.ciudad}</td>
@@ -302,6 +309,7 @@ function renderizarPedidosSinAsignar() {
                 <button class="btn-asignar-vehiculo" onclick="abrirModalAsignarVehiculo(${pedido.id})">
                     <i class="fas fa-truck"></i> Asignar
                 </button>
+                <span class="drag-hint" title="Arrastra a un vehículo"><i class="fas fa-grip-vertical"></i></span>
             </td>
         </tr>
     `).join('');
@@ -856,4 +864,316 @@ function getCapacityClass(porcentaje) {
     if (porcentaje >= 85) return 'high';
     if (porcentaje >= 70) return 'medium';
     return 'low';
+}
+
+// ===========================
+// DRAG & DROP
+// PRD: prd/repartos-dia.html - Sección 10.1
+// ===========================
+
+/**
+ * Sistema de Drag & Drop para asignar pedidos a vehículos
+ *
+ * LÓGICA:
+ * - Filas de pedidos sin asignar son arrastrables
+ * - Cards de vehículos son zonas de drop
+ * - Al soltar, asigna pedido al vehículo
+ * - Feedback visual durante el arrastre
+ */
+
+let draggedPedidoId = null;
+
+/**
+ * Inicia el arrastre de un pedido
+ */
+function handleDragStart(e, pedidoId) {
+    draggedPedidoId = pedidoId;
+    e.target.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', pedidoId);
+
+    // Resaltar zonas de drop
+    document.querySelectorAll('.vehicle-group[data-vehiculo-id]').forEach(zone => {
+        zone.classList.add('drop-zone-active');
+    });
+}
+
+/**
+ * Finaliza el arrastre
+ */
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    draggedPedidoId = null;
+
+    // Quitar resaltado de zonas
+    document.querySelectorAll('.vehicle-group').forEach(zone => {
+        zone.classList.remove('drop-zone-active', 'drop-zone-hover');
+    });
+}
+
+/**
+ * Pedido entra en zona de drop
+ */
+function handleDragEnter(e) {
+    e.preventDefault();
+    const zone = e.target.closest('.vehicle-group[data-vehiculo-id]');
+    if (zone && draggedPedidoId) {
+        zone.classList.add('drop-zone-hover');
+    }
+}
+
+/**
+ * Pedido sale de zona de drop
+ */
+function handleDragLeave(e) {
+    const zone = e.target.closest('.vehicle-group[data-vehiculo-id]');
+    if (zone) {
+        // Solo quitar si realmente salió del contenedor
+        const rect = zone.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX > rect.right ||
+            e.clientY < rect.top || e.clientY > rect.bottom) {
+            zone.classList.remove('drop-zone-hover');
+        }
+    }
+}
+
+/**
+ * Permite el drop
+ */
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+/**
+ * Procesa el drop - asigna pedido al vehículo
+ */
+function handleDrop(e) {
+    e.preventDefault();
+
+    const zone = e.target.closest('.vehicle-group[data-vehiculo-id]');
+    if (!zone || !draggedPedidoId) return;
+
+    const vehiculoId = zone.dataset.vehiculoId;
+    const pedidoId = parseInt(draggedPedidoId);
+
+    // Buscar pedido en sin asignar
+    const pedidoIndex = appData.pedidosSinAsignar.findIndex(p => p.id === pedidoId);
+    if (pedidoIndex === -1) return;
+
+    // Buscar vehículo destino
+    const vehiculo = appData.vehiculos.find(v => v.id === vehiculoId);
+    if (!vehiculo) return;
+
+    // Mover pedido
+    const pedido = appData.pedidosSinAsignar.splice(pedidoIndex, 1)[0];
+    vehiculo.pedidos.push(pedido);
+
+    // Recalcular capacidad
+    recalcularCapacidadVehiculo(vehiculoId);
+
+    // Re-renderizar
+    renderizarVehiculos();
+    renderizarPedidosSinAsignar();
+    renderizarCiudades();
+    actualizarStats();
+
+    // Feedback
+    console.log(`[D&D] Pedido ${pedido.numero} asignado a ${vehiculo.badge}`);
+
+    // Limpiar estado
+    zone.classList.remove('drop-zone-hover', 'drop-zone-active');
+}
+
+/**
+ * Inicializa eventos de drag & drop en zonas de vehículos
+ */
+function initDragDropZones() {
+    document.querySelectorAll('.vehicle-group[data-vehiculo-id]').forEach(zone => {
+        zone.addEventListener('dragenter', handleDragEnter);
+        zone.addEventListener('dragleave', handleDragLeave);
+        zone.addEventListener('dragover', handleDragOver);
+        zone.addEventListener('drop', handleDrop);
+    });
+}
+
+// ===========================
+// OPTIMIZACIÓN AUTOMÁTICA
+// PRD: prd/repartos-dia.html - Sección 10.2
+// ===========================
+
+/**
+ * Sistema de sugerencias de asignación óptima
+ *
+ * LÓGICA:
+ * - Agrupa pedidos sin asignar por ciudad
+ * - Busca vehículo con más capacidad disponible
+ * - Sugiere asignar grupo completo de ciudad a un vehículo
+ * - Considera peso total vs capacidad disponible
+ */
+
+let sugerenciasActuales = [];
+
+/**
+ * Genera y muestra sugerencias de optimización
+ */
+function mostrarSugerenciasOptimizacion() {
+    if (appData.pedidosSinAsignar.length === 0) {
+        alert('No hay pedidos sin asignar');
+        return;
+    }
+
+    // Agrupar pedidos por ciudad
+    const pedidosPorCiudad = {};
+    appData.pedidosSinAsignar.forEach(p => {
+        if (!pedidosPorCiudad[p.ciudad]) {
+            pedidosPorCiudad[p.ciudad] = [];
+        }
+        pedidosPorCiudad[p.ciudad].push(p);
+    });
+
+    // Generar sugerencias
+    sugerenciasActuales = [];
+
+    Object.keys(pedidosPorCiudad).forEach(ciudad => {
+        const pedidos = pedidosPorCiudad[ciudad];
+        const pesoTotal = pedidos.reduce((sum, p) => sum + p.peso, 0);
+
+        // Buscar mejor vehículo (más capacidad disponible)
+        const mejorVehiculo = encontrarMejorVehiculo(pesoTotal);
+
+        if (mejorVehiculo) {
+            sugerenciasActuales.push({
+                ciudad,
+                pedidos,
+                pesoTotal,
+                vehiculo: mejorVehiculo,
+                capacidadResultante: Math.round(((mejorVehiculo.pesoActual + pesoTotal) / mejorVehiculo.capacidadKg) * 100)
+            });
+        }
+    });
+
+    // Renderizar sugerencias
+    renderizarSugerencias();
+
+    // Mostrar panel
+    document.getElementById('sugerencias-panel').style.display = 'block';
+}
+
+/**
+ * Encuentra el vehículo con más capacidad disponible para un peso dado
+ */
+function encontrarMejorVehiculo(pesoRequerido) {
+    let mejorVehiculo = null;
+    let mayorCapacidadDisponible = 0;
+
+    appData.vehiculos.forEach(v => {
+        const capacidadDisponible = v.capacidadKg - v.pesoActual;
+
+        // Solo considerar si cabe el peso
+        if (capacidadDisponible >= pesoRequerido && capacidadDisponible > mayorCapacidadDisponible) {
+            mayorCapacidadDisponible = capacidadDisponible;
+            mejorVehiculo = v;
+        }
+    });
+
+    // Si ninguno tiene capacidad suficiente, sugerir el que más espacio tiene
+    if (!mejorVehiculo) {
+        appData.vehiculos.forEach(v => {
+            const capacidadDisponible = v.capacidadKg - v.pesoActual;
+            if (capacidadDisponible > mayorCapacidadDisponible) {
+                mayorCapacidadDisponible = capacidadDisponible;
+                mejorVehiculo = v;
+            }
+        });
+    }
+
+    return mejorVehiculo;
+}
+
+/**
+ * Renderiza las sugerencias en el panel
+ */
+function renderizarSugerencias() {
+    const container = document.getElementById('sugerencias-content');
+
+    if (sugerenciasActuales.length === 0) {
+        container.innerHTML = '<p style="padding: 16px; color: var(--text-secondary);">No se pueden generar sugerencias</p>';
+        return;
+    }
+
+    container.innerHTML = sugerenciasActuales.map((s, idx) => `
+        <div class="sugerencia-item">
+            <div class="sugerencia-ciudad">
+                <i class="fas fa-map-marker-alt"></i>
+                <strong>${s.ciudad}</strong>
+                <span class="sugerencia-stats">${s.pedidos.length} pedidos · ${s.pesoTotal} kg</span>
+            </div>
+            <div class="sugerencia-vehiculo">
+                <i class="fas fa-arrow-right"></i>
+                <span class="badge-vehiculo">${s.vehiculo.badge}</span>
+                <span class="sugerencia-capacidad ${s.capacidadResultante >= 85 ? 'high' : s.capacidadResultante >= 70 ? 'medium' : 'low'}">
+                    → ${s.capacidadResultante}%
+                </span>
+            </div>
+            <button class="btn-aplicar-sugerencia" onclick="aplicarSugerencia(${idx})">
+                <i class="fas fa-check"></i>
+            </button>
+        </div>
+    `).join('');
+}
+
+/**
+ * Aplica una sugerencia individual
+ */
+function aplicarSugerencia(index) {
+    const sugerencia = sugerenciasActuales[index];
+    if (!sugerencia) return;
+
+    // Mover todos los pedidos de la ciudad al vehículo
+    sugerencia.pedidos.forEach(pedido => {
+        const idx = appData.pedidosSinAsignar.findIndex(p => p.id === pedido.id);
+        if (idx !== -1) {
+            const p = appData.pedidosSinAsignar.splice(idx, 1)[0];
+            sugerencia.vehiculo.pedidos.push(p);
+        }
+    });
+
+    // Recalcular capacidad
+    recalcularCapacidadVehiculo(sugerencia.vehiculo.id);
+
+    // Quitar sugerencia aplicada
+    sugerenciasActuales.splice(index, 1);
+
+    // Re-renderizar
+    renderizarVehiculos();
+    renderizarPedidosSinAsignar();
+    renderizarCiudades();
+    actualizarStats();
+    renderizarSugerencias();
+
+    // Si no quedan sugerencias, cerrar panel
+    if (sugerenciasActuales.length === 0) {
+        cerrarSugerencias();
+    }
+
+    console.log(`[Optimización] ${sugerencia.pedidos.length} pedidos de ${sugerencia.ciudad} asignados a ${sugerencia.vehiculo.badge}`);
+}
+
+/**
+ * Aplica todas las sugerencias
+ */
+function aplicarTodasSugerencias() {
+    // Aplicar en orden inverso para no afectar índices
+    while (sugerenciasActuales.length > 0) {
+        aplicarSugerencia(0);
+    }
+}
+
+/**
+ * Cierra el panel de sugerencias
+ */
+function cerrarSugerencias() {
+    document.getElementById('sugerencias-panel').style.display = 'none';
+    sugerenciasActuales = [];
 }

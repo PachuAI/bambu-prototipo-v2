@@ -180,14 +180,42 @@ function calcularSaldoResultante() {
     }
 }
 
+/**
+ * Guarda un pago en Cuenta Corriente
+ *
+ * SINCRONIZACIÓN CC ↔ VENTAS:
+ * - Registra el pago en BambuState.movimientos_cc
+ * - El pago aparecerá sincronizado en ambas vistas
+ *
+ * PRD: prd/cuenta-corriente.html - Sección Pagos
+ */
 function guardarPago() {
-    const monto = parseInt(document.getElementById('input-monto-pago').value) || 0;
-    const tipoGenerico = document.getElementById('radio-generico').checked;
-    const efectivo = document.getElementById('pago-modal-efectivo').checked;
-    const digital = document.getElementById('pago-modal-digital').checked;
+    // Obtener valores del modal
+    const montoInput = document.getElementById('input-monto-pago');
+    const tipoGenerico = document.getElementById('radio-generico')?.checked;
+    const efectivo = document.getElementById('pago-modal-efectivo')?.checked;
+    const digital = document.getElementById('pago-modal-digital')?.checked;
+    const notaPago = document.getElementById('nota-pago')?.value || '';
 
-    if (monto === 0 && (!efectivo || !digital)) {
-        alert('Debe ingresar un monto y seleccionar método de pago');
+    // Calcular monto según modo (simple o split)
+    let monto = 0;
+    let montoEfectivo = null;
+    let montoDigital = null;
+
+    if (efectivo && digital) {
+        // Modo mixto/split
+        montoEfectivo = parseInt(document.getElementById('split-efectivo-pago')?.value) || 0;
+        montoDigital = parseInt(document.getElementById('split-digital-pago')?.value) || 0;
+        monto = montoEfectivo + montoDigital;
+    } else {
+        monto = parseInt(montoInput?.value) || 0;
+        if (efectivo) montoEfectivo = monto;
+        if (digital) montoDigital = monto;
+    }
+
+    // Validaciones
+    if (monto === 0) {
+        alert('Debe ingresar un monto válido');
         return;
     }
 
@@ -196,16 +224,48 @@ function guardarPago() {
         return;
     }
 
-    // Validaciones OK, simular guardado
-    console.log('Guardando pago:', {
+    // Obtener cliente_id (desde URL si estamos en cliente-detalle)
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = parseInt(params.get('id')) || 9; // Default cliente demo
+
+    // Determinar método de pago
+    let metodoPago = 'efectivo';
+    if (efectivo && digital) metodoPago = 'mixto';
+    else if (digital) metodoPago = 'digital';
+
+    // Obtener pedido específico si aplica
+    let pedidoId = null;
+    if (!tipoGenerico) {
+        const selectPedido = document.getElementById('select-pedido-pago');
+        if (selectPedido && selectPedido.value) {
+            pedidoId = parseInt(selectPedido.value);
+        }
+    }
+
+    // SINCRONIZACIÓN: Registrar pago en BambuState
+    const movimiento = BambuState.registrarPagoCC({
+        cliente_id: clienteId,
+        pedido_id: pedidoId,
         monto: monto,
-        tipo: tipoGenerico ? 'generico' : 'especifico',
-        efectivo: efectivo,
-        digital: digital
+        metodo_pago: metodoPago,
+        monto_efectivo: montoEfectivo,
+        monto_digital: montoDigital,
+        nota: notaPago
     });
 
-    alert('✅ Pago registrado exitosamente\n(Mock - en producción se guardará en BD)');
+    console.log('✅ Pago registrado en CC:', movimiento);
+
+    // Cerrar modal
     cerrarModalPago();
+
+    // Refrescar tabla CC si estamos en cliente-detalle
+    if (typeof renderizarMovimientosCC === 'function') {
+        renderizarMovimientosCC(clienteId);
+    }
+
+    // Mostrar confirmación
+    const saldoNuevo = BambuState.calcularSaldoCC(clienteId);
+    alert(`✅ Pago de $${monto.toLocaleString('es-AR')} registrado\n\nNuevo saldo: ${saldoNuevo < 0 ? '-' : ''}$${Math.abs(saldoNuevo).toLocaleString('es-AR')}`);
 }
 
 // Trigger abrir modal desde botón (línea 182 HTML)

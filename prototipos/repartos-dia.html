@@ -141,6 +141,28 @@
                                 <span><strong id="sin-asignar-count">0</strong> pedidos</span>
                                 <span>|</span>
                                 <span><strong id="sin-asignar-peso">0</strong> kg</span>
+                                <button class="btn-auto-asignar" onclick="mostrarSugerenciasOptimizacion()" title="Sugerir asignación óptima">
+                                    <i class="fas fa-magic"></i> Auto-asignar
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Panel de sugerencias (oculto por defecto) -->
+                        <div class="sugerencias-panel" id="sugerencias-panel" style="display: none;">
+                            <div class="sugerencias-header">
+                                <i class="fas fa-lightbulb"></i> Sugerencia de asignación por ciudad
+                                <button class="btn-cerrar-sugerencias" onclick="cerrarSugerencias()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="sugerencias-content" id="sugerencias-content">
+                                <!-- Sugerencias se renderizan aquí -->
+                            </div>
+                            <div class="sugerencias-footer">
+                                <button class="btn-secondary" onclick="cerrarSugerencias()">Cancelar</button>
+                                <button class="btn-primary" onclick="aplicarTodasSugerencias()">
+                                    <i class="fas fa-check"></i> Aplicar todas
+                                </button>
                             </div>
                         </div>
 

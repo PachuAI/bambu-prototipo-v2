@@ -10,9 +10,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 26 | 84% |
+| ✅ Implementadas (HTML + JS) | 27 | 87% |
 | ⚠️ Visuales sin lógica | 1 | 3% |
-| ❌ Faltantes | 4 | 13% |
+| ❌ Faltantes | 3 | 10% |
 
 **Total funcionalidades**: 31
 
@@ -79,6 +79,7 @@
 
 ### Sprint 3 - Implementadas (07/01/2026)
 34. ✅ Exportar Excel Cuenta Corriente (CSV con movimientos)
+35. ✅ Sincronización CC ↔ Ventas (cargos/pagos compartidos via BambuState)
 
 ---
 
@@ -91,17 +92,13 @@
 
 ---
 
-## FALTANTES (3 funcionalidades)
+## FALTANTES (2 funcionalidades)
 
 ### 1. Persistencia de datos
 - Guardar en backend/localStorage
 - **Complejidad**: Alta
 
-### 2. Sincronización CC ↔ Ventas
-- Pagos en Ventas aparecen en CC y viceversa
-- **Complejidad**: Alta
-
-### 3. Enviar Estado de Cuenta
+### 2. Enviar Estado de Cuenta
 - Generar PDF y/o enviar por email
 - **Complejidad**: Alta
 
@@ -157,11 +154,11 @@
 
 ### Sprint 3 - Avanzados (EN PROGRESO)
 9. ✅ Exportar Excel CC (07/01/2026)
-10. Sincronización CC ↔ Ventas
+10. ✅ Sincronización CC ↔ Ventas (07/01/2026)
 11. Enviar Estado Cuenta
 12. Persistencia datos
 
 ---
 
-**Estado general: MUY BUENO (84% implementado)**
+**Estado general: EXCELENTE (87% implementado)**
 **PRD necesita actualización significativa**
