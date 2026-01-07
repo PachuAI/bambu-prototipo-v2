@@ -269,6 +269,19 @@
 .align-right {
     text-align: right;
     font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+}
+
+/* Valores principales más grandes en sidebar */
+#txt-subtotal {
+    font-size: 16px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+#txt-peso {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
 }
 
 .date-input-inline {
@@ -1100,31 +1113,42 @@
 
 .btn-clear-client {
     position: absolute;
-    right: 10px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    background: var(--color-danger, #ff5630);
     border: none;
-    color: var(--text-secondary);
+    color: white;
     cursor: pointer;
-    padding: 4px 8px;
-    font-size: 14px;
-    border-radius: var(--border-radius-sm);
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    font-size: 11px;
+    border-radius: 4px;
     transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.85;
 }
 
 .btn-clear-client:hover {
-    background: var(--color-danger-light, #ffebe6);
-    color: var(--color-danger);
+    background: var(--color-danger-dark, #de350b);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+}
+
+[data-theme="dark"] .btn-clear-client {
+    background: rgba(255, 86, 48, 0.8);
 }
 
 [data-theme="dark"] .btn-clear-client:hover {
-    background: rgba(255, 86, 48, 0.15);
+    background: var(--color-danger);
 }
 
 /* Ajustar input cuando hay botón X visible */
 .client-search-container:has(.btn-clear-client:not(.hidden)) input {
-    padding-right: 36px;
+    padding-right: 42px;
 }
 
 /* ============================================================================
@@ -1159,12 +1183,49 @@
     background: var(--color-accent-light, #e3f2fd);
     color: var(--color-accent);
     font-size: 9px;
-    padding: 1px 4px;
+    padding: 2px 5px;
     border-radius: var(--border-radius-sm);
-    margin-left: 4px;
+    margin-left: 6px;
     font-weight: var(--font-weight-semibold);
 }
 
 [data-theme="dark"] .badge-bambu {
+    background: rgba(0, 82, 204, 0.2);
+}
+
+/* Badge PROMO */
+.badge-promo {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--color-success-light, #e3fcef);
+    color: var(--color-success-dark, #006644);
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: var(--border-radius-sm);
+    margin-left: 6px;
+    font-weight: var(--font-weight-semibold);
+}
+
+[data-theme="dark"] .badge-promo {
+    background: rgba(54, 179, 126, 0.2);
+    color: var(--color-success);
+}
+
+/* Info BAMBU sin límite */
+.stock-info-bambu {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-accent-light, #e3f2fd);
+    color: var(--color-accent);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: var(--border-radius-sm);
+    margin-left: 8px;
+    font-weight: var(--font-weight-medium);
+}
+
+[data-theme="dark"] .stock-info-bambu {
     background: rgba(0, 82, 204, 0.15);
 }

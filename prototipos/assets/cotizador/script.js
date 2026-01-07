@@ -1263,9 +1263,15 @@ function updateClearClientButton() {
  * @returns {string|null} HTML del warning o null
  */
 function getStockWarning(item) {
-    // Productos BAMBU no tienen restricción
-    if (item.proveedor === 'BAMBU') return null;
+    // Productos BAMBU: sin restricción, pero mostrar info si excede stock físico
+    if (item.proveedor === 'BAMBU') {
+        if (item.qty > item.stock) {
+            return `<span class="stock-info-bambu"><i class="fas fa-infinity"></i> Sin límite</span>`;
+        }
+        return null;
+    }
 
+    // Productos normales: warning si excede stock
     if (item.qty > item.stock) {
         const excede = item.qty - item.stock;
         return `<span class="stock-warning"><i class="fas fa-exclamation-triangle"></i> Excede stock por ${excede}</span>`;
@@ -1280,15 +1286,29 @@ function getStockWarning(item) {
 }
 
 /**
- * Genera badge de proveedor BAMBU
+ * Genera badges para el producto (BAMBU, PROMO, etc.)
  * @param {Object} item - Item del carrito
- * @returns {string} HTML del badge o vacío
+ * @returns {string} HTML de los badges
  */
-function getBambuBadge(item) {
+function getProductBadges(item) {
+    let badges = '';
+
+    // Badge BAMBU (proveedor principal)
     if (item.proveedor === 'BAMBU') {
-        return '<span class="badge-bambu"><i class="fas fa-leaf"></i> BAMBU</span>';
+        badges += '<span class="badge-bambu"><i class="fas fa-leaf"></i> BAMBU</span>';
     }
-    return '';
+
+    // Badge PROMO
+    if (item.en_promocion) {
+        badges += '<span class="badge-promo"><i class="fas fa-tag"></i> PROMO</span>';
+    }
+
+    return badges;
+}
+
+// Alias para compatibilidad
+function getBambuBadge(item) {
+    return getProductBadges(item);
 }
 
 // ============================================================================
