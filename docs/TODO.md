@@ -1,7 +1,7 @@
 # TODO - Bambu CRM V2 Prototipo
 
-**Última actualización**: 06 Enero 2026
-**Fase actual**: State Manager (Fase 3.1)
+**Última actualización**: 07 Enero 2026
+**Fase actual**: Mock Logic - Interactividad (Fase 3.2)
 
 ---
 
@@ -11,39 +11,61 @@
 |------|-------------|--------|
 | 1. Prototipado UI | Construir HTML/CSS de todos los módulos | ✅ Completada |
 | 2. Auditoría PRD | Comparar prototipos vs PRDs, identificar gaps | ✅ Completada |
-| 3. Mock Logic | Implementar lógica JS simulada para validar UX | **EN CURSO** |
+| 3.1 State Manager | Sistema de datos centralizado | ✅ Completada |
+| 3.2 Mock Logic | Implementar lógica JS interactiva | **EN CURSO** |
 
 ---
 
-## Fase 3: Mock Logic - State Manager
+## Fase 3.1: State Manager - ✅ COMPLETADA
 
-**Plan detallado**: `docs/PLAN-STATE-MANAGER.md`
-
-### Objetivo
-Sistema de datos mock consistente con persistencia localStorage.
-- Fecha central: Miércoles 8 enero 2026
-- ~80 pedidos con datos calculados (no random)
-- Navegación funcional entre módulos
-
-### Progreso Actual
+**Plan**: `docs/PLAN-STATE-MANAGER.md`
 
 | Sub-fase | Descripción | Estado |
 |----------|-------------|--------|
-| 0 | Crear state-manager.js base | ✅ Completado |
-| 1-2 | Estructuras normalizadas + generador | ✅ Completado |
-| 3 | Persistencia localStorage | ✅ Completado |
-| 4 | Migrar Dashboard | ✅ Completado |
-| 5 | Migrar Clientes + ?id= | ✅ Completado |
-| 6 | Migrar Ventas | ⬜ Pendiente |
-| 7 | Migrar Repartos-día | ⬜ Pendiente |
+| 0 | Crear state-manager.js base | ✅ |
+| 1-2 | Estructuras normalizadas + generador | ✅ |
+| 3 | Persistencia localStorage | ✅ |
+| 4 | Migrar Dashboard | ✅ |
+| 5 | Migrar Clientes + ?id= | ✅ |
+| 6 | Migrar Ventas | ✅ |
+| 7 | Migrar Repartos-día | ✅ |
+
+**Resultado**: ~830 líneas de mock eliminadas, datos consistentes en 4 módulos.
+
+---
+
+## Fase 3.2: Mock Logic - Interactividad (PRÓXIMOS PASOS)
+
+Implementar lógica JS para flujos críticos de UX.
+
+### Prioridad Alta (core business)
+| Tarea | Módulo | Descripción |
+|-------|--------|-------------|
+| [ ] Cotizador funcional | `cotizador.html` | Calcular totales, descuentos L1/L2/L3, confirmar pedido |
+| [ ] CRUD Clientes | `clientes.html` | Crear/editar/eliminar con persistencia |
+| [ ] Cuenta Corriente | `cliente-detalle.html` | Cargos/pagos actualizan saldo |
+| [ ] Cambio estado pedido | `ventas.html` | Marcar entregado, registrar pago |
+
+### Prioridad Media
+| Tarea | Módulo | Descripción |
+|-------|--------|-------------|
+| [ ] Asignar vehículo | `repartos-dia.html` | Modal asignar funcional |
+| [ ] CRUD Productos | `productos.html` | Crear/editar, toggle disponible |
+| [ ] Filtros funcionales | `ventas.html` | Filtrar por estado/fecha/tipo real |
+
+### Prioridad Baja
+| Tarea | Módulo | Descripción |
+|-------|--------|-------------|
+| [ ] Drag & drop productos | `productos.html` | Reordenar lista |
+| [ ] Exportar Excel mock | `estadisticas.html` | Generar CSV/descarga |
+| [ ] Reset datos | `configuracion.html` | Botón para BambuState.reset() |
 
 ### Cómo Retomar
 
 Si retomás después de `/clear`:
-1. Leer `docs/PLAN-STATE-MANAGER.md` para el plan completo
-2. Ver esta tabla para saber en qué fase estamos
-3. `git log -1` para ver último commit
-4. Continuar con la siguiente fase pendiente
+1. Leer este archivo para ver próximos pasos
+2. `git log --oneline -5` para contexto reciente
+3. Elegir tarea de "Prioridad Alta" y empezar
 
 ---
 
@@ -96,18 +118,6 @@ Usar skill `/analizar-estado-modulo` para generar documento de estado por módul
 
 ### Nota importante (06 Enero 2026)
 Los PRDs fueron limpiados masivamente (~11,000 → ~1,240 líneas). Los documentos ESTADO-*.md fueron actualizados para reflejar las nuevas referencias de sección.
-
----
-
-## Fase 3: Mock Logic (Pendiente)
-
-Implementar lógica JS para simular flujos críticos:
-- [ ] Cotizador: calcular totales, descuentos, confirmar pedido
-- [ ] Clientes: CRUD completo con persistencia localStorage
-- [ ] Cuenta Corriente: cargos/pagos actualizan saldo
-- [ ] Productos: drag & drop orden, toggle disponible
-- [ ] Ventas: filtros, cambio estado, registro pago
-- [ ] Calendario: asignar pedidos a vehículos
 
 ---
 
