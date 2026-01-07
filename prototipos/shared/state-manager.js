@@ -414,6 +414,8 @@ const BambuState = {
         // ====================================================================
 
         const clientes = [
+            // Cliente especial para ventas casuales (PRD 6.5)
+            { id: 0, direccion: 'SIN REGISTRO', telefono: '-', ciudad: '-', saldo: 0, estado: 'activo', lista_precio: 'L1', email: '', nota: 'Ventas casuales de mostrador', es_sin_registro: true },
             { id: 1, direccion: 'ARAUCARIAS 371', telefono: '299 456-7890', ciudad: 'Neuquén', saldo: -45000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
             { id: 2, direccion: 'PELLEGRINI 615', telefono: '299 456-7891', ciudad: 'Cipolletti', saldo: 0, estado: 'activo', lista_precio: 'L3', email: 'pellegrini@email.com', nota: '' },
             { id: 3, direccion: 'SAN LUIS 372', telefono: '299 456-7892', ciudad: 'Allen', saldo: -25000, estado: 'activo', lista_precio: 'L1', email: '', nota: 'Cliente mayorista' },

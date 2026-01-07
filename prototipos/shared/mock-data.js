@@ -390,10 +390,18 @@ const VEHICULOS = [
 
 // ============================================================================
 // PEDIDOS / VENTAS
-// Estructura extraída de: prototipos/assets/ventas/script.js
-// Campos: id, numero, fecha, fechaDisplay, cliente (dirección), direccion, ciudad,
-//         tipo, estado, vehiculo, total, items (número), peso, metodoPago,
-//         montoEfectivo, montoDigital, fechaEntrega, nota
+// PRD: prd/ventas.html
+// Estructura completa para módulo ventas con soporte para:
+// - Exportar Excel (PRD 9.1): subtotal, descuento_porcentaje, descuento_monto
+// - Pagos parciales (PRD 6.2, 6.3): monto_pagado, pagos[]
+// - Auditoría (PRD 10.1): historial_cambios[]
+// - Reordenamiento (PRD 8.2): orden_visita
+//
+// Campos base: id, numero, fecha, fechaDisplay, cliente, direccion, ciudad,
+//              tipo, estado, vehiculo, subtotal, descuento_porcentaje,
+//              descuento_monto, total, items, peso, orden_visita, metodoPago,
+//              montoEfectivo, montoDigital, monto_pagado, pagos[],
+//              fechaEntrega, nota, historial_cambios[]
 // ============================================================================
 
 /**
@@ -435,6 +443,11 @@ function generatePedidos() {
     const peso = parseFloat((Math.random() * 40 + 10).toFixed(1));
     const total = Math.floor(Math.random() * 180000) + 20000;
 
+    // Calcular subtotal y descuento para exportación Excel (PRD 9.1)
+    const descuentoPorcentaje = Math.random() < 0.3 ? [5, 10, 15][Math.floor(Math.random() * 3)] : 0;
+    const subtotal = descuentoPorcentaje > 0 ? Math.round(total / (1 - descuentoPorcentaje / 100)) : total;
+    const descuentoMonto = subtotal - total;
+
     const pedido = {
       id: id++,
       numero: `#00${id}`,
@@ -446,14 +459,25 @@ function generatePedidos() {
       tipo,
       estado,
       vehiculo: esFabrica ? null : vehiculo,
+      // PRD 9.1 - Exportar Excel: columnas Subtotal, Descuentos, Total
+      subtotal,
+      descuento_porcentaje: descuentoPorcentaje,
+      descuento_monto: descuentoMonto,
       total,
       items,
       peso,
+      // PRD 8.2 - Reordenamiento de pedidos (ruta de entrega)
+      orden_visita: vehiculo ? Math.floor(Math.random() * 10) + 1 : null,
       metodoPago: null,
       montoEfectivo: null,
       montoDigital: null,
+      // PRD 6.2, 6.3 - Pagos parciales
+      monto_pagado: 0,
+      pagos: [],
       fechaEntrega: null,
       nota: obs,
+      // PRD 10.1 - Sistema de Auditoría (historial de cambios)
+      historial_cambios: [],
     };
 
     // Si está entregado, asignar método de pago
@@ -462,19 +486,81 @@ function generatePedidos() {
       const metodo = metodos[Math.floor(Math.random() * metodos.length)];
       pedido.metodoPago = metodo;
 
+      // PRD 6.2 - Pagos parciales: 20% de pedidos tienen pago parcial
+      const esPagoParcial = Math.random() < 0.2;
+      const montoPagado = esPagoParcial ? Math.floor(total * (0.5 + Math.random() * 0.4)) : total;
+
       if (metodo === 'efectivo') {
-        pedido.montoEfectivo = total;
+        pedido.montoEfectivo = montoPagado;
       } else if (metodo === 'digital') {
-        pedido.montoDigital = total;
+        pedido.montoDigital = montoPagado;
       } else {
-        const efectivo = Math.floor(total * 0.6);
+        const efectivo = Math.floor(montoPagado * 0.6);
         pedido.montoEfectivo = efectivo;
-        pedido.montoDigital = total - efectivo;
+        pedido.montoDigital = montoPagado - efectivo;
       }
+
+      pedido.monto_pagado = montoPagado;
 
       const horas = String(Math.floor(Math.random() * 12) + 9).padStart(2, '0');
       const mins = String(Math.floor(Math.random() * 60)).padStart(2, '0');
       pedido.fechaEntrega = `${fecha}T${horas}:${mins}:00`;
+
+      // PRD 6.2, 6.3 - Crear registro de pago(s)
+      if (esPagoParcial && Math.random() < 0.5) {
+        // Dos pagos parciales
+        const primerPago = Math.floor(montoPagado * 0.6);
+        pedido.pagos = [
+          {
+            id: 1,
+            fecha: `${fecha}T${horas}:${mins}:00`,
+            monto: primerPago,
+            metodo: 'efectivo',
+            tipo: 'asociado',
+            registrado_por: 'admin@bambu.com'
+          },
+          {
+            id: 2,
+            fecha: `${fecha}T${String(parseInt(horas) + 1).padStart(2, '0')}:${mins}:00`,
+            monto: montoPagado - primerPago,
+            metodo: 'digital',
+            tipo: 'asociado',
+            registrado_por: 'admin@bambu.com'
+          }
+        ];
+      } else {
+        // Un solo pago
+        pedido.pagos = [{
+          id: 1,
+          fecha: `${fecha}T${horas}:${mins}:00`,
+          monto: montoPagado,
+          metodo,
+          tipo: 'asociado',
+          registrado_por: 'admin@bambu.com'
+        }];
+      }
+
+      // PRD 10.1 - Historial de cambios: 15% de pedidos entregados tienen ediciones
+      if (Math.random() < 0.15) {
+        const cambios = [
+          { campo: 'total', anterior: total + 5000, nuevo: total, razon: 'Corrección precio' },
+          { campo: 'descuento_porcentaje', anterior: 0, nuevo: 5, razon: 'Descuento olvidado' },
+          { campo: 'vehiculo', anterior: 'Reparto 1', nuevo: vehiculo, razon: 'Reasignación' },
+        ];
+        const cambio = cambios[Math.floor(Math.random() * cambios.length)];
+        pedido.historial_cambios = [{
+          id: 1,
+          fecha: `${fecha}T${String(parseInt(horas) + 2).padStart(2, '0')}:${mins}:00`,
+          usuario_id: 1,
+          usuario_nombre: 'admin@bambu.com',
+          accion: 'EDICION',
+          campo_modificado: cambio.campo,
+          valor_anterior: cambio.anterior,
+          valor_nuevo: cambio.nuevo,
+          razon: cambio.razon,
+          ip: '192.168.1.100'
+        }];
+      }
     }
 
     return pedido;
@@ -598,16 +684,96 @@ function generatePedidos() {
       tipo: 'reparto',
       estado: 'borrador',
       vehiculo: null,
+      subtotal: total,
+      descuento_porcentaje: 0,
+      descuento_monto: 0,
       total,
       items,
       peso,
+      orden_visita: null,
       metodoPago: null,
       montoEfectivo: null,
       montoDigital: null,
+      monto_pagado: 0,
+      pagos: [],
       fechaEntrega: null,
       nota: 'Pendiente confirmar fecha',
+      historial_cambios: [],
     });
   }
+
+  // ========================================================================
+  // PEDIDOS ESPECIALES PARA TESTING (datos conocidos)
+  // ========================================================================
+
+  // Pedido con historial de cambios completo (para testing auditoría)
+  pedidos.push({
+    id: 999,
+    numero: '#00999',
+    fecha: '2026-01-07',
+    fechaDisplay: '07/01',
+    cliente: 'ARAUCARIAS 371',
+    direccion: 'ARAUCARIAS 371',
+    ciudad: 'Neuquén',
+    tipo: 'reparto',
+    estado: 'entregado',
+    vehiculo: 'Reparto 1',
+    subtotal: 55000,
+    descuento_porcentaje: 10,
+    descuento_monto: 5500,
+    total: 49500,
+    items: 4,
+    peso: 12.5,
+    orden_visita: 1,
+    metodoPago: 'mixto',
+    montoEfectivo: 30000,
+    montoDigital: 19500,
+    monto_pagado: 49500,
+    pagos: [
+      { id: 1, fecha: '2026-01-07T10:30:00', monto: 30000, metodo: 'efectivo', tipo: 'asociado', registrado_por: 'admin@bambu.com' },
+      { id: 2, fecha: '2026-01-07T14:15:00', monto: 19500, metodo: 'digital', tipo: 'asociado', registrado_por: 'admin@bambu.com' }
+    ],
+    fechaEntrega: '2026-01-07T16:45:00',
+    nota: 'Pedido de testing - auditoría completa',
+    historial_cambios: [
+      { id: 1, fecha: '2026-01-07T11:00:00', usuario_id: 1, usuario_nombre: 'admin@bambu.com', accion: 'CREACION', campo_modificado: null, valor_anterior: null, valor_nuevo: null, razon: 'Pedido creado desde cotizador', ip: '192.168.1.100' },
+      { id: 2, fecha: '2026-01-07T12:30:00', usuario_id: 1, usuario_nombre: 'admin@bambu.com', accion: 'EDICION', campo_modificado: 'descuento_porcentaje', valor_anterior: 0, valor_nuevo: 10, razon: 'Cliente solicitó descuento acordado', ip: '192.168.1.100' },
+      { id: 3, fecha: '2026-01-07T15:00:00', usuario_id: 2, usuario_nombre: 'vendedor@bambu.com', accion: 'ESTADO', campo_modificado: 'estado', valor_anterior: 'en transito', valor_nuevo: 'entregado', razon: 'Entrega confirmada', ip: '192.168.1.105' },
+      { id: 4, fecha: '2026-01-07T17:00:00', usuario_id: 1, usuario_nombre: 'admin@bambu.com', accion: 'EDICION', campo_modificado: 'total', valor_anterior: 52000, valor_nuevo: 49500, razon: 'Ajuste post-entrega - 1 producto devuelto', ip: '192.168.1.100' }
+    ]
+  });
+
+  // Pedido con pago parcial pendiente (para testing pagos parciales)
+  pedidos.push({
+    id: 998,
+    numero: '#00998',
+    fecha: '2026-01-06',
+    fechaDisplay: '06/01',
+    cliente: 'PELLEGRINI 615',
+    direccion: 'PELLEGRINI 615',
+    ciudad: 'Cipolletti',
+    tipo: 'reparto',
+    estado: 'entregado',
+    vehiculo: 'Reparto 2',
+    subtotal: 80000,
+    descuento_porcentaje: 0,
+    descuento_monto: 0,
+    total: 80000,
+    items: 6,
+    peso: 25.0,
+    orden_visita: 3,
+    metodoPago: 'efectivo',
+    montoEfectivo: 50000,
+    montoDigital: 0,
+    monto_pagado: 50000,  // Pago parcial: debe $30.000
+    pagos: [
+      { id: 1, fecha: '2026-01-06T11:00:00', monto: 30000, metodo: 'efectivo', tipo: 'asociado', registrado_por: 'admin@bambu.com' },
+      { id: 2, fecha: '2026-01-06T16:30:00', monto: 20000, metodo: 'efectivo', tipo: 'asociado', registrado_por: 'admin@bambu.com' }
+    ],
+    fechaEntrega: '2026-01-06T17:00:00',
+    nota: 'Pedido de testing - pago parcial ($30.000 pendiente)',
+    historial_cambios: []
+  });
 
   return pedidos;
 }

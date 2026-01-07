@@ -20,7 +20,8 @@ const appState = {
         fechaHasta: '2026-01-31',
         tipo: 'todos',
         vehiculo: 'todos',
-        metodoPago: 'todos'
+        metodoPago: 'todos',
+        busqueda: ''
     },
     // Estado para borradores
     borradores: [],
@@ -78,9 +79,16 @@ function renderIconoPago(pedido) {
     }
 
     if (pedido.metodoPago === 'mixto') {
+        // Mostrar montos en tooltip si existen
+        const efectivo = pedido.montoEfectivo ? `$${pedido.montoEfectivo.toLocaleString()}` : '';
+        const digital = pedido.montoDigital ? `$${pedido.montoDigital.toLocaleString()}` : '';
+        const titleMixto = efectivo && digital ? `Mixto: ${efectivo} efectivo + ${digital} digital` : 'Pago Mixto';
+
         return `
-            <i class="fas fa-money-bill-wave" style="color: var(--green-success); margin-right: 2px;" title="Efectivo"></i>
-            <i class="fas fa-credit-card" style="color: var(--accent);" title="Digital"></i>
+            <span class="icono-pago-mixto" title="${titleMixto}">
+                <i class="fas fa-money-bill-wave" style="color: var(--green-success);"></i>
+                <i class="fas fa-credit-card" style="color: var(--accent);"></i>
+            </span>
         `;
     }
 }
@@ -98,7 +106,7 @@ function renderAcciones(pedido) {
                 <button class="btn-action-sm" title="Editar" onclick="abrirModalEditar(${pedido.id})">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn-action-sm danger" title="Eliminar">
+                <button class="btn-action-sm danger" title="Eliminar" onclick="eliminarPedido(${pedido.id})">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -107,7 +115,7 @@ function renderAcciones(pedido) {
 
     return `
         <div class="actions-cell">
-            <button class="btn-action-sm warning" title="Volver a En Tránsito">
+            <button class="btn-action-sm warning" title="Volver a En Tránsito" onclick="volverAEnTransito(${pedido.id})">
                 <i class="fas fa-undo"></i>
             </button>
             <button class="btn-action-sm" title="Ver Detalle" onclick="abrirModalDetalle(${pedido.id})">
@@ -116,11 +124,33 @@ function renderAcciones(pedido) {
             <button class="btn-action-sm" title="Editar" onclick="abrirModalEditar(${pedido.id})">
                 <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-action-sm danger" title="Eliminar">
+            <button class="btn-action-sm danger" title="Eliminar" onclick="eliminarPedido(${pedido.id})">
                 <i class="fas fa-trash"></i>
             </button>
         </div>
     `;
+}
+
+// ========================================
+// BUSCADOR DE PEDIDOS
+// PRD: Funcionalidad útil para localización rápida
+// ========================================
+
+/**
+ * Busca pedidos por número de pedido, cliente o dirección
+ *
+ * LÓGICA:
+ * - Búsqueda en tiempo real (oninput)
+ * - Busca en: número pedido, cliente, dirección
+ * - Case insensitive
+ * - Se combina con otros filtros activos
+ *
+ * @param {string} termino - Texto a buscar
+ */
+function buscarPedido(termino) {
+    appState.filtros.busqueda = termino.toLowerCase().trim();
+    console.log('🔍 Buscando:', termino);
+    render();
 }
 
 // ========================================
@@ -171,6 +201,17 @@ function aplicarFiltros() {
         } else {
             resultado = resultado.filter(p => p.metodoPago === appState.filtros.metodoPago);
         }
+    }
+
+    // Filtro por búsqueda (texto libre)
+    if (appState.filtros.busqueda) {
+        const termino = appState.filtros.busqueda;
+        resultado = resultado.filter(p =>
+            (p.numero && p.numero.toLowerCase().includes(termino)) ||
+            (p.cliente && p.cliente.toLowerCase().includes(termino)) ||
+            (p.direccion && p.direccion.toLowerCase().includes(termino)) ||
+            (p.ciudad && p.ciudad.toLowerCase().includes(termino))
+        );
     }
 
     appState.pedidosFiltrados = resultado;
@@ -452,6 +493,9 @@ function abrirModalEntregado(pedidoId) {
     document.getElementById('modal-cliente-nombre').textContent = pedido.cliente;
     document.getElementById('modal-pedido-total').textContent = formatearMonto(pedido.total);
 
+    // Resetear formulario de método de pago
+    resetearFormularioMetodoPago();
+
     modal.classList.remove('hidden');
 }
 
@@ -470,8 +514,9 @@ function cerrarModal() {
  * SINCRONIZACIÓN CC ↔ VENTAS:
  * - Al marcar entregado se genera automáticamente un CARGO en CC
  * - El pago se registra posteriormente desde CC del cliente
+ * - EXCEPCIÓN: Cliente "Sin registro" NO genera cargo en CC (PRD 6.5)
  *
- * PRD: prd/ventas.html - Sección 6.4 Sincronización
+ * PRD: prd/ventas.html - Sección 6.4 y 6.5
  */
 function confirmarEntregado() {
     const pedido = appState.pedidos.find(p => p.id === pedidoSeleccionadoId);
@@ -480,18 +525,52 @@ function confirmarEntregado() {
     // Calcular total del pedido
     const total = BambuState.calcularTotalPedido(pedido.id);
 
+    // Verificar si es cliente "Sin registro" (PRD 6.5)
+    const esSinRegistro = pedido.cliente_id === 0 || pedido.cliente === 'SIN REGISTRO';
+
+    // Obtener método de pago seleccionado
+    const metodoPagoData = obtenerMetodoPagoSeleccionado();
+
+    // VALIDACIÓN PRD 6.5: Si es FÁBRICA + Sin registro → pago obligatorio
+    if (esSinRegistro && pedido.tipo === 'fabrica' && !metodoPagoData) {
+        mostrarNotificacion('⚠️ Ventas "Sin registro" requieren método de pago obligatorio', 'warning');
+        return;
+    }
+
+    // Validar método de pago mixto
+    if (metodoPagoData && metodoPagoData.metodo === 'mixto') {
+        const sumaValida = validarSumaMixto();
+        if (!sumaValida) {
+            mostrarNotificacion('⚠️ La suma de efectivo + digital debe igualar el total del pedido', 'warning');
+            return;
+        }
+    }
+
     // Marcar como entregado
     pedido.estado = 'entregado';
     pedido.fechaEntrega = new Date().toISOString();
 
+    // Guardar método de pago si se seleccionó
+    if (metodoPagoData) {
+        pedido.metodoPago = metodoPagoData.metodo;
+        if (metodoPagoData.metodo === 'mixto') {
+            pedido.montoEfectivo = metodoPagoData.montoEfectivo;
+            pedido.montoDigital = metodoPagoData.montoDigital;
+        }
+    }
+
     // Actualizar en BambuState también
     BambuState.update('pedidos', pedido.id, {
         estado: 'entregado',
-        fechaEntrega: pedido.fechaEntrega
+        fechaEntrega: pedido.fechaEntrega,
+        metodoPago: pedido.metodoPago || null,
+        montoEfectivo: pedido.montoEfectivo || 0,
+        montoDigital: pedido.montoDigital || 0
     });
 
     // SINCRONIZACIÓN: Generar cargo en Cuenta Corriente
-    if (pedido.cliente_id && total > 0) {
+    // PRD 6.5: "Sin registro" NO genera cargo en CC
+    if (pedido.cliente_id && pedido.cliente_id !== 0 && total > 0 && !esSinRegistro) {
         BambuState.registrarCargoCC({
             cliente_id: pedido.cliente_id,
             pedido_id: pedido.id,
@@ -500,6 +579,18 @@ function confirmarEntregado() {
             fecha: pedido.fecha || BambuState.FECHA_SISTEMA
         });
         console.log(`✅ Cargo CC generado: $${total.toLocaleString()} para cliente ${pedido.cliente_id}`);
+    } else if (esSinRegistro) {
+        console.log(`ℹ️ Venta "Sin registro" - No se genera cargo en CC`);
+    }
+
+    // Mensaje según método de pago
+    let mensajePago = '';
+    if (metodoPagoData) {
+        if (metodoPagoData.metodo === 'mixto') {
+            mensajePago = ` Pago mixto: $${metodoPagoData.montoEfectivo.toLocaleString()} efectivo + $${metodoPagoData.montoDigital.toLocaleString()} digital.`;
+        } else {
+            mensajePago = ` Método: ${metodoPagoData.metodo}.`;
+        }
     }
 
     console.log('Pedido marcado como entregado:', pedido);
@@ -508,8 +599,12 @@ function confirmarEntregado() {
     render();
     cerrarModal();
 
-    // Mostrar notificación con link a CC
-    mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO. Cargo de $${total.toLocaleString()} generado en Cuenta Corriente.`);
+    // Mostrar notificación (diferente si es Sin registro)
+    if (esSinRegistro) {
+        mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO (Sin registro).${mensajePago} Sin cargo en CC.`);
+    } else {
+        mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO.${mensajePago} Cargo de $${total.toLocaleString()} en CC.`);
+    }
 }
 
 function irACuentaCorriente() {
@@ -518,6 +613,257 @@ function irACuentaCorriente() {
 
     // Por ahora, abrir en nueva pestaña
     window.open('cliente-detalle.html', '_blank');
+}
+
+// ========================================
+// MÉTODO DE PAGO - Funciones auxiliares
+// PRD: prd/ventas.html - Sección 6.1
+// ========================================
+
+/**
+ * Muestra/oculta campos de montos cuando se selecciona "Mixto"
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Efectivo/Digital: solo marcar el método
+ * - Mixto: requiere desglose de montos
+ */
+function toggleCamposMixto() {
+    const mixtoRadio = document.querySelector('input[name="metodoPago"][value="mixto"]');
+    const camposMixto = document.getElementById('mixto-campos');
+    const totalEsperado = document.getElementById('mixto-total-esperado');
+
+    if (mixtoRadio && mixtoRadio.checked) {
+        camposMixto.classList.remove('hidden');
+        // Setear el total esperado
+        const pedido = appState.pedidos.find(p => p.id === pedidoSeleccionadoId);
+        if (pedido) {
+            const total = BambuState.calcularTotalPedido(pedido.id);
+            totalEsperado.textContent = '$' + total.toLocaleString();
+        }
+        // Limpiar campos
+        document.getElementById('monto-efectivo').value = '';
+        document.getElementById('monto-digital').value = '';
+        validarSumaMixto();
+    } else {
+        camposMixto.classList.add('hidden');
+    }
+}
+
+/**
+ * Valida que la suma de efectivo + digital iguale el total del pedido
+ *
+ * VALIDACIONES:
+ * - Suma debe ser exactamente igual al total
+ * - Feedback visual: verde si válido, rojo si inválido
+ */
+function validarSumaMixto() {
+    const montoEfectivo = parseFloat(document.getElementById('monto-efectivo').value) || 0;
+    const montoDigital = parseFloat(document.getElementById('monto-digital').value) || 0;
+    const suma = montoEfectivo + montoDigital;
+
+    const pedido = appState.pedidos.find(p => p.id === pedidoSeleccionadoId);
+    const totalEsperado = pedido ? BambuState.calcularTotalPedido(pedido.id) : 0;
+
+    const validacionDiv = document.getElementById('mixto-validacion');
+    const sumaActualSpan = validacionDiv.querySelector('.suma-actual');
+
+    sumaActualSpan.textContent = 'Suma: $' + suma.toLocaleString();
+
+    // Remover clases previas
+    validacionDiv.classList.remove('valido', 'invalido');
+
+    // Agregar clase según validación
+    if (suma === totalEsperado && suma > 0) {
+        validacionDiv.classList.add('valido');
+    } else if (suma > 0) {
+        validacionDiv.classList.add('invalido');
+    }
+
+    return suma === totalEsperado;
+}
+
+/**
+ * Obtiene el método de pago seleccionado y sus montos
+ *
+ * @returns {Object} { metodo, montoEfectivo, montoDigital } o null si no válido
+ */
+function obtenerMetodoPagoSeleccionado() {
+    const metodoRadio = document.querySelector('input[name="metodoPago"]:checked');
+
+    if (!metodoRadio) {
+        return null; // No se seleccionó método
+    }
+
+    const metodo = metodoRadio.value;
+
+    if (metodo === 'mixto') {
+        const montoEfectivo = parseFloat(document.getElementById('monto-efectivo').value) || 0;
+        const montoDigital = parseFloat(document.getElementById('monto-digital').value) || 0;
+
+        return {
+            metodo: 'mixto',
+            montoEfectivo,
+            montoDigital
+        };
+    }
+
+    return { metodo, montoEfectivo: 0, montoDigital: 0 };
+}
+
+/**
+ * Resetea el formulario de método de pago al abrir el modal
+ */
+function resetearFormularioMetodoPago() {
+    // Deseleccionar todos los radios
+    document.querySelectorAll('input[name="metodoPago"]').forEach(r => r.checked = false);
+    // Ocultar campos mixto
+    document.getElementById('mixto-campos').classList.add('hidden');
+    // Limpiar inputs
+    document.getElementById('monto-efectivo').value = '';
+    document.getElementById('monto-digital').value = '';
+}
+
+// ========================================
+// VOLVER A EN TRÁNSITO (Cambiar estado inverso)
+// PRD: prd/ventas.html - Sección 5.3
+// ========================================
+
+/**
+ * Cambia el estado de un pedido de ENTREGADO a EN TRÁNSITO
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Solo pedidos con estado 'entregado' pueden revertirse
+ * - Se elimina la fecha de entrega
+ * - El cargo en CC permanece (se ajusta manualmente si es necesario)
+ *
+ * @param {number} pedidoId - ID del pedido a revertir
+ */
+function volverAEnTransito(pedidoId) {
+    const pedido = appState.pedidos.find(p => p.id === pedidoId);
+    if (!pedido) {
+        console.error('Pedido no encontrado:', pedidoId);
+        return;
+    }
+
+    // Validar que esté entregado
+    if (pedido.estado !== 'entregado') {
+        alert('Solo se pueden revertir pedidos con estado ENTREGADO');
+        return;
+    }
+
+    // Confirmar acción
+    const mensaje = `¿Volver pedido ${pedido.numero} a EN TRÁNSITO?\n\n` +
+        `⚠️ El cargo en Cuenta Corriente permanecerá.\n` +
+        `Si el cliente ya pagó, deberás ajustarlo manualmente.`;
+
+    if (!confirm(mensaje)) {
+        return;
+    }
+
+    // Cambiar estado
+    pedido.estado = 'transito';
+    pedido.fechaEntrega = null;
+
+    // Actualizar en BambuState
+    BambuState.update('pedidos', pedido.id, {
+        estado: 'en transito',
+        fechaEntrega: null
+    });
+
+    console.log('⏪ Pedido revertido a EN TRÁNSITO:', pedido.numero);
+
+    // Re-renderizar
+    render();
+
+    // Notificación
+    mostrarNotificacion(`⏪ Pedido ${pedido.numero} vuelto a EN TRÁNSITO`);
+}
+
+// ========================================
+// ELIMINAR PEDIDO CON REINTEGRO STOCK
+// PRD: prd/ventas.html - Sección 5.5
+// ========================================
+
+/**
+ * Elimina un pedido con reintegro de stock y ajuste en CC
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Confirmación obligatoria con advertencia
+ * - Si pedido entregado: reintegrar productos al stock
+ * - Si tiene cargo en CC: generar nota de crédito/ajuste
+ * - Eliminar de la lista de pedidos
+ *
+ * @param {number} pedidoId - ID del pedido a eliminar
+ */
+function eliminarPedido(pedidoId) {
+    const pedido = appState.pedidos.find(p => p.id === pedidoId);
+    if (!pedido) {
+        console.error('Pedido no encontrado:', pedidoId);
+        return;
+    }
+
+    // Obtener productos del pedido para mostrar en confirmación
+    const productos = getProductosPedido(pedidoId);
+    const numProductos = productos.length;
+
+    // Preparar mensaje de confirmación
+    let mensaje = `⚠️ ¿ELIMINAR PEDIDO ${pedido.numero}?\n\n`;
+    mensaje += `Cliente: ${pedido.cliente}\n`;
+    mensaje += `Total: ${formatearMonto(pedido.total)}\n`;
+    mensaje += `Productos: ${numProductos} items\n\n`;
+
+    if (pedido.estado === 'entregado') {
+        mensaje += `📦 REINTEGRO STOCK:\n`;
+        mensaje += `Se reintegrarán ${numProductos} productos al inventario.\n\n`;
+
+        // Verificar si tiene cargo en CC
+        mensaje += `💰 CUENTA CORRIENTE:\n`;
+        mensaje += `Se generará una nota de crédito por ${formatearMonto(pedido.total)}.\n\n`;
+    }
+
+    mensaje += `Esta acción NO se puede deshacer.`;
+
+    if (!confirm(mensaje)) {
+        return;
+    }
+
+    // Si está entregado, reintegrar stock (mock)
+    if (pedido.estado === 'entregado') {
+        console.log('📦 Reintegrando stock para productos:', productos);
+
+        // En producción: BambuState.reintegrarStock(pedidoId)
+        productos.forEach(prod => {
+            console.log(`  + ${prod.cantidad}x ${prod.nombre} → Stock`);
+        });
+
+        // Generar nota de crédito en CC
+        if (pedido.cliente_id && pedido.total > 0) {
+            BambuState.registrarPagoCC({
+                cliente_id: pedido.cliente_id,
+                pedido_id: pedido.id,
+                monto: pedido.total,
+                tipo: 'nota_credito',
+                descripcion: `Anulación pedido ${pedido.numero}`,
+                fecha: BambuState.FECHA_SISTEMA
+            });
+            console.log(`💳 Nota de crédito generada: ${formatearMonto(pedido.total)}`);
+        }
+    }
+
+    // Eliminar pedido del estado local
+    appState.pedidos = appState.pedidos.filter(p => p.id !== pedidoId);
+
+    // Eliminar de BambuState
+    BambuState.delete('pedidos', pedidoId);
+
+    console.log('🗑️ Pedido eliminado:', pedido.numero);
+
+    // Re-renderizar
+    render();
+
+    // Notificación
+    const msgExtra = pedido.estado === 'entregado' ? ' (stock reintegrado)' : '';
+    mostrarNotificacion(`🗑️ Pedido ${pedido.numero} eliminado${msgExtra}`);
 }
 
 function mostrarNotificacion(mensaje) {
@@ -569,7 +915,8 @@ function limpiarFiltros() {
         fechaHasta: '2026-01-31',
         tipo: 'todos',
         vehiculo: 'todos',
-        metodoPago: 'todos'
+        metodoPago: 'todos',
+        busqueda: ''
     };
 
     // Actualizar inputs
@@ -579,6 +926,7 @@ function limpiarFiltros() {
     document.getElementById('filter-tipo').value = 'todos';
     document.getElementById('filter-vehiculo').value = 'todos';
     document.getElementById('filter-pago').value = 'todos';
+    document.getElementById('filter-busqueda').value = '';
 
     render();
 
@@ -862,6 +1210,283 @@ function verVentasFabrica() {
 }
 
 // ========================================
+// CALENDARIO: NAVEGACIÓN DE SEMANAS
+// PRD: prd/ventas.html - Sección 8.2
+// ========================================
+
+// Offset de semana (0 = semana actual del sistema)
+let semanaOffset = 0;
+
+/**
+ * Navega entre semanas del calendario
+ *
+ * LÓGICA:
+ * - direccion -1: semana anterior
+ * - direccion 0: volver a semana actual (HOY)
+ * - direccion +1: semana siguiente
+ *
+ * @param {number} direccion - -1, 0, o 1
+ */
+function navegarSemana(direccion) {
+    if (direccion === 0) {
+        semanaOffset = 0;
+    } else {
+        semanaOffset += direccion;
+    }
+
+    console.log('📅 Navegando a semana offset:', semanaOffset);
+    renderizarCalendario();
+}
+
+/**
+ * Obtiene las fechas de una semana dado un offset
+ * @param {number} offset - Número de semanas desde la actual (0 = actual)
+ * @returns {Array<string>} Array de 5 fechas YYYY-MM-DD (lunes a viernes)
+ */
+function getSemanaConOffset(offset) {
+    // Semana base del sistema: 06-10 Enero 2026
+    const fechaBase = new Date('2026-01-06T12:00:00'); // Lunes base
+
+    // Agregar offset de semanas (7 días por semana)
+    fechaBase.setDate(fechaBase.getDate() + (offset * 7));
+
+    const semana = [];
+    for (let i = 0; i < 5; i++) {
+        const fecha = new Date(fechaBase);
+        fecha.setDate(fechaBase.getDate() + i);
+        semana.push(fecha.toISOString().split('T')[0]);
+    }
+
+    return semana;
+}
+
+// ========================================
+// EXPORTAR HOJA DE REPARTO
+// PRD: prd/ventas.html - Sección 9.2
+// ========================================
+
+let diaSeleccionadoExportar = null;
+
+/**
+ * Abre modal para exportar hoja de reparto
+ */
+function abrirModalExportarHoja() {
+    // Obtener día seleccionado del calendario
+    const diaCard = document.querySelector('.dia-card.selected');
+    if (!diaCard) {
+        mostrarNotificacion('⚠️ Selecciona un día del calendario primero', 'warning');
+        return;
+    }
+
+    diaSeleccionadoExportar = diaCard.dataset.fecha;
+    document.getElementById('modal-exportar-hoja').classList.remove('hidden');
+}
+
+function cerrarModalExportarHoja() {
+    document.getElementById('modal-exportar-hoja').classList.add('hidden');
+    diaSeleccionadoExportar = null;
+}
+
+/**
+ * Exporta la hoja de reparto del día seleccionado
+ *
+ * @param {string} formato - 'con-precios' o 'sin-precios'
+ *
+ * LÓGICA:
+ * - Obtiene pedidos del día seleccionado
+ * - Agrupa por vehículo
+ * - Genera documento (mock en prototipo)
+ */
+function exportarHojaReparto(formato) {
+    if (!diaSeleccionadoExportar) {
+        mostrarNotificacion('⚠️ No hay día seleccionado', 'warning');
+        return;
+    }
+
+    // Obtener pedidos del día
+    const pedidosDia = appState.pedidos.filter(p =>
+        p.tipo === 'reparto' &&
+        p.fecha === diaSeleccionadoExportar
+    );
+
+    if (pedidosDia.length === 0) {
+        mostrarNotificacion('⚠️ No hay pedidos de reparto para este día', 'warning');
+        cerrarModalExportarHoja();
+        return;
+    }
+
+    // Agrupar por vehículo
+    const porVehiculo = {};
+    pedidosDia.forEach(p => {
+        const vehiculo = p.vehiculo || 'Sin asignar';
+        if (!porVehiculo[vehiculo]) porVehiculo[vehiculo] = [];
+        porVehiculo[vehiculo].push(p);
+    });
+
+    // En producción: generar Excel/Word real
+    // En prototipo: mostrar resumen
+    const fecha = new Date(diaSeleccionadoExportar).toLocaleDateString('es-AR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+    });
+
+    let resumen = `📄 HOJA DE REPARTO - ${fecha.toUpperCase()}\n`;
+    resumen += `Formato: ${formato === 'con-precios' ? 'CON PRECIOS' : 'SIN PRECIOS'}\n\n`;
+
+    Object.keys(porVehiculo).forEach(vehiculo => {
+        const pedidos = porVehiculo[vehiculo];
+        resumen += `🚚 ${vehiculo} (${pedidos.length} pedidos)\n`;
+        pedidos.forEach((p, i) => {
+            resumen += `   ${i + 1}. ${p.cliente} - ${p.direccion}`;
+            if (formato === 'con-precios') {
+                resumen += ` - ${formatearMonto(p.total)}`;
+            }
+            resumen += '\n';
+        });
+        resumen += '\n';
+    });
+
+    console.log(resumen);
+    cerrarModalExportarHoja();
+
+    // Mock: simular descarga
+    mostrarNotificacion(`✅ Hoja de reparto generada (${pedidosDia.length} pedidos)`);
+
+    // En producción usar: window.open() o descargar blob
+    alert(`📄 EXPORTACIÓN SIMULADA\n\n${resumen}\n\n(En producción se descargará como Excel/Word)`);
+}
+
+/**
+ * Renderiza el calendario con las tarjetas de días
+ * Genera dinámicamente basado en semanaOffset
+ */
+function renderizarCalendario() {
+    const semana = getSemanaConOffset(semanaOffset);
+    const grid = document.getElementById('calendario-grid');
+    const titulo = document.getElementById('calendario-titulo');
+
+    // Actualizar título
+    const fechaInicio = new Date(semana[0] + 'T12:00:00');
+    const fechaFin = new Date(semana[4] + 'T12:00:00');
+    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    const diaInicio = fechaInicio.getDate().toString().padStart(2, '0');
+    const diaFin = fechaFin.getDate().toString().padStart(2, '0');
+    const mes = meses[fechaInicio.getMonth()];
+    const anio = fechaInicio.getFullYear();
+
+    titulo.textContent = `Semana: ${diaInicio} - ${diaFin} ${mes} ${anio}`;
+
+    // Generar HTML de tarjetas
+    const diasNombres = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES'];
+    const diasKeys = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
+    const hoy = BambuState.FECHA_SISTEMA;
+
+    // Calcular datos de fábrica para la semana
+    const pedidosFabrica = appState.pedidos.filter(p =>
+        p.tipo === 'fabrica' &&
+        semana.includes(p.fecha)
+    );
+    const fabricaStats = {
+        pedidos: pedidosFabrica.length,
+        peso: pedidosFabrica.reduce((sum, p) => sum + (p.peso || 0), 0)
+    };
+
+    let html = `
+        <!-- Tarjeta Fábrica -->
+        <div class="dia-card fabrica-card">
+            <div class="dia-header">
+                <span class="dia-label">FABRICA</span>
+                <span class="dia-numero"><i class="fas fa-industry"></i></span>
+                <span class="dia-tipo">Vendidos en fabrica</span>
+                <span class="badge-estado-semanal">Semanal</span>
+            </div>
+            <div class="dia-stats">
+                <div class="dia-stat"><i class="fas fa-box"></i><span><strong>${fabricaStats.pedidos} pedidos</strong></span></div>
+                <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>${fabricaStats.peso} kg</strong></span></div>
+            </div>
+            <div class="dia-pagos-line">
+                <span class="pago-item"><i class="fas fa-money-bill-wave"></i> XXX</span>
+                <span class="pago-item"><i class="fas fa-credit-card"></i> XXX</span>
+            </div>
+            <div class="dia-botones">
+                <button class="btn-filtrar-lista-dia" onclick="verVentasFabrica()"><i class="fas fa-list"></i> Ver pedidos</button>
+            </div>
+        </div>
+    `;
+
+    // Generar tarjetas de días
+    semana.forEach((fecha, index) => {
+        const estado = calcularEstadoDia(fecha);
+        const diaNombre = diasNombres[index];
+        const diaKey = diasKeys[index];
+        const diaNum = new Date(fecha + 'T12:00:00').getDate().toString().padStart(2, '0');
+
+        // Contar pedidos del día (solo reparto)
+        const pedidosDia = appState.pedidos.filter(p =>
+            p.fecha === fecha && p.tipo === 'reparto'
+        );
+        const numPedidos = pedidosDia.length;
+        const pesoTotal = pedidosDia.reduce((sum, p) => sum + (p.peso || 0), 0);
+
+        // Clases según estado
+        let claseEstado = '';
+        let badgeHtml = '';
+        let esHoy = estado === 'hoy';
+        let esControlado = estado === 'controlado';
+        let esSinControl = estado === 'sin-control';
+
+        if (esHoy) {
+            claseEstado = 'dia-hoy';
+            badgeHtml = '<span class="badge-estado-hoy">HOY</span>';
+        } else if (esControlado) {
+            claseEstado = 'dia-controlado';
+            badgeHtml = '<span class="badge-estado-controlado">Controlado</span>';
+        } else if (esSinControl) {
+            claseEstado = 'dia-sin-control';
+            badgeHtml = `<button class="badge-estado-controlar" onclick="filtrarListaPorDia(event, '${fecha}'); event.stopPropagation();">Controlar</button>`;
+        } else {
+            // Futuro
+            badgeHtml = '<span class="badge-estado-planificado">Planificado</span>';
+        }
+
+        // Active solo para el día actual si estamos en semana offset 0
+        const activeClass = (semanaOffset === 0 && esHoy) ? 'active' : '';
+
+        html += `
+            <div class="dia-card ${claseEstado} ${activeClass}" data-dia="${diaKey}" data-fecha="${fecha}" onclick="seleccionarDia(this, '${diaKey}')">
+                <div class="dia-header">
+                    <span class="dia-label">${diaNombre}</span>
+                    <span class="dia-numero">${diaNum}</span>
+                    <span class="dia-tipo">Reparto</span>
+                    ${badgeHtml}
+                </div>
+                <div class="dia-stats">
+                    <div class="dia-stat"><i class="fas fa-box"></i><span><strong>${numPedidos} ped</strong></span></div>
+                    <div class="dia-stat"><i class="fas fa-weight"></i><span><strong>${pesoTotal} kg</strong></span></div>
+                </div>
+                <div class="dia-pagos-line">
+                    <span class="pago-item"><i class="fas fa-money-bill-wave"></i> ${esSinControl ? 'XXX' : calcularPagosDia(fecha).efectivo || '0'}</span>
+                    <span class="pago-item"><i class="fas fa-credit-card"></i> ${esSinControl ? 'XXX' : calcularPagosDia(fecha).digital || '0'}</span>
+                </div>
+                <div class="dia-botones">
+                    <button class="btn-ver-detalle-dia" onclick="verDetalleDia(event, '${fecha}')"><i class="fas fa-eye"></i> Ver detalle</button>
+                    <button class="btn-filtrar-lista-dia" onclick="filtrarListaPorDia(event, '${fecha}')"><i class="fas fa-list"></i> Ver pedidos</button>
+                </div>
+            </div>
+        `;
+    });
+
+    grid.innerHTML = html;
+
+    // Renderizar vehículos del día seleccionado o miércoles por defecto
+    const diaActivo = semanaOffset === 0 ? 'miercoles' : 'lunes';
+    renderVehiculosCapacidades(diaActivo);
+}
+
+// ========================================
 // CALENDARIO: SELECCIÓN DE DÍAS Y VEHÍCULOS
 // ========================================
 
@@ -1022,6 +1647,9 @@ function marcarDiaControladoDesdeLista(fecha) {
 
     // Actualizar badge en lista
     actualizarBadgeEstadoDia();
+
+    // Actualizar calendario (para que la tarjeta muestre "Controlado")
+    renderizarCalendario();
 
     // Notificación
     if (cantidadTransito > 0) {
@@ -1336,6 +1964,85 @@ function marcarSeleccionadosComoEntregado() {
     mostrarNotificacion(`✅ ${pedidosSeleccionados.length} pedido${pedidosSeleccionados.length > 1 ? 's marcados' : ' marcado'} como ENTREGADO`);
 }
 
+/**
+ * Elimina múltiples pedidos seleccionados
+ * PRD: Extensión de funcionalidad bulk
+ */
+function eliminarSeleccionados() {
+    const checkboxes = Array.from(document.querySelectorAll('.table-ventas tbody input[type="checkbox"]'));
+    const checkboxesSeleccionados = checkboxes.filter(cb => cb.checked);
+
+    if (checkboxesSeleccionados.length === 0) {
+        alert('No hay pedidos seleccionados');
+        return;
+    }
+
+    // Obtener pedidos seleccionados
+    const pedidosSeleccionados = [];
+    checkboxesSeleccionados.forEach(cb => {
+        const row = cb.closest('tr');
+        const rowIndex = Array.from(row.parentNode.children).indexOf(row);
+        const pedidoPagina = obtenerPedidosPaginaActual();
+        const pedido = pedidoPagina[rowIndex];
+        if (pedido) {
+            pedidosSeleccionados.push(pedido);
+        }
+    });
+
+    if (pedidosSeleccionados.length === 0) {
+        alert('No se encontraron pedidos para eliminar');
+        return;
+    }
+
+    // Contar entregados para advertir sobre reintegro
+    const entregados = pedidosSeleccionados.filter(p => p.estado === 'entregado').length;
+    let mensaje = `⚠️ ¿ELIMINAR ${pedidosSeleccionados.length} PEDIDO${pedidosSeleccionados.length > 1 ? 'S' : ''}?\n\n`;
+
+    if (entregados > 0) {
+        mensaje += `📦 ${entregados} pedido${entregados > 1 ? 's' : ''} entregado${entregados > 1 ? 's' : ''}: se reintegrará stock y generará nota de crédito.\n\n`;
+    }
+
+    mensaje += `Esta acción NO se puede deshacer.`;
+
+    if (!confirm(mensaje)) {
+        return;
+    }
+
+    // Eliminar cada pedido
+    let eliminados = 0;
+    pedidosSeleccionados.forEach(pedido => {
+        // Si está entregado, reintegrar stock (mock)
+        if (pedido.estado === 'entregado') {
+            console.log(`📦 Reintegrando stock para pedido ${pedido.numero}`);
+
+            // Generar nota de crédito
+            if (pedido.cliente_id && pedido.total > 0) {
+                BambuState.registrarPagoCC({
+                    cliente_id: pedido.cliente_id,
+                    pedido_id: pedido.id,
+                    monto: pedido.total,
+                    tipo: 'nota_credito',
+                    descripcion: `Anulación pedido ${pedido.numero}`,
+                    fecha: BambuState.FECHA_SISTEMA
+                });
+            }
+        }
+
+        // Eliminar del estado
+        appState.pedidos = appState.pedidos.filter(p => p.id !== pedido.id);
+        BambuState.delete('pedidos', pedido.id);
+        eliminados++;
+    });
+
+    console.log(`🗑️ ${eliminados} pedidos eliminados en bulk`);
+
+    // Re-renderizar
+    render();
+    cancelarSeleccion();
+
+    mostrarNotificacion(`🗑️ ${eliminados} pedido${eliminados > 1 ? 's eliminados' : ' eliminado'}`);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     inicializarApp();
     render();
@@ -1413,6 +2120,132 @@ function cerrarModalEditar() {
     pedidoEditandoId = null;
     productosEditando = [];
     totalAnterior = 0;
+}
+
+// ========================================
+// MODAL: AGREGAR PRODUCTO A PEDIDO
+// PRD: prd/ventas.html - Sección 5.2
+// ========================================
+
+/**
+ * Abre modal para agregar producto al pedido en edición
+ *
+ * LÓGICA:
+ * - Lista todos los productos disponibles con stock
+ * - Permite buscar por nombre
+ * - Click en producto lo agrega con cantidad 1
+ */
+function abrirModalAgregarProducto() {
+    if (!pedidoEditandoId) {
+        console.error('No hay pedido en edición');
+        return;
+    }
+
+    // Limpiar búsqueda
+    document.getElementById('buscar-producto-input').value = '';
+
+    // Renderizar lista de productos
+    renderizarProductosDisponibles();
+
+    // Mostrar modal
+    document.getElementById('modal-agregar-producto').classList.remove('hidden');
+}
+
+function cerrarModalAgregarProducto() {
+    document.getElementById('modal-agregar-producto').classList.add('hidden');
+}
+
+/**
+ * Renderiza la lista de productos disponibles para agregar
+ */
+function renderizarProductosDisponibles(filtro = '') {
+    const container = document.getElementById('productos-lista-modal');
+    const productos = BambuState.getProductos();
+
+    // Filtrar productos
+    let productosFiltrados = productos.filter(p => p.disponible);
+
+    if (filtro) {
+        const filtroLower = filtro.toLowerCase();
+        productosFiltrados = productosFiltrados.filter(p =>
+            p.nombre.toLowerCase().includes(filtroLower)
+        );
+    }
+
+    // Excluir productos ya en el pedido
+    const idsEnPedido = productosEditando.map(p => p.id);
+    productosFiltrados = productosFiltrados.filter(p => !idsEnPedido.includes(p.id));
+
+    if (productosFiltrados.length === 0) {
+        container.innerHTML = `
+            <div class="productos-lista-empty">
+                <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
+                <div>${filtro ? 'No se encontraron productos' : 'Todos los productos ya están en el pedido'}</div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = productosFiltrados.map(p => {
+        const sinStock = p.stock_actual <= 0;
+        return `
+            <div class="producto-item ${sinStock ? 'no-stock' : ''}"
+                 onclick="${sinStock ? '' : `agregarProductoAlPedido(${p.id})`}">
+                <div class="producto-item-info">
+                    <div class="producto-item-nombre">${p.nombre}</div>
+                    <div class="producto-item-meta">
+                        ${p.peso_kg}kg · Stock: ${p.stock_actual}
+                        ${sinStock ? '<span style="color: var(--color-error);"> (Sin stock)</span>' : ''}
+                    </div>
+                </div>
+                <div class="producto-item-precio">
+                    ${formatearMonto(p.precio_l1)}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Filtra productos en el modal según búsqueda
+ */
+function filtrarProductosModal() {
+    const filtro = document.getElementById('buscar-producto-input').value;
+    renderizarProductosDisponibles(filtro);
+}
+
+/**
+ * Agrega un producto al pedido en edición
+ *
+ * @param {number} productoId - ID del producto a agregar
+ */
+function agregarProductoAlPedido(productoId) {
+    const producto = BambuState.getProductos().find(p => p.id === productoId);
+    if (!producto) return;
+
+    // Verificar si ya está en el pedido
+    if (productosEditando.find(p => p.id === productoId)) {
+        mostrarNotificacion('⚠️ Este producto ya está en el pedido', 'warning');
+        return;
+    }
+
+    // Agregar con cantidad 1
+    productosEditando.push({
+        id: producto.id,
+        nombre: producto.nombre,
+        precio: producto.precio_l1, // TODO: usar lista de precio del cliente
+        cantidad: 1,
+        peso: producto.peso_kg
+    });
+
+    // Cerrar modal
+    cerrarModalAgregarProducto();
+
+    // Re-renderizar productos en edición
+    renderizarProductosEdit();
+    actualizarTotalesEdit();
+
+    mostrarNotificacion(`✅ ${producto.nombre} agregado al pedido`);
 }
 
 function renderizarProductosEdit() {
@@ -1621,6 +2454,11 @@ function abrirModalDetalle(pedidoId) {
     document.getElementById('detalle-pedido-num').textContent = pedido.numero;
     document.getElementById('detalle-fecha').textContent = pedido.fechaDisplay;
 
+    // Badge tipo
+    const tipoBadge = document.getElementById('detalle-tipo-badge');
+    tipoBadge.textContent = pedido.tipo === 'fabrica' ? 'FÁBRICA' : 'REPARTO';
+    tipoBadge.className = `badge-tipo ${pedido.tipo}`;
+
     // Badge estado
     const estadoBadge = document.getElementById('detalle-estado-badge');
     estadoBadge.textContent = pedido.estado === 'transito' ? 'EN TRÁNSITO' : 'ENTREGADO';
@@ -1709,6 +2547,84 @@ function abrirModalDetalle(pedidoId) {
 
     // Mostrar modal
     document.getElementById('modal-ver-detalle').classList.remove('hidden');
+}
+
+// ========================================
+// CAMBIAR TIPO PEDIDO (REPARTO ↔ FÁBRICA)
+// PRD: prd/ventas.html - Sección 5.4
+// ========================================
+
+/**
+ * Cambia el tipo de un pedido entre REPARTO y FÁBRICA
+ *
+ * LÓGICA DE NEGOCIO:
+ * - REPARTO → FÁBRICA: Se desasigna vehículo
+ * - FÁBRICA → REPARTO: Requiere asignar vehículo después
+ * - Solo pedidos en estado 'transito' pueden cambiar tipo
+ */
+function cambiarTipoPedido() {
+    if (!pedidoViendoId) {
+        console.error('No hay pedido seleccionado');
+        return;
+    }
+
+    const pedido = appState.pedidos.find(p => p.id === pedidoViendoId);
+    if (!pedido) {
+        console.error('Pedido no encontrado');
+        return;
+    }
+
+    // Validar que esté en tránsito
+    if (pedido.estado === 'entregado') {
+        mostrarNotificacion('⚠️ No se puede cambiar el tipo de un pedido entregado', 'warning');
+        return;
+    }
+
+    const tipoActual = pedido.tipo === 'fabrica' ? 'FÁBRICA' : 'REPARTO';
+    const tipoNuevo = pedido.tipo === 'fabrica' ? 'REPARTO' : 'FÁBRICA';
+    const tipoNuevoVal = pedido.tipo === 'fabrica' ? 'reparto' : 'fabrica';
+
+    // Mensaje de confirmación según el cambio
+    let mensaje = `¿Cambiar pedido ${pedido.numero} de ${tipoActual} a ${tipoNuevo}?`;
+    if (pedido.tipo === 'reparto') {
+        mensaje += '\n\nAl cambiar a FÁBRICA se desasignará el vehículo.';
+    } else {
+        mensaje += '\n\nAl cambiar a REPARTO deberás asignar un vehículo.';
+    }
+
+    if (!confirm(mensaje)) return;
+
+    // Guardar tipo anterior
+    const tipoAnterior = pedido.tipo;
+
+    // Cambiar tipo
+    pedido.tipo = tipoNuevoVal;
+
+    // Si cambia a FÁBRICA, desasignar vehículo
+    if (tipoNuevoVal === 'fabrica') {
+        pedido.vehiculo = null;
+        pedido.vehiculo_id = null;
+    }
+
+    // Actualizar en BambuState
+    BambuState.update('pedidos', pedido.id, {
+        tipo: pedido.tipo,
+        vehiculo: pedido.vehiculo,
+        vehiculo_id: pedido.vehiculo_id
+    });
+
+    console.log(`🔄 Pedido ${pedido.numero} cambiado de ${tipoAnterior} a ${pedido.tipo}`);
+
+    // Actualizar badge en modal
+    const tipoBadge = document.getElementById('detalle-tipo-badge');
+    tipoBadge.textContent = pedido.tipo === 'fabrica' ? 'FÁBRICA' : 'REPARTO';
+    tipoBadge.className = `badge-tipo ${pedido.tipo}`;
+
+    // Re-renderizar lista
+    render();
+
+    // Notificación
+    mostrarNotificacion(`✅ Pedido ${pedido.numero} cambiado a ${tipoNuevo}`);
 }
 
 function renderizarProductosDetalle(pedidoId) {

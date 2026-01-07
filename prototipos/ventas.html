@@ -87,6 +87,11 @@
                 </div>
 
                 <div class="filters-inline">
+                    <div class="search-box-compact">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="filter-busqueda" placeholder="Buscar pedido, cliente..." oninput="buscarPedido(this.value)">
+                    </div>
+
                     <select class="select-filter-compact" id="filter-estado">
                         <option value="todos">Estado: Todos</option>
                         <option value="transito">Estado: En Transito</option>
@@ -200,7 +205,11 @@
                         <div class="bulk-actions-buttons">
                             <button class="btn-bulk-primary" onclick="marcarSeleccionadosComoEntregado()">
                                 <i class="fas fa-check-circle"></i>
-                                Marcar como Entregado
+                                Marcar Entregado
+                            </button>
+                            <button class="btn-bulk-danger" onclick="eliminarSeleccionados()">
+                                <i class="fas fa-trash"></i>
+                                Eliminar
                             </button>
                             <button class="btn-bulk-secondary" onclick="cancelarSeleccion()">
                                 <i class="fas fa-times"></i>
@@ -273,15 +282,16 @@
             <div class="view-container" id="view-calendario">
                 <div class="calendario-container">
                     <div class="calendario-header">
-                        <h3>Semana: 06 - 10 Enero 2026</h3>
+                        <h3 id="calendario-titulo">Semana: 06 - 10 Enero 2026</h3>
                         <div class="calendario-nav">
-                            <button class="btn-nav"><i class="fas fa-chevron-left"></i> Anterior</button>
-                            <button class="btn-nav-today">Hoy</button>
-                            <button class="btn-nav">Siguiente <i class="fas fa-chevron-right"></i></button>
+                            <button class="btn-nav" onclick="navegarSemana(-1)"><i class="fas fa-chevron-left"></i> Anterior</button>
+                            <button class="btn-nav-today" onclick="navegarSemana(0)">Hoy</button>
+                            <button class="btn-nav" onclick="navegarSemana(1)">Siguiente <i class="fas fa-chevron-right"></i></button>
+                            <button class="btn-exportar-hoja" onclick="abrirModalExportarHoja()"><i class="fas fa-file-alt"></i> Hoja de Reparto</button>
                         </div>
                     </div>
 
-                    <div class="calendario-grid">
+                    <div class="calendario-grid" id="calendario-grid">
                         <div class="dia-card fabrica-card">
                             <div class="dia-header">
                                 <span class="dia-label">FABRICA</span>
@@ -474,6 +484,60 @@
         </div>
     </div>
 
+    <!-- MODAL: Exportar Hoja de Reparto -->
+    <div class="modal-overlay hidden" id="modal-exportar-hoja">
+        <div class="modal-content modal-exportar-hoja">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-alt"></i> Exportar Hoja de Reparto</h3>
+                <button class="btn-close-modal" onclick="cerrarModalExportarHoja()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-descripcion">Selecciona el formato de la hoja de reparto:</p>
+                <div class="exportar-opciones">
+                    <div class="exportar-opcion" onclick="exportarHojaReparto('con-precios')">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span class="opcion-titulo">Con Precios</span>
+                        <span class="opcion-desc">Incluye precios unitarios y totales</span>
+                    </div>
+                    <div class="exportar-opcion" onclick="exportarHojaReparto('sin-precios')">
+                        <i class="fas fa-list"></i>
+                        <span class="opcion-titulo">Sin Precios</span>
+                        <span class="opcion-desc">Solo productos y cantidades</span>
+                    </div>
+                </div>
+                <div class="exportar-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Se exportará la hoja del día seleccionado en el calendario</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalExportarHoja()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Agregar Producto -->
+    <div class="modal-overlay hidden" id="modal-agregar-producto">
+        <div class="modal-content modal-agregar-producto">
+            <div class="modal-header">
+                <h3><i class="fas fa-box"></i> Agregar Producto</h3>
+                <button class="btn-close-modal" onclick="cerrarModalAgregarProducto()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="buscador-productos">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="buscar-producto-input" placeholder="Buscar producto..." oninput="filtrarProductosModal()">
+                </div>
+                <div class="productos-lista" id="productos-lista-modal">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="cerrarModalAgregarProducto()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Marcar como Entregado -->
     <div class="modal-overlay hidden" id="modal-entregado">
         <div class="modal-content">
@@ -488,14 +552,46 @@
                     <div class="info-row"><span class="label">Total pedido:</span><span class="value"><strong id="modal-pedido-total">$45.800</strong></span></div>
                 </div>
                 <div class="divider-modal"></div>
-                <div class="info-pago-cc">
-                    <div class="icon-info-wrapper"><i class="fas fa-money-check-alt"></i></div>
-                    <div class="info-content">
-                        <h4>Registro de pagos</h4>
-                        <p>Los pagos se registran desde <strong>Cuenta Corriente</strong> del cliente.</p>
-                        <p class="text-muted-small">Puedes marcar el pedido como entregado ahora y registrar el pago despues desde el perfil del cliente.</p>
-                        <button class="btn-ir-cc" onclick="irACuentaCorriente()"><i class="fas fa-arrow-right"></i> Ir a Cuenta Corriente</button>
+                <!-- MÉTODO DE PAGO -->
+                <div class="metodo-pago-section">
+                    <h4><i class="fas fa-credit-card"></i> Método de Pago</h4>
+                    <div class="metodo-pago-opciones">
+                        <label class="metodo-opcion">
+                            <input type="radio" name="metodoPago" value="efectivo" onchange="toggleCamposMixto()">
+                            <span class="metodo-label"><i class="fas fa-money-bill-wave"></i> Efectivo</span>
+                        </label>
+                        <label class="metodo-opcion">
+                            <input type="radio" name="metodoPago" value="digital" onchange="toggleCamposMixto()">
+                            <span class="metodo-label"><i class="fas fa-credit-card"></i> Digital</span>
+                        </label>
+                        <label class="metodo-opcion">
+                            <input type="radio" name="metodoPago" value="mixto" onchange="toggleCamposMixto()">
+                            <span class="metodo-label"><i class="fas fa-wallet"></i> Mixto</span>
+                        </label>
                     </div>
+
+                    <!-- Campos para pago mixto -->
+                    <div class="mixto-campos hidden" id="mixto-campos">
+                        <div class="mixto-row">
+                            <div class="mixto-input-group">
+                                <label><i class="fas fa-money-bill-wave"></i> Efectivo</label>
+                                <input type="number" id="monto-efectivo" placeholder="$0" min="0" oninput="validarSumaMixto()">
+                            </div>
+                            <div class="mixto-input-group">
+                                <label><i class="fas fa-credit-card"></i> Digital</label>
+                                <input type="number" id="monto-digital" placeholder="$0" min="0" oninput="validarSumaMixto()">
+                            </div>
+                        </div>
+                        <div class="mixto-validacion" id="mixto-validacion">
+                            <span class="suma-actual">Suma: $0</span>
+                            <span class="suma-esperada">/ Total: <strong id="mixto-total-esperado">$0</strong></span>
+                        </div>
+                    </div>
+
+                    <p class="text-muted-small metodo-hint">
+                        <i class="fas fa-info-circle"></i> También puedes registrar el pago después desde
+                        <a href="#" onclick="irACuentaCorriente(); return false;">Cuenta Corriente</a>
+                    </p>
                 </div>
                 <div class="divider-modal"></div>
                 <div class="editar-hint">
@@ -518,6 +614,7 @@
                 <div class="modal-header-info">
                     <h3><i class="fas fa-file-invoice"></i> Detalle del Pedido <span id="detalle-pedido-num">#00467</span></h3>
                     <div class="pedido-estado-info">
+                        <span class="badge-tipo" id="detalle-tipo-badge">REPARTO</span>
                         <span class="badge-estado" id="detalle-estado-badge">EN TRANSITO</span>
                         <span class="separator">-</span>
                         <span id="detalle-fecha">Lunes 23 Dic 2025</span>
@@ -587,6 +684,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="cerrarModalDetalle()">Cerrar</button>
+                <button class="btn-outline" onclick="cambiarTipoPedido()"><i class="fas fa-exchange-alt"></i> Cambiar Tipo</button>
                 <button class="btn-primary" onclick="abrirEditarDesdeDetalle()"><i class="fas fa-edit"></i> Editar Pedido</button>
             </div>
         </div>

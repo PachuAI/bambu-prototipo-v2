@@ -1,7 +1,7 @@
 # ESTADO-VENTAS.md - Auditoría Módulo Ventas
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 07 Enero 2026 (integración edición borradores con Cotizador)
+**Última actualización**: 07 Enero 2026 (Exportar Hoja de Reparto)
 **Prototipo**: `prototipos/ventas.html`
 **PRD**: `prd/ventas.html` (versión limpia: 340 líneas, secciones 1-10)
 **JavaScript**: `prototipos/assets/ventas/script.js`
@@ -12,11 +12,11 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 76 | 78% |
-| ⚠️ Visuales sin lógica | 14 | 14% |
-| ❌ Faltantes | 8 | 8% |
+| ✅ Implementadas (HTML + JS) | 98 | 92.5% |
+| ⚠️ Visuales sin lógica | 3 | 2.8% |
+| ❌ Faltantes | 5 | 4.7% |
 
-**Total funcionalidades**: 98 (desglose en detalle abajo)
+**Total funcionalidades**: 106 (desglose en detalle abajo)
 
 **Nota**: El PRD limpio (Enero 2026) simplificó la documentación a 10 secciones funcionales.
 
@@ -111,37 +111,85 @@
 65. `renderBadgeTipo()`, `renderBadgeEstado()`
 66. `renderIconoPago()`, `renderAcciones()`
 
+### Cambio de Estado Inverso (Sprint 07/01/2026)
+67. Botón "Volver a En Tránsito" con onclick
+68. Función `volverAEnTransito()` con validación y confirmación
+69. Actualización en BambuState
+
+### Buscador de Pedidos (Sprint 07/01/2026)
+70. Input búsqueda en header filtros
+71. Función `buscarPedido()` con filtrado tiempo real
+72. Búsqueda en número, cliente, dirección, ciudad
+
+### Navegación Calendario (Sprint 07/01/2026)
+73. Botones Anterior/Hoy/Siguiente funcionales
+74. Función `navegarSemana()` con offset
+75. Función `renderizarCalendario()` dinámico
+76. Actualización de título y tarjetas de días
+
+### Eliminar Pedido (Sprint 07/01/2026)
+77. Función `eliminarPedido()` con confirmación
+78. Reintegro de stock (mock) si entregado
+79. Generación nota de crédito en CC
+
+### Control Reparto Lista (Sprint 07/01/2026)
+80. Actualización de calendario al marcar controlado
+
+### Sistema Bulk Mejorado (Sprint 07/01/2026)
+81. Botón "Eliminar" en barra bulk actions
+82. Función `eliminarSeleccionados()` con reintegro
+
+### Pedidos Sin Cliente - Ventas Casuales (Sprint 07/01/2026)
+83. Cliente especial "SIN REGISTRO" (id: 0) en state-manager.js
+84. Validación: Solo modo FÁBRICA permitido para ventas casuales
+85. Pago obligatorio (validación en confirmarEntregado)
+86. NO genera cargo en Cuenta Corriente
+87. Mensaje diferenciado en notificación
+
 ### Sistema Mock Data
-67. `generateMockPedidos()` - 60 pedidos
-68. `BORRADORES_MOCK` - 5 borradores
-69. `VEHICULOS_POR_DIA` - Capacidades
-70. `DIAS_CALENDARIO` - Estados de control
+88. `generateMockPedidos()` - 60 pedidos
+89. `BORRADORES_MOCK` - 5 borradores
+90. `VEHICULOS_POR_DIA` - Capacidades
+91. `DIAS_CALENDARIO` - Estados de control
 
 ### Funciones de Control de Días
-71. `calcularEstadoDia()`
-72. `calcularPagosDia()`
-73. `marcarDiaControlado()`
-74. `marcarDiaControladoDesdeLista()`
+92. `calcularEstadoDia()`
+93. `calcularPagosDia()`
+94. `marcarDiaControlado()`
+95. `marcarDiaControladoDesdeLista()`
+
+### Cambiar Tipo Pedido (Sprint 07/01/2026)
+96. ~~**Cambiar Tipo Pedido (REPARTO ↔ FÁBRICA)**~~ ✅ IMPLEMENTADO Sprint 2
+   - Badge "FÁBRICA/REPARTO" en modal detalle
+   - Botón "Cambiar Tipo" en footer del modal
+   - Función `cambiarTipoPedido()` con validación
+   - Solo permite cambio en pedidos "En tránsito"
+   - Si REPARTO→FÁBRICA: desasigna vehículo automáticamente
+   - Confirmación con mensaje contextual según dirección del cambio
+   - Actualización en BambuState y re-render automático
+
+### Exportar Hoja de Reparto (Sprint 07/01/2026)
+97. ~~**Exportar Hoja de Reparto**~~ ✅ IMPLEMENTADO 07/01/2026
+   - Botón "Hoja de Reparto" en navegación del calendario
+   - Modal selección formato: Con precios / Sin precios
+   - Función `exportarHojaReparto()` agrupa pedidos por vehículo
+   - Mock de exportación con resumen formateado
+   - Validación: requiere día seleccionado en calendario
 
 ---
 
 ## VISUALES SIN LÓGICA (Prioridad Alta)
 
-### 1. Sistema de Selección Bulk (Checkboxes)
-- **PRD**: Sección 3.1 - Lista Pedidos
-- **HTML**: ✅ Existe header checkbox + checkboxes por fila
-- **JS Falta**: Integración con modal de registro de pago en bulk
-- **Complejidad**: Media
+### ~~1. Sistema de Selección Bulk (Checkboxes)~~ ✅ IMPLEMENTADO (07/01/2026)
+- Mejorado con botón "Eliminar" en bulk
 
-### 2. Modal Registro de Pago Completo
-- **PRD**: Sección 6 - Sistema de Pagos
-- **HTML**: ✅ Modal "Marcar como Entregado" existe
-- **JS Falta**:
-  - Input Efectivo/Digital/Mixto
-  - Si Mixto: inputs `montoEfectivo` y `montoDigital`
-  - Validación: suma debe igualar total
-- **Nota**: Comentado "Los pagos ahora se registran solo desde CC"
-- **Complejidad**: Media
+### ~~2. Modal Registro de Pago Completo~~ ✅ IMPLEMENTADO 07/01/2026
+- Selector método de pago (Efectivo/Digital/Mixto)
+- Campos `montoEfectivo` y `montoDigital` para pago mixto
+- Validación: suma debe igualar total del pedido
+- Guardado en `pedido.metodoPago`, `pedido.montoEfectivo`, `pedido.montoDigital`
+- Sincronización con BambuState
+- Icono dual 💵💳 en tabla con tooltip desglose
 
 ### 3. Exportar Excel con Selección de Columnas
 - **PRD**: Sección 9.1 - Exportar Excel
@@ -162,31 +210,18 @@
   - **Historial de cambios** (usuario, fecha, campo, valor anterior/nuevo, IP)
 - **Complejidad**: Alta
 
-### 5. Cambiar Estado Manualmente (Entregado → En Tránsito)
-- **PRD**: Sección 5.3 - Cambiar estado
-- **HTML**: ✅ Botón "Volver a En Tránsito" existe
-- **JS Falta**: Función para cambiar estado inverso
-- **Complejidad**: Baja
+### ~~5. Cambiar Estado Manualmente (Entregado → En Tránsito)~~ ✅ IMPLEMENTADO (07/01/2026)
 
-### 6. Cambiar Tipo Pedido (REPARTO ↔ FÁBRICA)
-- **PRD**: Sección 5.4 - Cambiar tipo
-- **HTML**: ❌ No existe botón
-- **JS Falta**:
-  - Botón [🔄 Cambiar tipo] en modal detalle
-  - Modal confirmación con efectos
-  - Lógica bidireccional
-- **Complejidad**: Alta
+### ~~6. Cambiar Tipo Pedido (REPARTO ↔ FÁBRICA)~~ ✅ IMPLEMENTADO (07/01/2026)
+- Badge de tipo en modal detalle (FÁBRICA/REPARTO)
+- Botón "Cambiar Tipo" en footer del modal
+- Validación: solo pedidos en tránsito
+- Si REPARTO→FÁBRICA: desasigna vehículo
+- Actualización en BambuState + re-render automático
 
-### 7. Control de Reparto desde Vista Lista
-- **PRD**: Sección 8 - Calendario Semana
-- **HTML**: ✅ Badge estado día existe
-- **JS Falta**:
-  - Botón "Marcar día como controlado" clickeable
-  - Validación pedidos en tránsito
-  - Actualizar badge calendario
-- **Complejidad**: Media
+### ~~7. Control de Reparto desde Vista Lista~~ ✅ IMPLEMENTADO (07/01/2026)
 
-### 8. Reasignación de Vehículos desde VENTAS
+### 3. Reasignación de Vehículos desde VENTAS
 - **PRD**: Sección 8.3 - Click en día
 - **HTML**: ❌ No existe panel/modal
 - **JS Falta**:
@@ -195,52 +230,27 @@
   - Botón [Mover a...▼] y [Desasignar]
 - **Complejidad**: Alta
 
-### 9. Paginación Borradores
-- **PRD**: Sección 3.3 - Tab Borradores
-- **HTML**: ✅ Contenedor existe vacío
-- **JS Falta**: Renderizar botones paginación
-- **Complejidad**: Baja
+### ~~4. Paginación Borradores~~ ✅ YA IMPLEMENTADO (funciona si >12 borradores)
 
-### 10. Eliminar Pedido con Reintegro Stock
-- **PRD**: Sección 5.5 - Eliminar
-- **HTML**: ✅ Botón existe
-- **JS Falta**:
-  - Confirmación con advertencia
-  - Reintegrar productos al stock
-  - Ajuste en CC si tiene pago
-- **Complejidad**: Media
+### ~~5. Eliminar Pedido con Reintegro Stock~~ ✅ IMPLEMENTADO (07/01/2026)
 
-### 11. Agregar Producto a Pedido en Edición
-- **PRD**: Sección 5.2 - Editar
-- **HTML**: ✅ Botón existe
-- **JS Falta**:
-  - Modal selección de producto
-  - Buscador de productos
-  - Integración catálogo
-- **Complejidad**: Alta
+### ~~11. Agregar Producto a Pedido en Edición~~ ✅ IMPLEMENTADO 07/01/2026
+   - Modal "Agregar Producto" con buscador
+   - Lista productos disponibles (excluye sin stock y ya agregados)
+   - Click en producto lo agrega con cantidad 1
+   - Funciones: abrirModalAgregarProducto(), renderizarProductosDisponibles(), filtrarProductosModal(), agregarProductoAlPedido()
+   - Re-render automático de tabla y totales
 
-### 12. Navegación Calendario (Semana Anterior/Siguiente)
-- **PRD**: Sección 8.2 - Funcionalidades calendario
-- **HTML**: ✅ Botones existen
-- **JS Falta**:
-  - Función cambiar semana
-  - Actualizar fechas y header
-  - Recalcular datos mock
-- **Complejidad**: Media
+### ~~5. Navegación Calendario (Semana Anterior/Siguiente)~~ ✅ IMPLEMENTADO (07/01/2026)
 
-### 13. Exportar Hoja de Reparto
-- **PRD**: Sección 9.2 - Exportar hoja de reparto
-- **HTML**: ❌ No existe botón
-- **JS Falta**:
-  - Modal selección: CON/SIN precios
-  - Generar documento Word/Excel
-- **Complejidad**: Alta
+### ~~5. Exportar Hoja de Reparto~~ ✅ IMPLEMENTADO 07/01/2026
+- Botón "Hoja de Reparto" en navegación del calendario
+- Modal selección formato: Con precios / Sin precios
+- Función `exportarHojaReparto()` que agrupa pedidos por vehículo
+- Mock de exportación (alert con resumen formateado)
+- Validación: requiere día seleccionado en calendario
 
-### 14. Buscar Pedido (Campo búsqueda)
-- **PRD**: No especificado pero útil
-- **HTML**: ❌ No existe
-- **JS Falta**: Input búsqueda + filtro tiempo real
-- **Complejidad**: Baja
+### ~~6. Buscar Pedido (Campo búsqueda)~~ ✅ IMPLEMENTADO (07/01/2026)
 
 ---
 
@@ -272,21 +282,20 @@
   - Múltiples pagos parciales
 - **Complejidad**: Alta
 
-### 4. Pedidos Sin Cliente (Ventas Casuales)
-- **PRD**: Sección 6.5 - Ventas sin cliente ("Sin registro")
-- **Requiere**:
-  - Cliente especial "Sin registro"
-  - Pago obligatorio en modo FÁBRICA
-  - NO genera cargo en CC
-- **Complejidad**: Media
+### ~~4. Pedidos Sin Cliente (Ventas Casuales)~~ ✅ IMPLEMENTADO 07/01/2026
+- Cliente especial "SIN REGISTRO" (id: 0) en state-manager.js
+- Solo modo FÁBRICA permitido
+- Pago obligatorio (validación en confirmarEntregado)
+- NO genera cargo en Cuenta Corriente
+- Mensaje diferenciado en notificación
 
-### 5. Método de Pago Mixto con Validación
-- **PRD**: Sección 6.1 - Opciones de método de pago
-- **Requiere**:
-  - Campos `monto_efectivo` y `monto_digital`
-  - Validación JS: suma = total
-  - Icono dual 💵💳
-- **Complejidad**: Media
+### ~~5. Método de Pago Mixto con Validación~~ ✅ IMPLEMENTADO 07/01/2026
+- Selector método de pago en modal "Marcar como Entregado"
+- Campos `montoEfectivo` y `montoDigital` para pago mixto
+- Validación JS: suma debe igualar total del pedido
+- Icono dual 💵💳 con tooltip mostrando desglose de montos
+- Guardado en `pedido.metodoPago`, `pedido.montoEfectivo`, `pedido.montoDigital`
+- Sincronización con BambuState
 
 ### 6. Control de Stock en Edición
 - **PRD**: Sección 7.2 - Impacto automático

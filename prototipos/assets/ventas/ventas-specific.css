@@ -47,6 +47,40 @@
     box-shadow: none;
 }
 
+/* Search Box Compact */
+.search-box-compact {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 5px 10px;
+    background: white;
+    transition: border-color var(--transition-base);
+}
+
+.search-box-compact:focus-within {
+    border-color: var(--text-primary);
+}
+
+.search-box-compact i {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.search-box-compact input {
+    border: none;
+    outline: none;
+    font-size: 12px;
+    width: 140px;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.search-box-compact input::placeholder {
+    color: var(--text-secondary);
+}
+
 .filter-periodo-compact {
     display: flex;
     align-items: center;
@@ -969,6 +1003,350 @@
     margin: 20px 0;
 }
 
+/* ========================================
+   MÉTODO DE PAGO - Modal Entregado
+   ======================================== */
+
+.metodo-pago-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-strong);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.metodo-pago-section h4 i {
+    color: var(--color-accent);
+}
+
+.metodo-pago-opciones {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.metodo-opcion {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--bg-white);
+}
+
+.metodo-opcion:hover {
+    border-color: var(--text-secondary);
+    background: var(--bg-hover);
+}
+
+.metodo-opcion input[type="radio"] {
+    display: none;
+}
+
+.metodo-opcion input[type="radio"]:checked + .metodo-label {
+    color: var(--color-accent);
+}
+
+.metodo-opcion:has(input:checked) {
+    border-color: var(--color-accent);
+    background: var(--bg-selected);
+}
+
+.metodo-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.metodo-label i {
+    font-size: 14px;
+}
+
+/* Campos Mixto */
+.mixto-campos {
+    padding: 16px;
+    background: var(--bg-sidebar);
+    border-radius: var(--border-radius-base);
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.mixto-campos.hidden {
+    display: none;
+}
+
+.mixto-row {
+    display: flex;
+    gap: 16px;
+}
+
+.mixto-input-group {
+    flex: 1;
+}
+
+.mixto-input-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.mixto-input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 14px;
+    background: var(--bg-white);
+    color: var(--text-primary);
+    transition: border-color var(--transition-base);
+}
+
+.mixto-input-group input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.mixto-validacion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-color);
+    font-size: 13px;
+}
+
+.suma-actual {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.mixto-validacion.valido .suma-actual {
+    color: var(--color-success);
+}
+
+.mixto-validacion.invalido .suma-actual {
+    color: var(--color-error);
+}
+
+.suma-esperada {
+    color: var(--text-secondary);
+}
+
+.metodo-hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.metodo-hint a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.metodo-hint a:hover {
+    text-decoration: underline;
+}
+
+/* Icono pago mixto en tabla */
+.icono-pago-mixto {
+    display: inline-flex;
+    gap: 2px;
+    cursor: help;
+}
+
+/* ========================================
+   MODAL: Agregar Producto
+   ======================================== */
+
+.modal-agregar-producto {
+    max-width: 500px;
+    max-height: 70vh;
+}
+
+.buscador-productos {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    margin-bottom: 16px;
+}
+
+.buscador-productos i {
+    color: var(--text-secondary);
+}
+
+.buscador-productos input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.productos-lista {
+    max-height: 350px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+}
+
+.producto-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background var(--transition-base);
+}
+
+.producto-item:last-child {
+    border-bottom: none;
+}
+
+.producto-item:hover {
+    background: var(--bg-hover);
+}
+
+.producto-item-info {
+    flex: 1;
+}
+
+.producto-item-nombre {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.producto-item-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.producto-item-precio {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-accent);
+}
+
+.producto-item.no-stock {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.producto-item.no-stock:hover {
+    background: transparent;
+}
+
+.productos-lista-empty {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   MODAL: Exportar Hoja de Reparto
+   ======================================== */
+
+.btn-exportar-hoja {
+    margin-left: 16px;
+    padding: 6px 12px;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-base);
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: background var(--transition-base);
+}
+
+.btn-exportar-hoja:hover {
+    background: var(--color-accent-hover);
+}
+
+.modal-exportar-hoja {
+    max-width: 420px;
+}
+
+.modal-descripcion {
+    margin: 0 0 16px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.exportar-opciones {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.exportar-opcion {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-align: center;
+}
+
+.exportar-opcion:hover {
+    border-color: var(--color-accent);
+    background: var(--bg-hover);
+}
+
+.exportar-opcion i {
+    font-size: 24px;
+    color: var(--color-accent);
+}
+
+.opcion-titulo {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.opcion-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.exportar-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--bg-sidebar);
+    border-radius: var(--border-radius-base);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.exportar-info i {
+    color: var(--color-info);
+}
+
 .editar-hint {
     display: flex;
     align-items: center;
@@ -1661,6 +2039,24 @@
     cursor: pointer;
 }
 
+.btn-bulk-danger {
+    background: var(--color-danger, #dc3545);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: var(--font-weight-medium);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-bulk-danger:hover {
+    background: #c82333;
+}
+
 /* ========================================
    RESPONSIVE
    ======================================== */
@@ -1697,10 +2093,15 @@
    ======================================== */
 
 [data-theme="dark"] .select-filter-compact,
-[data-theme="dark"] .input-date-compact {
+[data-theme="dark"] .input-date-compact,
+[data-theme="dark"] .search-box-compact {
     background: var(--bg-sidebar) !important;
     color: var(--text-primary) !important;
     border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .search-box-compact input {
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .btn-ghost-sm {
