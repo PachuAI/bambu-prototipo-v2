@@ -1,16 +1,26 @@
 // ============================================================================
 // DASHBOARD V2 - Script Principal
 // PRD: Dashboard con calendario semanal, repartos mañana y stock crítico
+// Migrado a BambuState (Fase 4)
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Dashboard V2 Loaded");
+    // Inicializar state manager
+    BambuState.init();
+    console.log("Dashboard V2 Loaded (usando BambuState)");
 
     // ========================================================================
-    // CONFIGURACIÓN: Fecha simulada (miércoles 8 enero 2026)
+    // CONFIGURACIÓN: Fecha desde BambuState
     // ========================================================================
-    const HOY = new Date(2026, 0, 8); // Miércoles 8 Enero 2026
+    const HOY = new Date(BambuState.FECHA_SISTEMA);
+    const VEHICULOS = BambuState.getVehiculos();
+    const PRODUCTOS = BambuState.get('productos');
+    const CLIENTES = BambuState.get('clientes');
+    const PEDIDOS = BambuState.get('pedidos');
     const CAPACIDAD_TOTAL_FLOTA = VEHICULOS.reduce((sum, v) => sum + v.capacidadKg, 0);
+
+    // Helper: obtener peso de un pedido (calculado desde items)
+    const getPesoPedido = (pedido) => BambuState.calcularPesoPedido(pedido.id);
 
     // ========================================================================
     // 1. CALENDARIO SEMANAL
@@ -40,11 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
             fecha.setDate(lunes.getDate() + i);
 
             const fechaStr = formatFechaISO(fecha);
-            const pedidosDia = getPedidosByFecha(fechaStr);
+            const pedidosDia = BambuState.getPedidosByFecha(fechaStr);
 
             // Calcular métricas del día
             const totalPedidos = pedidosDia.filter(p => p.tipo === 'reparto').length;
-            const totalKg = pedidosDia.reduce((sum, p) => sum + (p.peso || 0), 0);
+            const totalKg = pedidosDia.reduce((sum, p) => sum + getPesoPedido(p), 0);
             const pctCarga = Math.round((totalKg / CAPACIDAD_TOTAL_FLOTA) * 100);
 
             // Determinar si es HOY
@@ -86,10 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `${diasSemana[manana.getDay()]} ${manana.getDate()} ${meses[manana.getMonth()]}`;
 
         // Obtener pedidos de mañana (solo repartos)
-        const pedidosManana = getPedidosByFecha(fechaMananaStr).filter(p => p.tipo === 'reparto');
+        const pedidosManana = BambuState.getPedidosByFecha(fechaMananaStr).filter(p => p.tipo === 'reparto');
 
         // Calcular totales
-        const totalKg = pedidosManana.reduce((sum, p) => sum + (p.peso || 0), 0);
+        const totalKg = pedidosManana.reduce((sum, p) => sum + getPesoPedido(p), 0);
         const pct = Math.round((totalKg / CAPACIDAD_TOTAL_FLOTA) * 100);
 
         document.getElementById('capacidad-total').textContent = `${Math.round(totalKg)}kg / ${CAPACIDAD_TOTAL_FLOTA}kg`;
@@ -103,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ciudadesMap[p.ciudad] = { pedidos: 0, kg: 0 };
             }
             ciudadesMap[p.ciudad].pedidos++;
-            ciudadesMap[p.ciudad].kg += p.peso || 0;
+            ciudadesMap[p.ciudad].kg += getPesoPedido(p);
         });
 
         // Agrupar por vehículo
@@ -120,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pedidosManana.forEach(p => {
             if (p.vehiculo && vehiculosMap[p.vehiculo]) {
                 vehiculosMap[p.vehiculo].pedidos.push(p);
-                vehiculosMap[p.vehiculo].kg += p.peso || 0;
+                vehiculosMap[p.vehiculo].kg += getPesoPedido(p);
             }
         });
 
@@ -134,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const pedidosSinAsignar = pedidosManana.filter(p => !p.vehiculo);
         const totalSinAsignar = pedidosSinAsignar.length;
-        const kgSinAsignar = pedidosSinAsignar.reduce((sum, p) => sum + (p.peso || 0), 0);
+        const kgSinAsignar = pedidosSinAsignar.reduce((sum, p) => sum + getPesoPedido(p), 0);
 
         sinAsignarCol.innerHTML = `
             <div class="reparto-col-header">
@@ -146,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="sin-asignar-col-list">
                     ${pedidosSinAsignar.slice(0, 4).map(p => `
                         <div class="ciudad-item">
-                            <span class="ciudad-nombre">${p.cliente.substring(0, 18)}${p.cliente.length > 18 ? '...' : ''}</span>
-                            <span class="ciudad-meta">${p.peso}kg</span>
+                            <span class="ciudad-nombre">${p.direccion.substring(0, 18)}${p.direccion.length > 18 ? '...' : ''}</span>
+                            <span class="ciudad-meta">${Math.round(getPesoPedido(p))}kg</span>
                         </div>
                     `).join('')}
                 </div>
@@ -172,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data.pedidos.forEach(p => {
                 if (!ciudadesVeh[p.ciudad]) ciudadesVeh[p.ciudad] = { pedidos: 0, kg: 0 };
                 ciudadesVeh[p.ciudad].pedidos++;
-                ciudadesVeh[p.ciudad].kg += p.peso || 0;
+                ciudadesVeh[p.ciudad].kg += getPesoPedido(p);
             });
 
             const col = document.createElement('div');
@@ -252,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fechaMananaStr = formatFechaISO(manana);
 
         // Obtener pedidos de mañana y agrupar por ciudad
-        const pedidosManana = getPedidosByFecha(fechaMananaStr).filter(p => p.tipo === 'reparto');
+        const pedidosManana = BambuState.getPedidosByFecha(fechaMananaStr).filter(p => p.tipo === 'reparto');
 
         const ciudadesMap = {};
         pedidosManana.forEach(p => {
@@ -260,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ciudadesMap[p.ciudad] = { pedidos: 0, kg: 0 };
             }
             ciudadesMap[p.ciudad].pedidos++;
-            ciudadesMap[p.ciudad].kg += p.peso || 0;
+            ciudadesMap[p.ciudad].kg += getPesoPedido(p);
         });
 
         const ciudadesArr = Object.entries(ciudadesMap).sort((a, b) => b[1].pedidos - a[1].pedidos);
@@ -339,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ).slice(0, 4),
             pedidos: PEDIDOS.filter(p =>
                 p.numero.toLowerCase().includes(query) ||
-                p.cliente.toLowerCase().includes(query)
+                p.direccion.toLowerCase().includes(query)
             ).slice(0, 4)
         };
     }
@@ -394,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="result-icon icon-order"><i class="fas fa-file-invoice"></i></div>
                         <div class="result-info">
                             <span class="result-title">Pedido ${p.numero}</span>
-                            <span class="result-subtitle">${p.cliente} - ${p.estado}</span>
+                            <span class="result-subtitle">${p.direccion} - ${p.estado}</span>
                         </div>
                     </div>
                 `;
