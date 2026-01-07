@@ -87,30 +87,37 @@
         <!-- MAIN LAYOUT -->
         <main class="main-layout">
 
-            <!-- HEADER (estandarizado) -->
-            <header class="header-toolbar-standard">
-                <div class="page-header-title">
-                    <i class="fas fa-home" style="color: var(--text-secondary);"></i>
-                    Dashboard
+            <!-- HEADER (Dashboard compacto) -->
+            <header class="header-toolbar-standard header-dashboard">
+                <!-- Izquierda: Título + navegación semana -->
+                <div class="header-left">
+                    <div class="page-header-title">
+                        <i class="fas fa-calendar-week" style="color: var(--text-secondary);"></i>
+                        Resumen Semanal
+                    </div>
+                    <span class="header-mes" id="calendario-mes">Enero 2026</span>
+                    <div class="header-nav-semana">
+                        <button class="btn-nav-day" id="btn-semana-prev"><i class="fas fa-chevron-left"></i></button>
+                        <button class="btn-nav-day btn-hoy hidden" id="btn-hoy">HOY</button>
+                        <button class="btn-nav-day" id="btn-semana-next"><i class="fas fa-chevron-right"></i></button>
+                    </div>
                 </div>
 
-                <!-- Filtros inline (mismo estilo otros módulos) -->
-                <div class="filters-inline">
-                    <!-- Global Search compacto -->
-                    <div class="search-global-compact">
+                <!-- Centro: Búsqueda global prominente -->
+                <div class="header-center">
+                    <div class="search-global-compact search-centered">
                         <i class="fas fa-search"></i>
                         <input type="text" id="global-search" placeholder="Buscar clientes, productos, pedidos..." autocomplete="off">
                         <span class="search-shortcut">Ctrl+K</span>
-                        <!-- Search Results Dropdown -->
                         <div id="global-search-results" class="global-results-dropdown hidden"></div>
                     </div>
+                </div>
 
-                    <!-- Notificación -->
+                <!-- Derecha: Notificaciones + Usuario -->
+                <div class="header-right">
                     <button class="btn-icon-compact" title="Notificaciones">
                         <i class="far fa-bell"></i>
                     </button>
-
-                    <!-- Usuario -->
                     <div class="user-badge-compact">
                         <div class="user-avatar-sm">AD</div>
                         <span>Admin</span>
@@ -122,19 +129,8 @@
             <div class="dashboard-content">
                 <div class="dashboard-sections">
 
-                    <!-- 1. CALENDAR CAROUSEL -->
-                    <section class="section-carousel">
-                        <div class="carousel-header">
-                            <div>
-                                <h2 class="carousel-title">Resumen Semanal</h2>
-                                <span class="text-muted" id="calendario-mes" style="font-size:13px;">Enero 2026</span>
-                            </div>
-                            <div class="carousel-controls">
-                                <button class="btn-nav-day" id="btn-semana-prev"><i class="fas fa-chevron-left"></i></button>
-                                <button class="btn-nav-day" id="btn-semana-next"><i class="fas fa-chevron-right"></i></button>
-                            </div>
-                        </div>
-
+                    <!-- 1. CALENDARIO SEMANAL (sin header, ya está arriba) -->
+                    <section class="section-calendario">
                         <div class="days-row" id="days-row">
                             <!-- Se genera dinámicamente desde JS -->
                         </div>

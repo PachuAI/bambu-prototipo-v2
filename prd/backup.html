@@ -57,12 +57,12 @@
                 </tr>
                 <tr>
                     <td><strong>Estado</strong></td>
-                    <td>⚠️ Borrador (pendiente prototipar y validar)</td>
+                    <td>✅ Prototipado y validado (Enero 2026)</td>
                 </tr>
             </table>
 
-            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>⚠️ Nota importante:</strong> Este PRD es documentación modular de referencia. Solo Cotizador y Ventas están prototipados/validados al 100%. El contenido de Backup y Logs probablemente cambie al prototipar e implementar.</p>
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>Nota:</strong> Este PRD describe funcionalidades y reglas de negocio. Para referencia visual, ver el <a href="../prototipos/backup.html">prototipo HTML</a>.</p>
             </div>
         </header>
 
@@ -155,12 +155,13 @@ En Logs:
                 <li>Botón [Restaurar desde archivo]</li>
             </ul>
 
-            <p><strong>Historial de respaldos:</strong></p>
+            <p><strong>Historial de respaldos:</strong> (con contador "X respaldos")</p>
             <table>
                 <thead>
                     <tr>
                         <th>Fecha</th>
                         <th>Tamaño</th>
+                        <th>Tipo</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -168,11 +169,13 @@ En Logs:
                     <tr>
                         <td>31/12/2024 14:30</td>
                         <td>2.5 MB</td>
+                        <td><span style="background:#e7f3ff;padding:2px 6px;border-radius:3px;font-size:11px;">MANUAL</span></td>
                         <td>[Descargar] [Eliminar]</td>
                     </tr>
                     <tr>
                         <td>30/12/2024 23:00</td>
                         <td>2.4 MB</td>
+                        <td><span style="background:#d4edda;padding:2px 6px;border-radius:3px;font-size:11px;">AUTOMATICO</span></td>
                         <td>[Descargar] [Eliminar]</td>
                     </tr>
                 </tbody>
@@ -223,7 +226,7 @@ En Logs:
                 <li>Botones: [Aplicar filtros] [Limpiar filtros]</li>
             </ul>
 
-            <p><strong>Tabla de logs:</strong></p>
+            <p><strong>Tabla de logs:</strong> (con contador "X eventos")</p>
             <table>
                 <thead>
                     <tr>
@@ -231,6 +234,7 @@ En Logs:
                         <th>Usuario</th>
                         <th>Tipo</th>
                         <th>Descripción</th>
+                        <th>IP</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -239,18 +243,21 @@ En Logs:
                         <td>admin@bambu.com</td>
                         <td>Stock</td>
                         <td>Ajuste manual: Detergente X (+100 un)</td>
+                        <td>192.168.1.100</td>
                     </tr>
                     <tr>
                         <td>31/12/2024 14:20</td>
                         <td>admin@bambu.com</td>
                         <td>Acceso</td>
                         <td>Login exitoso</td>
+                        <td>192.168.1.100</td>
                     </tr>
                     <tr>
                         <td>30/12/2024 23:05</td>
                         <td>admin@bambu.com</td>
                         <td>Configuración</td>
                         <td>Modificó lista L2: 6.25% → 7%</td>
+                        <td>192.168.1.100</td>
                     </tr>
                 </tbody>
             </table>

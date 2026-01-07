@@ -21,6 +21,51 @@
     gap: 16px;
 }
 
+/* Header Dashboard: 3 columnas (izq, centro, der) */
+.header-dashboard {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-mes {
+    color: var(--text-muted);
+    font-size: 13px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border-color);
+}
+
+.header-nav-semana {
+    display: flex;
+    gap: 4px;
+}
+
+.header-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-centered input {
+    width: 400px;
+}
+
+.search-centered input:focus {
+    width: 450px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .filters-inline {
     display: flex;
     align-items: center;
@@ -277,7 +322,7 @@
    ============================================================================ */
 
 .dashboard-content {
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-lg) var(--spacing-2xl) var(--spacing-2xl);
     overflow-y: auto;
     height: 100%;
     width: 100%;
@@ -296,6 +341,12 @@
 
 .section-carousel {
     background: transparent;
+}
+
+/* Calendario sin header (header está en toolbar) */
+.section-calendario {
+    background: transparent;
+    padding-top: 0;
 }
 
 .carousel-header {
@@ -335,6 +386,17 @@
 .btn-nav-day:hover {
     border-color: var(--text-primary);
     color: var(--text-primary);
+}
+
+.btn-hoy {
+    width: auto;
+    padding: 0 10px;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.btn-hoy.hidden {
+    display: none;
 }
 
 .days-row {

@@ -59,12 +59,12 @@
                 </tr>
                 <tr>
                     <td><strong>Estado</strong></td>
-                    <td>⚠️ Borrador (pendiente prototipar y validar)</td>
+                    <td>✅ Prototipado y validado (Enero 2026)</td>
                 </tr>
             </table>
 
-            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>⚠️ Nota importante:</strong> Este PRD es documentación modular de referencia. Solo Cotizador y Ventas están prototipados/validados al 100%. El contenido de Estadísticas probablemente cambie al prototipar e implementar.</p>
+            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
+                <p style="margin: 0;"><strong>Nota:</strong> Este PRD describe funcionalidades y reglas de negocio. Para referencia visual, ver el <a href="../prototipos/estadisticas.html">prototipo HTML</a>.</p>
             </div>
         </header>
 
@@ -101,11 +101,12 @@
             <h3>2.2 Características clave</h3>
             <ul>
                 <li>✅ Selector de período (desde-hasta)</li>
+                <li>✅ Cards resumen: productos vendidos, unidades, monto total, pedidos</li>
                 <li>✅ Tabla de productos con métricas de venta</li>
                 <li>✅ Ordenamiento por cantidad vendida o monto total</li>
-                <li>✅ Gráfico de tendencia (opcional, pendiente definir)</li>
-                <li>✅ Exportación Excel con resumen detallado</li>
-                <li>✅ Filtros adicionales: Por proveedor, por categoría (si aplica)</li>
+                <li>✅ Gráfico Top 10 productos (Chart.js) con toggle cantidad/monto</li>
+                <li>✅ Exportación CSV con resumen detallado</li>
+                <li>✅ Filtros adicionales: Por proveedor, búsqueda por nombre</li>
             </ul>
 
             <h3>2.3 Flujo de trabajo típico</h3>
@@ -206,19 +207,17 @@ Administrador puede:
                 <li>Clickeable en headers: Permite ordenar por cualquier columna</li>
             </ul>
 
-            <h3>3.4 Gráfico de tendencia (opcional)</h3>
-            <p><strong>Tipo:</strong> Gráfico de barras o líneas</p>
+            <h3>3.4 Gráfico Top 10 Productos</h3>
+            <p><strong>Tipo:</strong> Gráfico de barras verticales (Chart.js)</p>
 
             <p><strong>Contenido:</strong></p>
             <ul>
-                <li>Eje X: Productos (top 10 más vendidos)</li>
-                <li>Eje Y: Cantidad vendida</li>
-                <li>Permite visualizar rápidamente los productos líderes</li>
+                <li>Eje X: Productos (top 10 más vendidos, nombres truncados a 20 chars)</li>
+                <li>Eje Y: Cantidad vendida o Monto total (según toggle)</li>
+                <li>Toggle botones: "Cantidad" / "Monto" para cambiar visualización</li>
+                <li>Tooltips formateados según tipo (unidades vs $)</li>
+                <li>Dark mode compatible (colores adaptan al tema)</li>
             </ul>
-
-            <div class="note" style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 1rem; margin: 1rem 0;">
-                <p style="margin: 0;"><strong>💡 Pendiente definir:</strong> Tipo de gráfico específico (barras horizontales, verticales, líneas). Evaluar si usar librería como Chart.js o similar.</p>
-            </div>
 
             <h3>3.5 Modal: Ver detalle de producto</h3>
             <p><strong>Acceso:</strong> Click en [Ver detalle] de un producto en la tabla</p>
@@ -327,8 +326,8 @@ Administrador puede:
             <p><strong>Estados NO incluidos:</strong></p>
             <ul>
                 <li>❌ Borrador (nunca confirmado)</li>
-                <li>❌ Cancelado (si existe el estado)</li>
             </ul>
+            <p><em>Nota: El estado "Cancelado" no existe actualmente en el sistema.</em></p>
         </section>
 
         <!-- SECCIÓN 5: INTEGRACIÓN -->

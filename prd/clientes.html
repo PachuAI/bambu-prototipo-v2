@@ -60,7 +60,7 @@
                 </tr>
                 <tr>
                     <td><strong>Estado</strong></td>
-                    <td>En especificación</td>
+                    <td>✅ Prototipado y validado (Enero 2026)</td>
                 </tr>
             </table>
         </header>
@@ -225,9 +225,7 @@ Acciones disponibles:
             <ul>
                 <li><strong>Dirección</strong>: Identificador principal (clickeable → abre detalle)</li>
                 <li><strong>Teléfono</strong>: Número de contacto</li>
-                <li><strong>Email</strong>: Email del cliente (opcional, puede estar vacío)</li>
                 <li><strong>Ciudad</strong>: Ciudad del cliente</li>
-                <li><strong>Descuento</strong>: Badge indicando descuento fijo (Sin desc / L2 / L3)</li>
                 <li><strong>Saldo CC</strong>: Saldo cuenta corriente con indicador visual:
                     <ul>
                         <li>🔴 Rojo: Saldo negativo (debe)</li>
@@ -293,6 +291,18 @@ Acciones disponibles:
                         <td>-</td>
                         <td>Sin descuento (default) / L2 (6.25%) / L3 (10%)</td>
                     </tr>
+                    <tr>
+                        <td><strong>Nota</strong></td>
+                        <td>Textarea</td>
+                        <td>❌ No</td>
+                        <td>Nota interna sobre el cliente (opcional)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Activo</strong></td>
+                        <td>Checkbox (header modal)</td>
+                        <td>-</td>
+                        <td>Toggle para marcar cliente activo/inactivo</td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -312,32 +322,32 @@ Acciones disponibles:
             <h3>3.5 Vista detallada del cliente</h3>
             <p><strong>Acceso:</strong> Click en dirección del cliente en la tabla principal</p>
 
-            <p><strong>Estructura con 2 pestañas:</strong></p>
+            <p><strong>Header:</strong> Dirección + badges (estado, descuento) + botones editar/eliminar</p>
 
-            <h4>3.5.1 Pestaña "Información"</h4>
-            <p><strong>Panel superior muestra:</strong></p>
-            <ul>
-                <li>Dirección (título principal)</li>
-                <li>Teléfono | Email | Ciudad</li>
-                <li>Descuento fijo configurado (badge)</li>
-                <li>Saldo actual en cuenta corriente (grande, con color)</li>
-                <li>Botones: [Editar cliente] [Eliminar cliente]</li>
-            </ul>
+            <p><strong>Estructura con 3 pestañas:</strong> (Cuenta Corriente es la tab por defecto)</p>
 
-            <p><strong>Panel inferior: Historial de pedidos</strong></p>
+            <h4>3.5.1 Pestaña "Cuenta Corriente" (default)</h4>
+            <p><strong>Contenido:</strong> Vista completa de la cuenta corriente del cliente</p>
+            <p><strong>📄 Especificación detallada:</strong> <a href="cuenta-corriente.html" target="_blank">Ver PRD Cuenta Corriente completo</a></p>
+
+            <h4>3.5.2 Pestaña "Historial Pedidos"</h4>
+            <p><strong>Contenido:</strong></p>
             <ul>
-                <li>Tabla con últimos pedidos del cliente</li>
+                <li>Tabla con todos los pedidos del cliente</li>
                 <li>Columnas: Fecha | Pedido # | Estado | Total | Método pago</li>
                 <li>Clickeable → Abre detalle del pedido en módulo Ventas</li>
                 <li>Ordenamiento: Cronológico descendente (más recientes primero)</li>
             </ul>
 
-            <h4>3.5.2 Pestaña "Cuenta Corriente"</h4>
-            <p><strong>Contenido:</strong> Vista completa de la cuenta corriente del cliente</p>
+            <h4>3.5.3 Pestaña "Información"</h4>
+            <p><strong>Panel muestra:</strong></p>
+            <ul>
+                <li>Datos de contacto: Teléfono, Email, Ciudad</li>
+                <li>Nota interna (si existe)</li>
+                <li>Fecha de creación</li>
+            </ul>
 
-            <p><strong>📄 Especificación detallada:</strong> <a href="cuenta-corriente.html" target="_blank">Ver PRD Cuenta Corriente completo</a></p>
-
-            <p><strong>Panel superior muestra:</strong></p>
+            <p><strong>Panel superior de Cuenta Corriente muestra:</strong></p>
             <ul>
                 <li><strong>Saldo actual:</strong> Indicador visual (rojo si debe, verde si a favor)</li>
                 <li>Total de pedidos realizados</li>

@@ -1,6 +1,6 @@
 # ESTADO-DASHBOARD.md - Auditoría Módulo Dashboard
 
-**Fecha**: 06 Enero 2026
+**Fecha**: 07 Enero 2026
 **Prototipo**: `prototipos/dashboard.html`
 **PRD**: `prd/dashboard.html`
 
@@ -10,9 +10,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 21 | 91% |
-| ⚠️ Visuales sin lógica | 1 | 4% |
-| ❌ Faltantes | 1 | 4% |
+| ✅ Implementadas (HTML + JS) | 23 | 100% |
+| ⚠️ Visuales sin lógica | 0 | 0% |
+| ❌ Faltantes | 0 | 0% |
 
 **Total funcionalidades**: 23
 
@@ -66,23 +66,10 @@
 - ✅ Ordenadas por cantidad DESC
 - ✅ Botón "Ver repartos"
 
----
-
-## VISUALES SIN LÓGICA
-
-### 1. Navegación Calendario (Flechas Semana)
-- **HTML**: ✅ Botones existen
-- **JS Falta**: Event listeners para cambiar semana
-- **Complejidad**: Baja (15-20 líneas)
-
----
-
-## FALTANTES
-
-### 1. Botón "HOY" en Navegación
-- Resetear calendario a fecha actual
-- **Complejidad**: Baja
-- **Prioridad**: Baja (mejora UX opcional)
+### 6. Navegación Calendario
+- ✅ Flechas < > para cambiar semana
+- ✅ Botón "HOY" para volver a semana actual
+- ✅ Botón HOY visible solo cuando offset != 0
 
 ---
 
@@ -99,4 +86,4 @@
 
 ---
 
-**Estado general: EXCELENTE (91% implementado)**
+**Estado general: COMPLETO (100% implementado)**

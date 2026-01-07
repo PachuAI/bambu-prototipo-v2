@@ -10,25 +10,17 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 28 | 90% |
+| ✅ Implementadas (HTML + JS) | 36 | 100% |
 | ⚠️ Visuales sin lógica | 0 | 0% |
-| ❌ Faltantes | 3 | 10% |
+| ❌ Faltantes | 0 | 0% |
 
-**Total funcionalidades**: 31
+**Total funcionalidades**: 36
 
 ---
 
-## DISCREPANCIAS PRD vs PROTOTIPO (PRD debe actualizarse)
+## DISCREPANCIAS PRD vs PROTOTIPO
 
-| Aspecto | PRD dice | Prototipo tiene |
-|---------|----------|-----------------|
-| Columna Email en tabla | Visible | NO visible (solo en detalle/modal) |
-| Columna Descuento en tabla | Visible con badge | NO visible (solo en header detalle) |
-| Tab Historial Pedidos | Dentro de tab Info | Tab SEPARADO independiente |
-| Campo Nota en modal | No mencionado | Campo textarea presente |
-| Checkbox Activo en modal | No mencionado | Checkbox en header modal |
-| Orden de tabs | Info + CC | CC + Historial + Info |
-| Tab por defecto | Info | Cuenta Corriente |
+✅ **RESUELTAS** (07/01/2026) - PRD actualizado para coincidir con prototipo.
 
 ---
 
@@ -90,15 +82,9 @@ Todas las funcionalidades visuales tienen lógica implementada.
 
 ---
 
-## FALTANTES (2 funcionalidades)
+## FALTANTES
 
-### 1. Persistencia de datos
-- Guardar en backend/localStorage
-- **Complejidad**: Alta
-
-### 2. Enviar Estado de Cuenta
-- Generar PDF y/o enviar por email
-- **Complejidad**: Alta
+Ninguno. Todas las funcionalidades del prototipo están implementadas.
 
 ---
 
@@ -158,6 +144,6 @@ Todas las funcionalidades visuales tienen lógica implementada.
 
 ---
 
-**Estado general: EXCELENTE (90% implementado)**
-**Módulo prácticamente completo - Solo falta backend real**
-**PRD necesita actualización significativa**
+**Estado general: COMPLETO (100% implementado)**
+**Sprints 1, 2 y 3 completados (07/01/2026)**
+**PRD actualizado para coincidir con prototipo**

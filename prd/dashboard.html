@@ -103,7 +103,7 @@
             <p><strong>Comportamiento:</strong></p>
             <ul>
                 <li>Resultados agrupados por tipo con ícono identificador</li>
-                <li>Máximo 5 resultados por categoría</li>
+                <li>Máximo 4 resultados por categoría</li>
                 <li>Click en resultado → navega al detalle</li>
                 <li>Atajo de teclado: Ctrl+K o Cmd+K</li>
             </ul>
@@ -119,8 +119,9 @@
             </ul>
             <p><strong>Interacción:</strong></p>
             <ul>
-                <li>Click en día → Ventas filtrado por esa fecha</li>
+                <li>Click en día → Navega a Repartos del día (repartos-dia.html?fecha=YYYY-MM-DD)</li>
                 <li>Flechas para navegar entre semanas</li>
+                <li>Botón "HOY" para volver a semana actual (visible solo si navegó)</li>
             </ul>
 
             <h3>3.3 Repartos del Día Siguiente</h3>
@@ -132,10 +133,10 @@
                 <li>Vehículo asignado (si tiene)</li>
                 <li>Peso total (kg)</li>
             </ul>
-            <p><strong>Agrupación:</strong> Por vehículo (Reparto 1, Reparto 2, Sin asignar)</p>
+            <p><strong>Agrupación:</strong> 4 columnas: Sin asignar + Reparto 1 + Reparto 2 + Reparto 3</p>
 
             <h3>3.4 Alertas de Stock Bajo</h3>
-            <p><strong>Vista:</strong> Panel compacto (8-10 productos)</p>
+            <p><strong>Vista:</strong> Panel compacto (máximo 5 productos)</p>
             <p><strong>Información:</strong></p>
             <ul>
                 <li>Nombre del producto</li>
@@ -148,6 +149,17 @@
                 <li>🟡 Advertencia: stock actual entre 50% y 100% del mínimo</li>
             </ul>
             <p><strong>Click:</strong> Ir a Productos (abre modal Ajustar Stock)</p>
+
+            <h3>3.5 Ciudades a Visitar Mañana</h3>
+            <p><strong>Vista:</strong> Widget con lista de ciudades con pedidos programados para mañana</p>
+            <p><strong>Información por ciudad:</strong></p>
+            <ul>
+                <li>Nombre de la ciudad</li>
+                <li>Cantidad de pedidos</li>
+                <li>Total kg a entregar</li>
+            </ul>
+            <p><strong>Ordenamiento:</strong> Por cantidad de pedidos (descendente)</p>
+            <p><strong>Click:</strong> Botón "Ver repartos" → navega a repartos-dia.html</p>
         </section>
 
         <!-- REGLAS -->

@@ -27,14 +27,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // PRD: Click en día → navega a repartos-dia.html
     // Muestra: pedidos, kilos, porcentaje de carga
     // Highlight: día actual (HOY)
+    // Navegación: Flechas < > cambian semana, botón HOY resetea
     // ========================================================================
+
+    // Estado de navegación del calendario
+    let semanaOffset = 0;
 
     function initCalendario() {
         const daysRow = document.getElementById('days-row');
         const mesLabel = document.getElementById('calendario-mes');
 
-        // Obtener lunes de la semana actual
-        const lunes = getLunesDeSemana(HOY);
+        // Calcular fecha base según offset
+        const fechaBase = new Date(HOY);
+        fechaBase.setDate(fechaBase.getDate() + (semanaOffset * 7));
+
+        // Obtener lunes de la semana
+        const lunes = getLunesDeSemana(fechaBase);
 
         // Actualizar label del mes
         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -76,6 +84,47 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             daysRow.appendChild(card);
+        }
+    }
+
+    /**
+     * NAVEGACIÓN CALENDARIO
+     * PRD: Flechas < > cambian semana mostrada
+     * Botón HOY: Resetea a semana actual (solo visible si offset != 0)
+     */
+    function initNavegacionCalendario() {
+        const btnPrev = document.getElementById('btn-semana-prev');
+        const btnNext = document.getElementById('btn-semana-next');
+        const btnHoy = document.getElementById('btn-hoy');
+
+        // Navegar a semana anterior
+        btnPrev.addEventListener('click', () => {
+            semanaOffset--;
+            initCalendario();
+            actualizarBotonHoy();
+        });
+
+        // Navegar a semana siguiente
+        btnNext.addEventListener('click', () => {
+            semanaOffset++;
+            initCalendario();
+            actualizarBotonHoy();
+        });
+
+        // Volver a semana actual
+        btnHoy.addEventListener('click', () => {
+            semanaOffset = 0;
+            initCalendario();
+            actualizarBotonHoy();
+        });
+    }
+
+    function actualizarBotonHoy() {
+        const btnHoy = document.getElementById('btn-hoy');
+        if (semanaOffset === 0) {
+            btnHoy.classList.add('hidden');
+        } else {
+            btnHoy.classList.remove('hidden');
         }
     }
 
@@ -480,6 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================================================
 
     initCalendario();
+    initNavegacionCalendario();
     initRepartosManana();
     initStockCritico();
     initCiudadesWidget();
