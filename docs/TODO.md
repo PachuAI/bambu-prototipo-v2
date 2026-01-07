@@ -29,12 +29,11 @@ Sistema de datos mock consistente con persistencia localStorage.
 
 | Sub-fase | Descripción | Estado |
 |----------|-------------|--------|
-| 0 | Crear state-manager.js base | ⬜ Pendiente |
-| 1 | Estructuras normalizadas | ⬜ Pendiente |
-| 2 | Generador datos consistentes | ⬜ Pendiente |
-| 3 | Persistencia localStorage | ⬜ Pendiente |
-| 4 | Migrar Dashboard | ⬜ Pendiente |
-| 5 | Migrar Clientes + ?id= | ⬜ Pendiente |
+| 0 | Crear state-manager.js base | ✅ Completado |
+| 1-2 | Estructuras normalizadas + generador | ✅ Completado |
+| 3 | Persistencia localStorage | ✅ Completado |
+| 4 | Migrar Dashboard | ✅ Completado |
+| 5 | Migrar Clientes + ?id= | ✅ Completado |
 | 6 | Migrar Ventas | ⬜ Pendiente |
 | 7 | Migrar Repartos-día | ⬜ Pendiente |
 

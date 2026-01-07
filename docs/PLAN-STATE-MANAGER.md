@@ -1,7 +1,7 @@
 # Plan: Sistema de Datos Mock Consistente - Bambu CRM V2
 
 **Fecha creación**: 06 Enero 2026
-**Estado**: EN PROGRESO
+**Estado**: EN PROGRESO (5/7 fases completadas)
 **Alcance**: Consistencia de datos + navegación (sin creación de pedidos aún)
 
 ---
@@ -70,12 +70,11 @@ Dashboard  Ventas  Repartos Clientes  Productos
 
 | Fase | Descripción | Estado | Commit |
 |------|-------------|--------|--------|
-| 0 | Crear state-manager.js base | ⬜ Pendiente | `feat: crear state-manager.js base` |
-| 1 | Estructuras normalizadas | ⬜ Pendiente | `feat: estructuras de datos normalizadas` |
-| 2 | Generador datos consistentes | ⬜ Pendiente | `feat: generador datos consistentes` |
-| 3 | Persistencia localStorage | ⬜ Pendiente | `feat: persistencia localStorage` |
-| 4 | Migrar Dashboard | ⬜ Pendiente | `refactor(dashboard): usar state-manager` |
-| 5 | Migrar Clientes + ?id= | ⬜ Pendiente | `refactor(clientes): migrar + soporte ?id=` |
+| 0 | Crear state-manager.js base | ✅ Completado | `feat: crear state-manager.js base` |
+| 1-2 | Estructuras normalizadas + generador | ✅ Completado | `feat: estructuras normalizadas + generador` |
+| 3 | Persistencia localStorage | ✅ Completado | (incluido en fase 0) |
+| 4 | Migrar Dashboard | ✅ Completado | `refactor(dashboard): migrar a BambuState` |
+| 5 | Migrar Clientes + ?id= | ✅ Completado | `refactor(clientes): migrar + soporte ?id=` |
 | 6 | Migrar Ventas | ⬜ Pendiente | `refactor(ventas): eliminar datos locales` |
 | 7 | Migrar Repartos-día | ⬜ Pendiente | `refactor(repartos): datos dinámicos` |
 
