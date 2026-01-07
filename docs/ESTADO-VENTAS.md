@@ -12,9 +12,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 102 | 96.2% |
+| ✅ Implementadas (HTML + JS) | 104 | 98.1% |
 | ⚠️ Visuales sin lógica | 0 | 0.0% |
-| ❌ Faltantes | 4 | 3.8% |
+| ❌ Faltantes | 2 | 1.9% |
 
 **Total funcionalidades**: 106 (desglose en detalle abajo)
 
@@ -239,23 +239,24 @@
   - Advertencias si insuficiente
 - **Complejidad**: Alta
 
-### 3. Modo Fábrica: Registro de Pago en Cotizador
+### ~~3. Modo Fábrica: Registro de Pago en Cotizador~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 2.2 - Flujo de datos
-- **Requiere**:
-  - Modificar Cotizador con sección pago opcional
-  - Checkboxes Efectivo/Digital/Ambos
-  - Sincronización automática
-- **Complejidad**: Alta
-- **Nota**: Corresponde al módulo Cotizador, no Ventas
+- **Implementado**:
+  - ✅ Tag "Requerido" en lugar de "Opcional" cuando modo FÁBRICA
+  - ✅ Validación: no permite confirmar sin método de pago seleccionado
+  - ✅ Guarda metodo_pago y monto_pagado en el pedido
+  - ✅ CSS para tag .required-tag
+- **Archivos modificados**: cotizador/script.js, cotizador-specific.css
 
-### 4. Reordenamiento de Pedidos en Vehículo (REPARTOS-DÍA)
+### ~~4. Reordenamiento de Pedidos en Vehículo (REPARTOS-DÍA)~~ ✅ IMPLEMENTADO (07/01/2026)
 - **PRD**: Sección 8.2 - Reordenamiento de pedidos (ruta de entrega)
-- **Requiere**:
-  - Drag & drop para reordenar
-  - Campo `orden_visita`
-  - Exportar con orden correcto
-- **Complejidad**: Alta
-- **Nota**: Ubicación correcta: `prototipos/repartos-dia.html`, no Ventas
+- **Implementado**:
+  - ✅ Drag & drop para reordenar pedidos dentro de vehículo
+  - ✅ Campo `orden_visita` actualizado al reordenar
+  - ✅ Columna "Orden" con badges #1, #2, #3...
+  - ✅ Hoja de reparto exportada respeta orden
+  - ✅ CSS para indicadores de drop (arriba/abajo)
+- **Archivos modificados**: repartos/script.js, repartos-specific.css
 
 ---
 

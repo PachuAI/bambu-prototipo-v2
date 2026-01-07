@@ -10,11 +10,11 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 34 | 100% |
+| ✅ Implementadas (HTML + JS) | 35 | 100% |
 | ⚠️ Visuales sin lógica | 0 | 0% |
 | ❌ Faltantes | 0 | 0% |
 
-**Total funcionalidades**: 34
+**Total funcionalidades**: 35
 
 ---
 
@@ -86,6 +86,14 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 ### Vista Por Ciudad (BONUS - no en PRD)
 33. ✅ Agrupación pedidos por ciudad
 34. ✅ Stats por ciudad
+
+### Reordenamiento de Ruta (PRD 8.2) - Sprint 07/01/2026
+35. ✅ Drag & drop para reordenar pedidos dentro de vehículo
+    - Columna "Orden" con badges #1, #2, #3...
+    - Handle de arrastre visible en hover
+    - Indicadores visuales de inserción (arriba/abajo)
+    - Campo `orden_visita` actualizado al reordenar
+    - Hoja de reparto exportada respeta orden
 
 ---
 

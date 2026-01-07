@@ -402,15 +402,35 @@ function setupListeners() {
     });
 }
 
+/**
+ * Actualiza la UI según el modo seleccionado (REPARTO/FÁBRICA)
+ * PRD: Sección 2.2 - Modo Fábrica requiere pago obligatorio
+ *
+ * LÓGICA:
+ * - REPARTO: Pago opcional, entrega agendada
+ * - FÁBRICA: Pago REQUERIDO, entrega inmediata
+ */
 function updateModeUI() {
-    // Both sections (Delivery Date & Payment Method) are now always visible
-    // Only update button text based on mode
+    const optionalTag = document.querySelector('.optional-tag');
+
     if (state.mode === 'FABRICA') {
         els.btnConfirm.classList.remove('btn-reparto');
         els.confirmSubtext.textContent = "Entregar ahora";
+
+        // Pago es REQUERIDO en modo Fábrica
+        if (optionalTag) {
+            optionalTag.textContent = 'Requerido';
+            optionalTag.classList.add('required-tag');
+        }
     } else {
         els.btnConfirm.classList.add('btn-reparto');
         els.confirmSubtext.textContent = "Agendar entrega";
+
+        // Pago es opcional en modo Reparto
+        if (optionalTag) {
+            optionalTag.textContent = 'Opcional';
+            optionalTag.classList.remove('required-tag');
+        }
     }
 }
 
@@ -1204,6 +1224,7 @@ function guardarBorrador() {
 /**
  * Confirma el pedido actual y lo persiste en BambuState
  * PRD: Al confirmar → Guardar → Limpiar → Focus en buscador (SIN reload)
+ * PRD 2.2: Modo FÁBRICA requiere pago obligatorio
  */
 function confirmarPedido() {
     // Validar que hay productos
@@ -1220,6 +1241,40 @@ function confirmarPedido() {
     const fecha = esReparto ? els.inputDateInline.value : BambuState.FECHA_SISTEMA;
     const estadoInicial = esReparto ? 'en transito' : 'entregado';
 
+    // =========================================================================
+    // VALIDACIÓN PAGO EN MODO FÁBRICA
+    // PRD: Sección 2.2 - Pago obligatorio al confirmar pedido de fábrica
+    // =========================================================================
+    const tieneEfectivo = els.chkEfectivo.checked;
+    const tieneDigital = els.chkDigital.checked;
+    const hayMetodoPago = tieneEfectivo || tieneDigital;
+
+    if (!esReparto && !hayMetodoPago) {
+        // En modo FÁBRICA, el pago es obligatorio
+        alert('En modo FÁBRICA es obligatorio registrar el método de pago.\n\nSeleccioná Efectivo, Digital o ambos.');
+        els.chkEfectivo.focus();
+        return;
+    }
+
+    // Obtener datos de pago
+    let metodoPago = null;
+    let montoPagado = 0;
+
+    if (hayMetodoPago) {
+        if (tieneEfectivo && tieneDigital) {
+            metodoPago = 'mixto';
+            const montoEfectivo = parseFloat(document.getElementById('input-monto-efectivo')?.value) || 0;
+            const montoDigital = parseFloat(document.getElementById('input-monto-digital')?.value) || 0;
+            montoPagado = montoEfectivo + montoDigital;
+        } else if (tieneEfectivo) {
+            metodoPago = 'efectivo';
+            montoPagado = parseFloat(document.getElementById('input-monto-recibido')?.value) || 0;
+        } else if (tieneDigital) {
+            metodoPago = 'digital';
+            montoPagado = parseFloat(document.getElementById('input-monto-recibido')?.value) || 0;
+        }
+    }
+
     // Crear pedido en BambuState
     const nuevoPedido = BambuState.crearPedido({
         cliente_id: state.selectedClient?.id || null,
@@ -1229,7 +1284,9 @@ function confirmarPedido() {
         direccion: state.selectedClient?.address || 'Cliente sin nombre',
         ciudad: 'Neuquén',  // Default, en producción vendría del cliente
         notas: state.notes || null,
-        vehiculo_id: null  // Se asigna después en repartos-dia
+        vehiculo_id: null,  // Se asigna después en repartos-dia
+        metodo_pago: metodoPago,
+        monto_pagado: montoPagado
     });
 
     // Agregar items al pedido

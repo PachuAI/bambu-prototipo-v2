@@ -64,6 +64,12 @@ function cargarDatosDia(fecha) {
 
 /**
  * Adapta pedido de BambuState al formato de la UI
+ * PRD: prd/ventas.html - Sección 8.2 (Reordenamiento de Ruta)
+ *
+ * CAMPO orden_visita:
+ * - Determina secuencia de entrega dentro del vehículo
+ * - Se actualiza al reordenar por drag & drop
+ * - Se usa en hoja de reparto exportada
  */
 function adaptarPedido(p) {
     const cliente = BambuState.getById('clientes', p.cliente_id);
@@ -84,7 +90,8 @@ function adaptarPedido(p) {
         telefono: cliente?.telefono || '',
         peso: Math.round(peso * 10) / 10,
         monto: Math.round(monto),
-        fechaEntrega: fechaDisplay
+        fechaEntrega: fechaDisplay,
+        orden_visita: p.orden_visita || 0 // Orden de visita para la ruta
     };
 }
 
@@ -226,21 +233,30 @@ function renderizarVehiculos() {
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="collapsible-content">
-                        <table class="pedidos-table">
+                        <table class="pedidos-table pedidos-reordenables" data-vehiculo-id="${vehiculo.id}">
                             <thead>
                                 <tr>
+                                    <th style="width: 5%; text-align: center;">Orden</th>
                                     <th style="width: 7%;">#</th>
-                                    <th style="width: 28%;">Dirección</th>
-                                    <th style="width: 14%;">Ciudad</th>
-                                    <th style="width: 14%;">Teléfono</th>
-                                    <th style="width: 9%; text-align: right;">Peso</th>
-                                    <th style="width: 12%; text-align: right;">Monto</th>
-                                    <th style="width: 16%; text-align: center;">Acción</th>
+                                    <th style="width: 25%;">Dirección</th>
+                                    <th style="width: 12%;">Ciudad</th>
+                                    <th style="width: 12%;">Teléfono</th>
+                                    <th style="width: 8%; text-align: right;">Peso</th>
+                                    <th style="width: 11%; text-align: right;">Monto</th>
+                                    <th style="width: 20%; text-align: center;">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${vehiculo.pedidos.map(pedido => `
-                                    <tr>
+                                ${vehiculo.pedidos.map((pedido, idx) => `
+                                    <tr class="pedido-row-reordenable"
+                                        draggable="true"
+                                        data-pedido-id="${pedido.id}"
+                                        data-vehiculo-id="${vehiculo.id}"
+                                        data-orden="${idx}">
+                                        <td class="orden-cell" style="text-align: center;">
+                                            <span class="orden-badge">#${idx + 1}</span>
+                                            <span class="drag-handle" title="Arrastra para reordenar"><i class="fas fa-grip-vertical"></i></span>
+                                        </td>
                                         <td><strong>${pedido.numero}</strong></td>
                                         <td>${pedido.direccion}</td>
                                         <td>${pedido.ciudad}</td>
@@ -987,14 +1003,19 @@ function handleDrop(e) {
 
 /**
  * Inicializa eventos de drag & drop en zonas de vehículos
+ * Incluye tanto asignación (sin asignar → vehículo) como reordenamiento (dentro de vehículo)
  */
 function initDragDropZones() {
+    // D&D para ASIGNAR pedidos sin asignar a vehículos
     document.querySelectorAll('.vehicle-group[data-vehiculo-id]').forEach(zone => {
         zone.addEventListener('dragenter', handleDragEnter);
         zone.addEventListener('dragleave', handleDragLeave);
         zone.addEventListener('dragover', handleDragOver);
         zone.addEventListener('drop', handleDrop);
     });
+
+    // D&D para REORDENAR pedidos dentro de vehículos
+    initReorderDragDrop();
 }
 
 // ===========================
@@ -1176,4 +1197,183 @@ function aplicarTodasSugerencias() {
 function cerrarSugerencias() {
     document.getElementById('sugerencias-panel').style.display = 'none';
     sugerenciasActuales = [];
+}
+
+// ===========================
+// REORDENAMIENTO DE RUTA (D&D)
+// PRD: prd/ventas.html - Sección 8.2
+// ===========================
+
+/**
+ * Sistema de Drag & Drop para reordenar pedidos DENTRO de un vehículo
+ *
+ * LÓGICA DE NEGOCIO:
+ * - El campo orden_visita determina la secuencia de entrega
+ * - El usuario puede arrastrar filas para cambiar el orden
+ * - El nuevo orden se refleja inmediatamente en la UI
+ * - La hoja de reparto exportada respeta este orden
+ *
+ * DIFERENCIA con D&D de asignación:
+ * - Asignación: mueve pedido SIN ASIGNAR → VEHÍCULO
+ * - Reordenamiento: cambia posición DENTRO del mismo vehículo
+ */
+
+let reorderDraggedRow = null;
+let reorderSourceVehiculo = null;
+
+/**
+ * Inicia el arrastre de una fila para reordenar
+ */
+function handleReorderDragStart(e) {
+    const row = e.target.closest('.pedido-row-reordenable');
+    if (!row) return;
+
+    reorderDraggedRow = row;
+    reorderSourceVehiculo = row.dataset.vehiculoId;
+
+    row.classList.add('reorder-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', row.dataset.pedidoId);
+
+    // Marcar tabla como activa para reordenamiento
+    const table = row.closest('.pedidos-reordenables');
+    if (table) {
+        table.classList.add('reorder-active');
+    }
+}
+
+/**
+ * Finaliza el arrastre de reordenamiento
+ */
+function handleReorderDragEnd(e) {
+    const row = e.target.closest('.pedido-row-reordenable');
+    if (row) {
+        row.classList.remove('reorder-dragging');
+    }
+
+    // Limpiar indicadores
+    document.querySelectorAll('.reorder-drop-indicator').forEach(el => el.remove());
+    document.querySelectorAll('.pedidos-reordenables').forEach(table => {
+        table.classList.remove('reorder-active');
+    });
+    document.querySelectorAll('.pedido-row-reordenable').forEach(r => {
+        r.classList.remove('reorder-over-above', 'reorder-over-below');
+    });
+
+    reorderDraggedRow = null;
+    reorderSourceVehiculo = null;
+}
+
+/**
+ * Permite el drop durante reordenamiento
+ */
+function handleReorderDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+
+    const row = e.target.closest('.pedido-row-reordenable');
+    if (!row || !reorderDraggedRow || row === reorderDraggedRow) return;
+
+    // Solo permitir reordenar dentro del mismo vehículo
+    if (row.dataset.vehiculoId !== reorderSourceVehiculo) return;
+
+    // Determinar si insertar arriba o abajo según posición del mouse
+    const rect = row.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+
+    // Limpiar clases previas
+    row.classList.remove('reorder-over-above', 'reorder-over-below');
+
+    if (e.clientY < midY) {
+        row.classList.add('reorder-over-above');
+    } else {
+        row.classList.add('reorder-over-below');
+    }
+}
+
+/**
+ * Quita indicador al salir de la fila
+ */
+function handleReorderDragLeave(e) {
+    const row = e.target.closest('.pedido-row-reordenable');
+    if (row) {
+        row.classList.remove('reorder-over-above', 'reorder-over-below');
+    }
+}
+
+/**
+ * Procesa el drop y reordena los pedidos
+ *
+ * LÓGICA:
+ * - Obtiene índice origen y destino
+ * - Mueve el pedido en el array
+ * - Actualiza orden_visita de todos los pedidos afectados
+ * - Re-renderiza la vista
+ */
+function handleReorderDrop(e) {
+    e.preventDefault();
+
+    const targetRow = e.target.closest('.pedido-row-reordenable');
+    if (!targetRow || !reorderDraggedRow || targetRow === reorderDraggedRow) return;
+
+    const vehiculoId = targetRow.dataset.vehiculoId;
+
+    // Solo permitir reordenar dentro del mismo vehículo
+    if (vehiculoId !== reorderSourceVehiculo) return;
+
+    // Obtener vehículo y pedidos
+    const vehiculo = appData.vehiculos.find(v => v.id === vehiculoId);
+    if (!vehiculo) return;
+
+    const draggedPedidoId = parseInt(reorderDraggedRow.dataset.pedidoId);
+    const targetPedidoId = parseInt(targetRow.dataset.pedidoId);
+
+    // Encontrar índices
+    const draggedIndex = vehiculo.pedidos.findIndex(p => p.id === draggedPedidoId);
+    const targetIndex = vehiculo.pedidos.findIndex(p => p.id === targetPedidoId);
+
+    if (draggedIndex === -1 || targetIndex === -1) return;
+
+    // Determinar posición de inserción
+    const rect = targetRow.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    let newIndex = e.clientY < midY ? targetIndex : targetIndex + 1;
+
+    // Ajustar si movemos hacia abajo
+    if (draggedIndex < newIndex) {
+        newIndex--;
+    }
+
+    // Reordenar el array
+    const [pedidoMovido] = vehiculo.pedidos.splice(draggedIndex, 1);
+    vehiculo.pedidos.splice(newIndex, 0, pedidoMovido);
+
+    // Actualizar orden_visita de todos los pedidos
+    vehiculo.pedidos.forEach((p, idx) => {
+        p.orden_visita = idx + 1;
+    });
+
+    // Feedback en consola
+    console.log(`[Reorden] Pedido ${pedidoMovido.numero} movido a posición #${newIndex + 1} en ${vehiculo.badge}`);
+
+    // Re-renderizar
+    renderizarVehiculos();
+    renderizarCiudades();
+
+    // Limpiar estado
+    reorderDraggedRow = null;
+    reorderSourceVehiculo = null;
+}
+
+/**
+ * Inicializa eventos de D&D para reordenamiento en tablas de pedidos asignados
+ */
+function initReorderDragDrop() {
+    document.querySelectorAll('.pedido-row-reordenable').forEach(row => {
+        row.addEventListener('dragstart', handleReorderDragStart);
+        row.addEventListener('dragend', handleReorderDragEnd);
+        row.addEventListener('dragover', handleReorderDragOver);
+        row.addEventListener('dragleave', handleReorderDragLeave);
+        row.addEventListener('drop', handleReorderDrop);
+    });
 }

@@ -826,6 +826,14 @@
     font-size: 10px;
     color: var(--text-muted);
     font-style: italic;
+    transition: var(--transition-fast);
+}
+
+/* Tag "Requerido" en modo Fábrica - PRD 2.2 */
+.payment-header .optional-tag.required-tag {
+    color: var(--color-danger);
+    font-weight: var(--font-weight-semibold);
+    font-style: normal;
 }
 
 .payment-options {

@@ -178,18 +178,27 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
     - Cotizador detecta URL, carga cliente/productos/modo
     - Guardar actualiza borrador, Confirmar lo convierte a pedido
 
+### Sprint 5 - Pago Fábrica ✅ COMPLETADO (07-Ene-2026)
+
+12. ~~**Pago obligatorio en modo FÁBRICA**~~ ✅ IMPLEMENTADO Sprint 5
+    - PRD: Sección 2.2 - Flujo de datos modo Fábrica
+    - Tag "Opcional" → "Requerido" cuando es FÁBRICA
+    - Validación en confirmarPedido(): bloquea si no hay método de pago
+    - Guarda metodo_pago y monto_pagado en pedido
+    - CSS para .required-tag (color rojo)
+
 ---
 
 ## Resumen Cuantitativo
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| Implementadas | 47 | 97.92% |
-| Visuales sin lógica | 1 | 2.08% |
+| Implementadas | 48 | 100% |
+| Visuales sin lógica | 0 | 0% |
 | Faltantes | 0 | 0% |
 | **TOTAL funcionalidades** | **48** | **100%** |
 
-**Nota**: Sprint 4 completado (07-Ene-2026). Cotizador **98% COMPLETO** - Solo falta: Mejorar feedback visual de descuento cliente.
+**Nota**: Sprint 5 completado (07-Ene-2026). Cotizador **100% COMPLETO** - Pago obligatorio en modo FÁBRICA implementado.
 
 ---
 

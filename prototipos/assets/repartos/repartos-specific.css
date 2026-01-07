@@ -1010,3 +1010,97 @@
 [data-theme="dark"] .sugerencia-item {
     background: var(--bg-hover);
 }
+
+/* ===========================
+   REORDENAMIENTO DE RUTA (D&D)
+   PRD: prd/ventas.html - Sección 8.2
+   =========================== */
+
+/* Badge de orden (#1, #2, #3...) */
+.orden-cell {
+    position: relative;
+}
+
+.orden-badge {
+    display: inline-block;
+    background: var(--color-primary);
+    color: var(--text-white);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    min-width: 28px;
+}
+
+/* Handle de arrastre */
+.drag-handle {
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    cursor: grab;
+    opacity: 0;
+    transition: var(--transition-fast);
+    font-size: 12px;
+}
+
+.pedido-row-reordenable:hover .drag-handle {
+    opacity: 0.6;
+}
+
+.pedido-row-reordenable:hover .drag-handle:hover {
+    opacity: 1;
+    color: var(--color-accent);
+}
+
+/* Fila arrastrable para reordenar */
+.pedido-row-reordenable {
+    cursor: grab;
+    transition: var(--transition-fast);
+}
+
+.pedido-row-reordenable:active {
+    cursor: grabbing;
+}
+
+/* Durante el arrastre */
+.pedido-row-reordenable.reorder-dragging {
+    opacity: 0.4;
+    background: var(--color-accent-light) !important;
+}
+
+/* Tabla activa durante reordenamiento */
+.pedidos-reordenables.reorder-active {
+    background: rgba(13, 148, 136, 0.02);
+}
+
+/* Indicador de inserción arriba */
+.pedido-row-reordenable.reorder-over-above {
+    border-top: 3px solid var(--color-accent) !important;
+    background: rgba(13, 148, 136, 0.08);
+}
+
+/* Indicador de inserción abajo */
+.pedido-row-reordenable.reorder-over-below {
+    border-bottom: 3px solid var(--color-accent) !important;
+    background: rgba(13, 148, 136, 0.08);
+}
+
+/* Dark mode adjustments para reordenamiento */
+[data-theme="dark"] .orden-badge {
+    background: var(--color-accent);
+}
+
+[data-theme="dark"] .pedido-row-reordenable.reorder-dragging {
+    background: rgba(13, 148, 136, 0.15) !important;
+}
+
+[data-theme="dark"] .pedido-row-reordenable.reorder-over-above,
+[data-theme="dark"] .pedido-row-reordenable.reorder-over-below {
+    background: rgba(13, 148, 136, 0.12);
+}
+
+[data-theme="dark"] .pedidos-reordenables.reorder-active {
+    background: rgba(13, 148, 136, 0.05);
+}
