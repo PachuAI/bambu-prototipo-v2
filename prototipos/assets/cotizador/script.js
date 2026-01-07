@@ -319,7 +319,10 @@ function renderCart() {
             <td class="text-center">
                 <div class="qty-control">
                     <button onclick="updateQty(${index}, -1)">-</button>
-                    <input type="text" value="${item.qty}" readonly>
+                    <input type="number" value="${item.qty}" min="0"
+                           onchange="handleQtyDirectEdit(${index}, this.value)"
+                           onkeydown="if(event.key==='Enter'){this.blur()}"
+                           class="qty-input-editable">
                     <button onclick="updateQty(${index}, 1)">+</button>
                 </div>
             </td>
@@ -484,8 +487,8 @@ function updateTotals() {
 
 /* AUTO-CHECK THRESHOLDS (Only if not manually applied) */
 function checkAutoLevels(subtotal) {
-    const L2_THRESHOLD = 250000;
-    const L3_THRESHOLD = 1000000;
+    const L2_THRESHOLD = 400000;  // $400k para L2
+    const L3_THRESHOLD = 1000000; // $1M para L3
 
     if (subtotal >= L3_THRESHOLD) {
         // Auto-apply L3
@@ -839,5 +842,356 @@ function resetearFormulario() {
     console.log('[Cotizador] Formulario reseteado para nuevo pedido');
 }
 
+// ============================================================================
+// SPRINT 2: ATAJOS DE TECLADO CONFIGURABLES
+// PRD: Sección 8.4 - Atajos de teclado
+// ============================================================================
+
+/**
+ * Configuración de atajos de teclado (PLACEHOLDERS)
+ * Los atajos finales se definirán después de validar disponibilidad en Chrome
+ *
+ * Formato: { key, ctrl, shift, alt, action, description }
+ */
+const KEYBOARD_SHORTCUTS = [
+    // TODO: Definir combinaciones finales que no colisionen con Chrome
+    { key: 'Escape', ctrl: false, shift: false, alt: false, action: 'closeModals', description: 'Cerrar modales/dropdowns' },
+    { key: 'Enter', ctrl: false, shift: false, alt: false, action: 'selectHighlighted', description: 'Seleccionar item resaltado' },
+    { key: 'ArrowUp', ctrl: false, shift: false, alt: false, action: 'navigateUp', description: 'Navegar arriba en resultados' },
+    { key: 'ArrowDown', ctrl: false, shift: false, alt: false, action: 'navigateDown', description: 'Navegar abajo en resultados' },
+    // Placeholders para atajos principales (a definir)
+    // { key: '4', ctrl: false, shift: true, alt: false, action: 'confirmOrder', description: 'Confirmar pedido' },
+    // { key: 'F4', ctrl: false, shift: false, alt: false, action: 'openSummary', description: 'Abrir resumen' },
+];
+
+// Estado de navegación por teclado
+let keyboardNavState = {
+    activeDropdown: null, // 'products' | 'clients' | null
+    highlightedIndex: -1
+};
+
+/**
+ * Inicializa el sistema de atajos de teclado
+ */
+function initKeyboardShortcuts() {
+    document.addEventListener('keydown', handleKeyboardShortcut);
+    console.log('[Cotizador] Atajos de teclado inicializados');
+}
+
+/**
+ * Maneja eventos de teclado globales
+ */
+function handleKeyboardShortcut(e) {
+    // Encontrar atajo configurado
+    const shortcut = KEYBOARD_SHORTCUTS.find(s =>
+        s.key === e.key &&
+        s.ctrl === e.ctrlKey &&
+        s.shift === e.shiftKey &&
+        s.alt === e.altKey
+    );
+
+    if (!shortcut) return;
+
+    // Ejecutar acción
+    switch (shortcut.action) {
+        case 'closeModals':
+            closeAllModalsAndDropdowns();
+            e.preventDefault();
+            break;
+        case 'navigateUp':
+            if (keyboardNavState.activeDropdown) {
+                navigateResults(-1);
+                e.preventDefault();
+            }
+            break;
+        case 'navigateDown':
+            if (keyboardNavState.activeDropdown) {
+                navigateResults(1);
+                e.preventDefault();
+            }
+            break;
+        case 'selectHighlighted':
+            if (keyboardNavState.activeDropdown && keyboardNavState.highlightedIndex >= 0) {
+                selectHighlightedItem();
+                e.preventDefault();
+            }
+            break;
+        case 'confirmOrder':
+            els.modalConfirm.classList.remove('hidden');
+            e.preventDefault();
+            break;
+        case 'openSummary':
+            openSummaryModal();
+            e.preventDefault();
+            break;
+    }
+}
+
+/**
+ * Cierra todos los modales y dropdowns abiertos
+ */
+function closeAllModalsAndDropdowns() {
+    // Cerrar dropdowns
+    els.resultsProduct.classList.add('hidden');
+    els.resultsCliente.classList.add('hidden');
+    keyboardNavState.activeDropdown = null;
+    keyboardNavState.highlightedIndex = -1;
+
+    // Cerrar modales
+    els.modalResumen.classList.add('hidden');
+    els.modalConfirm.classList.add('hidden');
+}
+
+// ============================================================================
+// SPRINT 2: NAVEGACIÓN TECLADO EN BUSCADORES
+// PRD: Sección 3.3 - "Flechas ↑↓ + Enter → navegar y seleccionar"
+// ============================================================================
+
+/**
+ * Navega por los resultados de búsqueda con flechas
+ * @param {number} direction - 1 para abajo, -1 para arriba
+ */
+function navigateResults(direction) {
+    const dropdown = keyboardNavState.activeDropdown === 'products'
+        ? els.resultsProduct
+        : els.resultsCliente;
+
+    const items = dropdown.querySelectorAll('.prod-row');
+    if (items.length === 0) return;
+
+    // Quitar highlight anterior
+    if (keyboardNavState.highlightedIndex >= 0 && items[keyboardNavState.highlightedIndex]) {
+        items[keyboardNavState.highlightedIndex].classList.remove('keyboard-highlight');
+    }
+
+    // Calcular nuevo índice
+    keyboardNavState.highlightedIndex += direction;
+
+    // Wrap around
+    if (keyboardNavState.highlightedIndex < 0) {
+        keyboardNavState.highlightedIndex = items.length - 1;
+    } else if (keyboardNavState.highlightedIndex >= items.length) {
+        keyboardNavState.highlightedIndex = 0;
+    }
+
+    // Aplicar highlight y scroll
+    const currentItem = items[keyboardNavState.highlightedIndex];
+    currentItem.classList.add('keyboard-highlight');
+    currentItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/**
+ * Selecciona el item actualmente resaltado
+ */
+function selectHighlightedItem() {
+    const dropdown = keyboardNavState.activeDropdown === 'products'
+        ? els.resultsProduct
+        : els.resultsCliente;
+
+    const items = dropdown.querySelectorAll('.prod-row');
+    if (keyboardNavState.highlightedIndex >= 0 && items[keyboardNavState.highlightedIndex]) {
+        items[keyboardNavState.highlightedIndex].click();
+        keyboardNavState.highlightedIndex = -1;
+        keyboardNavState.activeDropdown = null;
+    }
+}
+
+/**
+ * Configura navegación de teclado para un input de búsqueda
+ */
+function setupSearchKeyboardNav(inputEl, dropdownType) {
+    inputEl.addEventListener('focus', () => {
+        keyboardNavState.activeDropdown = dropdownType;
+        keyboardNavState.highlightedIndex = -1;
+    });
+
+    inputEl.addEventListener('blur', () => {
+        // Delay para permitir click en resultado
+        setTimeout(() => {
+            if (keyboardNavState.activeDropdown === dropdownType) {
+                keyboardNavState.activeDropdown = null;
+                keyboardNavState.highlightedIndex = -1;
+            }
+        }, 200);
+    });
+
+    inputEl.addEventListener('input', () => {
+        keyboardNavState.highlightedIndex = -1;
+    });
+}
+
+// ============================================================================
+// SPRINT 2: VALIDACIÓN FECHA SOLO L-V
+// PRD: Sección 10.1 - "Solo días laborables (Lunes a Viernes)"
+// ============================================================================
+
+/**
+ * Valida que la fecha seleccionada sea día laborable (L-V)
+ * @param {string} dateStr - Fecha en formato YYYY-MM-DD
+ * @returns {boolean} true si es día laborable
+ */
+function esDiaLaborable(dateStr) {
+    const date = new Date(dateStr + 'T12:00:00'); // Evitar issues de timezone
+    const dayOfWeek = date.getDay();
+    return dayOfWeek >= 1 && dayOfWeek <= 5; // 1=Lunes, 5=Viernes
+}
+
+/**
+ * Obtiene el próximo día laborable desde una fecha
+ * @param {Date} date - Fecha de inicio
+ * @returns {string} Fecha en formato YYYY-MM-DD
+ */
+function getProximoDiaLaborable(date) {
+    const nextDate = new Date(date);
+    while (nextDate.getDay() === 0 || nextDate.getDay() === 6) {
+        nextDate.setDate(nextDate.getDate() + 1);
+    }
+    return nextDate.toISOString().split('T')[0];
+}
+
+/**
+ * Inicializa validación de fecha de entrega
+ */
+function initValidacionFecha() {
+    els.inputDateInline.addEventListener('change', (e) => {
+        const fechaSeleccionada = e.target.value;
+
+        if (!esDiaLaborable(fechaSeleccionada)) {
+            const date = new Date(fechaSeleccionada + 'T12:00:00');
+            const diaNombre = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
+            const proximoLaborable = getProximoDiaLaborable(date);
+            const proximoDate = new Date(proximoLaborable + 'T12:00:00');
+            const proximoNombre = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][proximoDate.getDay()];
+
+            // Mostrar advertencia y sugerir próximo día laborable
+            const confirmar = confirm(
+                `⚠️ ${diaNombre} no es día de reparto.\n\n` +
+                `Los repartos solo se realizan de Lunes a Viernes.\n\n` +
+                `¿Cambiar a ${proximoNombre} ${proximoLaborable}?`
+            );
+
+            if (confirmar) {
+                els.inputDateInline.value = proximoLaborable;
+            } else {
+                // Restaurar a hoy o próximo laborable
+                const hoy = new Date();
+                els.inputDateInline.value = getProximoDiaLaborable(hoy);
+            }
+        }
+    });
+
+    // Asegurar que la fecha inicial sea laborable
+    const today = new Date();
+    els.inputDateInline.value = getProximoDiaLaborable(today);
+}
+
+// ============================================================================
+// SPRINT 2: BOTÓN COPIAR EN MODAL RESUMEN
+// PRD: Sección 8.3 - Formatos de resumen
+// ============================================================================
+
+/**
+ * Copia el texto del resumen al portapapeles
+ */
+function copiarResumenAlPortapapeles() {
+    // Construir texto para copiar (formato WhatsApp)
+    const fecha = document.getElementById('preview-date').textContent;
+    const cliente = document.getElementById('preview-client').textContent;
+    const subtotal = document.getElementById('preview-subtotal').textContent;
+    const total = document.getElementById('preview-total-display').textContent;
+
+    // Construir lista de items
+    const itemsTexto = state.cart.map(item =>
+        `• x${item.qty} - ${item.name} - $${(item.price * item.qty).toLocaleString()}`
+    ).join('\n');
+
+    const textoCompleto = `🔥 COTIZACIÓN BAMBU 🔥
+
+📅 Fecha: ${fecha}
+👤 Cliente: ${cliente}
+
+🛒 PRODUCTOS:
+${itemsTexto}
+
+💰 RESUMEN:
+• Subtotal: ${subtotal}
+• TOTAL: ${total}`;
+
+    // Copiar al portapapeles
+    navigator.clipboard.writeText(textoCompleto).then(() => {
+        // Feedback visual
+        const btnCopiar = document.getElementById('btn-copiar-resumen');
+        const textoOriginal = btnCopiar.textContent;
+        btnCopiar.textContent = '✓ Copiado!';
+        btnCopiar.style.background = '#10b981';
+        btnCopiar.style.color = 'white';
+
+        setTimeout(() => {
+            btnCopiar.textContent = textoOriginal;
+            btnCopiar.style.background = '';
+            btnCopiar.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+        alert('No se pudo copiar al portapapeles');
+    });
+}
+
+/**
+ * Inicializa el botón copiar
+ */
+function initBotonCopiar() {
+    const btnCopiar = document.getElementById('btn-copiar-resumen');
+    if (btnCopiar) {
+        btnCopiar.addEventListener('click', copiarResumenAlPortapapeles);
+    }
+}
+
+// ============================================================================
+// SPRINT 2: INPUT CANTIDAD EDITABLE
+// PRD: Sección 5.2 - "Input central: permite edición directa"
+// ============================================================================
+
+/**
+ * Maneja la edición directa de cantidad en el carrito
+ * @param {number} index - Índice del producto en el carrito
+ * @param {string} newValue - Nuevo valor ingresado
+ */
+function handleQtyDirectEdit(index, newValue) {
+    const qty = parseInt(newValue, 10);
+
+    if (isNaN(qty) || qty <= 0) {
+        // Si es inválido o 0, eliminar del carrito
+        state.cart.splice(index, 1);
+    } else {
+        state.cart[index].qty = qty;
+    }
+
+    renderCart();
+    updateTotals();
+}
+
+// ============================================================================
+// INICIALIZACIÓN SPRINT 2
+// ============================================================================
+
+function initSprint2Features() {
+    // Atajos de teclado
+    initKeyboardShortcuts();
+
+    // Navegación teclado en buscadores
+    setupSearchKeyboardNav(els.inputProduct, 'products');
+    setupSearchKeyboardNav(els.inputClientSearch, 'clients');
+
+    // Validación fecha L-V
+    initValidacionFecha();
+
+    // Botón copiar
+    initBotonCopiar();
+
+    console.log('[Cotizador] Sprint 2 features inicializadas');
+}
+
 // Start
 init();
+initSprint2Features();

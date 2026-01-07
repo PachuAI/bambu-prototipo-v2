@@ -1041,3 +1041,55 @@
     border-color: var(--color-success) !important;
     color: var(--color-success) !important;
 }
+
+/* ============================================================================
+   SPRINT 2: NAVEGACIÓN TECLADO
+   ============================================================================ */
+
+/* Highlight de teclado en resultados de búsqueda */
+.prod-row.keyboard-highlight {
+    background: var(--color-accent-light, #e3f2fd) !important;
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+}
+
+[data-theme="dark"] .prod-row.keyboard-highlight {
+    background: rgba(0, 82, 204, 0.2) !important;
+}
+
+/* ============================================================================
+   SPRINT 2: INPUT CANTIDAD EDITABLE
+   ============================================================================ */
+
+.qty-input-editable {
+    width: 40px;
+    border: none;
+    text-align: center;
+    font-size: 13px;
+    font-weight: var(--font-weight-semibold);
+    border-left: var(--border-width) solid var(--border-color);
+    border-right: var(--border-width) solid var(--border-color);
+    background: var(--bg-white);
+    cursor: text;
+    -moz-appearance: textfield;
+}
+
+.qty-input-editable::-webkit-outer-spin-button,
+.qty-input-editable::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.qty-input-editable:focus {
+    background: var(--color-warning-light, #fff8e6);
+    outline: none;
+}
+
+[data-theme="dark"] .qty-input-editable {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .qty-input-editable:focus {
+    background: rgba(255, 171, 0, 0.15) !important;
+}

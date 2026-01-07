@@ -1,5 +1,43 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [07 Enero 2026] - ✅ Cotizador Sprint 2 COMPLETADO
+
+### UX Improvements - Cotizador
+
+**Atajos de teclado configurables**:
+- Sistema modular con placeholders para definir teclas finales
+- `Esc` cierra modales y dropdowns
+- `↑↓` navega resultados de búsqueda
+- `Enter` selecciona item resaltado
+
+**Navegación teclado en buscadores**:
+- Flechas navegan con highlight visual (`.keyboard-highlight`)
+- Auto-scroll al item seleccionado
+- Funciona en productos y clientes
+
+**Validación fecha solo L-V**:
+- Detecta fines de semana al seleccionar fecha
+- Sugiere próximo día laborable con confirm()
+- Fecha inicial automáticamente ajustada a laborable
+
+**Botón copiar resumen**:
+- `navigator.clipboard.writeText()` implementado
+- Feedback visual "✓ Copiado!" por 2 segundos
+- Formato WhatsApp listo para pegar
+
+**Input cantidad editable**:
+- Removido `readonly` del input
+- Edición directa del número
+- `Enter` confirma, valores inválidos eliminan producto
+
+**Archivos modificados**:
+- `prototipos/cotizador.html` (ID botón copiar)
+- `prototipos/assets/cotizador/script.js` (+350 líneas Sprint 2)
+- `prototipos/assets/cotizador/cotizador-specific.css` (+50 líneas estilos)
+- `docs/ESTADO-COTIZADOR.md` (actualizado 87% implementado)
+
+---
+
 ## [07 Enero 2026] - ✅ State-Manager COMPLETADO (7/7 fases)
 
 ### Sistema de Estado Centralizado

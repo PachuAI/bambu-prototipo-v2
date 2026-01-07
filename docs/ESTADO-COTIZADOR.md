@@ -15,7 +15,7 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ---
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 06 Enero 2026 (alineado con PRD limpio Enero 2026)
+**Última actualización**: 07 Enero 2026 (Sprint 2 completado)
 **Archivos verificados**:
 - `prototipos/cotizador.html`
 - `prototipos/assets/cotizador/script.js`
@@ -97,11 +97,8 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - Actual: Solo muestra alert y hace reload
    - Complejidad: Alta
 
-3. **Input cantidad editable**
-   - PRD: Sección 5.2 - "Input central: permite edición directa"
-   - HTML: Input existe pero es `readonly`
-   - JS falta: Permitir edición directa del número
-   - Complejidad: Baja
+3. ~~**Input cantidad editable**~~ ✅ IMPLEMENTADO Sprint 2
+   - Edición directa habilitada, Enter confirma
 
 ### Media prioridad
 
@@ -111,11 +108,8 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - JS falta: Tab Remito PDF con generación de documento
    - Complejidad: Alta
 
-5. **Botón Copiar en modal resumen**
-   - PRD: Sección 8.3 - Formatos de resumen
-   - HTML: Botón "Copiar" existe (línea 339)
-   - JS falta: `navigator.clipboard.writeText()`
-   - Complejidad: Baja
+5. ~~**Botón Copiar en modal resumen**~~ ✅ IMPLEMENTADO Sprint 2
+   - navigator.clipboard + feedback visual "✓ Copiado!"
 
 6. **Descuento cliente visible en panel**
    - PRD: Sección 6.1 - Jerarquía de descuentos
@@ -124,11 +118,8 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - Parcial: Funciona pero podría mejorar feedback visual
    - Complejidad: Baja
 
-7. **Validación fecha solo L-V**
-   - PRD: Sección 10.1 - "Solo días laborables (Lunes a Viernes)"
-   - HTML: Input date sin restricción
-   - JS falta: Validar fin de semana, mostrar alerta
-   - Complejidad: Baja
+7. ~~**Validación fecha solo L-V**~~ ✅ IMPLEMENTADO Sprint 2
+   - Detecta fines de semana, confirm() sugiere próximo día laborable
 
 8. **Quitar cliente seleccionado**
    - PRD: Sección 4 - Selector de Cliente
@@ -157,16 +148,10 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - Complejidad: Media
    - **PRIORIDAD MÁXIMA**: Regla de negocio crítica
 
-2. **Atajos de teclado**
-   - PRD: Sección 8.4 - Atajos de teclado
-   - Debe hacer:
-     - `Shift+4` → Confirmar Pedido
-     - `F4` → Generar Resumen
-     - `Esc` → Cerrar dropdowns/modales
-     - `Enter` → Agregar producto seleccionado
-     - `↑↓` → Navegar resultados búsqueda
-   - HTML/JS: No existe
-   - Complejidad: Media
+2. ~~**Atajos de teclado**~~ ✅ IMPLEMENTADO Sprint 2
+   - Sistema configurable con placeholders
+   - Esc cierra modales, ↑↓ navega, Enter selecciona
+   - Atajos principales (Shift+4, F4) pendientes de definir teclas finales
 
 3. **Cierre con advertencia cambios sin guardar**
    - PRD: Sección 10.4 - "¿Estás seguro? Se perderán los cambios no guardados"
@@ -188,11 +173,9 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 ### Media prioridad
 
-6. **Navegación teclado en buscadores**
-   - PRD: Sección 3.3 - "Flechas ↑↓ + Enter → navegar y seleccionar"
-   - Debe hacer: Flechas ↑↓ navegan, Enter selecciona, auto-scroll al item seleccionado
-   - HTML/JS: No existe
-   - Complejidad: Media
+6. ~~**Navegación teclado en buscadores**~~ ✅ IMPLEMENTADO Sprint 2
+   - Flechas ↑↓ navegan, Enter selecciona
+   - Highlight visual (.keyboard-highlight), auto-scroll
 
 7. **Saldo cliente en resultados búsqueda**
    - PRD: Sección 4.2 y 4.3 - "Muestra: dirección, teléfono, saldo cuenta corriente"
@@ -232,12 +215,12 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| Implementadas | 35 | 76% |
-| Visuales sin lógica | 8 | 17% |
-| Faltantes | 11 | 24% |
+| Implementadas | 40 | 87% |
+| Visuales sin lógica | 5 | 11% |
+| Faltantes | 6 | 13% |
 | **TOTAL funcionalidades** | **46** | **100%** |
 
-**Nota**: El PRD limpio (Enero 2026) simplificó la documentación. Algunas funcionalidades se superponen entre categorías.
+**Nota**: Sprint 2 completado el 07-Ene-2026. El cotizador está casi completo.
 
 ---
 
@@ -253,12 +236,12 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 - ✅ Migración a BambuState (productos/clientes dinámicos)
 - ✅ Saldo cliente en resultados búsqueda (rojo/verde)
 
-### Sprint 2 - UX IMPORTANTE
-5. Atajos de teclado (Shift+4, F4, Esc)
-6. Navegación teclado en buscadores
-7. Validación fecha solo L-V
-8. Botón copiar en modal resumen
-9. Input cantidad editable
+### Sprint 2 - UX IMPORTANTE ✅ COMPLETADO (07-Ene-2026)
+5. ✅ **Atajos de teclado configurables** - Sistema con placeholders, Esc cierra modales
+6. ✅ **Navegación teclado en buscadores** - ↑↓ navegan, Enter selecciona, highlight visual
+7. ✅ **Validación fecha solo L-V** - Detecta fines de semana, sugiere próximo laborable
+8. ✅ **Botón copiar en modal resumen** - navigator.clipboard + feedback visual
+9. ✅ **Input cantidad editable** - Edición directa sin readonly, Enter confirma
 
 ### Sprint 3 - COMPLETITUD
 10. Quitar cliente (botón X)
