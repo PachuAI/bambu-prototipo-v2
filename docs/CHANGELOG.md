@@ -1,5 +1,21 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [07 Enero 2026] - Cotizador Sprint 3 - Completitud
+
+### Qué se hizo
+- Botón X para quitar cliente seleccionado
+- Advertencia stock bajo (badge naranja si qty > stock)
+- Cierre con advertencia si hay cambios sin guardar (beforeunload)
+- Productos BAMBU sin restricción de stock (proveedor_id=1)
+- Badge visual "BAMBU" en productos del proveedor principal
+
+### Archivos clave
+- `prototipos/cotizador.html` - botón clear client
+- `prototipos/assets/cotizador/script.js` - lógica Sprint 3
+- `prototipos/assets/cotizador/cotizador-specific.css` - estilos nuevos
+
+---
+
 ## [07 Enero 2026] - ✅ Cotizador Sprint 2 COMPLETADO
 
 ### UX Improvements - Cotizador

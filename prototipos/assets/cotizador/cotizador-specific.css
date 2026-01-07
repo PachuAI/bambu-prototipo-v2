@@ -1093,3 +1093,78 @@
 [data-theme="dark"] .qty-input-editable:focus {
     background: rgba(255, 171, 0, 0.15) !important;
 }
+
+/* ============================================================================
+   SPRINT 3: BOTÓN QUITAR CLIENTE (X)
+   ============================================================================ */
+
+.btn-clear-client {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 14px;
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.btn-clear-client:hover {
+    background: var(--color-danger-light, #ffebe6);
+    color: var(--color-danger);
+}
+
+[data-theme="dark"] .btn-clear-client:hover {
+    background: rgba(255, 86, 48, 0.15);
+}
+
+/* Ajustar input cuando hay botón X visible */
+.client-search-container:has(.btn-clear-client:not(.hidden)) input {
+    padding-right: 36px;
+}
+
+/* ============================================================================
+   SPRINT 3: ADVERTENCIA STOCK BAJO
+   ============================================================================ */
+
+.stock-warning {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--color-warning-light, #fff8e6);
+    color: var(--color-warning-dark, #ff8b00);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: var(--border-radius-sm);
+    margin-left: 8px;
+}
+
+.stock-warning i {
+    font-size: 10px;
+}
+
+[data-theme="dark"] .stock-warning {
+    background: rgba(255, 171, 0, 0.15);
+}
+
+/* Badge proveedor BAMBU */
+.badge-bambu {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--color-accent-light, #e3f2fd);
+    color: var(--color-accent);
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: var(--border-radius-sm);
+    margin-left: 4px;
+    font-weight: var(--font-weight-semibold);
+}
+
+[data-theme="dark"] .badge-bambu {
+    background: rgba(0, 82, 204, 0.15);
+}

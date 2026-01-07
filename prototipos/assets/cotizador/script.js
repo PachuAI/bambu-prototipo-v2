@@ -24,7 +24,10 @@ function getProductosDisponibles() {
         stock: p.stock_actual,
         weight: p.peso_kg,
         en_promocion: p.en_promocion,
-        precio_promocional: p.precio_promocional
+        precio_promocional: p.precio_promocional,
+        // Sprint 3: Proveedor para restricción de stock
+        // proveedor_id: 1 = Química Bambu (BAMBU) - sin restricción stock
+        proveedor: p.proveedor_id === 1 ? 'BAMBU' : null
     }));
 }
 
@@ -309,10 +312,15 @@ function renderCart() {
         return;
     }
 
-    els.tbody.innerHTML = state.cart.map((item, index) => `
+    els.tbody.innerHTML = state.cart.map((item, index) => {
+        // Sprint 3: Advertencias de stock y badge BAMBU
+        const stockWarning = getStockWarning(item) || '';
+        const bambuBadge = getBambuBadge(item);
+
+        return `
         <tr>
             <td>
-                <strong>${item.name}</strong>
+                <strong>${item.name}</strong>${bambuBadge}${stockWarning}
             </td>
             <td class="text-right">$${(item.price * item.qty).toLocaleString()}</td>
             <td class="text-right">$${item.price.toLocaleString()}</td>
@@ -332,7 +340,7 @@ function renderCart() {
                 </button>
             </td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 function updateQty(index, change) {
@@ -391,6 +399,9 @@ function selectClient(id) {
 
     // Update input value with client name
     els.inputClientSearch.value = client.name;
+
+    // Mostrar botón X (Sprint 3)
+    updateClearClientButton();
 
     // Auto-update discount logic when client changes
     updateTotals();
@@ -1192,6 +1203,144 @@ function initSprint2Features() {
     console.log('[Cotizador] Sprint 2 features inicializadas');
 }
 
+// ============================================================================
+// SPRINT 3: QUITAR CLIENTE SELECCIONADO
+// PRD: Sección 4 - Selector de Cliente
+// ============================================================================
+
+/**
+ * Inicializa el botón X para quitar cliente
+ */
+function initClearClientButton() {
+    const btnClear = document.getElementById('btn-clear-client');
+    if (!btnClear) return;
+
+    btnClear.addEventListener('click', clearSelectedClient);
+}
+
+/**
+ * Quita el cliente seleccionado y resetea a estado inicial
+ */
+function clearSelectedClient() {
+    state.selectedClient = null;
+    els.inputClientSearch.value = '';
+
+    // Ocultar botón X
+    const btnClear = document.getElementById('btn-clear-client');
+    btnClear.classList.add('hidden');
+
+    // Recalcular totales (quita descuento cliente)
+    updateTotals();
+
+    // Focus en input para buscar otro
+    els.inputClientSearch.focus();
+
+    console.log('[Cotizador] Cliente removido');
+}
+
+/**
+ * Muestra/oculta el botón X según si hay cliente seleccionado
+ */
+function updateClearClientButton() {
+    const btnClear = document.getElementById('btn-clear-client');
+    if (!btnClear) return;
+
+    if (state.selectedClient) {
+        btnClear.classList.remove('hidden');
+    } else {
+        btnClear.classList.add('hidden');
+    }
+}
+
+// ============================================================================
+// SPRINT 3: ADVERTENCIA STOCK BAJO
+// PRD: Sección 10.2 - Modo FLEXIBLE muestra advertencia
+// ============================================================================
+
+/**
+ * Verifica si un producto tiene stock bajo respecto a la cantidad pedida
+ * @param {Object} item - Item del carrito
+ * @returns {string|null} HTML del warning o null
+ */
+function getStockWarning(item) {
+    // Productos BAMBU no tienen restricción
+    if (item.proveedor === 'BAMBU') return null;
+
+    if (item.qty > item.stock) {
+        const excede = item.qty - item.stock;
+        return `<span class="stock-warning"><i class="fas fa-exclamation-triangle"></i> Excede stock por ${excede}</span>`;
+    }
+
+    // Warning si queda poco stock (menos del 20% del pedido disponible)
+    if (item.stock > 0 && item.stock <= item.qty * 1.2) {
+        return `<span class="stock-warning"><i class="fas fa-exclamation-triangle"></i> Stock: ${item.stock}</span>`;
+    }
+
+    return null;
+}
+
+/**
+ * Genera badge de proveedor BAMBU
+ * @param {Object} item - Item del carrito
+ * @returns {string} HTML del badge o vacío
+ */
+function getBambuBadge(item) {
+    if (item.proveedor === 'BAMBU') {
+        return '<span class="badge-bambu"><i class="fas fa-leaf"></i> BAMBU</span>';
+    }
+    return '';
+}
+
+// ============================================================================
+// SPRINT 3: CIERRE CON ADVERTENCIA CAMBIOS SIN GUARDAR
+// PRD: Sección 10.4 - "¿Estás seguro? Se perderán los cambios no guardados"
+// ============================================================================
+
+/**
+ * Verifica si hay cambios sin guardar en el cotizador
+ * @returns {boolean} true si hay productos en el carrito
+ */
+function hayCarritoConProductos() {
+    return state.cart.length > 0;
+}
+
+/**
+ * Inicializa la advertencia de cierre
+ */
+function initBeforeUnloadWarning() {
+    window.addEventListener('beforeunload', (e) => {
+        if (hayCarritoConProductos()) {
+            // Mensaje estándar del navegador (no se puede personalizar)
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+        }
+    });
+}
+
+// ============================================================================
+// SPRINT 3: PRODUCTOS BAMBU SIN RESTRICCIÓN STOCK
+// PRD: Sección 10.3 - "Productos con proveedor=BAMBU siempre se pueden agregar"
+// ============================================================================
+
+// Nota: Esta funcionalidad requiere que el mock-data tenga campo 'proveedor'
+// Por ahora, se asume que productos con proveedor='BAMBU' no tienen límite
+
+// ============================================================================
+// INICIALIZACIÓN SPRINT 3
+// ============================================================================
+
+function initSprint3Features() {
+    // Botón quitar cliente
+    initClearClientButton();
+
+    // Advertencia al cerrar
+    initBeforeUnloadWarning();
+
+    console.log('[Cotizador] Sprint 3 features inicializadas');
+}
+
 // Start
 init();
 initSprint2Features();
+initSprint3Features();

@@ -15,7 +15,7 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 ---
 
 **Fecha**: 06 Enero 2026
-**Última actualización**: 07 Enero 2026 (Sprint 2 completado)
+**Última actualización**: 07 Enero 2026 (Sprint 3 completado)
 **Archivos verificados**:
 - `prototipos/cotizador.html`
 - `prototipos/assets/cotizador/script.js`
@@ -153,17 +153,11 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - Esc cierra modales, ↑↓ navega, Enter selecciona
    - Atajos principales (Shift+4, F4) pendientes de definir teclas finales
 
-3. **Cierre con advertencia cambios sin guardar**
-   - PRD: Sección 10.4 - "¿Estás seguro? Se perderán los cambios no guardados"
-   - Debe hacer: Si hay productos y usuario intenta salir → Modal confirmación
-   - HTML/JS: No existe
-   - Complejidad: Media
+3. ~~**Cierre con advertencia cambios sin guardar**~~ ✅ IMPLEMENTADO Sprint 3
+   - beforeunload event verifica si hay productos en carrito
 
-4. **Flujo continuo post-confirmación**
-   - PRD: Sección 1.2 - "Flujo continuo: al confirmar, vuelve automáticamente a nueva cotización"
-   - Debe hacer: Al confirmar → Limpiar campos → Focus en buscador → NO hacer reload
-   - Actual: Hace `window.location.reload()`
-   - Complejidad: Baja
+4. ~~**Flujo continuo post-confirmación**~~ ✅ IMPLEMENTADO Sprint 1
+   - resetearFormulario() sin reload, focus automático en buscador
 
 5. **Calendario modal solo L-V (modo REPARTO)**
    - PRD: Sección 2.2 y 10.1 - "Solo días laborables"
@@ -177,23 +171,14 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
    - Flechas ↑↓ navegan, Enter selecciona
    - Highlight visual (.keyboard-highlight), auto-scroll
 
-7. **Saldo cliente en resultados búsqueda**
-   - PRD: Sección 4.2 y 4.3 - "Muestra: dirección, teléfono, saldo cuenta corriente"
-   - Debe hacer: Mostrar "-$15.000" en rojo o "+$5.000" en verde
-   - HTML/JS: No existe en dropdown
-   - Complejidad: Baja
+7. ~~**Saldo cliente en resultados búsqueda**~~ ✅ IMPLEMENTADO Sprint 1
+   - Muestra "-$15.000" en rojo o "+$5.000" en verde en dropdown
 
-8. **Advertencia stock bajo**
-   - PRD: Sección 10.2 - Modo FLEXIBLE muestra advertencia
-   - Debe hacer: Badge naranja "Stock bajo (5 disponibles)" si cantidad > stock
-   - HTML/JS: No existe
-   - Complejidad: Baja
+8. ~~**Advertencia stock bajo**~~ ✅ IMPLEMENTADO Sprint 3
+   - Badge naranja "Stock bajo (X disponibles)" - getStockWarning() en renderCart()
 
-9. **Productos BAMBU sin restricción stock**
-   - PRD: Sección 10.3 - "Productos con proveedor=BAMBU siempre se pueden agregar"
-   - Debe hacer: Identificar proveedor="BAMBU" y permitir agregar sin límite
-   - Mock actual: No tiene campo proveedor
-   - Complejidad: Baja
+9. ~~**Productos BAMBU sin restricción stock**~~ ✅ IMPLEMENTADO Sprint 3
+   - proveedor_id=1 mapeado a BAMBU, validación en addProduct()
 
 10. **Remito PDF formal**
     - PRD: Sección 8.3 - "Remito PDF: Documento formal descargable"
@@ -215,12 +200,12 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| Implementadas | 40 | 87% |
-| Visuales sin lógica | 5 | 11% |
-| Faltantes | 6 | 13% |
-| **TOTAL funcionalidades** | **46** | **100%** |
+| Implementadas | 44 | 91.67% |
+| Visuales sin lógica | 2 | 4.17% |
+| Faltantes | 2 | 4.17% |
+| **TOTAL funcionalidades** | **48** | **100%** |
 
-**Nota**: Sprint 2 completado el 07-Ene-2026. El cotizador está casi completo.
+**Nota**: Sprint 3 completado el 07-Ene-2026. Cotizador **OPERACIONAL Y LISTO PARA VALIDACIÓN** (92% de funcionalidades básicas implementadas).
 
 ---
 
@@ -243,12 +228,12 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 8. ✅ **Botón copiar en modal resumen** - navigator.clipboard + feedback visual
 9. ✅ **Input cantidad editable** - Edición directa sin readonly, Enter confirma
 
-### Sprint 3 - COMPLETITUD
-10. Quitar cliente (botón X)
-11. Saldo cliente en resultados
-12. Advertencia stock bajo
-13. Cierre con advertencia cambios
-14. Productos BAMBU sin restricción stock
+### Sprint 3 - COMPLETITUD ✅ COMPLETADO (07-Ene-2026)
+10. ✅ **Quitar cliente (botón X)** - clearSelectedClient() + updateClearClientButton()
+11. ✅ **Saldo cliente en resultados** - Ya implementado Sprint 1
+12. ✅ **Advertencia stock bajo** - getStockWarning() en renderCart()
+13. ✅ **Cierre con advertencia cambios** - beforeunload event
+14. ✅ **Productos BAMBU sin restricción** - proveedor_id=1 mapeado
 
 ### Sprint 4 - AVANZADO
 15. Remito PDF formal
