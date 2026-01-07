@@ -404,23 +404,294 @@ const BambuState = {
 
     /**
      * Genera datos iniciales consistentes
-     * IMPLEMENTAR EN FASE 2
+     * Fase 1-2 del plan: estructuras normalizadas + datos consistentes
      */
     _generarDatosIniciales() {
         console.log('[BambuState] Generando datos iniciales...');
 
-        // TODO: Fase 2 - Implementar generador completo
-        // Por ahora retorna estructura vacía
+        // ====================================================================
+        // DATOS BASE (copiados de mock-data.js)
+        // ====================================================================
+
+        const clientes = [
+            { id: 1, direccion: 'ARAUCARIAS 371', telefono: '299 456-7890', ciudad: 'Neuquén', saldo: -45000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+            { id: 2, direccion: 'PELLEGRINI 615', telefono: '299 456-7891', ciudad: 'Cipolletti', saldo: 0, estado: 'activo', lista_precio: 'L3', email: 'pellegrini@email.com', nota: '' },
+            { id: 3, direccion: 'SAN LUIS 372', telefono: '299 456-7892', ciudad: 'Allen', saldo: -25000, estado: 'activo', lista_precio: 'L1', email: '', nota: 'Cliente mayorista' },
+            { id: 4, direccion: 'MITRE 4735', telefono: '299 456-7893', ciudad: 'Neuquén', saldo: 15000, estado: 'activo', lista_precio: 'L2', email: '', nota: '' },
+            { id: 5, direccion: 'ECUADOR 2133', telefono: '299 456-7894', ciudad: 'Plottier', saldo: -150000, estado: 'activo', lista_precio: 'L1', email: 'ecuador2133@mail.com', nota: 'Atención: horario restringido' },
+            { id: 6, direccion: 'AV. ARGENTINA 825', telefono: '299 456-7895', ciudad: 'Neuquén', saldo: 0, estado: 'inactivo', lista_precio: 'L3', email: '', nota: 'Cerrado temporalmente' },
+            { id: 7, direccion: 'CUENCA 16 MZA 7', telefono: '294 464-3435', ciudad: 'Neuquén', saldo: 0, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+            { id: 8, direccion: 'ALMAFUERTE 1245', telefono: '299 456-7897', ciudad: 'Centenario', saldo: -80000, estado: 'activo', lista_precio: 'L2', email: '', nota: '' },
+            { id: 9, direccion: '9 DE JULIO 902', telefono: '299 507-3355', ciudad: 'Cipolletti', saldo: -150000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+            { id: 10, direccion: 'GENERAL PAZ 1461', telefono: '299 412-8800', ciudad: 'Neuquén', saldo: 5000, estado: 'activo', lista_precio: 'L2', email: 'gralpazclient@mail.com', nota: '' },
+            { id: 11, direccion: 'LAS RETAMAS 1091', telefono: '299 523-4455', ciudad: 'Plottier', saldo: -12000, estado: 'activo', lista_precio: 'L1', email: '', nota: '' },
+            { id: 12, direccion: 'CATAMARCA 662', telefono: '299 487-9633', ciudad: 'Allen', saldo: 0, estado: 'inactivo', lista_precio: 'L1', email: '', nota: 'Sin actividad hace 6 meses' },
+        ];
+
+        const productos = [
+            { id: 1, nombre: 'Detergente Industrial 5L', proveedor_id: 1, precio_l1: 15000, precio_l2: 14062.50, precio_l3: 13500, stock_actual: 150, stock_minimo: 30, peso_kg: 5.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 2, nombre: 'Lavandina Concentrada 2L', proveedor_id: 4, precio_l1: 3500, precio_l2: 3281.25, precio_l3: 3150, stock_actual: 300, stock_minimo: 50, peso_kg: 2.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 3, nombre: 'Desinfectante Multiuso 1L', proveedor_id: 1, precio_l1: 2200, precio_l2: 2062.50, precio_l3: 1980, stock_actual: 200, stock_minimo: 40, peso_kg: 1.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 4, nombre: 'Limpiador Pisos 5L', proveedor_id: 2, precio_l1: 8500, precio_l2: 7968.75, precio_l3: 7650, stock_actual: 120, stock_minimo: 25, peso_kg: 5.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 5, nombre: 'Jabón Líquido Manos 500ml', proveedor_id: 3, precio_l1: 1800, precio_l2: 1687.50, precio_l3: 1620, stock_actual: 250, stock_minimo: 60, peso_kg: 0.5, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 6, nombre: 'Alcohol en Gel 1L', proveedor_id: 1, precio_l1: 4500, precio_l2: 4218.75, precio_l3: 4050, stock_actual: 18, stock_minimo: 40, peso_kg: 1.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 7, nombre: 'Desengrasante Cocina 750ml', proveedor_id: 2, precio_l1: 3200, precio_l2: 3000, precio_l3: 2880, stock_actual: 160, stock_minimo: 35, peso_kg: 0.75, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 8, nombre: 'Limpia Vidrios 500ml', proveedor_id: 3, precio_l1: 1500, precio_l2: 1406.25, precio_l3: 1350, stock_actual: 220, stock_minimo: 50, peso_kg: 0.5, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 9, nombre: 'Pack Limpieza Hogar', proveedor_id: null, precio_l1: 18000, precio_l2: 18000, precio_l3: 18000, stock_actual: 25, stock_minimo: 10, peso_kg: 8.0, disponible: true, en_promocion: true, precio_promocional: 15000 },
+            { id: 10, nombre: 'Cloro Concentrado 5L', proveedor_id: 4, precio_l1: 4200, precio_l2: 3937.50, precio_l3: 3780, stock_actual: 8, stock_minimo: 30, peso_kg: 5.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 11, nombre: 'Suavizante Ropa 3L', proveedor_id: 2, precio_l1: 5800, precio_l2: 5437.50, precio_l3: 5220, stock_actual: 95, stock_minimo: 20, peso_kg: 3.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 12, nombre: 'Producto Descontinuado', proveedor_id: 1, precio_l1: 2500, precio_l2: 2343.75, precio_l3: 2250, stock_actual: 5, stock_minimo: 10, peso_kg: 1.5, disponible: false, en_promocion: false, precio_promocional: null },
+            { id: 13, nombre: 'Pack Oficina Premium', proveedor_id: null, precio_l1: 12000, precio_l2: 12000, precio_l3: 12000, stock_actual: 15, stock_minimo: 5, peso_kg: 6.0, disponible: true, en_promocion: true, precio_promocional: 9500 },
+            { id: 14, nombre: 'Limpiador Multiusos 1L', proveedor_id: 1, precio_l1: 2800, precio_l2: 2625, precio_l3: 2520, stock_actual: 180, stock_minimo: 40, peso_kg: 1.0, disponible: true, en_promocion: false, precio_promocional: null },
+            { id: 15, nombre: 'Cera Pisos Autobrillante 5L', proveedor_id: 3, precio_l1: 9500, precio_l2: 8906.25, precio_l3: 8550, stock_actual: 45, stock_minimo: 15, peso_kg: 5.2, disponible: true, en_promocion: false, precio_promocional: null },
+        ];
+
+        const vehiculos = [
+            { id: 1, nombre: 'Reparto 1', capacidadKg: 2500, modelo: 'Fiat Fiorino', patente: 'AB 123 CD' },
+            { id: 2, nombre: 'Reparto 2', capacidadKg: 1500, modelo: 'Renault Kangoo', patente: null },
+            { id: 3, nombre: 'Reparto 3', capacidadKg: 2250, modelo: null, patente: null },
+        ];
+
+        const ciudades = [
+            { id: 1, nombre: 'Neuquén', provincia: 'Neuquén' },
+            { id: 2, nombre: 'Cipolletti', provincia: 'Río Negro' },
+            { id: 3, nombre: 'Plottier', provincia: 'Neuquén' },
+            { id: 4, nombre: 'Centenario', provincia: 'Neuquén' },
+            { id: 5, nombre: 'Allen', provincia: 'Río Negro' },
+        ];
+
+        const listas_precio = [
+            { id: 1, nombre: 'L1', descuento: 0, umbral: null },
+            { id: 2, nombre: 'L2', descuento: 6.25, umbral: 50000 },
+            { id: 3, nombre: 'L3', descuento: 10, umbral: 100000 },
+        ];
+
+        // ====================================================================
+        // GENERAR PEDIDOS CONSISTENTES (~80 pedidos)
+        // ====================================================================
+
+        const pedidos = [];
+        const pedido_items = [];
+        let pedidoId = 500;
+        let itemId = 1;
+
+        // Helper: obtener precio según lista del cliente
+        const getPrecio = (producto, listaPrecio) => {
+            if (producto.en_promocion && producto.precio_promocional) {
+                return producto.precio_promocional;
+            }
+            switch (listaPrecio) {
+                case 'L2': return producto.precio_l2;
+                case 'L3': return producto.precio_l3;
+                default: return producto.precio_l1;
+            }
+        };
+
+        // Helper: crear pedido con items
+        const crearPedido = (fecha, tipo, estado, vehiculoId, clientesFiltro) => {
+            // Seleccionar cliente aleatorio de los activos
+            const clientesActivos = clientes.filter(c => c.estado === 'activo' && (!clientesFiltro || clientesFiltro.includes(c.id)));
+            const cliente = clientesActivos[Math.floor(Math.random() * clientesActivos.length)];
+
+            const pedido = {
+                id: pedidoId++,
+                numero: `#00${pedidoId}`,
+                fecha,
+                cliente_id: cliente.id,
+                direccion: tipo === 'fabrica' ? 'VENTA FÁBRICA' : cliente.direccion,
+                ciudad: cliente.ciudad,
+                tipo,
+                estado,
+                vehiculo_id: tipo === 'fabrica' ? null : vehiculoId,
+                vehiculo: vehiculoId ? vehiculos.find(v => v.id === vehiculoId)?.nombre : null,
+                metodoPago: null,
+                montoEfectivo: null,
+                montoDigital: null,
+                fechaEntrega: null,
+                nota: ''
+            };
+
+            // Generar 2-5 items por pedido
+            const numItems = Math.floor(Math.random() * 4) + 2;
+            const productosDisponibles = productos.filter(p => p.disponible);
+            const productosUsados = new Set();
+
+            for (let i = 0; i < numItems; i++) {
+                let productoId;
+                do {
+                    productoId = productosDisponibles[Math.floor(Math.random() * productosDisponibles.length)].id;
+                } while (productosUsados.has(productoId) && productosUsados.size < productosDisponibles.length);
+                productosUsados.add(productoId);
+
+                const producto = productos.find(p => p.id === productoId);
+                const cantidad = Math.floor(Math.random() * 10) + 1; // 1-10 unidades
+                const precioUnitario = getPrecio(producto, cliente.lista_precio);
+
+                pedido_items.push({
+                    id: itemId++,
+                    pedido_id: pedido.id,
+                    producto_id: productoId,
+                    cantidad,
+                    precio_unitario: precioUnitario
+                });
+            }
+
+            // Si está entregado, asignar método de pago
+            if (estado === 'entregado') {
+                const metodos = ['efectivo', 'digital', 'mixto'];
+                const metodo = metodos[Math.floor(Math.random() * metodos.length)];
+                pedido.metodoPago = metodo;
+
+                // Calcular total desde items
+                const itemsPedido = pedido_items.filter(i => i.pedido_id === pedido.id);
+                const total = itemsPedido.reduce((sum, i) => sum + (i.precio_unitario * i.cantidad), 0);
+
+                if (metodo === 'efectivo') {
+                    pedido.montoEfectivo = total;
+                } else if (metodo === 'digital') {
+                    pedido.montoDigital = total;
+                } else {
+                    const efectivo = Math.floor(total * 0.6);
+                    pedido.montoEfectivo = efectivo;
+                    pedido.montoDigital = total - efectivo;
+                }
+
+                const horas = String(Math.floor(Math.random() * 10) + 9).padStart(2, '0');
+                const mins = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+                pedido.fechaEntrega = `${fecha}T${horas}:${mins}:00`;
+            }
+
+            pedidos.push(pedido);
+            return pedido;
+        };
+
+        // ====================================================================
+        // DISTRIBUCIÓN DE PEDIDOS POR DÍA
+        // HOY = Miércoles 08/01/2026
+        // ====================================================================
+
+        // LUNES 06/01 - CONTROLADO (18 pedidos, todos entregados)
+        for (let i = 0; i < 14; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-06', 'reparto', 'entregado', vehId);
+        }
+        for (let i = 0; i < 4; i++) {
+            crearPedido('2026-01-06', 'fabrica', 'entregado', null);
+        }
+
+        // MARTES 07/01 - A CONTROLAR (16 pedidos, 80% entregados)
+        for (let i = 0; i < 10; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-07', 'reparto', 'entregado', vehId);
+        }
+        for (let i = 0; i < 3; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-07', 'reparto', 'en transito', vehId);
+        }
+        for (let i = 0; i < 3; i++) {
+            crearPedido('2026-01-07', 'fabrica', 'entregado', null);
+        }
+
+        // MIÉRCOLES 08/01 - HOY (16 pedidos, en tránsito/asignado)
+        for (let i = 0; i < 9; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-08', 'reparto', 'en transito', vehId);
+        }
+        for (let i = 0; i < 5; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-08', 'reparto', 'asignado', vehId);
+        }
+        for (let i = 0; i < 2; i++) {
+            crearPedido('2026-01-08', 'fabrica', 'entregado', null);
+        }
+
+        // JUEVES 09/01 - MAÑANA (16 pedidos, pendiente/asignado)
+        for (let i = 0; i < 5; i++) {
+            crearPedido('2026-01-09', 'reparto', 'pendiente', null);
+        }
+        for (let i = 0; i < 9; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-09', 'reparto', 'asignado', vehId);
+        }
+        for (let i = 0; i < 2; i++) {
+            crearPedido('2026-01-09', 'fabrica', 'pendiente', null);
+        }
+
+        // VIERNES 10/01 - PLANIFICANDO (12 pedidos, mayormente pendiente)
+        for (let i = 0; i < 8; i++) {
+            crearPedido('2026-01-10', 'reparto', 'pendiente', null);
+        }
+        for (let i = 0; i < 2; i++) {
+            const vehId = (i % 3) + 1;
+            crearPedido('2026-01-10', 'reparto', 'asignado', vehId);
+        }
+        for (let i = 0; i < 2; i++) {
+            crearPedido('2026-01-10', 'fabrica', 'pendiente', null);
+        }
+
+        // BORRADORES (3 pedidos sin fecha)
+        for (let i = 0; i < 3; i++) {
+            const clientesActivos = clientes.filter(c => c.estado === 'activo');
+            const cliente = clientesActivos[Math.floor(Math.random() * clientesActivos.length)];
+
+            pedidos.push({
+                id: pedidoId++,
+                numero: `#00${pedidoId}`,
+                fecha: null,
+                cliente_id: cliente.id,
+                direccion: cliente.direccion,
+                ciudad: cliente.ciudad,
+                tipo: 'reparto',
+                estado: 'borrador',
+                vehiculo_id: null,
+                vehiculo: null,
+                metodoPago: null,
+                montoEfectivo: null,
+                montoDigital: null,
+                fechaEntrega: null,
+                nota: 'Pendiente confirmar fecha'
+            });
+
+            // Agregar 1-3 items al borrador
+            const numItems = Math.floor(Math.random() * 3) + 1;
+            const productosDisponibles = productos.filter(p => p.disponible);
+            const productosUsados = new Set();
+
+            for (let j = 0; j < numItems; j++) {
+                let productoId;
+                do {
+                    productoId = productosDisponibles[Math.floor(Math.random() * productosDisponibles.length)].id;
+                } while (productosUsados.has(productoId));
+                productosUsados.add(productoId);
+
+                const producto = productos.find(p => p.id === productoId);
+                const cantidad = Math.floor(Math.random() * 5) + 1;
+                const precioUnitario = getPrecio(producto, cliente.lista_precio);
+
+                pedido_items.push({
+                    id: itemId++,
+                    pedido_id: pedidos[pedidos.length - 1].id,
+                    producto_id: productoId,
+                    cantidad,
+                    precio_unitario: precioUnitario
+                });
+            }
+        }
+
+        console.log(`[BambuState] Generados: ${pedidos.length} pedidos, ${pedido_items.length} items`);
+
         return {
-            clientes: [],
-            productos: [],
-            vehiculos: [],
-            ciudades: [],
-            pedidos: [],
-            pedido_items: [],
-            listas_precio: [],
+            clientes,
+            productos,
+            vehiculos,
+            ciudades,
+            listas_precio,
+            pedidos,
+            pedido_items,
             config: {
-                fechaSistema: this.FECHA_SISTEMA
+                fechaSistema: this.FECHA_SISTEMA,
+                nombreEmpresa: 'Química Bambu S.R.L.',
+                ubicacion: 'Neuquén, Argentina'
             }
         };
     },
