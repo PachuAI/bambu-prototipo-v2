@@ -146,11 +146,10 @@ Este documento refleja el **estado actual de implementación del prototipo Cotiz
 4. ~~**Flujo continuo post-confirmación**~~ ✅ IMPLEMENTADO Sprint 1
    - resetearFormulario() sin reload, focus automático en buscador
 
-5. **Calendario modal solo L-V (modo REPARTO)**
+5. ~~**Calendario modal solo L-V (modo REPARTO)**~~ ✅ DESCARTADO
    - PRD: Sección 2.2 y 10.1 - "Solo días laborables"
-   - Debe hacer: Modal con calendario, solo días laborables seleccionables
-   - Actual: Input date inline sin restricción
-   - Complejidad: Media
+   - Validación L-V ya implementada en Sprint 2 (confirm() sugiere próximo laborable)
+   - Modal visual descartado - validación existente es suficiente
 
 ### Media prioridad
 

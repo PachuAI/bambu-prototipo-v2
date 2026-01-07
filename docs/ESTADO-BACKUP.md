@@ -18,14 +18,16 @@
 
 ---
 
-## DISCREPANCIAS PRD vs PROTOTIPO (PRD debe actualizarse)
+## DISCREPANCIAS PRD vs PROTOTIPO
 
-| Aspecto | PRD dice | Prototipo tiene | Acción |
-|---------|----------|-----------------|--------|
-| Columna IP en logs | No mencionada en tabla (sección 3.3) | Implementada | ✅ Agregar al PRD |
-| Badge "Tipo" en backups | No en PRD | Implementado (MANUAL/AUTOMATICO) | ✅ Agregar al PRD |
-| Contador eventos/respaldos | No en PRD | Implementado (badges count) | ✅ Agregar al PRD |
-| Backup automático | Mencionado como "opcional" (sección 4.1) | Mock data tiene ejemplos AUTOMATICO | Aclarar estado en PRD |
+✅ **TODAS RESUELTAS** (07/01/2026) - PRD ya actualizado para coincidir con prototipo.
+
+| Aspecto | Estado |
+|---------|--------|
+| Columna IP en logs | ✅ Ya en PRD sección 3.3 |
+| Badge "Tipo" en backups | ✅ Ya en PRD sección 3.2 |
+| Contador eventos/respaldos | ✅ Ya en PRD |
+| Backup automático | ✅ PRD dice "opcional, pendiente implementar" - correcto |
 
 ---
 

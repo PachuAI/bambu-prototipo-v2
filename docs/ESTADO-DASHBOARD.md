@@ -18,15 +18,17 @@
 
 ---
 
-## DISCREPANCIAS PRD vs PROTOTIPO (PRD debe actualizarse)
+## DISCREPANCIAS PRD vs PROTOTIPO
 
-| Aspecto | PRD dice | Prototipo tiene | Acción |
-|---------|----------|-----------------|--------|
-| Click en día calendario | Navega a `ventas.html` | Navega a `repartos-dia.html` | ✅ Mejor - Actualizar PRD |
-| Widget ciudades mañana | No existe | Completamente funcional | ✅ Agregar al PRD |
-| Límite resultados búsqueda | 5 por categoría | 4 por categoría | Actualizar PRD |
-| Límite productos stock | 8-10 productos | 5 productos | Actualizar PRD |
-| Columnas repartos | 3 columnas | 4 columnas (Sin asignar + 3 vehículos) | ✅ Mejor - Actualizar PRD |
+✅ **TODAS RESUELTAS** (07/01/2026) - PRD ya actualizado para coincidir con prototipo.
+
+| Aspecto | Estado |
+|---------|--------|
+| Click en día calendario | ✅ PRD sección 3.2 dice repartos-dia.html |
+| Widget ciudades mañana | ✅ Ya en PRD sección 3.5 |
+| Límite resultados búsqueda | ✅ PRD sección 3.1 dice 4 |
+| Límite productos stock | ✅ PRD sección 3.4 dice 5 |
+| Columnas repartos | ✅ PRD sección 3.3 dice 4 columnas |
 
 ---
 

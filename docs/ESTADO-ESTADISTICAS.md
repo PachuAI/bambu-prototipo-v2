@@ -18,14 +18,16 @@
 
 ---
 
-## DISCREPANCIAS PRD vs PROTOTIPO (PRD debe actualizarse)
+## DISCREPANCIAS PRD vs PROTOTIPO
 
-| Aspecto | PRD dice | Prototipo tiene | Acción |
-|---------|----------|-----------------|--------|
-| Gráfico opcional/pendiente | Sección 3.4 dice "pendiente definir" | Implementado con Chart.js (toggle cantidad/monto) | ✅ Actualizar PRD |
-| Filtro categoría | Mencionado en sección 2.2 | NO implementado (solo proveedor) | ⚠️ Eliminar de PRD o implementar |
-| Cards resumen | No en PRD | 4 cards implementadas (productos, unidades, monto, pedidos) | ✅ Agregar al PRD |
-| Estado "cancelado" | Mencionado en sección 4.4 | No existe en mock data | Aclarar en PRD (estados actuales: borrador, pendiente, asignado, en tránsito, entregado) |
+✅ **TODAS RESUELTAS** (07/01/2026) - PRD ya actualizado para coincidir con prototipo.
+
+| Aspecto | Estado |
+|---------|--------|
+| Gráfico Chart.js | ✅ Ya documentado en PRD sección 3.4 |
+| Filtro categoría | ✅ No existe en PRD (correcto, no implementado) |
+| Cards resumen | ✅ Ya en PRD sección 2.2 |
+| Estado "cancelado" | ✅ PRD sección 4.4 ya dice "no existe actualmente" |
 
 ---
 
