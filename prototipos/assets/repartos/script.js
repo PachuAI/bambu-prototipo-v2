@@ -501,6 +501,16 @@ function seleccionarVehiculo(vehiculoId) {
 // CONFIRMAR ASIGNACIÓN
 // ===========================
 
+/**
+ * Confirma la asignación de un pedido a un vehículo
+ *
+ * REGLA DE NEGOCIO:
+ * - Asigna pedido al vehículo seleccionado
+ * - Cambia estado de 'pendiente' a 'en transito'
+ * - Persiste cambios en BambuState
+ *
+ * PRD: prd/ventas.html - Sección 8 (Repartos)
+ */
 function confirmarAsignacion() {
     if (!pedidoSeleccionadoId || !vehiculoSeleccionadoId) return;
 
@@ -513,6 +523,17 @@ function confirmarAsignacion() {
     // Mover pedido
     const pedido = appData.pedidosSinAsignar.splice(pedidoIndex, 1)[0];
     vehiculo.pedidos.push(pedido);
+
+    // =========================================================================
+    // REGLA DE NEGOCIO: Persistir asignación en BambuState
+    // PRD: prd/ventas.html - Sección 8.1
+    // =========================================================================
+    BambuState.update('pedidos', pedidoSeleccionadoId, {
+        vehiculo_id: vehiculo.vehiculoId,
+        estado: 'en transito',
+        orden_visita: vehiculo.pedidos.length  // Último en la lista
+    });
+    console.log(`✅ Pedido ${pedido.numero} asignado a ${vehiculo.badge} (persistido en BambuState)`);
 
     // Recalcular capacidad del vehículo
     recalcularCapacidadVehiculo(vehiculoSeleccionadoId);
@@ -560,6 +581,7 @@ function cambiarVehiculo(pedidoId, vehiculoActualId) {
  * LÓGICA:
  * - Busca el pedido en todos los vehículos asignados
  * - Lo mueve a la lista "Sin Asignar"
+ * - Persiste cambios en BambuState
  * - Recalcula capacidad del vehículo anterior
  * - Re-renderiza todas las vistas
  */
@@ -585,6 +607,17 @@ function desasignarVehiculo(pedidoId) {
     const pedido = vehiculoOrigen.pedidos.splice(pedidoIndex, 1)[0];
     appData.pedidosSinAsignar.push(pedido);
 
+    // =========================================================================
+    // REGLA DE NEGOCIO: Persistir desasignación en BambuState
+    // PRD: prd/ventas.html - Sección 8.1
+    // =========================================================================
+    BambuState.update('pedidos', pedidoId, {
+        vehiculo_id: null,
+        estado: 'pendiente',
+        orden_visita: 0
+    });
+    console.log(`✅ Pedido ${pedido.numero} desasignado de ${vehiculoOrigen.badge} (persistido en BambuState)`);
+
     // Recalcular capacidad del vehículo origen
     recalcularCapacidadVehiculo(vehiculoOrigen.id);
 
@@ -593,8 +626,6 @@ function desasignarVehiculo(pedidoId) {
     renderizarPedidosSinAsignar();
     renderizarCiudades();
     actualizarStats();
-
-    console.log(`[Repartos] Pedido ${pedido.numero} desasignado de ${vehiculoOrigen.badge}`);
 }
 
 // ===========================
@@ -1352,6 +1383,17 @@ function handleReorderDrop(e) {
     vehiculo.pedidos.forEach((p, idx) => {
         p.orden_visita = idx + 1;
     });
+
+    // =========================================================================
+    // REGLA DE NEGOCIO: Persistir orden_visita en BambuState
+    // PRD: prd/ventas.html - Sección 8.2 (Reordenamiento de Ruta)
+    // =========================================================================
+    vehiculo.pedidos.forEach((p, idx) => {
+        BambuState.update('pedidos', p.id, {
+            orden_visita: idx + 1
+        });
+    });
+    console.log(`✅ Orden de ruta actualizado para ${vehiculo.badge} (persistido en BambuState)`);
 
     // Feedback en consola
     console.log(`[Reorden] Pedido ${pedidoMovido.numero} movido a posición #${newIndex + 1} en ${vehiculo.badge}`);

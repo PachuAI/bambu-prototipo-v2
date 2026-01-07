@@ -887,17 +887,31 @@ function eliminarPedido(pedidoId) {
         return;
     }
 
-    // Si está entregado, reintegrar stock (mock)
-    if (pedido.estado === 'entregado') {
+    // =========================================================================
+    // REGLA DE NEGOCIO: Reintegrar stock al eliminar pedido
+    // PRD: prd/ventas.html - Sección 5.5
+    // =========================================================================
+    if (pedido.estado === 'entregado' || pedido.estado === 'transito' || pedido.estado === 'en transito') {
         console.log('📦 Reintegrando stock para productos:', productos);
 
-        // En producción: BambuState.reintegrarStock(pedidoId)
+        // Reintegrar stock de cada producto
         productos.forEach(prod => {
-            console.log(`  + ${prod.cantidad}x ${prod.nombre} → Stock`);
+            const resultado = BambuState.actualizarStock(
+                prod.producto_id,
+                prod.cantidad,  // Positivo = reintegrar
+                'pedido_eliminado',
+                pedidoId
+            );
+
+            if (resultado.exito) {
+                console.log(`  ✅ +${prod.cantidad}x ${prod.nombre} → Stock: ${resultado.stockNuevo}`);
+            } else {
+                console.warn(`  ⚠️ Error reintegrando ${prod.nombre}: ${resultado.error}`);
+            }
         });
 
-        // Generar nota de crédito en CC
-        if (pedido.cliente_id && pedido.total > 0) {
+        // Generar nota de crédito en CC (solo si estaba ENTREGADO, porque tuvo cargo)
+        if (pedido.estado === 'entregado' && pedido.cliente_id && pedido.total > 0) {
             BambuState.registrarPagoCC({
                 cliente_id: pedido.cliente_id,
                 pedido_id: pedido.id,
@@ -1125,6 +1139,16 @@ function editarBorrador(borradorId) {
     window.location.href = `cotizador.html?editar=${borradorId}`;
 }
 
+/**
+ * Confirma un borrador convirtiéndolo en pedido activo
+ *
+ * REGLA DE NEGOCIO:
+ * - Cambia estado de 'borrador' a 'en transito'
+ * - Descuenta stock de todos los productos
+ * - Persiste cambios en BambuState
+ *
+ * PRD: prd/ventas.html - Sección Borradores
+ */
 function confirmarBorrador(borradorId) {
     const borrador = appState.borradores.find(b => b.id === borradorId);
     if (!borrador) return;
@@ -1133,18 +1157,50 @@ function confirmarBorrador(borradorId) {
         return;
     }
 
-    // Crear nuevo pedido a partir del borrador
+    // Obtener el pedido real desde BambuState (los borradores son pedidos con estado='borrador')
+    const pedidoBambu = BambuState.getById('pedidos', borradorId);
+
+    // =========================================================================
+    // REGLA DE NEGOCIO: Descontar stock al confirmar borrador
+    // PRD: prd/productos.html - Sección Stock
+    // =========================================================================
+    if (pedidoBambu) {
+        const items = BambuState.getItemsPedido(borradorId);
+        items.forEach(item => {
+            const producto = BambuState.getById('productos', item.producto_id);
+            const resultado = BambuState.actualizarStock(
+                item.producto_id,
+                -item.cantidad,  // Negativo = descontar
+                'borrador_confirmado',
+                borradorId
+            );
+
+            if (resultado.exito) {
+                console.log(`📦 Stock descontado: ${producto?.nombre || item.producto_id} -${item.cantidad} → ${resultado.stockNuevo}`);
+            } else {
+                console.warn(`⚠️ Error descontando stock: ${resultado.error}`);
+            }
+        });
+
+        // Actualizar estado en BambuState
+        BambuState.update('pedidos', borradorId, {
+            estado: 'en transito',
+            fecha: BambuState.FECHA_SISTEMA
+        });
+    }
+
+    // Crear nuevo pedido a partir del borrador (para appState local)
     const nuevoPedido = {
-        id: Date.now(), // ID temporal
-        numero: '#' + String(Date.now()).slice(-5),
-        fecha: new Date().toISOString().split('T')[0],
+        id: borradorId,
+        numero: borrador.numero,
+        fecha: BambuState.FECHA_SISTEMA,
         fechaDisplay: new Date().toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' }),
         cliente: borrador.cliente,
         direccion: borrador.direccion,
         ciudad: borrador.ciudad,
         tipo: borrador.tipo,
         estado: 'transito',
-        vehiculo: borrador.tipo === 'fabrica' ? null : 'Reparto 1', // Asignar vehículo por defecto
+        vehiculo: borrador.tipo === 'fabrica' ? null : 'Reparto 1',
         total: borrador.total,
         items: borrador.items,
         peso: borrador.peso,
@@ -1156,7 +1212,7 @@ function confirmarBorrador(borradorId) {
     };
 
     // Agregar a pedidos
-    appState.pedidos.unshift(nuevoPedido); // Agregar al principio
+    appState.pedidos.unshift(nuevoPedido);
 
     // Remover de borradores
     appState.borradores = appState.borradores.filter(b => b.id !== borradorId);

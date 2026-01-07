@@ -1302,6 +1302,27 @@ function confirmarPedido() {
         });
     });
 
+    // =========================================================================
+    // REGLA DE NEGOCIO: Descontar stock al confirmar pedido
+    // PRD: prd/productos.html - Sección Stock
+    // =========================================================================
+    state.cart.forEach(item => {
+        // Productos BAMBU (proveedor_id=1) no tienen restricción de stock
+        // pero igual se descuenta para tracking
+        const resultado = BambuState.actualizarStock(
+            item.id,
+            -item.qty,  // Negativo = descontar
+            'pedido_confirmado',
+            nuevoPedido.id
+        );
+
+        if (resultado.exito) {
+            console.log(`📦 Stock descontado: ${item.name} -${item.qty} → ${resultado.stockNuevo}`);
+        } else {
+            console.warn(`⚠️ Error descontando stock ${item.name}: ${resultado.error}`);
+        }
+    });
+
     // Si estaba editando un borrador, eliminarlo (ya se creó el pedido nuevo)
     if (state.editandoBorradorId) {
         // Eliminar items del borrador viejo
