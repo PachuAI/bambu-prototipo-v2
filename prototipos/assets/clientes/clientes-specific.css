@@ -409,3 +409,65 @@
     background: var(--color-primary) !important;
     color: var(--text-white) !important;
 }
+
+/* ============================================================================
+   HEADERS ORDENABLES
+   ============================================================================ */
+
+.table-v2 th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition-fast);
+}
+
+.table-v2 th.sortable:hover {
+    background: var(--bg-app);
+}
+
+.table-v2 th.sortable i {
+    margin-left: 4px;
+    font-size: 10px;
+    opacity: 0.5;
+}
+
+.table-v2 th.sortable i.fa-sort-up,
+.table-v2 th.sortable i.fa-sort-down {
+    opacity: 1;
+    color: var(--color-accent);
+}
+
+/* ============================================================================
+   BOTÓN SECONDARY COMPACTO (Exportar Excel)
+   ============================================================================ */
+
+.btn-secondary-compact {
+    background: var(--bg-white);
+    color: var(--text-secondary);
+    padding: 6px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-base);
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-base);
+}
+
+.btn-secondary-compact:hover {
+    background: var(--bg-app);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+[data-theme="dark"] .btn-secondary-compact {
+    background: var(--bg-sidebar);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .btn-secondary-compact:hover {
+    background: var(--bg-hover);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}

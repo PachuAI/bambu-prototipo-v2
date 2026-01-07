@@ -809,6 +809,62 @@ const BambuState = {
             ...datos,
             estado: 'borrador'
         });
+    },
+
+    // ========================================================================
+    // MÉTODOS DE ACTUALIZACIÓN
+    // ========================================================================
+
+    /**
+     * Actualiza un registro existente
+     * @param {string} entidad - 'clientes', 'productos', 'pedidos', etc.
+     * @param {number} id - ID del registro a actualizar
+     * @param {Object} datos - Campos a actualizar (merge con existentes)
+     * @returns {Object|null} El registro actualizado o null si no existe
+     */
+    update(entidad, id, datos) {
+        this._checkInit();
+
+        const items = this._state[entidad];
+        if (!items) {
+            console.error(`[BambuState] Entidad '${entidad}' no existe`);
+            return null;
+        }
+
+        const idx = items.findIndex(item => item.id === id);
+        if (idx === -1) {
+            console.error(`[BambuState] Registro con id=${id} no encontrado en '${entidad}'`);
+            return null;
+        }
+
+        // Merge datos existentes con nuevos
+        items[idx] = { ...items[idx], ...datos };
+        this.save();
+
+        console.log(`[BambuState] ${entidad}[${id}] actualizado`);
+        return items[idx];
+    },
+
+    /**
+     * Elimina un registro
+     * @param {string} entidad
+     * @param {number} id
+     * @returns {boolean} true si se eliminó correctamente
+     */
+    delete(entidad, id) {
+        this._checkInit();
+
+        const items = this._state[entidad];
+        if (!items) return false;
+
+        const idx = items.findIndex(item => item.id === id);
+        if (idx === -1) return false;
+
+        items.splice(idx, 1);
+        this.save();
+
+        console.log(`[BambuState] ${entidad}[${id}] eliminado`);
+        return true;
     }
 };
 

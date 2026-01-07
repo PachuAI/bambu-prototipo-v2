@@ -122,18 +122,116 @@ function cargarPedidosCliente(clienteId) {
 
 /**
  * Carga la información del cliente en el tab Información
+ *
+ * LÓGICA:
+ * - Precarga todos los campos editables con datos del cliente
+ * - Selecciona ciudad y descuento correctos
  */
 function cargarInfoCliente(cliente) {
-    // Buscar elementos del tab info
-    const telefonoEl = document.querySelector('[data-field="telefono"]');
-    const ciudadEl = document.querySelector('[data-field="ciudad"]');
-    const emailEl = document.querySelector('[data-field="email"]');
-    const notaEl = document.querySelector('[data-field="nota"]');
+    // Campos de datos
+    const direccionEl = document.getElementById('info-direccion');
+    const telefonoEl = document.getElementById('info-telefono');
+    const ciudadEl = document.getElementById('info-ciudad');
+    const emailEl = document.getElementById('info-email');
+    const notaEl = document.getElementById('info-nota');
 
-    if (telefonoEl) telefonoEl.textContent = cliente.telefono || '-';
-    if (ciudadEl) ciudadEl.textContent = cliente.ciudad || '-';
-    if (emailEl) emailEl.textContent = cliente.email || '-';
-    if (notaEl) notaEl.textContent = cliente.nota || '-';
+    if (direccionEl) direccionEl.value = cliente.direccion || '';
+    if (telefonoEl) telefonoEl.value = cliente.telefono || '';
+    if (emailEl) emailEl.value = cliente.email || '';
+    if (notaEl) notaEl.value = cliente.nota || '';
+
+    // Seleccionar ciudad
+    if (ciudadEl) {
+        const ciudadNorm = cliente.ciudad.toLowerCase();
+        ciudadEl.value = ciudadNorm;
+    }
+
+    // Seleccionar descuento
+    const btnGroup = document.querySelector('#tab-info .btn-group-toggle');
+    if (btnGroup) {
+        btnGroup.querySelectorAll('.btn-toggle').forEach(btn => btn.classList.remove('active'));
+
+        let valorDescuento = 'none';
+        if (cliente.lista_precio === 'L2') valorDescuento = 'l2';
+        if (cliente.lista_precio === 'L3') valorDescuento = 'l3';
+
+        const btnDescuento = btnGroup.querySelector(`[data-value="${valorDescuento}"]`);
+        if (btnDescuento) btnDescuento.classList.add('active');
+    }
+}
+
+/**
+ * Guarda los cambios del tab Información
+ *
+ * REGLA DE NEGOCIO:
+ * - Dirección y teléfono son obligatorios
+ * - Ciudad debe estar seleccionada
+ * - Actualiza datos en BambuState y mock
+ *
+ * PRD: prd/clientes.html - Sección Edición
+ */
+function guardarInfoCliente() {
+    // Obtener ID del cliente actual
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = parseInt(params.get('id')) || 9;
+
+    // Obtener valores de los campos
+    const direccion = document.getElementById('info-direccion').value.trim();
+    const telefono = document.getElementById('info-telefono').value.trim();
+    const ciudad = document.getElementById('info-ciudad').value;
+    const email = document.getElementById('info-email').value.trim();
+    const nota = document.getElementById('info-nota').value.trim();
+
+    // Obtener descuento seleccionado
+    const btnActivo = document.querySelector('#tab-info .btn-toggle.active');
+    const descuentoVal = btnActivo ? btnActivo.getAttribute('data-value') : 'none';
+
+    // Validaciones
+    if (!direccion) {
+        alert('⚠️ La dirección es obligatoria');
+        document.getElementById('info-direccion').focus();
+        return;
+    }
+    if (!telefono) {
+        alert('⚠️ El teléfono es obligatorio');
+        document.getElementById('info-telefono').focus();
+        return;
+    }
+    if (!ciudad) {
+        alert('⚠️ Debe seleccionar una ciudad');
+        document.getElementById('info-ciudad').focus();
+        return;
+    }
+
+    // Mapear descuento a lista_precio
+    let listaPrecio = 'L1';
+    if (descuentoVal === 'l2') listaPrecio = 'L2';
+    if (descuentoVal === 'l3') listaPrecio = 'L3';
+
+    // Actualizar en BambuState
+    const clienteActualizado = BambuState.update('clientes', clienteId, {
+        direccion: direccion.toUpperCase(),
+        telefono,
+        ciudad: ciudad.charAt(0).toUpperCase() + ciudad.slice(1),
+        email,
+        nota,
+        lista_precio: listaPrecio
+    });
+
+    if (clienteActualizado) {
+        // Actualizar header
+        document.getElementById('cliente-direccion').textContent = clienteActualizado.direccion;
+
+        // Actualizar badge descuento
+        const descuentos = { 'L1': '0%', 'L2': '6.25%', 'L3': '10%' };
+        document.getElementById('cliente-lista').innerHTML =
+            `<i class="fas fa-tag"></i> ${listaPrecio} (${descuentos[listaPrecio]})`;
+
+        alert('✅ Cambios guardados correctamente');
+        console.log('✅ Cliente actualizado:', clienteActualizado);
+    } else {
+        alert('❌ Error al guardar los cambios');
+    }
 }
 
 /**
@@ -157,4 +255,31 @@ function formatearFecha(fechaISO) {
     if (!fechaISO) return '-';
     const [year, month, day] = fechaISO.split('-');
     return `${day}/${month}/${year}`;
+}
+
+// ========================================
+// NUEVA COTIZACIÓN CON CLIENTE
+// PRD: prd/clientes.html - Integración Cotizador
+// ========================================
+
+/**
+ * Redirige al cotizador con el cliente actual precargado
+ *
+ * LÓGICA:
+ * - Pasa cliente_id como parámetro URL
+ * - El cotizador debe leer este parámetro y precargar datos
+ */
+function nuevaCotizacionCliente() {
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = parseInt(params.get('id')) || 9;
+
+    const cliente = BambuState.getById('clientes', clienteId);
+    if (!cliente) {
+        alert('Error: Cliente no encontrado');
+        return;
+    }
+
+    // Redirigir al cotizador con cliente precargado
+    window.location.href = `cotizador.html?cliente_id=${clienteId}`;
+    console.log(`✅ Redirigiendo a cotizador con cliente ${cliente.direccion}`);
 }

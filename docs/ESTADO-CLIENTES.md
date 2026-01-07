@@ -1,6 +1,6 @@
 # ESTADO-CLIENTES.md - Auditoría Módulo Clientes
 
-**Fecha**: 06 Enero 2026
+**Fecha**: 07 Enero 2026
 **Prototipos**: `prototipos/clientes.html` + `prototipos/cliente-detalle.html`
 **PRDs**: `prd/clientes.html` + `prd/cuenta-corriente.html`
 
@@ -10,9 +10,9 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 18 | 58% |
-| ⚠️ Visuales sin lógica | 5 | 16% |
-| ❌ Faltantes | 8 | 26% |
+| ✅ Implementadas (HTML + JS) | 25 | 81% |
+| ⚠️ Visuales sin lógica | 2 | 6% |
+| ❌ Faltantes | 4 | 13% |
 
 **Total funcionalidades**: 31
 
@@ -66,72 +66,50 @@
 25. ✅ Validación monto excede pendiente
 26. ✅ Cálculo saldo resultante
 
+### Sprint 1 - Implementadas (07/01/2026)
+27. ✅ Filtros de clientes (búsqueda, estado, ciudad, saldo combinados)
+28. ✅ Restricción eliminación con pedidos asociados
+29. ✅ Guardar cambios Tab Información (con BambuState.update)
+
+### Sprint 2 - Implementadas (07/01/2026)
+30. ✅ Ordenamiento por columnas (click header asc/desc)
+31. ✅ Exportar Excel clientes (CSV UTF-8 compatible Excel)
+32. ✅ Validación formato email
+33. ✅ Nueva Cotización con cliente precargado
+
 ---
 
-## VISUALES SIN LÓGICA (5 funcionalidades)
+## VISUALES SIN LÓGICA (2 funcionalidades)
 
-### 1. Filtros del header (clientes.html)
-- **HTML**: ✅ Existe (buscador, estado, ciudad, saldo)
-- **JS Falta**: Event listeners para filtrar tabla
-- **Complejidad**: Media
-
-### 2. Exportar Excel clientes
-- **HTML**: No hay botón
-- **JS Falta**: Función generar Excel
-- **Complejidad**: Media
-
-### 3. Botón "Nueva Cotización"
-- **HTML**: ✅ Existe
-- **JS actual**: `alert()` stub
-- **JS Falta**: Redirigir a cotizador con cliente precargado
-- **Complejidad**: Baja
-
-### 4. Enviar Estado de Cuenta
+### 1. Enviar Estado de Cuenta
 - **HTML**: ✅ Existe botón
 - **JS Falta**: Generar PDF/enviar email
 - **Complejidad**: Alta
 
-### 5. Exportar Excel Cuenta Corriente
+### 2. Exportar Excel Cuenta Corriente
 - **HTML**: ✅ Existe botón
 - **JS Falta**: Generar Excel movimientos
 - **Complejidad**: Media
 
 ---
 
-## FALTANTES (8 funcionalidades)
+## FALTANTES (4 funcionalidades)
 
-### 1. Validación dirección única
-- No puede haber 2 clientes con misma dirección
-- **Complejidad**: Baja
-
-### 2. Validación formato email
-- Si email se completa, validar formato
-- **Complejidad**: Baja
-
-### 3. Restricción eliminación con pedidos
-- No eliminar si tiene pedidos asociados
-- Mostrar mensaje explicativo
-- **Complejidad**: Media
-
-### 4. Ordenamiento por columnas
-- Click en header ordena asc/desc
-- **Complejidad**: Media
-
-### 5. Integración Cotizador - seleccionar cliente
-- Al seleccionar cliente, aplicar descuento automáticamente
-- **Complejidad**: Baja
-
-### 6. Persistencia de datos
+### 1. Persistencia de datos
 - Guardar en backend/localStorage
 - **Complejidad**: Alta
 
-### 7. Sincronización CC ↔ Ventas
+### 2. Sincronización CC ↔ Ventas
 - Pagos en Ventas aparecen en CC y viceversa
 - **Complejidad**: Alta
 
-### 8. Guardar cambios Tab Información
-- Botón existe pero sin función
-- **Complejidad**: Baja
+### 3. Exportar Excel Cuenta Corriente
+- Generar CSV/Excel de movimientos CC
+- **Complejidad**: Media
+
+### 4. Enviar Estado de Cuenta
+- Generar PDF y/o enviar por email
+- **Complejidad**: Alta
 
 ---
 
@@ -171,19 +149,19 @@
 
 ## Roadmap Sugerido
 
-### Sprint 1 - Críticos
-1. Filtros de clientes
-2. Validación dirección única
-3. Restricción eliminación con pedidos
-4. Guardar cambios Tab Info
+### Sprint 1 - Críticos ✅ COMPLETADO (07/01/2026)
+1. ✅ Filtros de clientes (búsqueda, estado, ciudad, saldo)
+2. ~~Validación dirección única~~ (descartado - direcciones pueden repetirse)
+3. ✅ Restricción eliminación con pedidos
+4. ✅ Guardar cambios Tab Info
 
-### Sprint 2 - Importantes
-5. Ordenamiento columnas
-6. Exportar Excel clientes
-7. Validación email
-8. Nueva Cotización con cliente
+### Sprint 2 - Importantes ✅ COMPLETADO (07/01/2026)
+5. ✅ Ordenamiento columnas (click header asc/desc)
+6. ✅ Exportar Excel clientes (CSV UTF-8)
+7. ✅ Validación email
+8. ✅ Nueva Cotización con cliente (redirige a cotizador)
 
-### Sprint 3 - Avanzados
+### Sprint 3 - Avanzados (PENDIENTE)
 9. Sincronización CC ↔ Ventas
 10. Exportar Excel CC
 11. Enviar Estado Cuenta
@@ -191,5 +169,5 @@
 
 ---
 
-**Estado general: BUENO (58% implementado)**
+**Estado general: MUY BUENO (81% implementado)**
 **PRD necesita actualización significativa**

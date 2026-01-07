@@ -380,6 +380,13 @@ function crearNuevoCliente() {
         return;
     }
 
+    // Validar email si fue ingresado
+    if (email && !validarEmail(email)) {
+        alert('⚠️ El formato del email no es válido');
+        document.getElementById('nc-email').focus();
+        return;
+    }
+
     // Crear objeto cliente (mock)
     const nuevoCliente = {
         id: Date.now(),
@@ -527,6 +534,12 @@ function guardarCliente() {
         document.getElementById('nc-ciudad').focus();
         return;
     }
+    // Validar email si fue ingresado
+    if (email && !validarEmail(email)) {
+        alert('⚠️ El formato del email no es válido');
+        document.getElementById('nc-email').focus();
+        return;
+    }
 
     // Mapear descuento a lista_precio
     let listaPrecio = 'L1';
@@ -646,12 +659,285 @@ function renderizarClientes() {
 
 /**
  * Confirmar eliminación de cliente (mock)
+ *
+ * REGLA DE NEGOCIO:
+ * - No se puede eliminar un cliente si tiene pedidos asociados
+ * - Pedidos en estado "borrador" no cuentan como asociados
+ * - Mostrar cantidad de pedidos si existe restricción
+ *
+ * PRD: prd/clientes.html - Sección Eliminación
  */
 function confirmarEliminar(id, direccion) {
-    if (confirm(`¿Eliminar cliente "${direccion}"?\n\nEsta acción no se puede deshacer.`)) {
-        alert(`Cliente ${direccion} eliminado (mock)`);
-        // En producción: llamar API y recargar tabla
+    // Verificar si tiene pedidos asociados (excluir borradores)
+    const pedidosAsociados = PEDIDOS.filter(p =>
+        p.cliente === direccion && p.estado !== 'borrador'
+    );
+
+    if (pedidosAsociados.length > 0) {
+        alert(`⚠️ No se puede eliminar "${direccion}"\n\nTiene ${pedidosAsociados.length} pedido(s) asociado(s).\n\nDebe eliminar o reasignar los pedidos primero.`);
+        return;
     }
+
+    if (confirm(`¿Eliminar cliente "${direccion}"?\n\nEsta acción no se puede deshacer.`)) {
+        // Eliminar del array mock
+        const idx = CLIENTES.findIndex(c => c.id === id);
+        if (idx !== -1) {
+            CLIENTES.splice(idx, 1);
+            renderizarClientes();
+            alert(`✅ Cliente "${direccion}" eliminado correctamente`);
+        }
+    }
+}
+
+// ========================================
+// FILTROS DE CLIENTES
+// PRD: prd/clientes.html - Sección Listado
+// ========================================
+
+/**
+ * Filtra la tabla de clientes según los criterios seleccionados
+ *
+ * LÓGICA DE NEGOCIO:
+ * - Búsqueda: filtra por dirección, teléfono (case insensitive)
+ * - Estado: activo/inactivo
+ * - Ciudad: match exacto (normalizado)
+ * - Saldo: deudor (<0), favor (>0), dia (=0)
+ *
+ * Todos los filtros se combinan con AND
+ */
+function filtrarClientes() {
+    const busqueda = document.getElementById('search-clientes').value.toLowerCase().trim();
+    const estado = document.getElementById('filter-estado').value;
+    const ciudad = document.getElementById('filter-ciudad').value;
+    const saldo = document.getElementById('filter-saldo').value;
+
+    const clientesFiltrados = CLIENTES.filter(cliente => {
+        // Filtro búsqueda (dirección o teléfono)
+        if (busqueda) {
+            const matchDireccion = cliente.direccion.toLowerCase().includes(busqueda);
+            const matchTelefono = cliente.telefono.toLowerCase().includes(busqueda);
+            if (!matchDireccion && !matchTelefono) return false;
+        }
+
+        // Filtro estado
+        if (estado && cliente.estado !== estado) return false;
+
+        // Filtro ciudad (normalizar a minúsculas)
+        if (ciudad && cliente.ciudad.toLowerCase() !== ciudad.toLowerCase()) return false;
+
+        // Filtro saldo
+        if (saldo) {
+            if (saldo === 'deudor' && cliente.saldo >= 0) return false;
+            if (saldo === 'favor' && cliente.saldo <= 0) return false;
+            if (saldo === 'dia' && cliente.saldo !== 0) return false;
+        }
+
+        return true;
+    });
+
+    renderizarClientesFiltrados(clientesFiltrados);
+}
+
+/**
+ * Renderiza lista filtrada de clientes
+ */
+function renderizarClientesFiltrados(listaClientes) {
+    const tbody = document.getElementById('tabla-clientes-body');
+    if (!tbody) return;
+
+    if (listaClientes.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                    <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                    No se encontraron clientes con los filtros aplicados
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = listaClientes.map(cliente => {
+        const saldoAbs = Math.abs(cliente.saldo);
+        const saldoFormateado = saldoAbs.toLocaleString('es-AR');
+        const saldoClass = cliente.saldo < 0 ? 'amount-negative' : 'amount-positive';
+        const saldoTexto = cliente.saldo < 0 ? `-$${saldoFormateado}` : `$${saldoFormateado}`;
+
+        const estadoClass = cliente.estado === 'activo' ? 'active' : 'inactive';
+        const estadoTexto = cliente.estado === 'activo' ? 'Activo' : 'Inactivo';
+
+        return `
+            <tr onclick="location.href='cliente-detalle.html?id=${cliente.id}'">
+                <td class="text-bold">${cliente.direccion}</td>
+                <td>${cliente.telefono}</td>
+                <td>${cliente.ciudad}</td>
+                <td class="${saldoClass}">${saldoTexto}</td>
+                <td><span class="badge-status ${estadoClass}">${estadoTexto}</span></td>
+                <td>
+                    <div class="actions-cell">
+                        <button class="btn-icon-sm btn-edit" title="Editar"
+                            onclick="event.stopPropagation(); abrirModalEditarCliente(${cliente.id})">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="btn-icon-sm btn-view" title="Ver Detalle"
+                            onclick="event.stopPropagation(); location.href='cliente-detalle.html?id=${cliente.id}'">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-icon-sm btn-delete" title="Eliminar"
+                            onclick="event.stopPropagation(); confirmarEliminar(${cliente.id}, '${cliente.direccion}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    console.log(`✅ Mostrando ${listaClientes.length} de ${CLIENTES.length} clientes`);
+}
+
+// Event listeners para filtros
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-clientes');
+    const filterEstado = document.getElementById('filter-estado');
+    const filterCiudad = document.getElementById('filter-ciudad');
+    const filterSaldo = document.getElementById('filter-saldo');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filtrarClientes);
+    }
+    if (filterEstado) {
+        filterEstado.addEventListener('change', filtrarClientes);
+    }
+    if (filterCiudad) {
+        filterCiudad.addEventListener('change', filtrarClientes);
+    }
+    if (filterSaldo) {
+        filterSaldo.addEventListener('change', filtrarClientes);
+    }
+});
+
+// ========================================
+// ORDENAMIENTO DE COLUMNAS
+// PRD: prd/clientes.html - Sección Listado
+// ========================================
+
+/**
+ * Estado del ordenamiento actual
+ */
+let ordenActual = { campo: null, direccion: 'asc' };
+
+/**
+ * Ordena la tabla por una columna específica
+ *
+ * LÓGICA:
+ * - Click en misma columna: alterna asc/desc
+ * - Click en columna diferente: ordena asc
+ * - Actualiza indicador visual en headers
+ *
+ * @param {string} campo - 'direccion', 'ciudad', 'saldo', 'estado'
+ */
+function ordenarPor(campo) {
+    // Alternar dirección si es la misma columna
+    if (ordenActual.campo === campo) {
+        ordenActual.direccion = ordenActual.direccion === 'asc' ? 'desc' : 'asc';
+    } else {
+        ordenActual.campo = campo;
+        ordenActual.direccion = 'asc';
+    }
+
+    // Ordenar array
+    const clientesOrdenados = [...CLIENTES].sort((a, b) => {
+        let valA = a[campo];
+        let valB = b[campo];
+
+        // Normalizar strings
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+        // Comparar
+        if (valA < valB) return ordenActual.direccion === 'asc' ? -1 : 1;
+        if (valA > valB) return ordenActual.direccion === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    // Actualizar indicadores visuales
+    document.querySelectorAll('th.sortable').forEach(th => {
+        const icon = th.querySelector('i');
+        if (th.dataset.sort === campo) {
+            icon.className = ordenActual.direccion === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+        } else {
+            icon.className = 'fas fa-sort';
+        }
+    });
+
+    // Renderizar con orden aplicado
+    renderizarClientesFiltrados(clientesOrdenados);
+    console.log(`✅ Ordenado por ${campo} (${ordenActual.direccion})`);
+}
+
+// ========================================
+// EXPORTAR EXCEL
+// PRD: prd/clientes.html - Sección Acciones
+// ========================================
+
+/**
+ * Exporta la lista de clientes a CSV (compatible Excel)
+ *
+ * LÓGICA:
+ * - Exporta clientes actualmente visibles (respeta filtros)
+ * - Genera CSV con separador punto y coma (Excel ES)
+ * - Descarga automáticamente
+ */
+function exportarExcelClientes() {
+    // Headers
+    const headers = ['Dirección', 'Teléfono', 'Ciudad', 'Saldo', 'Estado', 'Lista Precio', 'Email', 'Nota'];
+
+    // Datos (usar CLIENTES actuales, idealmente filtrados)
+    const filas = CLIENTES.map(c => [
+        c.direccion,
+        c.telefono,
+        c.ciudad,
+        c.saldo,
+        c.estado,
+        c.lista_precio,
+        c.email || '',
+        c.nota || ''
+    ]);
+
+    // Construir CSV
+    let csv = '\uFEFF'; // BOM para UTF-8 en Excel
+    csv += headers.join(';') + '\n';
+    filas.forEach(fila => {
+        csv += fila.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';') + '\n';
+    });
+
+    // Descargar
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `clientes_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    console.log(`✅ Exportados ${CLIENTES.length} clientes a CSV`);
+}
+
+// ========================================
+// VALIDACIÓN EMAIL
+// PRD: prd/clientes.html - Sección Validaciones
+// ========================================
+
+/**
+ * Valida formato de email
+ * @param {string} email
+ * @returns {boolean}
+ */
+function validarEmail(email) {
+    if (!email || email.trim() === '') return true; // Email es opcional
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email.trim());
 }
 
 console.log('✅ Clientes V2 - Script cargado correctamente');

@@ -121,6 +121,7 @@
                         <option value="dia">Al Día</option>
                     </select>
 
+                    <button class="btn-secondary-compact" onclick="exportarExcelClientes()" title="Exportar a Excel"><i class="fas fa-file-excel"></i></button>
                     <button class="btn-primary-compact" onclick="abrirModalNuevoCliente()"><i class="fas fa-plus"></i> Nuevo Cliente</button>
                 </div>
             </header>
@@ -130,11 +131,11 @@
                 <table class="table-v2">
                     <thead>
                         <tr>
-                            <th>Dirección</th>
+                            <th class="sortable" data-sort="direccion" onclick="ordenarPor('direccion')">Dirección <i class="fas fa-sort"></i></th>
                             <th>Teléfono</th>
-                            <th>Ciudad</th>
-                            <th>Saldo (CC)</th>
-                            <th>Estado</th>
+                            <th class="sortable" data-sort="ciudad" onclick="ordenarPor('ciudad')">Ciudad <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-sort="saldo" onclick="ordenarPor('saldo')">Saldo (CC) <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-sort="estado" onclick="ordenarPor('estado')">Estado <i class="fas fa-sort"></i></th>
                             <th class="th-acciones">Acciones</th>
                         </tr>
                     </thead>

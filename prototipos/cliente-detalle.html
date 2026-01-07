@@ -102,7 +102,7 @@
                     <div class="tab-link" data-tab="info">Información</div>
                 </div>
                 <div class="header-right">
-                    <button class="btn-primary-compact" onclick="alert('Nueva Cotización')">
+                    <button class="btn-primary-compact" onclick="nuevaCotizacionCliente()">
                         <i class="fas fa-plus"></i> Nueva Cotización
                     </button>
                 </div>
@@ -364,26 +364,27 @@
                             <h3>Datos del Cliente</h3>
                             <div style="display:grid; gap:16px;">
                                 <div>
-                                    <label class="info-form-label">Nombre / Razón Social</label>
-                                    <input type="text" value="9 DE JULIO 902" class="info-form-input">
-                                </div>
-                                <div>
                                     <label class="info-form-label">Dirección</label>
-                                    <input type="text" value="9 de Julio 902" class="info-form-input">
+                                    <input type="text" id="info-direccion" class="info-form-input">
                                 </div>
                                 <div>
                                     <label class="info-form-label">Teléfono</label>
-                                    <input type="text" value="299 507-3355" class="info-form-input">
+                                    <input type="text" id="info-telefono" class="info-form-input">
                                 </div>
                                 <div>
                                     <label class="info-form-label">Ciudad</label>
-                                    <select class="info-form-input">
-                                        <option value="cipolletti" selected>Cipolletti</option>
+                                    <select id="info-ciudad" class="info-form-input">
+                                        <option value="">Seleccionar...</option>
                                         <option value="neuquen">Neuquén</option>
+                                        <option value="cipolletti">Cipolletti</option>
                                         <option value="plottier">Plottier</option>
                                         <option value="centenario">Centenario</option>
                                         <option value="allen">Allen</option>
                                     </select>
+                                </div>
+                                <div>
+                                    <label class="info-form-label">Email</label>
+                                    <input type="email" id="info-email" class="info-form-input" placeholder="cliente@email.com">
                                 </div>
                             </div>
                         </div>
@@ -403,10 +404,10 @@
                                 </div>
                                 <div>
                                     <label class="info-form-label">Nota / Comentario</label>
-                                    <textarea class="info-form-input" placeholder="Observaciones sobre el cliente..."></textarea>
+                                    <textarea id="info-nota" class="info-form-input" placeholder="Observaciones sobre el cliente..."></textarea>
                                 </div>
                                 <div style="margin-top:8px;">
-                                    <button class="btn-primary" style="width:100%; justify-content: center;">Guardar
+                                    <button class="btn-primary" style="width:100%; justify-content: center;" onclick="guardarInfoCliente()">Guardar
                                         Cambios</button>
                                 </div>
                             </div>
