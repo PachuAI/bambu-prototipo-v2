@@ -415,6 +415,142 @@ function renderizarMovimientosCC(clienteId) {
 }
 
 // ========================================
+// ENVIAR ESTADO DE CUENTA
+// PRD: prd/cuenta-corriente.html - Sección Estado de Cuenta
+// ========================================
+
+/**
+ * Genera y muestra estado de cuenta para enviar/imprimir
+ *
+ * LÓGICA:
+ * - Genera HTML con formato de estado de cuenta
+ * - Abre ventana nueva para imprimir/guardar como PDF
+ * - En producción: enviaría por email
+ */
+function enviarEstadoCuenta() {
+    // Obtener cliente actual
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = parseInt(params.get('id')) || 9;
+    const cliente = BambuState.getById('clientes', clienteId);
+
+    if (!cliente) {
+        alert('Error: Cliente no encontrado');
+        return;
+    }
+
+    // Obtener movimientos
+    const movimientos = BambuState.getMovimientosCC(clienteId);
+    const saldoActual = BambuState.calcularSaldoCC(clienteId);
+
+    // Generar tabla de movimientos
+    let tablaMovimientos = '';
+    if (movimientos.length > 0) {
+        // Calcular saldos acumulados
+        const movsOrdenados = [...movimientos].reverse();
+        let saldoAcum = 0;
+        const movsConSaldo = movsOrdenados.map(m => {
+            if (m.tipo === 'cargo') saldoAcum -= m.monto;
+            if (m.tipo === 'pago') saldoAcum += m.monto;
+            return { ...m, saldoAcumulado: saldoAcum };
+        }).reverse();
+
+        tablaMovimientos = movsConSaldo.map(m => {
+            const cargo = m.tipo === 'cargo' ? `$${m.monto.toLocaleString('es-AR')}` : '-';
+            const pago = m.tipo === 'pago' ? `$${m.monto.toLocaleString('es-AR')}` : '-';
+            const saldo = `${m.saldoAcumulado < 0 ? '-' : ''}$${Math.abs(m.saldoAcumulado).toLocaleString('es-AR')}`;
+            return `
+                <tr>
+                    <td>${formatearFecha(m.fecha)}</td>
+                    <td>${m.descripcion}</td>
+                    <td style="text-align:right">${cargo}</td>
+                    <td style="text-align:right">${pago}</td>
+                    <td style="text-align:right">${saldo}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // HTML del estado de cuenta
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Estado de Cuenta - ${cliente.direccion}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+        .header { border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+        .empresa { font-size: 24px; font-weight: bold; }
+        .titulo { font-size: 18px; color: #666; margin-top: 5px; }
+        .info-cliente { background: #f5f5f5; padding: 15px; margin-bottom: 20px; }
+        .info-row { display: flex; margin-bottom: 5px; }
+        .info-label { width: 120px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #333; color: white; }
+        .saldo-final { font-size: 20px; text-align: right; padding: 20px; background: ${saldoActual < 0 ? '#fee' : '#efe'}; }
+        .saldo-negativo { color: #c00; }
+        .saldo-positivo { color: #080; }
+        .footer { margin-top: 30px; font-size: 12px; color: #666; text-align: center; }
+        @media print { body { margin: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="empresa">Química Bambu S.R.L.</div>
+        <div class="titulo">Estado de Cuenta Corriente</div>
+    </div>
+
+    <div class="info-cliente">
+        <div class="info-row"><span class="info-label">Cliente:</span> ${cliente.direccion}</div>
+        <div class="info-row"><span class="info-label">Teléfono:</span> ${cliente.telefono}</div>
+        <div class="info-row"><span class="info-label">Ciudad:</span> ${cliente.ciudad}</div>
+        <div class="info-row"><span class="info-label">Fecha:</span> ${new Date().toLocaleDateString('es-AR')}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th style="text-align:right">Cargo</th>
+                <th style="text-align:right">Pago</th>
+                <th style="text-align:right">Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${tablaMovimientos || '<tr><td colspan="5" style="text-align:center">Sin movimientos</td></tr>'}
+        </tbody>
+    </table>
+
+    <div class="saldo-final">
+        <strong>SALDO ACTUAL: </strong>
+        <span class="${saldoActual < 0 ? 'saldo-negativo' : 'saldo-positivo'}">
+            ${saldoActual < 0 ? '-' : ''}$${Math.abs(saldoActual).toLocaleString('es-AR')}
+        </span>
+    </div>
+
+    <div class="footer">
+        Documento generado el ${new Date().toLocaleString('es-AR')}<br>
+        Este estado de cuenta es informativo. Ante cualquier duda contactar al vendedor.
+    </div>
+</body>
+</html>
+    `;
+
+    // Abrir ventana para imprimir
+    const ventana = window.open('', '_blank');
+    ventana.document.write(html);
+    ventana.document.close();
+
+    // Auto-abrir diálogo de impresión
+    setTimeout(() => {
+        ventana.print();
+    }, 500);
+
+    console.log(`✅ Estado de cuenta generado para ${cliente.direccion}`);
+}
+
+// ========================================
 // EXPORTAR EXCEL CUENTA CORRIENTE
 // PRD: prd/cuenta-corriente.html - Sección Exportación
 // ========================================

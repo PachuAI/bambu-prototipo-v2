@@ -10,8 +10,8 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 27 | 87% |
-| ⚠️ Visuales sin lógica | 1 | 3% |
+| ✅ Implementadas (HTML + JS) | 28 | 90% |
+| ⚠️ Visuales sin lógica | 0 | 0% |
 | ❌ Faltantes | 3 | 10% |
 
 **Total funcionalidades**: 31
@@ -80,15 +80,13 @@
 ### Sprint 3 - Implementadas (07/01/2026)
 34. ✅ Exportar Excel Cuenta Corriente (CSV con movimientos)
 35. ✅ Sincronización CC ↔ Ventas (cargos/pagos compartidos via BambuState)
+36. ✅ Enviar Estado de Cuenta (genera HTML imprimible/PDF)
 
 ---
 
-## VISUALES SIN LÓGICA (1 funcionalidad)
+## VISUALES SIN LÓGICA (0 funcionalidades)
 
-### 1. Enviar Estado de Cuenta
-- **HTML**: ✅ Existe botón
-- **JS Falta**: Generar PDF/enviar email
-- **Complejidad**: Alta
+Todas las funcionalidades visuales tienen lógica implementada.
 
 ---
 
@@ -152,13 +150,14 @@
 7. ✅ Validación email
 8. ✅ Nueva Cotización con cliente (redirige a cotizador)
 
-### Sprint 3 - Avanzados (EN PROGRESO)
-9. ✅ Exportar Excel CC (07/01/2026)
-10. ✅ Sincronización CC ↔ Ventas (07/01/2026)
-11. Enviar Estado Cuenta
-12. Persistencia datos
+### Sprint 3 - Avanzados ✅ COMPLETADO (07/01/2026)
+9. ✅ Exportar Excel CC
+10. ✅ Sincronización CC ↔ Ventas
+11. ✅ Enviar Estado Cuenta (HTML imprimible)
+12. ~~Persistencia datos~~ → Ya implementado via BambuState/localStorage
 
 ---
 
-**Estado general: EXCELENTE (87% implementado)**
+**Estado general: EXCELENTE (90% implementado)**
+**Módulo prácticamente completo - Solo falta backend real**
 **PRD necesita actualización significativa**
