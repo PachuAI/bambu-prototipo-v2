@@ -1,6 +1,6 @@
 # ESTADO-REPARTOS-DIA.md - Auditoría Módulo Repartos Día
 
-**Fecha**: 06 Enero 2026
+**Fecha**: 07 Enero 2026 (actualizado)
 **Prototipo**: `prototipos/repartos-dia.html`
 **PRD**: `prd/ventas.html` sección 8 (NO tiene PRD propio)
 
@@ -10,8 +10,8 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 29 | 85% |
-| ⚠️ Visuales sin lógica | 3 | 9% |
+| ✅ Implementadas (HTML + JS) | 32 | 94% |
+| ⚠️ Visuales sin lógica | 0 | 0% |
 | ❌ Faltantes | 2 | 6% |
 
 **Total funcionalidades**: 34
@@ -20,12 +20,12 @@
 
 ## BUG CRÍTICO ENCONTRADO
 
-### Modal muestra "undefined" en nombre cliente
+### ~~Modal muestra "undefined" en nombre cliente~~ ✅ CORREGIDO
 - **Ubicación**: Modal "Asignar Vehículo"
-- **Muestra**: "undefined - AV ROCA 123"
-- **Debería**: "CLIENTE X - AV ROCA 123" o solo "AV ROCA 123"
-- **Causa**: Acceso a `pedido.cliente` que no existe en mock
-- **Prioridad**: ALTA - fix visual urgente
+- ~~**Muestra**: "undefined - AV ROCA 123"~~
+- **Ahora muestra**: "AV ROCA 123 - NEUQUÉN" (dirección + ciudad)
+- **Fix**: Línea 407 de script.js - cambiado `pedido.cliente` por `pedido.direccion`
+- **Fecha fix**: 07 Enero 2026
 
 ---
 
@@ -89,25 +89,21 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 
 ---
 
-## VISUALES SIN LÓGICA (3 funcionalidades)
+## VISUALES SIN LÓGICA (0 funcionalidades)
 
-### 1. Botón Exportar
-- **HTML**: ✅ Existe (verde, header derecha)
-- **JS actual**: `alert()` o stub
-- **JS falta**: Generar PDF/Excel hoja de reparto
-- **Complejidad**: Media
+### ~~1. Botón Exportar~~ ✅ IMPLEMENTADO
+- **Estado**: Funcional (líneas 676-794 de script.js)
+- **Genera**: Ventana imprimible con hoja de reparto por vehículo
+- **Fecha implementación**: 07 Enero 2026
 
-### 2. Navegación cambiar día
-- **HTML**: ✅ Flechas < > existen
-- **JS actual**: `console.log()`
-- **JS falta**: Cambiar fecha y recargar datos
-- **Complejidad**: Baja
+### ~~2. Navegación cambiar día~~ ✅ YA IMPLEMENTADO
+- **Estado**: Funcional (líneas 796-832 de script.js)
+- **Fecha verificación**: 07 Enero 2026
 
-### 3. Desasignar vehículo (botón X)
-- **HTML**: ✅ Botón X existe
-- **JS actual**: `alert()` + TODO en código
-- **JS falta**: Mover pedido a "Sin Asignar"
-- **Complejidad**: Baja
+### ~~3. Desasignar vehículo (botón X)~~ ✅ IMPLEMENTADO
+- **Estado**: Funcional (líneas 542-574 de script.js)
+- **Lógica**: Busca pedido → mueve a Sin Asignar → recalcula capacidad → re-renderiza
+- **Fecha implementación**: 07 Enero 2026
 
 ---
 
@@ -154,7 +150,7 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 
 ### Screenshot 2 - Modal Asignar
 ✅ Título "Asignar Vehículo" + #501
-⚠️ BUG: "undefined - AV ROCA 123"
+✅ Dirección + Ciudad (corregido 07/01/2026)
 ✅ 3 opciones vehículo con preview
 ✅ Barras progreso proyectadas
 ✅ Botones Cancelar / Asignar Vehículo
@@ -163,14 +159,14 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 
 ## Roadmap Sugerido
 
-### Sprint 1 - Críticos
-1. **FIX BUG**: Corregir "undefined" en modal
-2. Implementar navegación días (flechas)
-3. Implementar desasignar (botón X)
+### Sprint 1 - Críticos ✅ COMPLETADO (07 Enero 2026)
+1. ~~**FIX BUG**: Corregir "undefined" en modal~~ ✅
+2. ~~Implementar navegación días (flechas)~~ ✅ (ya estaba)
+3. ~~Implementar desasignar (botón X)~~ ✅
 
-### Sprint 2 - Importantes
-4. Exportar hoja de reparto (PDF)
-5. Crear PRD específico del módulo
+### Sprint 2 - Importantes ✅ COMPLETADO (07 Enero 2026)
+4. ~~Exportar hoja de reparto (PDF)~~ ✅
+5. ~~Crear PRD específico del módulo~~ ✅ → `prd/repartos-dia.html`
 
 ### Sprint 3 - Mejoras
 6. Drag & drop (opcional)
@@ -188,5 +184,6 @@ El prototipo tiene **799 líneas de JS funcional** con muchas características N
 
 ---
 
-**Estado general: MUY BUENO (85% implementado)**
-**PRD necesita creación/expansión significativa**
+**Estado general: EXCELENTE (94% implementado)**
+**Sprint 1 y 2 completados - Queda Sprint 3 (mejoras opcionales)**
+**PRD creado: `prd/repartos-dia.html`**

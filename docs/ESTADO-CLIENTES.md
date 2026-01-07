@@ -10,8 +10,8 @@
 
 | Estado | Cantidad | % |
 |--------|----------|---|
-| ✅ Implementadas (HTML + JS) | 25 | 81% |
-| ⚠️ Visuales sin lógica | 2 | 6% |
+| ✅ Implementadas (HTML + JS) | 26 | 84% |
+| ⚠️ Visuales sin lógica | 1 | 3% |
 | ❌ Faltantes | 4 | 13% |
 
 **Total funcionalidades**: 31
@@ -77,23 +77,21 @@
 32. ✅ Validación formato email
 33. ✅ Nueva Cotización con cliente precargado
 
+### Sprint 3 - Implementadas (07/01/2026)
+34. ✅ Exportar Excel Cuenta Corriente (CSV con movimientos)
+
 ---
 
-## VISUALES SIN LÓGICA (2 funcionalidades)
+## VISUALES SIN LÓGICA (1 funcionalidad)
 
 ### 1. Enviar Estado de Cuenta
 - **HTML**: ✅ Existe botón
 - **JS Falta**: Generar PDF/enviar email
 - **Complejidad**: Alta
 
-### 2. Exportar Excel Cuenta Corriente
-- **HTML**: ✅ Existe botón
-- **JS Falta**: Generar Excel movimientos
-- **Complejidad**: Media
-
 ---
 
-## FALTANTES (4 funcionalidades)
+## FALTANTES (3 funcionalidades)
 
 ### 1. Persistencia de datos
 - Guardar en backend/localStorage
@@ -103,11 +101,7 @@
 - Pagos en Ventas aparecen en CC y viceversa
 - **Complejidad**: Alta
 
-### 3. Exportar Excel Cuenta Corriente
-- Generar CSV/Excel de movimientos CC
-- **Complejidad**: Media
-
-### 4. Enviar Estado de Cuenta
+### 3. Enviar Estado de Cuenta
 - Generar PDF y/o enviar por email
 - **Complejidad**: Alta
 
@@ -161,13 +155,13 @@
 7. ✅ Validación email
 8. ✅ Nueva Cotización con cliente (redirige a cotizador)
 
-### Sprint 3 - Avanzados (PENDIENTE)
-9. Sincronización CC ↔ Ventas
-10. Exportar Excel CC
+### Sprint 3 - Avanzados (EN PROGRESO)
+9. ✅ Exportar Excel CC (07/01/2026)
+10. Sincronización CC ↔ Ventas
 11. Enviar Estado Cuenta
 12. Persistencia datos
 
 ---
 
-**Estado general: MUY BUENO (81% implementado)**
+**Estado general: MUY BUENO (84% implementado)**
 **PRD necesita actualización significativa**

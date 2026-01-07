@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRD - Repartos Día | Bambu CRM V2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <button class="mobile-menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <nav id="sidebar">
+        <div class="logo"><span>◆</span> Bambu CRM v2</div>
+        <div class="nav-group">
+            <div class="nav-header">Navegación</div>
+            <a href="index.html" class="nav-link">← PRD General</a>
+            <a href="ventas.html" class="nav-link">← PRD Ventas</a>
+        </div>
+        <div class="nav-group">
+            <div class="nav-header">En esta página</div>
+            <a href="#contexto" class="nav-link">1. Contexto</a>
+            <a href="#acceso" class="nav-link">2. Acceso</a>
+            <a href="#header" class="nav-link">3. Header</a>
+            <a href="#vistas" class="nav-link">4. Vistas</a>
+            <a href="#vehiculos" class="nav-link">5. Vehículos</a>
+            <a href="#sin-asignar" class="nav-link">6. Sin Asignar</a>
+            <a href="#asignacion" class="nav-link">7. Asignación</a>
+            <a href="#acciones" class="nav-link">8. Acciones</a>
+            <a href="#exportar" class="nav-link">9. Exportar</a>
+            <a href="#futuro" class="nav-link">10. Mejoras Futuras</a>
+        </div>
+    </nav>
+
+    <main>
+        <header>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary);">Química Bambu S.R.L.</div>
+            <h1>PRD: Vista Detalle Día (Repartos)</h1>
+            <table>
+                <tr><td><strong>Versión</strong></td><td>1.0 (Enero 2026)</td></tr>
+                <tr><td><strong>Prototipo</strong></td><td><a href="../prototipos/repartos-dia.html">prototipos/repartos-dia.html</a></td></tr>
+                <tr><td><strong>Relacionado</strong></td><td><a href="ventas.html">PRD Ventas</a> (sección 8)</td></tr>
+                <tr><td><strong>Estado</strong></td><td>Prototipo validado (91%)</td></tr>
+            </table>
+            <div class="note" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0;">
+                <strong>Relación con Ventas:</strong> Esta vista es accesible desde el Calendario Semana en el módulo Ventas.
+                NO es un módulo independiente, pero su complejidad justifica documentación separada.
+            </div>
+        </header>
+
+        <!-- CONTEXTO -->
+        <section id="contexto">
+            <h2>1. Contexto y Propósito</h2>
+
+            <h3>1.1 Descripción</h3>
+            <p>Vista detallada de un día específico de reparto. Permite gestionar la asignación de pedidos a vehículos,
+            visualizar capacidad de carga, y organizar la logística de entrega.</p>
+
+            <h3>1.2 Problema que resuelve</h3>
+            <ul>
+                <li>Visualizar todos los pedidos REPARTO de un día específico</li>
+                <li>Asignar pedidos a vehículos según capacidad disponible</li>
+                <li>Evitar sobrecarga de vehículos</li>
+                <li>Generar hoja de reparto para choferes</li>
+                <li>Reorganizar pedidos entre vehículos</li>
+            </ul>
+
+            <h3>1.3 Usuarios objetivo</h3>
+            <ul>
+                <li><strong>Administrador:</strong> Planifica asignaciones y exporta hojas de reparto</li>
+                <li><strong>Chofer:</strong> Consulta su hoja de reparto del día</li>
+            </ul>
+        </section>
+
+        <!-- ACCESO -->
+        <section id="acceso">
+            <h2>2. Acceso a la Vista</h2>
+
+            <h3>2.1 Desde Calendario Semana (Ventas)</h3>
+            <p>Click en cualquier día del calendario abre esta vista con la fecha seleccionada.</p>
+
+            <h3>2.2 URL directa</h3>
+            <p>Parámetro <code>?fecha=YYYY-MM-DD</code></p>
+            <ul>
+                <li>Ejemplo: <code>repartos-dia.html?fecha=2026-01-08</code></li>
+                <li>Si no hay parámetro, usa fecha del sistema</li>
+            </ul>
+
+            <h3>2.3 Botón Volver</h3>
+            <p>Regresa a <code>ventas.html</code> (módulo padre).</p>
+        </section>
+
+        <!-- HEADER -->
+        <section id="header">
+            <h2>3. Header y Navegación</h2>
+
+            <h3>3.1 Navegación de fecha</h3>
+            <table>
+                <tr><th>Elemento</th><th>Comportamiento</th></tr>
+                <tr><td>Flecha izquierda (&lt;)</td><td>Día anterior (dentro de la semana laboral)</td></tr>
+                <tr><td>Título fecha</td><td>Formato: "Mié, 08 Ene 2026"</td></tr>
+                <tr><td>Flecha derecha (&gt;)</td><td>Día siguiente (dentro de la semana laboral)</td></tr>
+            </table>
+            <p><strong>Límite:</strong> Navegación restringida a días de la semana actual (Lunes a Viernes).</p>
+
+            <h3>3.2 Estadísticas globales</h3>
+            <p>Chips informativos que muestran totales del día:</p>
+            <ul>
+                <li><strong>Pedidos:</strong> Cantidad total (asignados + sin asignar)</li>
+                <li><strong>Monto:</strong> Suma total en formato compacto ($4.1M)</li>
+                <li><strong>Peso:</strong> Kilogramos totales a entregar</li>
+            </ul>
+
+            <h3>3.3 Acciones del header</h3>
+            <ul>
+                <li><strong>Exportar:</strong> Genera hoja de reparto imprimible (ver sección 9)</li>
+                <li><strong>Volver:</strong> Regresa a Ventas</li>
+            </ul>
+        </section>
+
+        <!-- VISTAS -->
+        <section id="vistas">
+            <h2>4. Vistas (Tabs)</h2>
+
+            <h3>4.1 Tab: Por Vehículo (default)</h3>
+            <p>Agrupa pedidos según el vehículo asignado. Vista principal para gestión de carga.</p>
+
+            <h3>4.2 Tab: Por Ciudad</h3>
+            <p>Agrupa pedidos según la ciudad de entrega. Útil para planificar rutas geográficas.</p>
+            <ul>
+                <li>Solo muestra pedidos YA asignados a vehículos</li>
+                <li>Incluye badge indicando qué vehículo tiene cada pedido</li>
+            </ul>
+        </section>
+
+        <!-- VEHÍCULOS -->
+        <section id="vehiculos">
+            <h2>5. Cards de Vehículos</h2>
+
+            <h3>5.1 Información mostrada</h3>
+            <table>
+                <tr><th>Campo</th><th>Descripción</th></tr>
+                <tr><td>Badge</td><td>Identificador corto (REPARTO 1, REPARTO 2, REPARTO 3)</td></tr>
+                <tr><td>Modelo</td><td>Modelo del vehículo (Mercedes-Benz Sprinter, Toyota Hiace)</td></tr>
+                <tr><td>Barra capacidad</td><td>Visual de carga actual vs máxima</td></tr>
+                <tr><td>Porcentaje</td><td>% de capacidad utilizada</td></tr>
+                <tr><td>Estado</td><td>Badge según nivel de carga</td></tr>
+                <tr><td>Stats</td><td>Cantidad pedidos y peso total asignado</td></tr>
+            </table>
+
+            <h3>5.2 Estados de capacidad</h3>
+            <table>
+                <tr><th>Estado</th><th>Rango</th><th>Color</th></tr>
+                <tr><td>ÓPTIMA</td><td>0% - 69%</td><td>Verde</td></tr>
+                <tr><td>ALTA</td><td>70% - 84%</td><td>Naranja</td></tr>
+                <tr><td>CASI LLENO</td><td>85% - 100%</td><td>Rojo/Rosa</td></tr>
+            </table>
+
+            <h3>5.3 Tabla de pedidos (colapsable)</h3>
+            <p>Cada vehículo tiene tabla expandible con sus pedidos asignados.</p>
+            <p><strong>Columnas:</strong></p>
+            <ul>
+                <li># Pedido (número identificador)</li>
+                <li>Dirección (destino de entrega)</li>
+                <li>Ciudad</li>
+                <li>Teléfono (del cliente)</li>
+                <li>Peso (kg)</li>
+                <li>Monto ($)</li>
+                <li>Acciones (Cambiar, Desasignar)</li>
+            </ul>
+        </section>
+
+        <!-- SIN ASIGNAR -->
+        <section id="sin-asignar">
+            <h2>6. Sección Sin Asignar</h2>
+
+            <h3>6.1 Cuándo aparece</h3>
+            <p>Solo visible si existen pedidos del día sin vehículo asignado.</p>
+
+            <h3>6.2 Información mostrada</h3>
+            <ul>
+                <li>Badge "PENDIENTE" (color naranja/rojo)</li>
+                <li>Cantidad de pedidos sin asignar</li>
+                <li>Peso total pendiente de asignación</li>
+            </ul>
+
+            <h3>6.3 Tabla de pedidos</h3>
+            <p>Mismas columnas que vehículos, pero acción es "Asignar" en lugar de "Cambiar/Desasignar".</p>
+
+            <h3>6.4 Objetivo</h3>
+            <p>Esta sección debe quedar VACÍA antes de iniciar el día de reparto.
+            Todos los pedidos deben estar asignados a un vehículo.</p>
+        </section>
+
+        <!-- ASIGNACIÓN -->
+        <section id="asignacion">
+            <h2>7. Modal de Asignación</h2>
+
+            <h3>7.1 Cuándo se abre</h3>
+            <ul>
+                <li>Click en "Asignar" desde pedido sin asignar</li>
+                <li>Click en "Cambiar" desde pedido ya asignado</li>
+            </ul>
+
+            <h3>7.2 Información del pedido</h3>
+            <p>Card superior muestra:</p>
+            <ul>
+                <li>Número de pedido</li>
+                <li>Dirección + Ciudad</li>
+                <li>Fecha de entrega</li>
+                <li>Peso del pedido (badge)</li>
+            </ul>
+
+            <h3>7.3 Selector de vehículos</h3>
+            <p>Lista todos los vehículos disponibles con:</p>
+            <ul>
+                <li>Nombre y modelo del vehículo</li>
+                <li>Capacidad actual (kg usados / kg máximos)</li>
+                <li><strong>Preview:</strong> "Con este pedido: X kg / Y kg (Z%)"</li>
+                <li>Barra de progreso proyectada (con colores según nivel)</li>
+            </ul>
+
+            <h3>7.4 Colores del preview</h3>
+            <table>
+                <tr><th>Color</th><th>Significado</th></tr>
+                <tr><td>Verde</td><td>Carga resultante &lt; 70%</td></tr>
+                <tr><td>Naranja</td><td>Carga resultante 70-84%</td></tr>
+                <tr><td>Rojo</td><td>Carga resultante ≥ 85%</td></tr>
+            </table>
+
+            <h3>7.5 Flujo de asignación</h3>
+            <ol>
+                <li>Usuario selecciona vehículo (click en card)</li>
+                <li>Card queda resaltado como seleccionado</li>
+                <li>Botón "Asignar Vehículo" se habilita</li>
+                <li>Click en confirmar → pedido se mueve al vehículo</li>
+                <li>Vista se actualiza automáticamente</li>
+            </ol>
+
+            <h3>7.6 Nota informativa</h3>
+            <p>El modal muestra mensaje: "Se asignará el vehículo seleccionado al reparto programado para [fecha]"</p>
+        </section>
+
+        <!-- ACCIONES -->
+        <section id="acciones">
+            <h2>8. Acciones sobre Pedidos</h2>
+
+            <h3>8.1 Asignar (desde Sin Asignar)</h3>
+            <ul>
+                <li>Abre modal de asignación</li>
+                <li>Mueve pedido de "Sin Asignar" al vehículo seleccionado</li>
+                <li>Recalcula capacidad del vehículo destino</li>
+            </ul>
+
+            <h3>8.2 Cambiar (desde vehículo asignado)</h3>
+            <ul>
+                <li>Abre modal de asignación</li>
+                <li>Permite reasignar a otro vehículo</li>
+                <li>Recalcula capacidad de ambos vehículos (origen y destino)</li>
+            </ul>
+
+            <h3>8.3 Desasignar (botón X)</h3>
+            <ul>
+                <li>Mueve pedido de vuelta a "Sin Asignar"</li>
+                <li>Recalcula capacidad del vehículo origen</li>
+                <li>NO requiere confirmación (acción reversible)</li>
+            </ul>
+
+            <h3>8.4 Recálculo automático</h3>
+            <p>Tras cualquier acción, el sistema automáticamente:</p>
+            <ol>
+                <li>Recalcula peso total del vehículo</li>
+                <li>Recalcula porcentaje de capacidad</li>
+                <li>Actualiza estado (ÓPTIMA/ALTA/CASI LLENO)</li>
+                <li>Actualiza estadísticas del header</li>
+                <li>Re-renderiza ambas vistas (Por Vehículo y Por Ciudad)</li>
+            </ol>
+        </section>
+
+        <!-- EXPORTAR -->
+        <section id="exportar">
+            <h2>9. Exportar Hoja de Reparto</h2>
+
+            <h3>9.1 Funcionalidad</h3>
+            <p>Genera documento imprimible con todos los pedidos del día organizados por vehículo.</p>
+
+            <h3>9.2 Contenido del documento</h3>
+            <ul>
+                <li><strong>Header:</strong> "QUÍMICA BAMBU S.R.L. - Hoja de Reparto" + fecha</li>
+                <li><strong>Estadísticas:</strong> Total pedidos, peso total, monto total</li>
+                <li><strong>Por vehículo:</strong> Nombre, stats, tabla de pedidos</li>
+                <li><strong>Footer:</strong> Fecha/hora de generación</li>
+            </ul>
+
+            <h3>9.3 Columnas por pedido</h3>
+            <ul>
+                <li># (orden de entrega)</li>
+                <li>Dirección</li>
+                <li>Ciudad</li>
+                <li>Teléfono</li>
+                <li>Peso</li>
+                <li>Monto</li>
+            </ul>
+
+            <h3>9.4 Flujo de exportación</h3>
+            <ol>
+                <li>Click en botón "Exportar"</li>
+                <li>Se abre nueva ventana con documento formateado</li>
+                <li>Automáticamente abre diálogo de impresión del navegador</li>
+                <li>Usuario puede imprimir o "Guardar como PDF"</li>
+            </ol>
+
+            <h3>9.5 Consideraciones</h3>
+            <ul>
+                <li>Solo incluye pedidos ASIGNADOS a vehículos</li>
+                <li>Pedidos "Sin Asignar" NO aparecen en la hoja</li>
+                <li>Formato optimizado para impresión (page-break entre vehículos)</li>
+            </ul>
+        </section>
+
+        <!-- FUTURO -->
+        <section id="futuro">
+            <h2>10. Mejoras Futuras (No implementadas)</h2>
+
+            <h3>10.1 Drag & Drop</h3>
+            <p>Arrastrar pedidos directamente entre secciones:</p>
+            <ul>
+                <li>Desde "Sin Asignar" hacia un vehículo</li>
+                <li>Entre vehículos para reasignar</li>
+                <li><strong>Estado:</strong> No implementado (modal funciona como alternativa)</li>
+                <li><strong>Prioridad:</strong> Baja</li>
+            </ul>
+
+            <h3>10.2 Optimización automática de rutas</h3>
+            <p>Sugerir asignación óptima basada en:</p>
+            <ul>
+                <li>Ciudades (agrupar pedidos de misma zona)</li>
+                <li>Capacidad disponible</li>
+                <li>Distancia entre puntos</li>
+                <li><strong>Estado:</strong> No implementado</li>
+                <li><strong>Prioridad:</strong> Baja (requiere integración con mapas)</li>
+            </ul>
+
+            <h3>10.3 Reordenamiento de ruta</h3>
+            <p>Dentro de cada vehículo, reordenar pedidos para optimizar ruta de entrega.</p>
+            <ul>
+                <li><strong>Estado:</strong> No implementado</li>
+                <li><strong>Prioridad:</strong> Media</li>
+            </ul>
+        </section>
+
+    </main>
+</body>
+
+</html>

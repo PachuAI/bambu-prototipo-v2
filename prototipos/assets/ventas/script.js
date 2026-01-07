@@ -464,23 +464,52 @@ function cerrarModal() {
 // Funciones calcularPago() y validarSuma() eliminadas
 // Los pagos ahora se registran solo desde Cuenta Corriente
 
+/**
+ * Confirma pedido como entregado y genera cargo en Cuenta Corriente
+ *
+ * SINCRONIZACIÓN CC ↔ VENTAS:
+ * - Al marcar entregado se genera automáticamente un CARGO en CC
+ * - El pago se registra posteriormente desde CC del cliente
+ *
+ * PRD: prd/ventas.html - Sección 6.4 Sincronización
+ */
 function confirmarEntregado() {
     const pedido = appState.pedidos.find(p => p.id === pedidoSeleccionadoId);
     if (!pedido) return;
 
-    // Marcar como entregado (sin registro de pago)
+    // Calcular total del pedido
+    const total = BambuState.calcularTotalPedido(pedido.id);
+
+    // Marcar como entregado
     pedido.estado = 'entregado';
     pedido.fechaEntrega = new Date().toISOString();
 
+    // Actualizar en BambuState también
+    BambuState.update('pedidos', pedido.id, {
+        estado: 'entregado',
+        fechaEntrega: pedido.fechaEntrega
+    });
+
+    // SINCRONIZACIÓN: Generar cargo en Cuenta Corriente
+    if (pedido.cliente_id && total > 0) {
+        BambuState.registrarCargoCC({
+            cliente_id: pedido.cliente_id,
+            pedido_id: pedido.id,
+            monto: total,
+            descripcion: `Pedido ${pedido.numero}`,
+            fecha: pedido.fecha || BambuState.FECHA_SISTEMA
+        });
+        console.log(`✅ Cargo CC generado: $${total.toLocaleString()} para cliente ${pedido.cliente_id}`);
+    }
+
     console.log('Pedido marcado como entregado:', pedido);
-    console.log('⚠️ Recordatorio: Registrar pago desde Cuenta Corriente del cliente');
 
     // Re-renderizar
     render();
     cerrarModal();
 
-    // Mostrar notificación
-    mostrarNotificacion(`✅ Pedido ${pedido.numero} marcado como ENTREGADO. Recordá registrar el pago en Cuenta Corriente.`);
+    // Mostrar notificación con link a CC
+    mostrarNotificacion(`✅ Pedido ${pedido.numero} ENTREGADO. Cargo de $${total.toLocaleString()} generado en Cuenta Corriente.`);
 }
 
 function irACuentaCorriente() {

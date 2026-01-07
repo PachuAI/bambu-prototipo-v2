@@ -680,6 +680,55 @@ const BambuState = {
 
         console.log(`[BambuState] Generados: ${pedidos.length} pedidos, ${pedido_items.length} items`);
 
+        // ====================================================================
+        // MOVIMIENTOS CUENTA CORRIENTE
+        // Sincronizados entre cliente-detalle y ventas
+        // ====================================================================
+
+        const movimientos_cc = [];
+        let movimientoId = 1;
+
+        // Generar movimientos para pedidos entregados
+        pedidos.filter(p => p.estado === 'entregado').forEach(pedido => {
+            const itemsPedido = pedido_items.filter(i => i.pedido_id === pedido.id);
+            const total = itemsPedido.reduce((sum, i) => sum + (i.precio_unitario * i.cantidad), 0);
+
+            // Cargo por pedido
+            movimientos_cc.push({
+                id: movimientoId++,
+                cliente_id: pedido.cliente_id,
+                pedido_id: pedido.id,
+                tipo: 'cargo',
+                descripcion: `Pedido ${pedido.numero}`,
+                monto: total,
+                metodo_pago: null,
+                fecha: pedido.fecha,
+                usuario: 'Sistema',
+                nota: ''
+            });
+
+            // Pago si tiene método de pago registrado
+            if (pedido.metodoPago) {
+                movimientos_cc.push({
+                    id: movimientoId++,
+                    cliente_id: pedido.cliente_id,
+                    pedido_id: pedido.id,
+                    tipo: 'pago',
+                    descripcion: pedido.metodoPago === 'efectivo' ? 'Pago Efectivo' :
+                                 pedido.metodoPago === 'digital' ? 'Pago Transferencia' : 'Pago Mixto',
+                    monto: total,
+                    metodo_pago: pedido.metodoPago,
+                    monto_efectivo: pedido.montoEfectivo,
+                    monto_digital: pedido.montoDigital,
+                    fecha: pedido.fecha,
+                    usuario: 'Sistema',
+                    nota: ''
+                });
+            }
+        });
+
+        console.log(`[BambuState] Generados: ${movimientos_cc.length} movimientos CC`);
+
         return {
             clientes,
             productos,
@@ -688,6 +737,7 @@ const BambuState = {
             listas_precio,
             pedidos,
             pedido_items,
+            movimientos_cc,
             config: {
                 fechaSistema: this.FECHA_SISTEMA,
                 nombreEmpresa: 'Química Bambu S.R.L.',
@@ -731,6 +781,110 @@ const BambuState = {
         }
 
         return errores;
+    },
+
+    // ========================================================================
+    // MÉTODOS CUENTA CORRIENTE
+    // PRD: prd/cuenta-corriente.html - Sincronización bidireccional
+    // ========================================================================
+
+    /**
+     * Obtiene movimientos CC de un cliente
+     * @param {number} clienteId
+     * @returns {Array} Movimientos ordenados por fecha desc
+     */
+    getMovimientosCC(clienteId) {
+        this._checkInit();
+        const movs = (this._state.movimientos_cc || [])
+            .filter(m => m.cliente_id === clienteId);
+
+        // Ordenar por fecha desc, luego por id desc
+        return movs.sort((a, b) => {
+            if (a.fecha !== b.fecha) return b.fecha.localeCompare(a.fecha);
+            return b.id - a.id;
+        });
+    },
+
+    /**
+     * Calcula el saldo actual de un cliente
+     * @param {number} clienteId
+     * @returns {number} Saldo (negativo = deuda, positivo = a favor)
+     */
+    calcularSaldoCC(clienteId) {
+        const movimientos = this.getMovimientosCC(clienteId);
+        return movimientos.reduce((saldo, m) => {
+            if (m.tipo === 'cargo') return saldo - m.monto;
+            if (m.tipo === 'pago') return saldo + m.monto;
+            return saldo;
+        }, 0);
+    },
+
+    /**
+     * Registra un cargo en cuenta corriente (al entregar pedido)
+     * @param {Object} datos - { cliente_id, pedido_id, monto, descripcion }
+     * @returns {Object} El movimiento creado
+     */
+    registrarCargoCC(datos) {
+        this._checkInit();
+        if (!this._state.movimientos_cc) this._state.movimientos_cc = [];
+
+        const maxId = this._state.movimientos_cc.reduce((max, m) => Math.max(max, m.id), 0);
+
+        const movimiento = {
+            id: maxId + 1,
+            cliente_id: datos.cliente_id,
+            pedido_id: datos.pedido_id || null,
+            tipo: 'cargo',
+            descripcion: datos.descripcion || 'Cargo',
+            monto: datos.monto,
+            metodo_pago: null,
+            fecha: datos.fecha || this.FECHA_SISTEMA,
+            usuario: datos.usuario || 'Usuario',
+            nota: datos.nota || ''
+        };
+
+        this._state.movimientos_cc.push(movimiento);
+        this.save();
+
+        console.log(`[BambuState] Cargo CC registrado: $${movimiento.monto} para cliente ${datos.cliente_id}`);
+        return movimiento;
+    },
+
+    /**
+     * Registra un pago en cuenta corriente
+     * @param {Object} datos - { cliente_id, pedido_id?, monto, metodo_pago, monto_efectivo?, monto_digital? }
+     * @returns {Object} El movimiento creado
+     */
+    registrarPagoCC(datos) {
+        this._checkInit();
+        if (!this._state.movimientos_cc) this._state.movimientos_cc = [];
+
+        const maxId = this._state.movimientos_cc.reduce((max, m) => Math.max(max, m.id), 0);
+
+        const descripcion = datos.pedido_id
+            ? `Pago Pedido ${this.getById('pedidos', datos.pedido_id)?.numero || ''}`
+            : 'Pago Genérico';
+
+        const movimiento = {
+            id: maxId + 1,
+            cliente_id: datos.cliente_id,
+            pedido_id: datos.pedido_id || null,
+            tipo: 'pago',
+            descripcion: datos.descripcion || descripcion,
+            monto: datos.monto,
+            metodo_pago: datos.metodo_pago,
+            monto_efectivo: datos.monto_efectivo || null,
+            monto_digital: datos.monto_digital || null,
+            fecha: datos.fecha || this.FECHA_SISTEMA,
+            usuario: datos.usuario || 'Usuario',
+            nota: datos.nota || ''
+        };
+
+        this._state.movimientos_cc.push(movimiento);
+        this.save();
+
+        console.log(`[BambuState] Pago CC registrado: $${movimiento.monto} para cliente ${datos.cliente_id}`);
+        return movimiento;
     },
 
     // ========================================================================

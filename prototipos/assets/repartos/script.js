@@ -404,7 +404,7 @@ function abrirModalAsignarVehiculo(pedidoId) {
 
     // Actualizar info del pedido en el modal
     document.getElementById('modal-pedido-numero').textContent = pedido.numero;
-    document.getElementById('modal-pedido-cliente').textContent = `${pedido.cliente} - ${pedido.direccion}`;
+    document.getElementById('modal-pedido-cliente').textContent = `${pedido.direccion} - ${pedido.ciudad}`;
     document.getElementById('modal-pedido-fecha').textContent = pedido.fechaEntrega;
     document.getElementById('modal-pedido-peso').textContent = `${pedido.peso}KG`;
     document.getElementById('modal-info-fecha').textContent = pedido.fechaEntrega;
@@ -529,16 +529,48 @@ function cambiarVehiculo(pedidoId, vehiculoActualId) {
 // DESASIGNAR VEHÍCULO
 // ===========================
 
+/**
+ * Desasigna un pedido de su vehículo actual
+ * PRD: prd/ventas.html - Sección 8 (Repartos)
+ *
+ * LÓGICA:
+ * - Busca el pedido en todos los vehículos asignados
+ * - Lo mueve a la lista "Sin Asignar"
+ * - Recalcula capacidad del vehículo anterior
+ * - Re-renderiza todas las vistas
+ */
 function desasignarVehiculo(pedidoId) {
-    // TODO: Implementar lógica de desasignación
-    // 1. Buscar pedido en vehículo asignado
-    // 2. Mover pedido a lista "sin asignar"
-    // 3. Mantener fecha del pedido (no cambiar)
-    // 4. Recalcular capacidad del vehículo
-    // 5. Re-renderizar vistas
+    // Buscar pedido en vehículos asignados
+    let vehiculoOrigen = null;
+    let pedidoIndex = -1;
 
-    console.log(`Desasignar pedido ${pedidoId} de vehículo`);
-    alert('Funcionalidad "Desasignar" pendiente de implementación en desarrollo backend');
+    for (const vehiculo of appData.vehiculos) {
+        pedidoIndex = vehiculo.pedidos.findIndex(p => p.id === pedidoId);
+        if (pedidoIndex !== -1) {
+            vehiculoOrigen = vehiculo;
+            break;
+        }
+    }
+
+    if (!vehiculoOrigen || pedidoIndex === -1) {
+        console.warn(`[Repartos] Pedido ${pedidoId} no encontrado en ningún vehículo`);
+        return;
+    }
+
+    // Mover pedido a "sin asignar"
+    const pedido = vehiculoOrigen.pedidos.splice(pedidoIndex, 1)[0];
+    appData.pedidosSinAsignar.push(pedido);
+
+    // Recalcular capacidad del vehículo origen
+    recalcularCapacidadVehiculo(vehiculoOrigen.id);
+
+    // Re-renderizar vistas
+    renderizarVehiculos();
+    renderizarPedidosSinAsignar();
+    renderizarCiudades();
+    actualizarStats();
+
+    console.log(`[Repartos] Pedido ${pedido.numero} desasignado de ${vehiculoOrigen.badge}`);
 }
 
 // ===========================
@@ -628,11 +660,137 @@ function cerrarModalAsignar() {
 }
 
 // ===========================
-// EXPORTAR HOJA REPARTO (MOCK)
+// EXPORTAR HOJA REPARTO
+// PRD: prd/ventas.html - Sección 8
 // ===========================
 
+/**
+ * Genera hoja de reparto imprimible/PDF
+ *
+ * LÓGICA:
+ * - Abre ventana nueva con formato imprimible
+ * - Muestra cada vehículo con sus pedidos
+ * - Incluye estadísticas y fecha
+ * - Usuario puede imprimir o guardar como PDF
+ */
 function exportarHojaReparto() {
-    alert("Acción de exportar pedido");
+    const fecha = formatearFechaCompleta(appData.fecha);
+
+    // Calcular totales
+    let totalPedidos = 0;
+    let totalKg = 0;
+    let totalMonto = 0;
+
+    appData.vehiculos.forEach(v => {
+        totalPedidos += v.pedidos.length;
+        totalKg += v.pesoActual;
+        totalMonto += v.pedidos.reduce((sum, p) => sum + p.monto, 0);
+    });
+
+    // Generar HTML de vehículos
+    let vehiculosHTML = '';
+    appData.vehiculos.forEach(vehiculo => {
+        if (vehiculo.pedidos.length === 0) return;
+
+        vehiculosHTML += `
+            <div class="vehiculo-section">
+                <h3>${vehiculo.badge} - ${vehiculo.nombre}</h3>
+                <p class="vehiculo-stats">${vehiculo.pedidos.length} pedidos | ${vehiculo.pesoActual} kg | Capacidad: ${vehiculo.porcentaje}%</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Dirección</th>
+                            <th>Ciudad</th>
+                            <th>Teléfono</th>
+                            <th>Peso</th>
+                            <th>Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${vehiculo.pedidos.map((p, idx) => `
+                            <tr>
+                                <td>${idx + 1}</td>
+                                <td>${p.direccion}</td>
+                                <td>${p.ciudad}</td>
+                                <td>${p.telefono}</td>
+                                <td>${p.peso} kg</td>
+                                <td>$${formatMonto(p.monto)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    });
+
+    // HTML completo para impresión
+    const html = `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Hoja de Reparto - ${fecha}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; font-size: 12px; }
+        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .header h1 { font-size: 18px; margin-bottom: 5px; }
+        .header p { color: #666; }
+        .stats { display: flex; justify-content: center; gap: 30px; margin: 15px 0; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 16px; font-weight: bold; }
+        .stat-label { font-size: 10px; color: #666; }
+        .vehiculo-section { margin-bottom: 25px; page-break-inside: avoid; }
+        .vehiculo-section h3 { background: #f0f0f0; padding: 8px; margin-bottom: 5px; }
+        .vehiculo-stats { color: #666; margin-bottom: 10px; font-size: 11px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+        th { background: #f5f5f5; font-weight: 600; }
+        tr:nth-child(even) { background: #fafafa; }
+        .footer { margin-top: 30px; text-align: center; color: #999; font-size: 10px; }
+        @media print {
+            body { padding: 10px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>QUÍMICA BAMBU S.R.L. - Hoja de Reparto</h1>
+        <p>${fecha}</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-value">${totalPedidos}</div>
+            <div class="stat-label">Pedidos</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">${formatMonto(totalKg)} kg</div>
+            <div class="stat-label">Peso Total</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">$${formatMonto(totalMonto)}</div>
+            <div class="stat-label">Monto Total</div>
+        </div>
+    </div>
+
+    ${vehiculosHTML}
+
+    <div class="footer">
+        Generado el ${new Date().toLocaleString('es-AR')} - Bambú CRM V2
+    </div>
+
+    <script>window.print();</script>
+</body>
+</html>
+    `;
+
+    // Abrir ventana de impresión
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(html);
+    printWindow.document.close();
 }
 
 // ===========================

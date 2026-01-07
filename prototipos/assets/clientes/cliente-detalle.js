@@ -283,3 +283,79 @@ function nuevaCotizacionCliente() {
     window.location.href = `cotizador.html?cliente_id=${clienteId}`;
     console.log(`✅ Redirigiendo a cotizador con cliente ${cliente.direccion}`);
 }
+
+// ========================================
+// EXPORTAR EXCEL CUENTA CORRIENTE
+// PRD: prd/cuenta-corriente.html - Sección Exportación
+// ========================================
+
+/**
+ * Exporta los movimientos de cuenta corriente a CSV (compatible Excel)
+ *
+ * LÓGICA:
+ * - Lee movimientos de la tabla en DOM (tab-cc)
+ * - Extrae: Fecha, Descripción, Método, Cargo, Pago, Saldo
+ * - Genera CSV con separador punto y coma (Excel ES)
+ * - Nombre archivo: CC_{direccion}_{fecha}.csv
+ */
+function exportarExcelCC() {
+    // Obtener cliente actual
+    const params = new URLSearchParams(window.location.search);
+    const clienteId = parseInt(params.get('id')) || 9;
+    const cliente = BambuState.getById('clientes', clienteId);
+    const direccionCliente = cliente ? cliente.direccion : 'CLIENTE';
+
+    // Obtener filas de movimientos de la tabla CC
+    const filas = document.querySelectorAll('#tab-cc .table-v2 tbody tr.movimiento-row');
+
+    if (filas.length === 0) {
+        alert('No hay movimientos para exportar');
+        return;
+    }
+
+    // Headers del CSV
+    const headers = ['Fecha', 'Descripción', 'Método Pago', 'Cargo', 'Pago', 'Saldo'];
+
+    // Extraer datos de cada fila
+    const datos = [];
+    filas.forEach(fila => {
+        const celdas = fila.querySelectorAll('td');
+        if (celdas.length >= 6) {
+            const fecha = celdas[0].textContent.trim();
+            const descripcion = celdas[1].textContent.trim().replace(/[\n\r\t]+/g, ' ').replace(/\s+/g, ' ');
+            const metodo = celdas[2].textContent.trim().replace(/[\n\r\t]+/g, ' ').replace(/\s+/g, ' ') || '-';
+            const cargo = celdas[3].textContent.trim() || '-';
+            const pago = celdas[4].textContent.trim() || '-';
+            const saldo = celdas[5].textContent.trim();
+
+            datos.push([fecha, descripcion, metodo, cargo, pago, saldo]);
+        }
+    });
+
+    // Construir CSV
+    let csv = '\uFEFF'; // BOM para UTF-8 en Excel
+    csv += `Cuenta Corriente - ${direccionCliente}\n`;
+    csv += `Exportado: ${new Date().toLocaleDateString('es-AR')}\n\n`;
+    csv += headers.join(';') + '\n';
+    datos.forEach(fila => {
+        csv += fila.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';') + '\n';
+    });
+
+    // Agregar saldo actual al final
+    const saldoActual = document.querySelector('.sidebar-balance-amount');
+    if (saldoActual) {
+        csv += `\n"Saldo Actual";"${saldoActual.textContent.trim()}"`;
+    }
+
+    // Descargar archivo
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const nombreArchivo = direccionCliente.replace(/\s+/g, '_').substring(0, 20);
+    link.download = `CC_${nombreArchivo}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    console.log(`✅ Exportados ${datos.length} movimientos de CC a CSV`);
+}
