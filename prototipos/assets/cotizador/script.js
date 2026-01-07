@@ -27,8 +27,28 @@ function getProductosDisponibles() {
         precio_promocional: p.precio_promocional,
         // Sprint 3: Proveedor para restricción de stock
         // proveedor_id: 1 = Química Bambu (BAMBU) - sin restricción stock
-        proveedor: p.proveedor_id === 1 ? 'BAMBU' : null
+        proveedor: p.proveedor_id === 1 ? 'BAMBU' : null,
+        // PRD Productos 4.5: Campo orden para ordenamiento en resúmenes
+        orden: p.orden || 999
     }));
+}
+
+/**
+ * Ordena items del carrito por el campo 'orden' del producto.
+ *
+ * LÓGICA DE NEGOCIO (PRD Productos 4.5, 5.1):
+ * - El orden definido en productos determina cómo aparecen en:
+ *   - Resumen de WhatsApp
+ *   - Remito PDF
+ *   - Órdenes de entrega
+ * - Propósito: Los productos que van primero en la lista son los que
+ *   se cargan primero en la camioneta (logística de carga)
+ *
+ * @param {Array} items - Items del carrito
+ * @returns {Array} - Items ordenados por campo 'orden'
+ */
+function ordenarItemsPorOrden(items) {
+    return [...items].sort((a, b) => (a.orden || 999) - (b.orden || 999));
 }
 
 /**
@@ -816,8 +836,9 @@ function openSummaryModal() {
     document.getElementById('preview-subtotal').textContent = els.txtSubtotal.textContent;
     document.getElementById('preview-total-display').textContent = els.txtTotal.textContent;
 
-    // Items list (WhatsApp)
-    const itemsHtml = state.cart.map(item => `
+    // Items list (WhatsApp) - PRD Productos 4.5: Ordenados por campo 'orden'
+    const itemsOrdenados = ordenarItemsPorOrden(state.cart);
+    const itemsHtml = itemsOrdenados.map(item => `
         <div>• x${item.qty} - ${item.name} - $${(item.price * item.qty).toLocaleString()}</div>
     `).join('');
     document.getElementById('preview-items-list').innerHTML = itemsHtml || "<div>(Sin productos)</div>";
@@ -877,8 +898,9 @@ function llenarRemitoPreview() {
     document.getElementById('remito-cliente-nombre').textContent = clienteNombre;
     document.getElementById('remito-cliente-direccion').textContent = clienteDireccion;
 
-    // Items de la tabla
-    const itemsHtml = state.cart.map(item => {
+    // Items de la tabla - PRD Productos 4.5: Ordenados por campo 'orden'
+    const itemsOrdenados = ordenarItemsPorOrden(state.cart);
+    const itemsHtml = itemsOrdenados.map(item => {
         const precioUnit = item.price;
         const subtotal = precioUnit * item.qty;
         return `
@@ -992,9 +1014,10 @@ function generarRemitoPDF() {
     doc.text('Subtotal', margen + 145, y);
     y += 8;
 
-    // Items
+    // Items - PRD Productos 4.5: Ordenados por campo 'orden' (logística de carga)
     doc.setFont('helvetica', 'normal');
-    state.cart.forEach(item => {
+    const itemsOrdenadosPDF = ordenarItemsPorOrden(state.cart);
+    itemsOrdenadosPDF.forEach(item => {
         const precioUnit = item.price;
         const subtotal = precioUnit * item.qty;
 
@@ -1570,8 +1593,9 @@ function copiarResumenAlPortapapeles() {
     const subtotal = document.getElementById('preview-subtotal').textContent;
     const total = document.getElementById('preview-total-display').textContent;
 
-    // Construir lista de items
-    const itemsTexto = state.cart.map(item =>
+    // Construir lista de items - PRD Productos 4.5: Ordenados por campo 'orden'
+    const itemsOrdenadosWA = ordenarItemsPorOrden(state.cart);
+    const itemsTexto = itemsOrdenadosWA.map(item =>
         `• x${item.qty} - ${item.name} - $${(item.price * item.qty).toLocaleString()}`
     ).join('\n');
 

@@ -11,14 +11,14 @@
 
 | Categoría | Cantidad | % |
 |-----------|----------|---|
-| **Implementadas** | 29 | 97% |
+| **Implementadas** | 30 | 100% |
 | **Visuales sin lógica** | 0 | 0% |
-| **Faltantes** | 1 | 3% |
+| **Faltantes** | 0 | 0% |
 | **TOTAL** | 30 | 100% |
 
 ---
 
-## IMPLEMENTADAS (HTML + JS funcional) - 29 funcionalidades
+## IMPLEMENTADAS (HTML + JS funcional) - 30 funcionalidades
 
 ### CRUD Productos
 1. **Crear producto** - Modal completo con validaciones
@@ -107,6 +107,18 @@
    - Hint explicativo "Peso por unidad del producto"
    - Clase .input-with-suffix para mejor UX
 
+### Sprint 4 - Integración Cotizador
+
+36. ~~**Integración con Cotizador - Orden Productos**~~ ✅ IMPLEMENTADO Sprint 3
+   - Campo orden agregado a productos en getProductosDisponibles()
+   - Función helper ordenarItemsPorOrden() para ordenar items del carrito
+   - Aplicado en 4 lugares del cotizador:
+     - Resumen WhatsApp (modal preview)
+     - Remito PDF preview (llenarRemitoPreview)
+     - Remito PDF real (generarRemitoPDF con jsPDF)
+     - Texto copiado al portapapeles (copiarTextoWhatsApp)
+   - Propósito: Los productos que van primero en la lista son los que se cargan primero en la camioneta (logística de carga)
+
 ### Reordenamiento
 26. ~~**Drag & Drop para Reordenar**~~ ✅ IMPLEMENTADO Sprint 1
    - SortableJS inicializado en tbody
@@ -127,14 +139,9 @@
 
 ---
 
-## FALTANTES (Ni HTML ni JS) - 1 funcionalidad
+## FALTANTES (Ni HTML ni JS) - 0 funcionalidades
 
-### Media prioridad
-
-1. **Integración con Cotizador - Orden Productos**
-   - PRD: Sección 4.5, 5.1
-   - Descripción: Orden drag & drop debe reflejarse en buscador cotizador
-   - Complejidad: Baja (integración)
+*Todas las funcionalidades del módulo han sido implementadas.*
 
 ---
 
@@ -156,6 +163,9 @@
 9. ✅ **Proveedores desde Configuración** - CRUD completo con validaciones
 10. ✅ **Exportar múltiples proveedores** - Checkboxes múltiples con toggle rápido
 11. ✅ **Mejora campo peso con unidad** - Input con suffix visual y hint explicativo
+
+### Sprint 4 - Integración Cotizador ✅ COMPLETADO (07-Enero-2026)
+12. ✅ **Integración con Cotizador - Orden Productos** - Campo orden en getProductosDisponibles(), función ordenarItemsPorOrden(), aplicado en 4 contextos
 
 ---
 
@@ -186,5 +196,5 @@ Campos coinciden con estructura PRD (sección 8.1):
 
 ---
 
-**Estado general**: 97% implementado funcionalmente - Módulo prácticamente completo
-**Nivel de madurez**: Prototipo robusto con CRUD completo, gestión de proveedores, panel de alertas, historial de movimientos, exportación Excel real, vista detalle con estadísticas y drag & drop persistente
+**Estado general**: 100% implementado funcionalmente - Módulo completamente funcional
+**Nivel de madurez**: Prototipo completo con CRUD, gestión de proveedores, panel de alertas, historial de movimientos, exportación Excel real, vista detalle con estadísticas, drag & drop persistente, e integración con cotizador para ordenamiento logístico de productos
