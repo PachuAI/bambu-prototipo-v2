@@ -2594,12 +2594,29 @@ function agregarProductoAlPedido(productoId) {
         }
     }
 
+    // =========================================================================
+    // REGLA DE NEGOCIO: Usar precio según lista del cliente
+    // PRD: prd/cotizador-especificacion.html - Sección Listas de Precio
+    // =========================================================================
+    let precioAplicar = producto.precio_l1; // Default L1
+
+    // Obtener cliente del pedido para determinar lista de precio
+    const pedidoActual = appState.pedidos.find(p => p.id === pedidoEditandoId);
+    if (pedidoActual?.cliente_id) {
+        const cliente = BambuState.getById('clientes', pedidoActual.cliente_id);
+        if (cliente?.lista_precio === 'L2') {
+            precioAplicar = producto.precio_l2 || producto.precio_l1;
+        } else if (cliente?.lista_precio === 'L3') {
+            precioAplicar = producto.precio_l3 || producto.precio_l1;
+        }
+    }
+
     // Agregar con cantidad 1
     productosEditando.push({
         id: producto.id,
         producto_id: producto.id, // Asegurar consistencia
         nombre: producto.nombre,
-        precio: producto.precio_l1, // TODO: usar lista de precio del cliente
+        precio: precioAplicar,
         cantidad: 1,
         peso: producto.peso_kg
     });

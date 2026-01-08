@@ -1425,14 +1425,16 @@ function resetearFormulario() {
  * Formato: { key, ctrl, shift, alt, action, description }
  */
 const KEYBOARD_SHORTCUTS = [
-    // TODO: Definir combinaciones finales que no colisionen con Chrome
+    // Navegación básica (no colisionan con Chrome)
     { key: 'Escape', ctrl: false, shift: false, alt: false, action: 'closeModals', description: 'Cerrar modales/dropdowns' },
     { key: 'Enter', ctrl: false, shift: false, alt: false, action: 'selectHighlighted', description: 'Seleccionar item resaltado' },
     { key: 'ArrowUp', ctrl: false, shift: false, alt: false, action: 'navigateUp', description: 'Navegar arriba en resultados' },
     { key: 'ArrowDown', ctrl: false, shift: false, alt: false, action: 'navigateDown', description: 'Navegar abajo en resultados' },
-    // Placeholders para atajos principales (a definir)
-    // { key: '4', ctrl: false, shift: true, alt: false, action: 'confirmOrder', description: 'Confirmar pedido' },
-    // { key: 'F4', ctrl: false, shift: false, alt: false, action: 'openSummary', description: 'Abrir resumen' },
+    // Atajos de acción (F2/F4 no colisionan con Chrome)
+    { key: 'F2', ctrl: false, shift: false, alt: false, action: 'openSummary', description: 'Abrir resumen WhatsApp/PDF' },
+    { key: 'F4', ctrl: false, shift: false, alt: false, action: 'focusProductSearch', description: 'Enfocar búsqueda productos' },
+    // Ctrl+Enter es estándar para "enviar/confirmar"
+    { key: 'Enter', ctrl: true, shift: false, alt: false, action: 'confirmOrder', description: 'Confirmar pedido (abre modal)' },
 ];
 
 // Estado de navegación por teclado
@@ -1493,6 +1495,11 @@ function handleKeyboardShortcut(e) {
             break;
         case 'openSummary':
             openSummaryModal();
+            e.preventDefault();
+            break;
+        case 'focusProductSearch':
+            els.inputProduct.focus();
+            els.inputProduct.select();
             e.preventDefault();
             break;
     }

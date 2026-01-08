@@ -1,5 +1,34 @@
 # CHANGELOG - Bambu CRM V2 Prototipo
 
+## [07 Enero 2026] - Auditoría Integridad + Fixes Stock/Repartos
+
+### Qué se hizo
+Auditoría completa de integridad de código entre módulos. Se detectaron y solucionaron 5 gaps de integración:
+
+**Fixes de Stock (Críticos):**
+1. `confirmarPedido()` ahora descuenta stock al crear pedido
+2. `confirmarBorrador()` ahora descuenta stock al confirmar
+3. `eliminarPedido()` ahora reintegra stock correctamente
+
+**Fixes de Repartos (Medianos):**
+4. `confirmarAsignacion()` persiste vehiculo_id y estado en BambuState
+5. `handleReorderDrop()` persiste orden_visita al reordenar ruta
+
+### Archivos modificados
+- `prototipos/assets/cotizador/script.js` - Fix 1
+- `prototipos/assets/ventas/script.js` - Fixes 2-3
+- `prototipos/assets/repartos/script.js` - Fixes 4-5
+
+### Documentación nueva
+- `docs/REPORTE-INTEGRIDAD-CODIGO.md` - Reporte completo de auditoría
+
+### Estado final
+- Flujos principales: 6/6 correctos
+- Gaps críticos: 0 (todos solucionados)
+- Sistema listo para testing manual
+
+---
+
 ## [07 Enero 2026] - Ventas: Auditoría + Pagos Parciales
 
 ### Qué se hizo
