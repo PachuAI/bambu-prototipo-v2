@@ -419,15 +419,21 @@ function cargarProveedoresEnSelectores() {
 
     // Filtro header
     const filterProveedor = document.getElementById('filter-proveedor');
-    filterProveedor.innerHTML = '<option value="">Proveedor: Todos</option>' + opciones;
+    if (filterProveedor) {
+        filterProveedor.innerHTML = '<option value="">Proveedor: Todos</option>' + opciones;
+    }
 
     // Modal producto
     const prodProveedor = document.getElementById('prod-proveedor');
-    prodProveedor.innerHTML = '<option value="">Sin proveedor (combo)</option>' + opciones;
+    if (prodProveedor) {
+        prodProveedor.innerHTML = '<option value="">Sin proveedor (combo)</option>' + opciones;
+    }
 
-    // Modal exportar
+    // Modal exportar (opcional - puede no existir)
     const exportProveedor = document.getElementById('export-proveedor');
-    exportProveedor.innerHTML = '<option value="">Todos los proveedores</option>' + opciones;
+    if (exportProveedor) {
+        exportProveedor.innerHTML = '<option value="">Todos los proveedores</option>' + opciones;
+    }
 }
 
 function limpiarFiltros() {
